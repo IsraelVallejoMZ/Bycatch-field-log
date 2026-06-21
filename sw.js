@@ -1,4 +1,6 @@
-const CACHE_NAME = 'bycatch-log-v1';
+// Bump this on every deploy so old clients detect the change and refresh
+// their cache instead of being stuck on a stale cached app shell.
+const CACHE_NAME = 'bycatch-log-v3';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -19,9 +21,8 @@ self.addEventListener('activate', (event) => {
       Promise.all(
         keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -35,15 +36,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for the app shell, falling back to network, then updating cache.
+  // Network-first for the app shell: always try to fetch the latest version.
+  // Only fall back to the cached copy when there's genuinely no connection,
+  // which is what makes this an offline-capable field tool rather than a
+  // version trap that hides updates from the user.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
+    fetch(event.request, { cache: 'no-store' })
+      .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
-      }).catch(() => cached);
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
+});
+
+// Lets the page ask the active service worker to take over immediately
+// after a new version has been installed, instead of waiting for a full
+// close-and-reopen of the app.
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
