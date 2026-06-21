@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +25,7 @@
     --blue-deep:  #06384f;
     --blue-mist:  #dfeaf0;
     --coral:      #c0532f;
+    --coral-soft: #f3e2d8;
     --released:   #2f7a52;
     --amber:      #b8893a;
 
@@ -299,6 +301,44 @@
   .map-point-popup{ font-family: var(--body); font-size: 12.5px; line-height:1.4; }
   .map-point-popup b{ font-family: var(--display); font-style: italic; }
 
+  /* ===== Insights screen ===== */
+  .insight-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .insight-stat{
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .insight-stat .is-num{ font-family: var(--display); font-size: 26px; font-weight:700; color: var(--blue-deep); line-height:1; }
+  .insight-stat .is-label{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px; }
+
+  .bar-row{ margin-bottom: 10px; }
+  .bar-row-top{ display:flex; justify-content:space-between; font-family: var(--data); font-size: 11.5px; color: var(--ink); margin-bottom: 4px; }
+  .bar-row-top .bn{ font-style: italic; font-family: var(--display); font-weight:600; font-size: 13px; }
+  .bar-track{ background: var(--blue-mist); border-radius: 4px; height: 9px; overflow:hidden; }
+  .bar-fill{ height:100%; background: var(--blue); border-radius:4px; transition: width 0.4s ease; }
+
+  .cond-bars{ display:flex; gap: 4px; height: 22px; border-radius: 5px; overflow:hidden; margin-bottom: 6px; }
+  .cond-seg{ height:100%; }
+  .cond-legend{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom: 22px; }
+
+  table.stat-table{ width:100%; border-collapse: collapse; font-size: 12.5px; }
+  table.stat-table th{
+    font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.03em;
+    color: var(--ink-soft); text-align:left; padding: 6px 8px; border-bottom: 1.5px solid var(--line);
+  }
+  table.stat-table td{ padding: 8px 8px; border-bottom: 1px solid var(--line); }
+  table.stat-table td.sp-name{ font-family: var(--display); font-style: italic; font-weight: 600; }
+  table.stat-table td.num{ font-family: var(--data); text-align:right; }
+
+  .insight-empty{
+    text-align:center; padding: 30px 20px; color: #9aa6a6; font-family: var(--data); font-size: 12.5px;
+  }
+
+  .duration-line{
+    font-family: var(--data); font-size: 12px; color: var(--blue-deep); margin-top: 12px;
+    background: var(--blue-mist); padding: 8px 12px; border-radius: var(--radius-sm);
+  }
+  .duration-line.warn{ background: var(--coral-soft); color: var(--coral); }
+
   .toast{
     position: fixed; top: 84px; left:50%; transform: translateX(-50%) translateY(-12px);
     background: var(--ink); color: var(--paper); font-family: var(--data); font-size:12.5px;
@@ -351,6 +391,13 @@
       <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
     </div>
 
+    <div class="section-h">Survey insights</div>
+    <div class="map-placeholder" data-go="insights" style="cursor:pointer;">
+      <span class="mp-icon">▤</span>
+      <div class="mp-title">Open insights</div>
+      <div class="mp-sub" id="homeInsightsSub">Species counts, length ranges, and condition breakdown</div>
+    </div>
+
     <div class="section-h">Most recent</div>
     <div class="recent-list" id="recentList"></div>
   </main>
@@ -369,7 +416,16 @@
   <main>
 
     <div class="card">
-      <div class="card-label"><span class="step">1</span>Site &amp; gear</div>
+      <div class="card-label"><span class="step">1</span>Session</div>
+      <label for="observer">Observer</label>
+      <input type="text" id="observer" placeholder="e.g. Israel Vallejo" list="observer-list">
+      <datalist id="observer-list"></datalist>
+      <label for="surveyDate">Survey date</label>
+      <input type="text" id="surveyDate" readonly>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">2</span>Site &amp; gear</div>
       <label for="site">Sampling site</label>
       <select id="site">
         <option value="">— select —</option>
@@ -393,7 +449,24 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">2</span>Specimen</div>
+      <div class="card-label"><span class="step">3</span>Fishing effort</div>
+      <label for="depth">Depth (m)</label>
+      <input type="number" id="depth" inputmode="decimal" placeholder="e.g. 35">
+      <div class="grid2">
+        <div>
+          <label for="haulStart">Haul start</label>
+          <input type="text" id="haulStart" inputmode="numeric" placeholder="HH:MM" maxlength="5">
+        </div>
+        <div>
+          <label for="haulEnd">Haul end</label>
+          <input type="text" id="haulEnd" inputmode="numeric" placeholder="HH:MM" maxlength="5">
+        </div>
+      </div>
+      <div class="duration-line" id="durationLine">Duration: —</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">4</span>Specimen</div>
       <label for="species">Species</label>
       <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
       <datalist id="species-list">
@@ -431,7 +504,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">3</span>Position</div>
+      <div class="card-label"><span class="step">5</span>Position</div>
       <label>GPS coordinates</label>
       <div class="gpsbox" id="gpsBox">
         <span class="coords pending" id="coordsLabel">not captured</span>
@@ -440,7 +513,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">4</span>Evidence</div>
+      <div class="card-label"><span class="step">6</span>Evidence</div>
       <label>Photo</label>
       <div class="photobox" id="photoBox">
         <span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>
@@ -448,7 +521,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">5</span>Notes</div>
+      <div class="card-label"><span class="step">7</span>Notes</div>
       <label for="notes">Observations</label>
       <textarea id="notes" rows="2" placeholder="gear condition, estimated depth, etc."></textarea>
     </div>
@@ -518,6 +591,21 @@
   </main>
 </section>
 
+<!-- ================= INSIGHTS ================= -->
+<section class="screen" id="screen-insights">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">Insights</span>
+    </div>
+    <h1>Survey Statistics</h1>
+    <div class="site-line" id="siteLineInsights">&nbsp;</div>
+  </div>
+  <main id="insightsMain">
+    <!-- populated dynamically by renderInsights() -->
+  </main>
+</section>
+
 <!-- ================= TAB BAR ================= -->
 <nav class="tabbar">
   <button class="tab active" data-go="home"><span class="tab-icon">⌂</span>Home</button>
@@ -531,11 +619,56 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 (function(){
-  const STORAGE_KEY = 'bycatch_entries_app_v1';
+  const STORAGE_KEY = 'bycatch_entries_app_v2';
+  const OLD_STORAGE_KEY = 'bycatch_entries_app_v1';
+  const LAST_OBSERVER_KEY = 'bycatch_last_observer';
+  const DEVICE_ID_KEY = 'bycatch_device_id';
   let coords = null;
   let photoDataUrl = null;
   let sexVal = null;
   let conditionVal = null;
+
+  // Stable short device tag so records made on different phones are
+  // distinguishable even before any real sync exists.
+  function getDeviceId(){
+    let id = localStorage.getItem(DEVICE_ID_KEY);
+    if(!id){
+      id = Math.random().toString(36).slice(2, 6).toUpperCase();
+      localStorage.setItem(DEVICE_ID_KEY, id);
+    }
+    return id;
+  }
+
+  function makeRecordId(){
+    // Format: DEV-YYYYMMDD-HHMMSS-rand — sortable, unique across devices in practice,
+    // and human-readable enough to cross-reference against a paper backup if needed.
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const stamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate())
+      + '-' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    const rand = Math.random().toString(36).slice(2,5).toUpperCase();
+    return getDeviceId() + '-' + stamp + '-' + rand;
+  }
+
+  // One-time migration from the old schema so existing field data isn't lost.
+  function migrateOldEntries(){
+    try{
+      const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY));
+      if(!old || !old.length) return;
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      if(existing.length) return; // already migrated or already has v2 data
+      const migrated = old.map(e => Object.assign({
+        record_id: makeRecordId(),
+        observer: '',
+        depth: '',
+        haul_start: '',
+        haul_end: '',
+        haul_duration_min: ''
+      }, e));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+    } catch(e){ /* nothing to migrate */ }
+  }
+  migrateOldEntries();
 
   // ===== Screen navigation =====
   function goTo(screen){
@@ -547,6 +680,7 @@
     if(screen === 'home') renderHome();
     if(screen === 'history') renderHistory();
     if(screen === 'map') renderMap();
+    if(screen === 'insights') renderInsights();
     document.querySelector('.screen.active').scrollTop = 0;
   }
   document.querySelectorAll('[data-go]').forEach(el => {
@@ -585,6 +719,75 @@
     document.getElementById('homeSiteTag').textContent = value ? value : 'No site selected';
   }
   document.getElementById('site').addEventListener('change', (e)=> setSiteDisplay(e.target.value));
+
+  // ===== Session: date + observer =====
+  function formatSurveyDate(){
+    const now = new Date();
+    return now.toLocaleDateString('en-US', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+  }
+  document.getElementById('surveyDate').value = formatSurveyDate();
+
+  // Remember observers used on this device so re-entry is a tap, not retyping.
+  function getKnownObservers(){
+    try{ return JSON.parse(localStorage.getItem(LAST_OBSERVER_KEY + '_list')) || []; }
+    catch(e){ return []; }
+  }
+  function rememberObserver(name){
+    if(!name) return;
+    localStorage.setItem(LAST_OBSERVER_KEY, name);
+    let list = getKnownObservers();
+    if(!list.includes(name)){
+      list.push(name);
+      localStorage.setItem(LAST_OBSERVER_KEY + '_list', JSON.stringify(list));
+    }
+  }
+  function populateObserverList(){
+    const datalist = document.getElementById('observer-list');
+    datalist.innerHTML = getKnownObservers().map(n => '<option value="'+n+'">').join('');
+  }
+  populateObserverList();
+  const lastObserver = localStorage.getItem(LAST_OBSERVER_KEY);
+  if(lastObserver) document.getElementById('observer').value = lastObserver;
+
+  // ===== Fishing effort: haul duration =====
+  function parseHHMM(str){
+    const m = /^([0-2]?[0-9]):?([0-5][0-9])$/.exec(str.trim());
+    if(!m) return null;
+    const h = parseInt(m[1],10), min = parseInt(m[2],10);
+    if(h > 23) return null;
+    return h*60 + min;
+  }
+  function updateDuration(){
+    const startStr = document.getElementById('haulStart').value;
+    const endStr = document.getElementById('haulEnd').value;
+    const line = document.getElementById('durationLine');
+    if(!startStr || !endStr){
+      line.textContent = 'Duration: —';
+      line.classList.remove('warn');
+      return;
+    }
+    const start = parseHHMM(startStr);
+    const end = parseHHMM(endStr);
+    if(start === null || end === null){
+      line.textContent = 'Duration: use HH:MM format (e.g. 14:30)';
+      line.classList.add('warn');
+      return;
+    }
+    let diff = end - start;
+    if(diff < 0) diff += 24*60; // haul crossed midnight
+    line.textContent = 'Duration: ' + Math.floor(diff/60) + 'h ' + (diff%60) + 'min';
+    line.classList.remove('warn');
+  }
+  document.getElementById('haulStart').addEventListener('input', updateDuration);
+  document.getElementById('haulEnd').addEventListener('input', updateDuration);
+  function getDurationMinutes(){
+    const start = parseHHMM(document.getElementById('haulStart').value || '');
+    const end = parseHHMM(document.getElementById('haulEnd').value || '');
+    if(start === null || end === null) return '';
+    let diff = end - start;
+    if(diff < 0) diff += 24*60;
+    return diff;
+  }
 
   // ===== GPS =====
   document.getElementById('gpsBtn').addEventListener('click', ()=>{
@@ -667,7 +870,8 @@
     const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
     return '<div class="entry">'
       + '<div><div class="sp">'+(e.species||'unnamed')+'</div>'
-      + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div></div>'
+      + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div>'
+      + '<div class="meta">obs: '+(e.observer||'—')+(e.record_id ? ' · '+e.record_id : '')+'</div></div>'
       + (withDelete ? '<button class="del" data-idx="'+idx+'" title="delete">×</button>' : '')
       + '</div>';
   }
@@ -733,6 +937,12 @@
     document.getElementById('vessel').value = '';
     document.getElementById('gearType').value = '';
     document.getElementById('notes').value = '';
+    document.getElementById('depth').value = '';
+    document.getElementById('haulStart').value = '';
+    document.getElementById('haulEnd').value = '';
+    updateDuration();
+    // Observer and survey date intentionally persist across consecutive
+    // records — same observer typically logs many specimens per session.
     coords = null;
     photoDataUrl = null;
     sexVal = null; conditionVal = null;
@@ -748,16 +958,30 @@
 
   document.getElementById('saveBtn').addEventListener('click', ()=>{
     const species = document.getElementById('species').value.trim();
+    const observer = document.getElementById('observer').value.trim();
+    if(!observer){
+      showToast('Observer name is required', true);
+      document.getElementById('observer').focus();
+      return;
+    }
     if(!species){
       showToast('Species name is required', true);
       document.getElementById('species').focus();
       return;
     }
+    rememberObserver(observer);
+    populateObserverList();
     const entry = {
+      record_id: makeRecordId(),
       timestamp: new Date().toISOString(),
+      observer: observer,
       site: document.getElementById('site').value,
       vessel: document.getElementById('vessel').value.trim(),
       gear_type: document.getElementById('gearType').value,
+      depth: document.getElementById('depth').value,
+      haul_start: document.getElementById('haulStart').value.trim(),
+      haul_end: document.getElementById('haulEnd').value.trim(),
+      haul_duration_min: getDurationMinutes(),
       species: species,
       length: document.getElementById('length').value,
       weight: document.getElementById('weight').value,
@@ -795,7 +1019,7 @@
       showToast('No records to export', true);
       return;
     }
-    const cols = ['timestamp','site','vessel','gear_type','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
+    const cols = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
     const rows = [cols.join(',')];
     list.forEach(e=>{ rows.push(cols.map(c => csvEscape(e[c])).join(',')); });
     const csv = rows.join('\n');
@@ -954,6 +1178,148 @@
     seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
     seLabel.textContent = minLon.toFixed(3) + '°E';
     wrap.appendChild(seLabel);
+  }
+
+  // ===== Insights (descriptive statistics) =====
+  function num(v){
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  }
+
+  function renderInsights(){
+    const list = loadEntries();
+    const main = document.getElementById('insightsMain');
+
+    if(list.length === 0){
+      main.innerHTML = '<div class="insight-empty">No records yet.<br>Log a few specimens to see counts, length ranges, and condition breakdown here.</div>';
+      return;
+    }
+
+    // --- top-level stats ---
+    const sitesUsed = new Set(list.map(e => e.site).filter(Boolean)).size;
+    const speciesUsed = new Set(list.map(e => e.species).filter(Boolean)).size;
+    const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
+
+    let html = '';
+    html += '<div class="insight-grid">';
+    html += '<div class="insight-stat"><div class="is-num">' + list.length + '</div><div class="is-label">Total records</div></div>';
+    html += '<div class="insight-stat"><div class="is-num">' + speciesUsed + '</div><div class="is-label">Species</div></div>';
+    html += '<div class="insight-stat"><div class="is-num">' + sitesUsed + '</div><div class="is-label">Sites surveyed</div></div>';
+    html += '<div class="insight-stat"><div class="is-num">' + withGps + '</div><div class="is-label">With GPS</div></div>';
+    html += '</div>';
+
+    // --- condition breakdown (stacked bar) ---
+    const condCounts = { alive: 0, dead: 0, released: 0, '': 0 };
+    list.forEach(e => { condCounts[e.condition || ''] = (condCounts[e.condition || ''] || 0) + 1; });
+    const condColors = { alive: '#0a5c8c', dead: '#c0532f', released: '#2f7a52', '': '#cdd6d6' };
+    const condLabels = { alive: 'Alive', dead: 'Dead', released: 'Released', '': 'Unspecified' };
+
+    html += '<div class="section-h">Condition breakdown</div>';
+    html += '<div class="cond-bars">';
+    Object.keys(condCounts).forEach(key => {
+      if(condCounts[key] === 0) return;
+      const pct = (condCounts[key] / list.length * 100).toFixed(1);
+      html += '<div class="cond-seg" style="width:' + pct + '%; background:' + condColors[key] + ';"></div>';
+    });
+    html += '</div>';
+    html += '<div class="cond-legend">';
+    Object.keys(condCounts).forEach(key => {
+      if(condCounts[key] === 0) return;
+      html += '<div class="legend-item"><span class="legend-dot" style="background:' + condColors[key] + ';"></span>' + condLabels[key] + ' · ' + condCounts[key] + '</div>';
+    });
+    html += '</div>';
+
+    // --- species frequency (bar list) ---
+    const speciesCount = {};
+    list.forEach(e => {
+      const sp = e.species || 'Unspecified';
+      speciesCount[sp] = (speciesCount[sp] || 0) + 1;
+    });
+    const sortedSpecies = Object.entries(speciesCount).sort((a,b) => b[1]-a[1]);
+    const maxCount = sortedSpecies.length ? sortedSpecies[0][1] : 1;
+
+    html += '<div class="section-h">Records by species</div>';
+    sortedSpecies.forEach(([sp, count]) => {
+      const pct = (count / maxCount * 100).toFixed(0);
+      html += '<div class="bar-row">'
+        + '<div class="bar-row-top"><span class="bn">' + sp + '</span><span>' + count + '</span></div>'
+        + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
+        + '</div>';
+    });
+
+    // --- length stats per species (table) ---
+    const lengthStats = {};
+    list.forEach(e => {
+      const sp = e.species || 'Unspecified';
+      const len = num(e.length);
+      if(len === null) return;
+      if(!lengthStats[sp]) lengthStats[sp] = [];
+      lengthStats[sp].push(len);
+    });
+    const speciesWithLength = Object.keys(lengthStats);
+
+    html += '<div class="section-h">Length by species (cm)</div>';
+    if(speciesWithLength.length === 0){
+      html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+    } else {
+      html += '<table class="stat-table"><thead><tr><th>Species</th><th>n</th><th>Mean</th><th>Min</th><th>Max</th></tr></thead><tbody>';
+      speciesWithLength.forEach(sp => {
+        const vals = lengthStats[sp];
+        const mean = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(1);
+        const min = Math.min(...vals).toFixed(1);
+        const max = Math.max(...vals).toFixed(1);
+        html += '<tr><td class="sp-name">' + sp + '</td><td class="num">' + vals.length + '</td><td class="num">' + mean + '</td><td class="num">' + min + '</td><td class="num">' + max + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    // --- gear type breakdown ---
+    const gearCount = {};
+    list.forEach(e => {
+      const g = e.gear_type || 'Unspecified';
+      gearCount[g] = (gearCount[g] || 0) + 1;
+    });
+    const sortedGear = Object.entries(gearCount).sort((a,b) => b[1]-a[1]);
+    const maxGear = sortedGear.length ? sortedGear[0][1] : 1;
+
+    html += '<div class="section-h">Records by gear type</div>';
+    sortedGear.forEach(([g, count]) => {
+      const pct = (count / maxGear * 100).toFixed(0);
+      html += '<div class="bar-row">'
+        + '<div class="bar-row-top"><span>' + g + '</span><span>' + count + '</span></div>'
+        + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
+        + '</div>';
+    });
+
+    // --- simple CPUE: specimens per hour of recorded haul effort, by site ---
+    const effortBySite = {};
+    list.forEach(e => {
+      const site = e.site || 'Unspecified';
+      const mins = num(e.haul_duration_min);
+      if(mins === null || mins <= 0) return;
+      if(!effortBySite[site]) effortBySite[site] = { specimens: 0, minutes: 0, hauls: 0 };
+      effortBySite[site].specimens += 1;
+      effortBySite[site].minutes += mins;
+      effortBySite[site].hauls += 1;
+    });
+    const sitesWithEffort = Object.keys(effortBySite);
+
+    html += '<div class="section-h">CPUE — specimens / hour (by site)</div>';
+    if(sitesWithEffort.length === 0){
+      html += '<div class="insight-empty">No haul start/end times recorded yet.<br>Log haul duration in the Fishing Effort step to see catch-per-unit-effort here.</div>';
+    } else {
+      html += '<table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Specimens</th><th>CPUE /hr</th></tr></thead><tbody>';
+      sitesWithEffort.forEach(site => {
+        const d = effortBySite[site];
+        const hours = d.minutes / 60;
+        const cpue = hours > 0 ? (d.specimens / hours).toFixed(2) : '—';
+        html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.hauls + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      html += '<div class="insight-empty" style="text-align:left; padding: 10px 2px;">Quick field reference only — based on records with logged haul duration. Use the exported CSV in R for the full effort-standardized CPUE used in formal analysis.</div>';
+    }
+
+    main.innerHTML = html;
   }
 
   // ===== Initial render =====
