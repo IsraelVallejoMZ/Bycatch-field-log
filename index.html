@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,6 +108,23 @@
     display:inline-block; margin-top:14px; font-family: var(--data); font-size:11.5px;
     background: rgba(255,255,255,0.12); padding:5px 11px; border-radius:14px;
   }
+
+  /* ===== Backup banner ===== */
+  .backup-banner{
+    display:flex; align-items:center; justify-content:space-between; gap: 12px;
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 16px;
+  }
+  .backup-banner.stale{ border-color: var(--amber); background: #fbf3e6; }
+  .backup-banner.urgent{ border-color: var(--coral); background: var(--coral-soft); }
+  .bb-title{ font-family: var(--display); font-weight:600; font-size: 13.5px; color: var(--ink); }
+  .bb-sub{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .bb-btn{
+    font-family: var(--data); font-size: 11.5px; font-weight:600; letter-spacing:0.02em;
+    background: var(--blue); color: white; border:none; padding: 9px 14px;
+    border-radius: var(--radius-sm); cursor:pointer; flex-shrink:0;
+  }
+  .backup-banner.urgent .bb-btn{ background: var(--coral); }
 
   .quick-actions{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .qa-btn{
@@ -369,6 +387,14 @@
       <div class="num" id="homeCount">0</div>
       <div class="label">specimens logged</div>
       <span class="site-tag" id="homeSiteTag">No site selected</span>
+    </div>
+
+    <div class="backup-banner" id="backupBanner">
+      <div class="bb-text">
+        <div class="bb-title">Backup status</div>
+        <div class="bb-sub" id="backupSub">Not backed up yet</div>
+      </div>
+      <button class="bb-btn" id="backupBtn">Back up now</button>
     </div>
 
     <div class="quick-actions">
@@ -881,6 +907,7 @@
     const list = loadEntries();
     document.getElementById('tallyCount').textContent = list.length + (list.length===1 ? ' record' : ' records');
     document.getElementById('homeCount').textContent = list.length;
+    renderBackupStatus();
 
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
     document.getElementById('homeMapSub').textContent = withGps > 0
@@ -1013,28 +1040,111 @@
     }
     return s;
   }
+
+  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
+
+  function buildCsv(list){
+    const rows = [CSV_COLS.join(',')];
+    list.forEach(e=>{ rows.push(CSV_COLS.map(c => csvEscape(e[c])).join(',')); });
+    return rows.join('\n');
+  }
+
+  function downloadCsv(csv, filename){
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   document.getElementById('exportBtn').addEventListener('click', ()=>{
     const list = loadEntries();
     if(list.length === 0){
       showToast('No records to export', true);
       return;
     }
-    const cols = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
-    const rows = [cols.join(',')];
-    list.forEach(e=>{ rows.push(cols.map(c => csvEscape(e[c])).join(',')); });
-    const csv = rows.join('\n');
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
     const today = new Date().toISOString().slice(0,10);
-    a.href = url;
-    a.download = 'bycatch_survey_' + today + '.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadCsv(buildCsv(list), 'bycatch_survey_' + today + '.csv');
     showToast('CSV exported');
   });
+
+  // ===== Backup / share =====
+  const LAST_BACKUP_COUNT_KEY = 'bycatch_last_backup_count';
+  const LAST_BACKUP_TIME_KEY = 'bycatch_last_backup_time';
+
+  function renderBackupStatus(){
+    const list = loadEntries();
+    const lastCount = parseInt(localStorage.getItem(LAST_BACKUP_COUNT_KEY) || '0', 10);
+    const lastTime = localStorage.getItem(LAST_BACKUP_TIME_KEY);
+    const unbacked = list.length - lastCount;
+
+    const banner = document.getElementById('backupBanner');
+    const sub = document.getElementById('backupSub');
+
+    banner.classList.remove('stale', 'urgent');
+
+    if(list.length === 0){
+      sub.textContent = 'No records yet';
+      return;
+    }
+    if(unbacked <= 0){
+      const when = lastTime ? new Date(lastTime).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : 'recently';
+      sub.textContent = 'All records backed up · last: ' + when;
+      return;
+    }
+    sub.textContent = unbacked + ' record' + (unbacked===1?'':'s') + ' not backed up yet';
+    if(unbacked >= 15){
+      banner.classList.add('urgent');
+    } else if(unbacked >= 5){
+      banner.classList.add('stale');
+    }
+  }
+
+  async function performBackup(){
+    const list = loadEntries();
+    if(list.length === 0){
+      showToast('No records to back up', true);
+      return;
+    }
+    const today = new Date().toISOString().slice(0,10);
+    const filename = 'bycatch_survey_' + today + '.csv';
+    const csv = buildCsv(list);
+
+    let shared = false;
+    if(navigator.share && navigator.canShare){
+      try{
+        const file = new File([csv], filename, { type: 'text/csv' });
+        if(navigator.canShare({ files: [file] })){
+          await navigator.share({
+            files: [file],
+            title: 'Bycatch Field Log backup',
+            text: list.length + ' records — ' + today
+          });
+          shared = true;
+        }
+      } catch(err){
+        // user cancelled the share sheet, or share failed — fall through to download
+        if(err && err.name === 'AbortError'){
+          return; // user cancelled deliberately, don't mark as backed up, don't show error
+        }
+      }
+    }
+
+    if(!shared){
+      downloadCsv(csv, filename);
+    }
+
+    localStorage.setItem(LAST_BACKUP_COUNT_KEY, String(list.length));
+    localStorage.setItem(LAST_BACKUP_TIME_KEY, new Date().toISOString());
+    renderBackupStatus();
+    showToast(shared ? 'Backup shared' : 'Backup downloaded');
+  }
+
+  document.getElementById('backupBtn').addEventListener('click', performBackup);
 
   // ===== Map rendering =====
   let leafletInstance = null;
@@ -1326,12 +1436,35 @@
   renderHome();
 })();
 
-// Register service worker for offline app-shell caching.
-// Runs outside the main IIFE so it doesn't depend on app state.
+// Register service worker for offline app-shell caching, and detect when
+// a new version has been installed so the app can refresh itself instead
+// of silently staying on an old cached version.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {
+    navigator.serviceWorker.register('./sw.js').then((registration) => {
+      // Check for an updated sw.js every time the app is opened.
+      registration.update();
+
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && registration.active) {
+            // A new version is ready. Activate it and reload once,
+            // so the next thing the user sees is the updated app shell.
+            newWorker.postMessage('SKIP_WAITING');
+          }
+        });
+      });
+    }).catch(() => {
       // Silent fail: app still works without SW, just without offline shell caching.
+    });
+
+    let hasReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hasReloaded) return;
+      hasReloaded = true;
+      window.location.reload();
     });
   });
 }
