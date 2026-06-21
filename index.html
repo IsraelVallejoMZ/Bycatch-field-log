@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<title>Bycatch Field Log</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0e1b26">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bycatch Log">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+  :root{
+    --ink:        #0e1b26;
+    --ink-soft:   #41545f;
+    --paper:      #f4f6f5;
+    --panel:      #ffffff;
+    --line:       #d9e0e0;
+    --blue:       #0a5c8c;
+    --blue-deep:  #06384f;
+    --blue-mist:  #dfeaf0;
+    --coral:      #c0532f;
+    --released:   #2f7a52;
+    --amber:      #b8893a;
+
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', -apple-system, sans-serif;
+    --data: 'JetBrains Mono', ui-monospace, monospace;
+
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    display:flex; flex-direction:column;
+    height: 100vh;
+  }
+  ::selection{ background: var(--blue); color: white; }
+
+  /* ===== App frame ===== */
+  .screen{
+    flex: 1; overflow-y: auto; display:none; padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active{ display:block; }
+
+  /* ===== Top bar (shared) ===== */
+  .topbar{
+    position: sticky; top:0; z-index: 20;
+    background: var(--ink); color: var(--paper);
+    padding: 16px 18px 14px;
+    border-bottom: 3px solid var(--blue);
+  }
+  .topbar-row{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .brand{
+    font-family: var(--data); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: #8fb4c9; font-weight: 500;
+  }
+  .tally{
+    display:flex; align-items:center; gap:7px;
+    font-family: var(--data); font-size: 11px; color: var(--paper);
+    background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 20px;
+    transition: transform 0.18s ease;
+  }
+  .tally.bump{ transform: scale(1.12); }
+  .tally-dot{ width:6px; height:6px; border-radius:50%; background: #5fc7ee; }
+  .tally-dot.off{ background:#666; }
+  .topbar h1{
+    font-family: var(--display); font-weight: 600; font-size: 21px;
+    margin: 8px 0 2px; letter-spacing: -0.01em;
+  }
+  .site-line{ font-family: var(--data); font-size: 12px; color: #aebfc6; }
+  .site-line.active{ color: #6fc4ee; }
+  .back-row{ display:flex; align-items:center; gap:10px; margin-bottom: 2px; }
+  .back-btn{
+    background: rgba(255,255,255,0.1); border:none; color: var(--paper);
+    width:30px; height:30px; border-radius: 50%; font-size: 16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  main{ padding: 18px 16px; max-width: 580px; margin: 0 auto; }
+
+  /* ===== Home screen ===== */
+  .home-stat{
+    background: var(--blue-deep); color: white; border-radius: var(--radius);
+    padding: 22px 20px; margin-bottom: 16px; position: relative; overflow:hidden;
+  }
+  .home-stat::after{
+    content:''; position:absolute; right:-30px; top:-30px; width:140px; height:140px;
+    border-radius:50%; background: rgba(255,255,255,0.05);
+  }
+  .home-stat .num{ font-family: var(--display); font-size: 42px; font-weight:700; line-height:1; }
+  .home-stat .label{ font-family: var(--data); font-size: 12px; color:#9fc8de; margin-top:6px; text-transform:uppercase; letter-spacing:0.06em; }
+  .home-stat .site-tag{
+    display:inline-block; margin-top:14px; font-family: var(--data); font-size:11.5px;
+    background: rgba(255,255,255,0.12); padding:5px 11px; border-radius:14px;
+  }
+
+  .quick-actions{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .qa-btn{
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    padding: 18px 14px; text-align:left; cursor:pointer;
+  }
+  .qa-btn:active{ transform: scale(0.97); }
+  .qa-icon{ font-size: 22px; margin-bottom: 8px; display:block; }
+  .qa-title{ font-family: var(--display); font-weight:600; font-size: 14.5px; color: var(--ink); }
+  .qa-sub{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); margin-top:2px; }
+  .qa-btn.primary{ background: var(--blue); border-color: var(--blue); }
+  .qa-btn.primary .qa-title, .qa-btn.primary .qa-sub{ color: white; }
+  .qa-btn.primary .qa-sub{ color: #cfe7f4; }
+
+  .section-h{
+    font-family: var(--display); font-size: 13px; text-transform:uppercase;
+    letter-spacing: 0.06em; color: var(--ink-soft); margin: 22px 0 10px;
+  }
+
+  .map-placeholder{
+    background: var(--panel); border: 1.5px dashed var(--line); border-radius: var(--radius);
+    padding: 30px 20px; text-align:center; color: var(--ink-soft);
+  }
+  .map-placeholder .mp-icon{ font-size: 26px; margin-bottom: 8px; display:block; }
+  .map-placeholder .mp-title{ font-family: var(--display); font-weight:600; font-size: 14px; color: var(--ink); }
+  .map-placeholder .mp-sub{ font-family: var(--data); font-size: 11px; margin-top: 6px; }
+
+  .recent-list .entry{ margin-bottom: 8px; }
+
+  /* ===== Cards (form) ===== */
+  .card{
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(14,27,38,0.04);
+  }
+  .card-label{
+    display:flex; align-items:center; gap:8px;
+    font-family: var(--display); font-weight: 600; font-size: 13px;
+    color: var(--blue-deep); margin-bottom: 14px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .card-label .step{
+    width: 22px; height:22px; border-radius:50%; background: var(--blue-mist);
+    color: var(--blue-deep); display:flex; align-items:center; justify-content:center;
+    font-family: var(--data); font-size: 11px; flex-shrink:0;
+  }
+
+  label{
+    display:block; font-family: var(--data); font-size: 11px;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft);
+    margin-bottom: 6px; margin-top: 16px;
+  }
+  label:first-of-type{ margin-top:0; }
+
+  input[type=text], input[type=number], select, textarea{
+    width:100%; padding: 12px 13px; font-size: 16px; font-family: var(--body);
+    border: 1.5px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--paper); color: var(--ink); transition: border-color 0.15s ease;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(10,92,140,0.12);
+  }
+  textarea{ resize: vertical; font-family: var(--body); }
+
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .pillrow{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill{
+    font-family: var(--data); font-size: 12.5px; font-weight: 500;
+    padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 20px;
+    background: var(--paper); cursor:pointer; user-select:none; color: var(--ink-soft);
+    transition: all 0.15s ease;
+  }
+  .pill:active{ transform: scale(0.96); }
+  .pill.active{ background: var(--blue); color: white; border-color: var(--blue); }
+  .pill.active[data-val="dead"]{ background: var(--coral); border-color: var(--coral); }
+  .pill.active[data-val="released"]{ background: var(--released); border-color: var(--released); }
+
+  .gpsbox{
+    display:flex; justify-content:space-between; align-items:center; gap: 10px;
+    border: 1.5px dashed var(--line); border-radius: var(--radius-sm);
+    padding: 12px 14px; background: var(--paper);
+  }
+  .gpsbox.locked{ border-style: solid; border-color: var(--blue); background: var(--blue-mist); }
+  .coords{ font-family: var(--data); font-size: 12.5px; color: var(--blue-deep); font-weight: 500; }
+  .coords.pending{ color: #9aa6a6; font-style: italic; font-weight: 400; }
+  .gps-btn{
+    font-family: var(--data); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em;
+    padding: 8px 13px; background: var(--ink); color: var(--paper);
+    border:none; border-radius: var(--radius-sm); cursor:pointer; flex-shrink:0;
+  }
+  .gps-btn:active{ transform: scale(0.96); }
+
+  .photobox{
+    border: 1.5px dashed var(--line); border-radius: var(--radius-sm);
+    padding: 20px; text-align:center; cursor:pointer; position:relative; overflow:hidden;
+    background: var(--paper); transition: border-color 0.15s ease;
+  }
+  .photobox.filled{ border-style:solid; padding: 8px; }
+  .photo-hint{ font-family: var(--data); font-size: 12px; color: #9aa6a6; }
+  .photobox img{ max-width:100%; border-radius: 4px; display:block; }
+  .photobox input{ display:none; }
+
+  .savebar{
+    padding: 14px 16px; background: var(--ink); display:flex; gap:10px;
+  }
+  .btn{
+    font-family: var(--display); font-size: 14px; font-weight: 600;
+    letter-spacing: 0.01em; padding: 14px; border-radius: var(--radius-sm);
+    border: none; cursor:pointer; transition: transform 0.12s ease;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn-save{ background: var(--blue); color: white; flex:2; }
+  .btn-clear{ background: transparent; color: #aab6bb; border:1.5px solid #2d3d45; flex:1; }
+
+  /* ===== History screen ===== */
+  .filter-row{ display:flex; gap:8px; margin-bottom: 16px; }
+  .filter-row input, .filter-row select{ font-size: 14px; padding: 10px 12px; }
+  .logh{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px; }
+  .count{ font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); }
+  .exportbtn{
+    font-family: var(--data); font-size: 11.5px; font-weight: 500;
+    background: var(--panel); border: 1.5px solid var(--line);
+    padding: 7px 12px; border-radius: var(--radius-sm); cursor:pointer; color: var(--blue-deep);
+  }
+  .entry{
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .entry .sp{ font-family: var(--display); font-weight: 600; font-size: 14px; font-style: italic; }
+  .entry .meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top:2px; }
+  .entry .del{
+    background:none; border:none; color: var(--coral); font-size: 19px; cursor:pointer;
+    padding: 2px 6px; line-height:1; flex-shrink:0;
+  }
+  .empty{
+    font-size: 13px; color:#9aa6a6; font-style:italic; padding: 16px; text-align:center;
+    background: var(--panel); border: 1px dashed var(--line); border-radius: var(--radius-sm);
+  }
+
+  /* ===== Tab bar ===== */
+  .tabbar{
+    display:flex; background: var(--panel); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom); flex-shrink:0; z-index: 50;
+  }
+  .tab{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding: 10px 0 8px; cursor:pointer; background:none; border:none;
+    color: #9aa6a6; font-family: var(--data); font-size: 10.5px; letter-spacing: 0.03em;
+  }
+  .tab.active{ color: var(--blue); }
+  .tab-icon{ font-size: 19px; }
+
+  /* ===== Map screen ===== */
+  #leafletMap{
+    width: 100%; height: 360px; border-radius: var(--radius);
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  .map-mode-banner{
+    display:flex; align-items:center; gap:8px;
+    font-family: var(--data); font-size: 11px; color: var(--ink-soft);
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 9px 12px; margin-bottom: 12px;
+  }
+  .map-mode-banner .mb-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .map-mode-banner.live .mb-dot{ background: var(--blue); }
+  .map-mode-banner.offline .mb-dot{ background: var(--amber); }
+
+  /* Schematic offline map */
+  .schematic-wrap{
+    width:100%; height: 360px; border-radius: var(--radius); border: 1px solid var(--line);
+    background:
+      linear-gradient(var(--blue-mist) 1px, transparent 1px),
+      linear-gradient(90deg, var(--blue-mist) 1px, transparent 1px),
+      var(--panel);
+    background-size: 36px 36px;
+    position: relative; overflow:hidden;
+  }
+  .schematic-wrap svg{ position:absolute; top:0; left:0; width:100%; height:100%; }
+  .schem-point{ cursor:pointer; }
+  .schem-axis-label{
+    position:absolute; font-family: var(--data); font-size: 9.5px; color: #9aa6a6;
+  }
+  .schem-empty{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family: var(--data); font-size: 12px; color: #9aa6a6; text-align:center; padding: 0 30px;
+  }
+
+  .legend-row{ display:flex; gap: 14px; margin-top: 12px; flex-wrap:wrap; }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-family: var(--data); font-size: 11px; color: var(--ink-soft); }
+  .legend-dot{ width:9px; height:9px; border-radius:50%; }
+
+  .map-point-popup{ font-family: var(--body); font-size: 12.5px; line-height:1.4; }
+  .map-point-popup b{ font-family: var(--display); font-style: italic; }
+
+  .toast{
+    position: fixed; top: 84px; left:50%; transform: translateX(-50%) translateY(-12px);
+    background: var(--ink); color: var(--paper); font-family: var(--data); font-size:12.5px;
+    padding: 10px 18px; border-radius: 20px; opacity:0; transition: all .25s ease; z-index:100;
+    pointer-events:none; box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+  .toast.error{ background: var(--coral); }
+</style>
+</head>
+<body>
+
+<!-- ================= HOME ================= -->
+<section class="screen active" id="screen-home">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Bycatch Field Log</span>
+      <div class="tally" id="tally">
+        <span class="tally-dot off" id="netDot"></span>
+        <span id="tallyCount">0 records</span>
+      </div>
+    </div>
+    <h1>Today's Survey</h1>
+    <div class="site-line" id="siteLineHome">No site selected</div>
+  </div>
+  <main>
+    <div class="home-stat">
+      <div class="num" id="homeCount">0</div>
+      <div class="label">specimens logged</div>
+      <span class="site-tag" id="homeSiteTag">No site selected</span>
+    </div>
+
+    <div class="quick-actions">
+      <div class="qa-btn primary" data-go="record">
+        <span class="qa-icon">＋</span>
+        <div class="qa-title">New Record</div>
+        <div class="qa-sub">Log a specimen</div>
+      </div>
+      <div class="qa-btn" data-go="history">
+        <span class="qa-icon">☷</span>
+        <div class="qa-title">History</div>
+        <div class="qa-sub">Browse & filter</div>
+      </div>
+    </div>
+
+    <div class="section-h">Survey map</div>
+    <div class="map-placeholder" data-go="map" style="cursor:pointer;">
+      <span class="mp-icon">⌖</span>
+      <div class="mp-title">Open map view</div>
+      <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
+    </div>
+
+    <div class="section-h">Most recent</div>
+    <div class="recent-list" id="recentList"></div>
+  </main>
+</section>
+
+<!-- ================= NEW RECORD ================= -->
+<section class="screen" id="screen-record">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">New Record</span>
+    </div>
+    <h1>Incidental Catch Entry</h1>
+    <div class="site-line" id="siteLineRecord">No site selected</div>
+  </div>
+  <main>
+
+    <div class="card">
+      <div class="card-label"><span class="step">1</span>Site &amp; gear</div>
+      <label for="site">Sampling site</label>
+      <select id="site">
+        <option value="">— select —</option>
+        <option value="Ranong">Ranong</option>
+        <option value="Phuket">Phuket</option>
+        <option value="Songkhla">Songkhla</option>
+        <option value="Samut Sakorn">Samut Sakorn</option>
+      </select>
+      <label for="vessel">Vessel ID</label>
+      <input type="text" id="vessel" placeholder="e.g. boat 04">
+      <label for="gearType">Gear type</label>
+      <select id="gearType">
+        <option value="">— select —</option>
+        <option value="Demersal trawl">Demersal trawl</option>
+        <option value="Otter trawl">Otter trawl</option>
+        <option value="Gillnet">Gillnet</option>
+        <option value="Longline">Longline</option>
+        <option value="Purse seine">Purse seine</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">2</span>Specimen</div>
+      <label for="species">Species</label>
+      <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
+      <datalist id="species-list">
+        <option value="Carcharhinus sorrah">
+        <option value="Carcharhinus limbatus">
+        <option value="Rhizoprionodon acutus">
+        <option value="Scoliodon macrorhynchos">
+        <option value="Sphyrna lewini">
+      </datalist>
+
+      <div class="grid2">
+        <div>
+          <label for="length">Length (cm)</label>
+          <input type="number" id="length" inputmode="decimal" placeholder="0.0">
+        </div>
+        <div>
+          <label for="weight">Weight (g)</label>
+          <input type="number" id="weight" inputmode="decimal" placeholder="optional">
+        </div>
+      </div>
+
+      <label>Sex</label>
+      <div class="pillrow" id="sexRow">
+        <div class="pill" data-val="M">Male</div>
+        <div class="pill" data-val="F">Female</div>
+        <div class="pill" data-val="NA">Undetermined</div>
+      </div>
+
+      <label>Condition</label>
+      <div class="pillrow" id="conditionRow">
+        <div class="pill" data-val="alive">Alive</div>
+        <div class="pill" data-val="dead">Dead</div>
+        <div class="pill" data-val="released">Released</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">3</span>Position</div>
+      <label>GPS coordinates</label>
+      <div class="gpsbox" id="gpsBox">
+        <span class="coords pending" id="coordsLabel">not captured</span>
+        <button class="gps-btn" id="gpsBtn" type="button">Capture</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">4</span>Evidence</div>
+      <label>Photo</label>
+      <div class="photobox" id="photoBox">
+        <span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">5</span>Notes</div>
+      <label for="notes">Observations</label>
+      <textarea id="notes" rows="2" placeholder="gear condition, estimated depth, etc."></textarea>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="clearBtn">Clear</button>
+    <button class="btn btn-save" id="saveBtn">Save record</button>
+  </div>
+</section>
+
+<!-- ================= HISTORY ================= -->
+<section class="screen" id="screen-history">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">History</span>
+    </div>
+    <h1>All Records</h1>
+    <div class="site-line" id="siteLineHistory">&nbsp;</div>
+  </div>
+  <main>
+    <div class="filter-row">
+      <input type="text" id="searchInput" placeholder="search species…">
+      <select id="filterSite">
+        <option value="">All sites</option>
+        <option value="Ranong">Ranong</option>
+        <option value="Phuket">Phuket</option>
+        <option value="Songkhla">Songkhla</option>
+        <option value="Samut Sakorn">Samut Sakorn</option>
+      </select>
+    </div>
+    <div class="logh">
+      <span class="count" id="historyCount">0 entries</span>
+      <button class="exportbtn" id="exportBtn">Export CSV</button>
+    </div>
+    <div id="logList"></div>
+  </main>
+</section>
+
+<!-- ================= MAP ================= -->
+<section class="screen" id="screen-map">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">Map</span>
+    </div>
+    <h1>Survey Locations</h1>
+    <div class="site-line" id="siteLineMap">&nbsp;</div>
+  </div>
+  <main>
+    <div class="map-mode-banner" id="mapModeBanner">
+      <span class="mb-dot"></span>
+      <span id="mapModeText">Checking connection…</span>
+    </div>
+
+    <div id="leafletMap"></div>
+    <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
+
+    <div class="legend-row">
+      <div class="legend-item"><span class="legend-dot" style="background:#0a5c8c;"></span>Alive</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#c0532f;"></span>Dead</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#2f7a52;"></span>Released</div>
+    </div>
+
+    <div class="section-h">Points without GPS</div>
+    <div id="noGpsNote" class="empty" style="display:none;"></div>
+  </main>
+</section>
+
+<!-- ================= TAB BAR ================= -->
+<nav class="tabbar">
+  <button class="tab active" data-go="home"><span class="tab-icon">⌂</span>Home</button>
+  <button class="tab" data-go="record"><span class="tab-icon">＋</span>New</button>
+  <button class="tab" data-go="map"><span class="tab-icon">⌖</span>Map</button>
+  <button class="tab" data-go="history"><span class="tab-icon">☷</span>History</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+(function(){
+  const STORAGE_KEY = 'bycatch_entries_app_v1';
+  let coords = null;
+  let photoDataUrl = null;
+  let sexVal = null;
+  let conditionVal = null;
+
+  // ===== Screen navigation =====
+  function goTo(screen){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector('.tab[data-go="' + screen + '"]');
+    if(tab) tab.classList.add('active');
+    if(screen === 'home') renderHome();
+    if(screen === 'history') renderHistory();
+    if(screen === 'map') renderMap();
+    document.querySelector('.screen.active').scrollTop = 0;
+  }
+  document.querySelectorAll('[data-go]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.go));
+  });
+
+  // ===== Network indicator =====
+  function updateNet(){
+    document.getElementById('netDot').classList.toggle('off', !navigator.onLine);
+  }
+  window.addEventListener('online', updateNet);
+  window.addEventListener('offline', updateNet);
+  updateNet();
+
+  // ===== Pills =====
+  function wirePillRow(rowId, setter){
+    const row = document.getElementById(rowId);
+    row.addEventListener('click', (e)=>{
+      const pill = e.target.closest('.pill');
+      if(!pill) return;
+      [...row.children].forEach(c=>c.classList.remove('active'));
+      pill.classList.add('active');
+      setter(pill.dataset.val);
+    });
+  }
+  wirePillRow('sexRow', v => sexVal = v);
+  wirePillRow('conditionRow', v => conditionVal = v);
+
+  // ===== Site selection (syncs across screens) =====
+  function setSiteDisplay(value){
+    const homeLabel = value ? 'Active site: ' + value : 'No site selected';
+    document.getElementById('siteLineHome').textContent = homeLabel;
+    document.getElementById('siteLineHome').classList.toggle('active', !!value);
+    document.getElementById('siteLineRecord').textContent = homeLabel;
+    document.getElementById('siteLineRecord').classList.toggle('active', !!value);
+    document.getElementById('homeSiteTag').textContent = value ? value : 'No site selected';
+  }
+  document.getElementById('site').addEventListener('change', (e)=> setSiteDisplay(e.target.value));
+
+  // ===== GPS =====
+  document.getElementById('gpsBtn').addEventListener('click', ()=>{
+    const label = document.getElementById('coordsLabel');
+    const box = document.getElementById('gpsBox');
+    if(!navigator.geolocation){
+      label.textContent = 'GPS not available in this browser';
+      return;
+    }
+    label.textContent = 'locating…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        coords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
+        label.classList.remove('pending');
+        label.textContent = coords.lat.toFixed(5) + ', ' + coords.lon.toFixed(5) + ' (±' + Math.round(coords.acc) + 'm)';
+        box.classList.add('locked');
+      },
+      err => {
+        label.textContent = 'no GPS signal — try again';
+        box.classList.remove('locked');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+
+  // ===== Photo =====
+  function buildPhotoInput(){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.style.display = 'none';
+    input.addEventListener('change', handlePhoto);
+    return input;
+  }
+  function handlePhoto(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      photoDataUrl = ev.target.result;
+      const box = document.getElementById('photoBox');
+      box.classList.add('filled');
+      box.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = photoDataUrl;
+      box.appendChild(img);
+      box.appendChild(buildPhotoInput());
+    };
+    reader.readAsDataURL(file);
+  }
+  document.getElementById('photoBox').appendChild(buildPhotoInput());
+  document.getElementById('photoBox').addEventListener('click', ()=>{
+    document.getElementById('photoBox').querySelector('input[type=file]').click();
+  });
+
+  // ===== Storage =====
+  function loadEntries(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveEntries(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+
+  function showToast(msg, isError){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', !!isError);
+    t.classList.add('show');
+    setTimeout(()=> t.classList.remove('show'), 1800);
+  }
+  function bumpTally(){
+    const t = document.getElementById('tally');
+    t.classList.add('bump');
+    setTimeout(()=> t.classList.remove('bump'), 180);
+  }
+
+  function entryRowHtml(e, idx, withDelete){
+    const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    return '<div class="entry">'
+      + '<div><div class="sp">'+(e.species||'unnamed')+'</div>'
+      + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div></div>'
+      + (withDelete ? '<button class="del" data-idx="'+idx+'" title="delete">×</button>' : '')
+      + '</div>';
+  }
+
+  // ===== Home rendering =====
+  function renderHome(){
+    const list = loadEntries();
+    document.getElementById('tallyCount').textContent = list.length + (list.length===1 ? ' record' : ' records');
+    document.getElementById('homeCount').textContent = list.length;
+
+    const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
+    document.getElementById('homeMapSub').textContent = withGps > 0
+      ? withGps + ' point' + (withGps===1?'':'s') + ' plotted so far'
+      : 'GPS points are saved with every record';
+
+    const recent = document.getElementById('recentList');
+    if(list.length === 0){
+      recent.innerHTML = '<div class="empty">No records yet. Start with "New Record" to log your first specimen.</div>';
+      return;
+    }
+    const lastThree = list.slice(-3).reverse();
+    recent.innerHTML = lastThree.map((e) => entryRowHtml(e, 0, false)).join('');
+  }
+
+  // ===== History rendering =====
+  function renderHistory(){
+    const list = loadEntries();
+    const search = (document.getElementById('searchInput').value || '').toLowerCase();
+    const siteFilter = document.getElementById('filterSite').value;
+
+    const filtered = list
+      .map((e, i) => ({...e, _idx: i}))
+      .filter(e => !search || (e.species||'').toLowerCase().includes(search))
+      .filter(e => !siteFilter || e.site === siteFilter);
+
+    document.getElementById('historyCount').textContent = filtered.length + (filtered.length===1 ? ' entry' : ' entries') + (list.length !== filtered.length ? ' of ' + list.length : '');
+
+    const logList = document.getElementById('logList');
+    if(filtered.length === 0){
+      logList.innerHTML = '<div class="empty">No records match. Try clearing the search or filter.</div>';
+      return;
+    }
+    logList.innerHTML = filtered.slice().reverse().map(e => entryRowHtml(e, e._idx, true)).join('');
+  }
+  document.getElementById('searchInput').addEventListener('input', renderHistory);
+  document.getElementById('filterSite').addEventListener('change', renderHistory);
+
+  document.getElementById('logList').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.del');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.idx, 10);
+    const list = loadEntries();
+    list.splice(idx, 1);
+    saveEntries(list);
+    renderHistory();
+  });
+
+  // ===== Form clear =====
+  function clearForm(){
+    document.getElementById('species').value = '';
+    document.getElementById('length').value = '';
+    document.getElementById('weight').value = '';
+    document.getElementById('vessel').value = '';
+    document.getElementById('gearType').value = '';
+    document.getElementById('notes').value = '';
+    coords = null;
+    photoDataUrl = null;
+    sexVal = null; conditionVal = null;
+    document.querySelectorAll('#sexRow .pill, #conditionRow .pill').forEach(p=>p.classList.remove('active'));
+    document.getElementById('coordsLabel').textContent = 'not captured';
+    document.getElementById('coordsLabel').classList.add('pending');
+    document.getElementById('gpsBox').classList.remove('locked');
+    const box = document.getElementById('photoBox');
+    box.classList.remove('filled');
+    box.innerHTML = '<span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>';
+    box.appendChild(buildPhotoInput());
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', ()=>{
+    const species = document.getElementById('species').value.trim();
+    if(!species){
+      showToast('Species name is required', true);
+      document.getElementById('species').focus();
+      return;
+    }
+    const entry = {
+      timestamp: new Date().toISOString(),
+      site: document.getElementById('site').value,
+      vessel: document.getElementById('vessel').value.trim(),
+      gear_type: document.getElementById('gearType').value,
+      species: species,
+      length: document.getElementById('length').value,
+      weight: document.getElementById('weight').value,
+      sex: sexVal || '',
+      condition: conditionVal || '',
+      lat: coords ? coords.lat : '',
+      lon: coords ? coords.lon : '',
+      gps_accuracy_m: coords ? Math.round(coords.acc) : '',
+      notes: document.getElementById('notes').value.trim(),
+      has_photo: photoDataUrl ? 'yes' : 'no',
+      photo: photoDataUrl || ''
+    };
+    const list = loadEntries();
+    list.push(entry);
+    saveEntries(list);
+    bumpTally();
+    showToast('Record saved — ' + list.length + ' total');
+    clearForm();
+    goTo('home');
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', clearForm);
+
+  // ===== CSV export =====
+  function csvEscape(val){
+    const s = String(val ?? '');
+    if(s.includes(',') || s.includes('"') || s.includes('\n')){
+      return '"' + s.replace(/"/g,'""') + '"';
+    }
+    return s;
+  }
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const list = loadEntries();
+    if(list.length === 0){
+      showToast('No records to export', true);
+      return;
+    }
+    const cols = ['timestamp','site','vessel','gear_type','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
+    const rows = [cols.join(',')];
+    list.forEach(e=>{ rows.push(cols.map(c => csvEscape(e[c])).join(',')); });
+    const csv = rows.join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const today = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = 'bycatch_survey_' + today + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('CSV exported');
+  });
+
+  // ===== Map rendering =====
+  let leafletInstance = null;
+  let leafletReady = false;
+
+  function conditionColor(condition){
+    if(condition === 'dead') return '#c0532f';
+    if(condition === 'released') return '#2f7a52';
+    return '#0a5c8c'; // alive / default
+  }
+
+  function checkTilesReachable(callback){
+    // Try to actually load a tile; if it fails quickly, treat as offline mode.
+    if(!navigator.onLine){ callback(false); return; }
+    const testImg = new Image();
+    let settled = false;
+    const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
+    testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
+    testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
+    testImg.src = 'https://tile.openstreetmap.org/0/0/0.png?check=' + Date.now();
+  }
+
+  function renderMap(){
+    const list = loadEntries();
+    const withGps = list.filter(e => e.lat !== '' && e.lon !== '' && e.lat != null && e.lon != null);
+    const withoutGps = list.length - withGps.length;
+
+    const noGpsNote = document.getElementById('noGpsNote');
+    if(withoutGps > 0){
+      noGpsNote.style.display = 'block';
+      noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' record has' : ' records have') + ' no GPS position and cannot be shown on the map.';
+    } else {
+      noGpsNote.style.display = 'none';
+    }
+
+    const banner = document.getElementById('mapModeBanner');
+    const bannerText = document.getElementById('mapModeText');
+
+    checkTilesReachable((isLive) => {
+      if(isLive){
+        banner.className = 'map-mode-banner live';
+        bannerText.textContent = 'Live map · tiles loaded from connection';
+        document.getElementById('leafletMap').style.display = 'block';
+        document.getElementById('schematicMap').style.display = 'none';
+        renderLeaflet(withGps);
+      } else {
+        banner.className = 'map-mode-banner offline';
+        bannerText.textContent = 'Offline mode · schematic coordinate plot';
+        document.getElementById('leafletMap').style.display = 'none';
+        document.getElementById('schematicMap').style.display = 'block';
+        renderSchematic(withGps);
+      }
+    });
+  }
+
+  function renderLeaflet(points){
+    if(!leafletInstance){
+      leafletInstance = L.map('leafletMap');
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(leafletInstance);
+    }
+    // clear old markers
+    leafletInstance.eachLayer(layer => {
+      if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
+        leafletInstance.removeLayer(layer);
+      }
+    });
+
+    if(points.length === 0){
+      leafletInstance.setView([10.5, 99.5], 6); // rough Thailand coast default
+      setTimeout(()=> leafletInstance.invalidateSize(), 50);
+      return;
+    }
+
+    const bounds = [];
+    points.forEach(p => {
+      const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
+      bounds.push([lat, lon]);
+      const marker = L.circleMarker([lat, lon], {
+        radius: 7, color: conditionColor(p.condition), fillColor: conditionColor(p.condition),
+        fillOpacity: 0.85, weight: 2
+      }).addTo(leafletInstance);
+      marker.bindPopup('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + '</div>');
+    });
+    leafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
+    setTimeout(()=> leafletInstance.invalidateSize(), 50);
+  }
+
+  function renderSchematic(points){
+    const wrap = document.getElementById('schematicMap');
+    wrap.innerHTML = '';
+
+    if(points.length === 0){
+      wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
+      return;
+    }
+
+    const lats = points.map(p => parseFloat(p.lat));
+    const lons = points.map(p => parseFloat(p.lon));
+    let minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    let minLon = Math.min(...lons), maxLon = Math.max(...lons);
+    // pad so single points or tight clusters aren't at the very edge
+    const padLat = Math.max((maxLat - minLat) * 0.2, 0.001);
+    const padLon = Math.max((maxLon - minLon) * 0.2, 0.001);
+    minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+
+    points.forEach(p => {
+      const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
+      const x = ((lon - minLon) / (maxLon - minLon)) * (w - 40) + 20;
+      const y = h - (((lat - minLat) / (maxLat - minLat)) * (h - 40) + 20); // invert y, lat increases upward
+      const circle = document.createElementNS(svgNS, 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', 7);
+      circle.setAttribute('fill', conditionColor(p.condition));
+      circle.setAttribute('stroke', '#fff');
+      circle.setAttribute('stroke-width', '2');
+      circle.classList.add('schem-point');
+      const title = document.createElementNS(svgNS, 'title');
+      title.textContent = (p.species||'unnamed') + ' · ' + (p.site||'—') + ' · ' + lat.toFixed(4) + ', ' + lon.toFixed(4);
+      circle.appendChild(title);
+      svg.appendChild(circle);
+    });
+    wrap.appendChild(svg);
+
+    // corner coordinate labels for orientation
+    const nwLabel = document.createElement('div');
+    nwLabel.className = 'schem-axis-label';
+    nwLabel.style.top = '6px'; nwLabel.style.left = '8px';
+    nwLabel.textContent = maxLat.toFixed(3) + '°N';
+    wrap.appendChild(nwLabel);
+
+    const seLabel = document.createElement('div');
+    seLabel.className = 'schem-axis-label';
+    seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
+    seLabel.textContent = minLon.toFixed(3) + '°E';
+    wrap.appendChild(seLabel);
+  }
+
+  // ===== Initial render =====
+  renderHome();
+})();
+
+// Register service worker for offline app-shell caching.
+// Runs outside the main IIFE so it doesn't depend on app state.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {
+      // Silent fail: app still works without SW, just without offline shell caching.
+    });
+  });
+}
+</script>
+
+</body>
+</html>
