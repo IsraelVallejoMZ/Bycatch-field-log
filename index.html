@@ -1,18 +1,15 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
-<title>Bycatch Field Log</title>
+<title>Fish Pulse</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0e1b26">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Bycatch Log">
+<meta name="apple-mobile-web-app-title" content="Fish Pulse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
@@ -358,6 +355,9 @@
   .map-point-popup b{ font-family: var(--display); font-style: italic; }
 
   /* ===== Insights screen ===== */
+  .insights-filter-row{ margin-bottom: 14px; }
+  .insights-filter-row select{ font-size: 14px; }
+
   .insight-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
   .insight-stat{
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
@@ -449,7 +449,7 @@
 <section class="screen active" id="screen-home">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Bycatch Field Log</span>
+      <span class="brand">Fish Pulse</span>
       <div class="tally" id="tally">
         <span class="tally-dot off" id="netDot"></span>
         <span id="tallyCount">0 records</span>
@@ -530,7 +530,7 @@
       <input type="text" id="observer" placeholder="e.g. Israel Vallejo" list="observer-list">
       <datalist id="observer-list"></datalist>
       <label for="surveyDate">Survey date</label>
-      <input type="text" id="surveyDate" readonly>
+      <input type="date" id="surveyDate">
     </div>
 
     <div class="card">
@@ -559,11 +559,11 @@
       <div class="grid2">
         <div>
           <label for="haulStart">Haul start</label>
-          <input type="text" id="haulStart" inputmode="numeric" placeholder="HH:MM" maxlength="5">
+          <input type="time" id="haulStart">
         </div>
         <div>
           <label for="haulEnd">Haul end</label>
-          <input type="text" id="haulEnd" inputmode="numeric" placeholder="HH:MM" maxlength="5">
+          <input type="time" id="haulEnd">
         </div>
       </div>
       <div class="duration-line" id="durationLine">Duration: —</div>
@@ -621,6 +621,12 @@
         <div class="pill" data-val="alive">Alive</div>
         <div class="pill" data-val="dead">Dead</div>
         <div class="pill" data-val="released">Released</div>
+      </div>
+
+      <label>Was this bycatch? <span class="optional-tag">i.e. not the target catch</span></label>
+      <div class="pillrow" id="bycatchRow">
+        <div class="pill" data-val="yes">Yes — bycatch</div>
+        <div class="pill" data-val="no">No — target catch</div>
       </div>
     </div>
 
@@ -749,8 +755,20 @@
     <h1>Survey Statistics</h1>
     <div class="site-line" id="siteLineInsights">&nbsp;</div>
   </div>
-  <main id="insightsMain">
-    <!-- populated dynamically by renderInsights() -->
+  <main>
+    <div class="insights-filter-row">
+      <select id="insightsTaxonFilter">
+        <option value="">All taxon groups</option>
+        <option value="Elasmobranchii">Elasmobranch</option>
+        <option value="Teleostei">Teleost fish</option>
+        <option value="Crustacea">Crustacean</option>
+        <option value="Mollusca">Mollusc</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div id="insightsMain">
+      <!-- populated dynamically by renderInsights() -->
+    </div>
   </main>
 </section>
 
@@ -810,6 +828,7 @@
   let sexVal = null;
   let conditionVal = null;
   let taxonVal = null;
+  let bycatchVal = null;
 
   // Stable short device tag so records made on different phones are
   // distinguishable even before any real sync exists.
@@ -893,6 +912,7 @@
   wirePillRow('sexRow', v => sexVal = v);
   wirePillRow('conditionRow', v => conditionVal = v);
   wirePillRow('taxonRow', v => taxonVal = v);
+  wirePillRow('bycatchRow', v => bycatchVal = v);
 
   // ===== Site selection (syncs across screens) =====
   function setSiteDisplay(value){
@@ -908,9 +928,13 @@
   // ===== Session: date + observer =====
   function formatSurveyDate(){
     const now = new Date();
-    return now.toLocaleDateString('en-US', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+    const pad = n => String(n).padStart(2,'0');
+    return now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
   }
   document.getElementById('surveyDate').value = formatSurveyDate();
+  // Defaults to today but stays fully editable — useful for logging a
+  // record retroactively (e.g. backfilling yesterday's catch from a
+  // paper notebook) without losing the time-saving default.
 
   // Generic "remember values typed on this device" helper, used for any
   // free-text field where re-typing the same value repeatedly is common:
@@ -1155,6 +1179,7 @@
   }
   document.getElementById('searchInput').addEventListener('input', renderHistory);
   document.getElementById('filterSite').addEventListener('change', renderHistory);
+  document.getElementById('insightsTaxonFilter').addEventListener('change', renderInsights);
 
   document.getElementById('logList').addEventListener('click', (e)=>{
     const btn = e.target.closest('.del');
@@ -1190,8 +1215,8 @@
     // the same site before the observer moves to a new one.
     coords = null;
     photoDataUrl = null;
-    sexVal = null; conditionVal = null; taxonVal = null;
-    document.querySelectorAll('#sexRow .pill, #conditionRow .pill, #taxonRow .pill').forEach(p=>p.classList.remove('active'));
+    sexVal = null; conditionVal = null; taxonVal = null; bycatchVal = null;
+    document.querySelectorAll('#sexRow .pill, #conditionRow .pill, #taxonRow .pill, #bycatchRow .pill').forEach(p=>p.classList.remove('active'));
     document.getElementById('coordsLabel').textContent = 'not captured';
     document.getElementById('coordsLabel').classList.add('pending');
     document.getElementById('gpsBox').classList.remove('locked');
@@ -1221,9 +1246,18 @@
     populateDatalist('observer-list', LAST_OBSERVER_KEY);
     populateDatalist('site-list', LAST_SITE_KEY);
     populateDatalist('species-list', 'bycatch_known_species', SPECIES_SUGGESTIONS);
+
+    // Build the record timestamp from the editable survey date plus the
+    // current time-of-day, so backfilling a past date doesn't get silently
+    // overwritten by "now" — while still keeping a real time component
+    // instead of defaulting to midnight.
+    const dateValue = document.getElementById('surveyDate').value || formatSurveyDate();
+    const now = new Date();
+    const recordTimestamp = new Date(dateValue + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0')).toISOString();
+
     const entry = {
       record_id: makeRecordId(),
-      timestamp: new Date().toISOString(),
+      timestamp: recordTimestamp,
       observer: observer,
       site: siteVal,
       vessel: document.getElementById('vessel').value.trim(),
@@ -1237,6 +1271,7 @@
       hook_count: document.getElementById('hookCount').value,
       hook_spacing_m: document.getElementById('hookSpacing').value,
       taxon_group: taxonVal || '',
+      is_bycatch: bycatchVal || '',
       species: species,
       length: document.getElementById('length').value,
       weight: document.getElementById('weight').value,
@@ -1271,7 +1306,7 @@
     return s;
   }
 
-  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','gonad_stage','stomach_contents','lat','lon','gps_accuracy_m','notes','has_photo'];
+  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','lat','lon','gps_accuracy_m','notes','has_photo'];
 
   function buildCsv(list){
     const rows = [CSV_COLS.join(',')];
@@ -1394,7 +1429,7 @@
         if(navigator.canShare({ files: [file] })){
           await navigator.share({
             files: [file],
-            title: 'Bycatch Field Log backup',
+            title: 'Fish Pulse backup',
             text: list.length + ' records — ' + today
           });
           shared = true;
@@ -1574,11 +1609,17 @@
   }
 
   function renderInsights(){
-    const list = loadEntries();
+    const allRecords = loadEntries();
+    const taxonFilter = document.getElementById('insightsTaxonFilter').value;
+    const list = taxonFilter ? allRecords.filter(e => e.taxon_group === taxonFilter) : allRecords;
     const main = document.getElementById('insightsMain');
 
-    if(list.length === 0){
+    if(allRecords.length === 0){
       main.innerHTML = '<div class="insight-empty">No records yet.<br>Log a few specimens to see counts, length ranges, and condition breakdown here.</div>';
+      return;
+    }
+    if(list.length === 0){
+      main.innerHTML = '<div class="insight-empty">No records match this taxon group filter.</div>';
       return;
     }
 
@@ -1701,32 +1742,60 @@
         + '</div>';
     });
 
-    // --- simple CPUE: specimens per hour of recorded haul effort, by site ---
-    const effortBySite = {};
+    // --- CPUE: supports both time-based (specimens/hour) and hook-based
+    // (specimens/100 hooks) effort units, since a single "per hour" number
+    // doesn't make sense for longline gear, where soak time matters less
+    // than hook count. Each unit is only shown if the filtered records
+    // actually have that kind of effort logged. ---
+    const effortByHourSite = {};
+    const effortByHookSite = {};
     list.forEach(e => {
       const site = e.site || 'Unspecified';
       const mins = num(e.haul_duration_min);
-      if(mins === null || mins <= 0) return;
-      if(!effortBySite[site]) effortBySite[site] = { specimens: 0, minutes: 0, hauls: 0 };
-      effortBySite[site].specimens += 1;
-      effortBySite[site].minutes += mins;
-      effortBySite[site].hauls += 1;
+      if(mins !== null && mins > 0){
+        if(!effortByHourSite[site]) effortByHourSite[site] = { specimens: 0, minutes: 0, hauls: 0 };
+        effortByHourSite[site].specimens += 1;
+        effortByHourSite[site].minutes += mins;
+        effortByHourSite[site].hauls += 1;
+      }
+      const hooks = num(e.hook_count);
+      if(hooks !== null && hooks > 0){
+        if(!effortByHookSite[site]) effortByHookSite[site] = { specimens: 0, hooks: 0, sets: 0 };
+        effortByHookSite[site].specimens += 1;
+        effortByHookSite[site].hooks += hooks;
+        effortByHookSite[site].sets += 1;
+      }
     });
-    const sitesWithEffort = Object.keys(effortBySite);
+    const sitesWithHourEffort = Object.keys(effortByHourSite);
+    const sitesWithHookEffort = Object.keys(effortByHookSite);
+    const taxonNote = taxonFilter ? ' (filtered to ' + taxonFilter + ')' : '';
 
-    html += '<div class="section-h">CPUE — specimens / hour (by site)</div>';
-    if(sitesWithEffort.length === 0){
-      html += '<div class="insight-empty">No haul start/end times recorded yet.<br>Log haul duration in the Fishing Effort step to see catch-per-unit-effort here.</div>';
+    html += '<div class="section-h">CPUE' + taxonNote + '</div>';
+    if(sitesWithHourEffort.length === 0 && sitesWithHookEffort.length === 0){
+      html += '<div class="insight-empty">No haul duration or hook count recorded yet.<br>Log fishing effort details to see catch-per-unit-effort here.</div>';
     } else {
-      html += '<table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Specimens</th><th>CPUE /hr</th></tr></thead><tbody>';
-      sitesWithEffort.forEach(site => {
-        const d = effortBySite[site];
-        const hours = d.minutes / 60;
-        const cpue = hours > 0 ? (d.specimens / hours).toFixed(2) : '—';
-        html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.hauls + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
-      });
-      html += '</tbody></table>';
-      html += '<div class="insight-empty" style="text-align:left; padding: 10px 2px;">Quick field reference only — based on records with logged haul duration. Use the exported CSV in R for the full effort-standardized CPUE used in formal analysis.</div>';
+      if(sitesWithHourEffort.length > 0){
+        html += '<div class="bar-row-top" style="margin-bottom:6px;"><span class="bn" style="font-style:normal;">By time — specimens / hour</span></div>';
+        html += '<table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Specimens</th><th>CPUE /hr</th></tr></thead><tbody>';
+        sitesWithHourEffort.forEach(site => {
+          const d = effortByHourSite[site];
+          const hours = d.minutes / 60;
+          const cpue = hours > 0 ? (d.specimens / hours).toFixed(2) : '—';
+          html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.hauls + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
+        });
+        html += '</tbody></table>';
+      }
+      if(sitesWithHookEffort.length > 0){
+        html += '<div class="bar-row-top" style="margin-bottom:6px; margin-top:16px;"><span class="bn" style="font-style:normal;">By hooks — specimens / 100 hooks</span></div>';
+        html += '<table class="stat-table"><thead><tr><th>Site</th><th>Sets</th><th>Specimens</th><th>CPUE /100 hooks</th></tr></thead><tbody>';
+        sitesWithHookEffort.forEach(site => {
+          const d = effortByHookSite[site];
+          const cpue = d.hooks > 0 ? (d.specimens / d.hooks * 100).toFixed(2) : '—';
+          html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.sets + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
+        });
+        html += '</tbody></table>';
+      }
+      html += '<div class="insight-empty" style="text-align:left; padding: 10px 2px;">Quick field reference only. Use the exported CSV in R for the full effort-standardized CPUE used in formal analysis.</div>';
     }
 
     main.innerHTML = html;
