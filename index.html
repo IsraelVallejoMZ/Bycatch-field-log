@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,6 +171,13 @@
     color: var(--blue-deep); display:flex; align-items:center; justify-content:center;
     font-family: var(--data); font-size: 11px; flex-shrink:0;
   }
+  .card-label.collapsible{ cursor:pointer; margin-bottom: 0; user-select:none; }
+  .collapse-chevron{
+    margin-left: auto; font-size: 13px; color: var(--ink-soft);
+    transition: transform 0.18s ease;
+  }
+  .collapse-chevron.open{ transform: rotate(180deg); }
+  .collapsible-body{ margin-top: 14px; }
 
   label{
     display:block; font-family: var(--data); font-size: 11px;
@@ -177,6 +185,10 @@
     margin-bottom: 6px; margin-top: 16px;
   }
   label:first-of-type{ margin-top:0; }
+  .optional-tag{
+    font-weight: 400; text-transform: none; letter-spacing: 0; color: #9aa6a6;
+    font-style: italic; font-size: 10px;
+  }
 
   input[type=text], input[type=number], select, textarea{
     width:100%; padding: 12px 13px; font-size: 16px; font-family: var(--body);
@@ -249,6 +261,7 @@
     background: var(--panel); border: 1.5px solid var(--line);
     padding: 7px 12px; border-radius: var(--radius-sm); cursor:pointer; color: var(--blue-deep);
   }
+  .export-btn-row{ display:flex; gap: 6px; }
   .entry{
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
     padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
@@ -313,6 +326,31 @@
   }
 
   .legend-row{ display:flex; gap: 14px; margin-top: 12px; flex-wrap:wrap; }
+
+  .offline-map-card{
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 20px;
+  }
+  .offline-map-text{
+    font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); line-height:1.5; margin-bottom: 14px;
+  }
+  .offline-progress{
+    font-family: var(--data); font-size: 12px; color: var(--blue-deep); margin-top: 12px;
+    text-align:center;
+  }
+  .offline-progress-bar{
+    width:100%; height: 8px; background: var(--blue-mist); border-radius: 4px; overflow:hidden; margin-top: 8px;
+  }
+  .offline-progress-bar-fill{ height:100%; background: var(--blue); transition: width 0.2s ease; }
+  .offline-area-entry{
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 10px 12px; margin-top: 10px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .offline-area-entry .oa-main{ font-family: var(--display); font-weight:600; font-size: 12.5px; }
+  .offline-area-entry .oa-meta{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); margin-top:2px; }
+  .offline-area-entry .del{
+    background:none; border:none; color: var(--coral); font-size: 18px; cursor:pointer; padding: 2px 6px; line-height:1;
+  }
   .legend-item{ display:flex; align-items:center; gap:6px; font-family: var(--data); font-size: 11px; color: var(--ink-soft); }
   .legend-dot{ width:9px; height:9px; border-radius:50%; }
 
@@ -351,11 +389,49 @@
     text-align:center; padding: 30px 20px; color: #9aa6a6; font-family: var(--data); font-size: 12.5px;
   }
 
+  /* ===== Track recorder ===== */
+  .track-stat-card{
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-bottom: 16px;
+  }
+  .track-stat-row{ display:flex; gap: 10px; }
+  .track-stat{ flex:1; text-align:center; }
+  .track-stat .ts-num{ font-family: var(--display); font-size: 24px; font-weight:700; color: var(--blue-deep); }
+  .track-stat .ts-label{ font-family: var(--data); font-size: 10px; color: var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
+  .track-gps-status{
+    text-align:center; font-family: var(--data); font-size: 11.5px; color: var(--ink-soft);
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  .track-gps-status.live{ color: var(--released); }
+  .track-toggle-btn{
+    width:100%; font-family: var(--display); font-size: 15px; font-weight:600;
+    padding: 16px; border-radius: var(--radius); border:none; cursor:pointer;
+    background: var(--blue); color: white; margin-bottom: 14px;
+  }
+  .track-toggle-btn.recording{ background: var(--coral); }
+  .track-toggle-btn:active{ transform: scale(0.98); }
+  .track-note{
+    font-family: var(--data); font-size: 11px; color: var(--ink-soft); line-height:1.5;
+    background: var(--blue-mist); padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 22px;
+  }
+  .track-entry{
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .track-entry .te-main{ font-family: var(--display); font-weight:600; font-size: 13.5px; }
+  .track-entry .te-meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .track-entry .del{
+    background:none; border:none; color: var(--coral); font-size: 19px; cursor:pointer;
+    padding: 2px 6px; line-height:1; flex-shrink:0;
+  }
+
   .duration-line{
     font-family: var(--data); font-size: 12px; color: var(--blue-deep); margin-top: 12px;
     background: var(--blue-mist); padding: 8px 12px; border-radius: var(--radius-sm);
   }
   .duration-line.warn{ background: var(--coral-soft); color: var(--coral); }
+
+  .gear-effort-fields{ margin-top: 4px; }
 
   .toast{
     position: fixed; top: 84px; left:50%; transform: translateX(-50%) translateY(-12px);
@@ -417,6 +493,13 @@
       <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
     </div>
 
+    <div class="section-h">Vessel track</div>
+    <div class="map-placeholder" data-go="track" style="cursor:pointer;">
+      <span class="mp-icon">⟿</span>
+      <div class="mp-title">Open track recorder</div>
+      <div class="mp-sub" id="homeTrackSub">Record the vessel's path during a haul</div>
+    </div>
+
     <div class="section-h">Survey insights</div>
     <div class="map-placeholder" data-go="insights" style="cursor:pointer;">
       <span class="mp-icon">▤</span>
@@ -453,13 +536,8 @@
     <div class="card">
       <div class="card-label"><span class="step">2</span>Site &amp; gear</div>
       <label for="site">Sampling site</label>
-      <select id="site">
-        <option value="">— select —</option>
-        <option value="Ranong">Ranong</option>
-        <option value="Phuket">Phuket</option>
-        <option value="Songkhla">Songkhla</option>
-        <option value="Samut Sakorn">Samut Sakorn</option>
-      </select>
+      <input type="text" id="site" placeholder="e.g. Gulf of Thailand, Ranong" list="site-list">
+      <datalist id="site-list"></datalist>
       <label for="vessel">Vessel ID</label>
       <input type="text" id="vessel" placeholder="e.g. boat 04">
       <label for="gearType">Gear type</label>
@@ -489,19 +567,36 @@
         </div>
       </div>
       <div class="duration-line" id="durationLine">Duration: —</div>
+
+      <div class="gear-effort-fields" id="netEffortFields" style="display:none;">
+        <label for="netWidth">Net width / mouth opening (m)</label>
+        <input type="number" id="netWidth" inputmode="decimal" placeholder="e.g. 12">
+        <label for="meshSize">Mesh size (mm)</label>
+        <input type="number" id="meshSize" inputmode="decimal" placeholder="e.g. 50">
+      </div>
+
+      <div class="gear-effort-fields" id="hookEffortFields" style="display:none;">
+        <label for="hookCount">Number of hooks</label>
+        <input type="number" id="hookCount" inputmode="numeric" placeholder="e.g. 200">
+        <label for="hookSpacing">Hook spacing (m)</label>
+        <input type="number" id="hookSpacing" inputmode="decimal" placeholder="optional">
+      </div>
     </div>
 
     <div class="card">
       <div class="card-label"><span class="step">4</span>Specimen</div>
+      <label>Taxon group <span class="optional-tag">optional</span></label>
+      <div class="pillrow" id="taxonRow">
+        <div class="pill" data-val="Elasmobranchii">Elasmobranch</div>
+        <div class="pill" data-val="Teleostei">Teleost fish</div>
+        <div class="pill" data-val="Crustacea">Crustacean</div>
+        <div class="pill" data-val="Mollusca">Mollusc</div>
+        <div class="pill" data-val="Other">Other</div>
+      </div>
+
       <label for="species">Species</label>
       <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
-      <datalist id="species-list">
-        <option value="Carcharhinus sorrah">
-        <option value="Carcharhinus limbatus">
-        <option value="Rhizoprionodon acutus">
-        <option value="Scoliodon macrorhynchos">
-        <option value="Sphyrna lewini">
-      </datalist>
+      <datalist id="species-list"></datalist>
 
       <div class="grid2">
         <div>
@@ -530,7 +625,27 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">5</span>Position</div>
+      <div class="card-label collapsible" id="advBioToggle">
+        <span class="step">5</span>Advanced biological data
+        <span class="collapse-chevron" id="advBioChevron">▾</span>
+      </div>
+      <div class="collapsible-body" id="advBioBody" style="display:none;">
+        <label for="gonadStage">Gonad maturity stage</label>
+        <select id="gonadStage">
+          <option value="">— not recorded —</option>
+          <option value="Immature">Immature</option>
+          <option value="Maturing">Maturing</option>
+          <option value="Mature">Mature</option>
+          <option value="Gravid/Pregnant">Gravid / Pregnant</option>
+          <option value="Spent">Spent</option>
+        </select>
+        <label for="stomachContents">Stomach contents</label>
+        <textarea id="stomachContents" rows="2" placeholder="e.g. squid beaks, teleost remains — leave blank if not examined"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">6</span>Position</div>
       <label>GPS coordinates</label>
       <div class="gpsbox" id="gpsBox">
         <span class="coords pending" id="coordsLabel">not captured</span>
@@ -539,7 +654,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">6</span>Evidence</div>
+      <div class="card-label"><span class="step">7</span>Evidence</div>
       <label>Photo</label>
       <div class="photobox" id="photoBox">
         <span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>
@@ -547,7 +662,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">7</span>Notes</div>
+      <div class="card-label"><span class="step">8</span>Notes</div>
       <label for="notes">Observations</label>
       <textarea id="notes" rows="2" placeholder="gear condition, estimated depth, etc."></textarea>
     </div>
@@ -573,15 +688,14 @@
       <input type="text" id="searchInput" placeholder="search species…">
       <select id="filterSite">
         <option value="">All sites</option>
-        <option value="Ranong">Ranong</option>
-        <option value="Phuket">Phuket</option>
-        <option value="Songkhla">Songkhla</option>
-        <option value="Samut Sakorn">Samut Sakorn</option>
       </select>
     </div>
     <div class="logh">
       <span class="count" id="historyCount">0 entries</span>
-      <button class="exportbtn" id="exportBtn">Export CSV</button>
+      <div class="export-btn-row">
+        <button class="exportbtn" id="exportBtn">CSV</button>
+        <button class="exportbtn" id="exportGeoJsonBtn">GeoJSON</button>
+      </div>
     </div>
     <div id="logList"></div>
   </main>
@@ -612,6 +726,14 @@
       <div class="legend-item"><span class="legend-dot" style="background:#2f7a52;"></span>Released</div>
     </div>
 
+    <div class="section-h">Offline map areas</div>
+    <div class="offline-map-card">
+      <div class="offline-map-text">Pan and zoom the map above to the area you plan to survey, then download it for offline use. Works best while you have wifi.</div>
+      <button class="track-toggle-btn" id="downloadAreaBtn" style="margin:0;">Download this area for offline use</button>
+      <div class="offline-progress" id="offlineProgress" style="display:none;"></div>
+      <div id="offlineAreasList"></div>
+    </div>
+
     <div class="section-h">Points without GPS</div>
     <div id="noGpsNote" class="empty" style="display:none;"></div>
   </main>
@@ -629,6 +751,40 @@
   </div>
   <main id="insightsMain">
     <!-- populated dynamically by renderInsights() -->
+  </main>
+</section>
+
+<!-- ================= TRACK ================= -->
+<section class="screen" id="screen-track">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">Track</span>
+    </div>
+    <h1>Vessel Track Recorder</h1>
+    <div class="site-line" id="siteLineTrack">&nbsp;</div>
+  </div>
+  <main>
+    <div class="track-stat-card" id="trackStatCard">
+      <div class="track-stat-row">
+        <div class="track-stat"><div class="ts-num" id="trackPointCount">0</div><div class="ts-label">Points</div></div>
+        <div class="track-stat"><div class="ts-num" id="trackDuration">00:00</div><div class="ts-label">Duration</div></div>
+        <div class="track-stat"><div class="ts-num" id="trackDistance">0.0</div><div class="ts-label">km (approx)</div></div>
+      </div>
+      <div class="track-gps-status" id="trackGpsStatus">GPS not active</div>
+    </div>
+
+    <button class="track-toggle-btn" id="trackToggleBtn">Start tracking</button>
+
+    <div class="track-note">
+      Tracking records one GPS point roughly every 20 seconds while this screen stays open and the app is in the foreground. Leaving the app or locking the phone will pause recording — this is a browser limitation, not a bug. Stop and save the track before switching apps.
+    </div>
+
+    <div class="logh">
+      <span class="section-h" style="margin:0;">Saved tracks</span>
+      <button class="exportbtn" id="exportTracksBtn">Export GeoJSON</button>
+    </div>
+    <div id="trackList"></div>
   </main>
 </section>
 
@@ -653,6 +809,7 @@
   let photoDataUrl = null;
   let sexVal = null;
   let conditionVal = null;
+  let taxonVal = null;
 
   // Stable short device tag so records made on different phones are
   // distinguishable even before any real sync exists.
@@ -707,6 +864,7 @@
     if(screen === 'history') renderHistory();
     if(screen === 'map') renderMap();
     if(screen === 'insights') renderInsights();
+    if(screen === 'track') renderTrackScreen();
     document.querySelector('.screen.active').scrollTop = 0;
   }
   document.querySelectorAll('[data-go]').forEach(el => {
@@ -734,6 +892,7 @@
   }
   wirePillRow('sexRow', v => sexVal = v);
   wirePillRow('conditionRow', v => conditionVal = v);
+  wirePillRow('taxonRow', v => taxonVal = v);
 
   // ===== Site selection (syncs across screens) =====
   function setSiteDisplay(value){
@@ -744,7 +903,7 @@
     document.getElementById('siteLineRecord').classList.toggle('active', !!value);
     document.getElementById('homeSiteTag').textContent = value ? value : 'No site selected';
   }
-  document.getElementById('site').addEventListener('change', (e)=> setSiteDisplay(e.target.value));
+  document.getElementById('site').addEventListener('input', (e)=> setSiteDisplay(e.target.value.trim()));
 
   // ===== Session: date + observer =====
   function formatSurveyDate(){
@@ -753,27 +912,68 @@
   }
   document.getElementById('surveyDate').value = formatSurveyDate();
 
-  // Remember observers used on this device so re-entry is a tap, not retyping.
-  function getKnownObservers(){
-    try{ return JSON.parse(localStorage.getItem(LAST_OBSERVER_KEY + '_list')) || []; }
+  // Generic "remember values typed on this device" helper, used for any
+  // free-text field where re-typing the same value repeatedly is common:
+  // observer, site, and species. Keeps the app usable for any species or
+  // any location worldwide, instead of hardcoding a fixed list.
+  function getKnownValues(storageKey){
+    try{ return JSON.parse(localStorage.getItem(storageKey + '_list')) || []; }
     catch(e){ return []; }
   }
-  function rememberObserver(name){
-    if(!name) return;
-    localStorage.setItem(LAST_OBSERVER_KEY, name);
-    let list = getKnownObservers();
-    if(!list.includes(name)){
-      list.push(name);
-      localStorage.setItem(LAST_OBSERVER_KEY + '_list', JSON.stringify(list));
+  function rememberValue(storageKey, value){
+    if(!value) return;
+    localStorage.setItem(storageKey, value);
+    let list = getKnownValues(storageKey);
+    if(!list.includes(value)){
+      list.unshift(value); // most recent first
+      if(list.length > 60) list = list.slice(0, 60); // keep the datalist manageable
+      localStorage.setItem(storageKey + '_list', JSON.stringify(list));
+    } else {
+      // move to front so frequently-used values surface first
+      list = [value, ...list.filter(v => v !== value)];
+      localStorage.setItem(storageKey + '_list', JSON.stringify(list));
     }
   }
-  function populateObserverList(){
-    const datalist = document.getElementById('observer-list');
-    datalist.innerHTML = getKnownObservers().map(n => '<option value="'+n+'">').join('');
+  function populateDatalist(datalistId, storageKey, extraOptions){
+    const datalist = document.getElementById(datalistId);
+    const known = getKnownValues(storageKey);
+    const combined = extraOptions ? extraOptions.concat(known.filter(v => !extraOptions.includes(v))) : known;
+    datalist.innerHTML = combined.map(v => '<option value="'+v.replace(/"/g,'&quot;')+'">').join('');
   }
-  populateObserverList();
+
+  populateDatalist('observer-list', LAST_OBSERVER_KEY);
   const lastObserver = localStorage.getItem(LAST_OBSERVER_KEY);
   if(lastObserver) document.getElementById('observer').value = lastObserver;
+
+  const LAST_SITE_KEY = 'bycatch_last_site';
+  populateDatalist('site-list', LAST_SITE_KEY);
+
+  const SPECIES_SUGGESTIONS = ['Carcharhinus sorrah','Carcharhinus limbatus','Rhizoprionodon acutus','Scoliodon macrorhynchos','Sphyrna lewini'];
+  populateDatalist('species-list', 'bycatch_known_species', SPECIES_SUGGESTIONS);
+
+  // ===== Gear-specific effort fields =====
+  // Different gear types need different effort metrics for a meaningful
+  // CPUE: net width/mesh size for net gears, hook count/spacing for
+  // longline. Showing only the relevant fields keeps the form fast to use
+  // instead of asking everyone for every possible measurement.
+  const NET_GEARS = ['Demersal trawl', 'Otter trawl', 'Gillnet', 'Purse seine'];
+  const HOOK_GEARS = ['Longline'];
+
+  function updateGearEffortFields(){
+    const gear = document.getElementById('gearType').value;
+    document.getElementById('netEffortFields').style.display = NET_GEARS.includes(gear) ? 'block' : 'none';
+    document.getElementById('hookEffortFields').style.display = HOOK_GEARS.includes(gear) ? 'block' : 'none';
+  }
+  document.getElementById('gearType').addEventListener('change', updateGearEffortFields);
+
+  // ===== Advanced biological data (optional, collapsed by default) =====
+  document.getElementById('advBioToggle').addEventListener('click', () => {
+    const body = document.getElementById('advBioBody');
+    const chevron = document.getElementById('advBioChevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.classList.toggle('open', !isOpen);
+  });
 
   // ===== Fishing effort: haul duration =====
   function parseHHMM(str){
@@ -924,7 +1124,17 @@
   }
 
   // ===== History rendering =====
+  function populateSiteFilter(){
+    const select = document.getElementById('filterSite');
+    const current = select.value;
+    const list = loadEntries();
+    const sites = Array.from(new Set(list.map(e => e.site).filter(Boolean))).sort();
+    select.innerHTML = '<option value="">All sites</option>' + sites.map(s => '<option value="'+s.replace(/"/g,'&quot;')+'">'+s+'</option>').join('');
+    if(sites.includes(current)) select.value = current;
+  }
+
   function renderHistory(){
+    populateSiteFilter();
     const list = loadEntries();
     const search = (document.getElementById('searchInput').value || '').toLowerCase();
     const siteFilter = document.getElementById('filterSite').value;
@@ -967,13 +1177,21 @@
     document.getElementById('depth').value = '';
     document.getElementById('haulStart').value = '';
     document.getElementById('haulEnd').value = '';
+    document.getElementById('netWidth').value = '';
+    document.getElementById('meshSize').value = '';
+    document.getElementById('hookCount').value = '';
+    document.getElementById('hookSpacing').value = '';
+    document.getElementById('gonadStage').value = '';
+    document.getElementById('stomachContents').value = '';
+    updateGearEffortFields();
     updateDuration();
-    // Observer and survey date intentionally persist across consecutive
-    // records — same observer typically logs many specimens per session.
+    // Observer, survey date, and site intentionally persist across consecutive
+    // records — a single sampling session usually logs many specimens at
+    // the same site before the observer moves to a new one.
     coords = null;
     photoDataUrl = null;
-    sexVal = null; conditionVal = null;
-    document.querySelectorAll('#sexRow .pill, #conditionRow .pill').forEach(p=>p.classList.remove('active'));
+    sexVal = null; conditionVal = null; taxonVal = null;
+    document.querySelectorAll('#sexRow .pill, #conditionRow .pill, #taxonRow .pill').forEach(p=>p.classList.remove('active'));
     document.getElementById('coordsLabel').textContent = 'not captured';
     document.getElementById('coordsLabel').classList.add('pending');
     document.getElementById('gpsBox').classList.remove('locked');
@@ -996,24 +1214,36 @@
       document.getElementById('species').focus();
       return;
     }
-    rememberObserver(observer);
-    populateObserverList();
+    const siteVal = document.getElementById('site').value.trim();
+    rememberValue(LAST_OBSERVER_KEY, observer);
+    rememberValue(LAST_SITE_KEY, siteVal);
+    rememberValue('bycatch_known_species', species);
+    populateDatalist('observer-list', LAST_OBSERVER_KEY);
+    populateDatalist('site-list', LAST_SITE_KEY);
+    populateDatalist('species-list', 'bycatch_known_species', SPECIES_SUGGESTIONS);
     const entry = {
       record_id: makeRecordId(),
       timestamp: new Date().toISOString(),
       observer: observer,
-      site: document.getElementById('site').value,
+      site: siteVal,
       vessel: document.getElementById('vessel').value.trim(),
       gear_type: document.getElementById('gearType').value,
       depth: document.getElementById('depth').value,
       haul_start: document.getElementById('haulStart').value.trim(),
       haul_end: document.getElementById('haulEnd').value.trim(),
       haul_duration_min: getDurationMinutes(),
+      net_width_m: document.getElementById('netWidth').value,
+      mesh_size_mm: document.getElementById('meshSize').value,
+      hook_count: document.getElementById('hookCount').value,
+      hook_spacing_m: document.getElementById('hookSpacing').value,
+      taxon_group: taxonVal || '',
       species: species,
       length: document.getElementById('length').value,
       weight: document.getElementById('weight').value,
       sex: sexVal || '',
       condition: conditionVal || '',
+      gonad_stage: document.getElementById('gonadStage').value,
+      stomach_contents: document.getElementById('stomachContents').value.trim(),
       lat: coords ? coords.lat : '',
       lon: coords ? coords.lon : '',
       gps_accuracy_m: coords ? Math.round(coords.acc) : '',
@@ -1041,7 +1271,7 @@
     return s;
   }
 
-  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','species','length','weight','sex','condition','lat','lon','gps_accuracy_m','notes','has_photo'];
+  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','gonad_stage','stomach_contents','lat','lon','gps_accuracy_m','notes','has_photo'];
 
   function buildCsv(list){
     const rows = [CSV_COLS.join(',')];
@@ -1049,8 +1279,8 @@
     return rows.join('\n');
   }
 
-  function downloadCsv(csv, filename){
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  function downloadFile(content, filename, mimeType){
+    const blob = new Blob([content], {type: mimeType});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -1059,6 +1289,37 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+  function downloadCsv(csv, filename){
+    downloadFile(csv, filename, 'text/csv;charset=utf-8;');
+  }
+
+  // GeoJSON export for direct use in QGIS or any GIS software, without
+  // needing the multi-file Shapefile format. Records without a captured
+  // GPS position are skipped here since GeoJSON geometry requires
+  // coordinates — they're still present in the CSV export.
+  function buildGeoJsonPoints(list){
+    const features = list
+      .filter(e => e.lat !== '' && e.lat != null && e.lon !== '' && e.lon != null)
+      .map(e => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [parseFloat(e.lon), parseFloat(e.lat)] },
+        properties: Object.fromEntries(CSV_COLS.filter(c => c !== 'lat' && c !== 'lon').map(c => [c, e[c] ?? '']))
+      }));
+    return JSON.stringify({ type: 'FeatureCollection', features: features }, null, 2);
+  }
+
+  function buildGeoJsonTracks(tracks){
+    const features = tracks.map(t => ({
+      type: 'Feature',
+      geometry: { type: 'LineString', coordinates: t.points.map(p => [p.lon, p.lat]) },
+      properties: {
+        track_id: t.track_id, observer: t.observer, site: t.site,
+        started_at: t.started_at, ended_at: t.ended_at,
+        duration_sec: t.duration_sec, distance_km: t.distance_km, point_count: t.points.length
+      }
+    }));
+    return JSON.stringify({ type: 'FeatureCollection', features: features }, null, 2);
   }
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{
@@ -1070,6 +1331,18 @@
     const today = new Date().toISOString().slice(0,10);
     downloadCsv(buildCsv(list), 'bycatch_survey_' + today + '.csv');
     showToast('CSV exported');
+  });
+
+  document.getElementById('exportGeoJsonBtn').addEventListener('click', ()=>{
+    const list = loadEntries();
+    const withGps = list.filter(e => e.lat !== '' && e.lat != null);
+    if(withGps.length === 0){
+      showToast('No georeferenced records to export', true);
+      return;
+    }
+    const today = new Date().toISOString().slice(0,10);
+    downloadFile(buildGeoJsonPoints(list), 'bycatch_survey_' + today + '.geojson', 'application/geo+json');
+    showToast('GeoJSON exported · ' + withGps.length + ' points');
   });
 
   // ===== Backup / share =====
@@ -1168,6 +1441,7 @@
   }
 
   function renderMap(){
+    renderOfflineAreasList();
     const list = loadEntries();
     const withGps = list.filter(e => e.lat !== '' && e.lon !== '' && e.lat != null && e.lon != null);
     const withoutGps = list.length - withGps.length;
@@ -1203,7 +1477,10 @@
   function renderLeaflet(points){
     if(!leafletInstance){
       leafletInstance = L.map('leafletMap');
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // A single fixed subdomain (no {s} placeholder) so the exact tile URLs
+      // requested by Leaflet match exactly what the offline downloader caches —
+      // using the {s} round-robin would make pre-cached tiles unreliable to find.
+      L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 18
       }).addTo(leafletInstance);
@@ -1339,6 +1616,29 @@
     });
     html += '</div>';
 
+    // --- taxon group breakdown (only shown if at least one record has it set) ---
+    const taxonCount = {};
+    list.forEach(e => {
+      if(!e.taxon_group) return;
+      taxonCount[e.taxon_group] = (taxonCount[e.taxon_group] || 0) + 1;
+    });
+    const taxonEntries = Object.entries(taxonCount).sort((a,b) => b[1]-a[1]);
+    if(taxonEntries.length > 0){
+      const taxonLabels = { 'Elasmobranchii':'Elasmobranch', 'Teleostei':'Teleost fish', 'Crustacea':'Crustacean', 'Mollusca':'Mollusc', 'Other':'Other' };
+      const taxonRecorded = taxonEntries.reduce((sum, [,c]) => sum + c, 0);
+      html += '<div class="section-h">Records by taxon group</div>';
+      taxonEntries.forEach(([tg, count]) => {
+        const pct = (count / taxonRecorded * 100).toFixed(0);
+        html += '<div class="bar-row">'
+          + '<div class="bar-row-top"><span>' + (taxonLabels[tg] || tg) + '</span><span>' + count + ' (' + pct + '%)</span></div>'
+          + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
+          + '</div>';
+      });
+      if(taxonRecorded < list.length){
+        html += '<div class="insight-empty" style="text-align:left; padding: 8px 2px;">' + (list.length - taxonRecorded) + ' record(s) have no taxon group set.</div>';
+      }
+    }
+
     // --- species frequency (bar list) ---
     const speciesCount = {};
     list.forEach(e => {
@@ -1431,6 +1731,327 @@
 
     main.innerHTML = html;
   }
+
+  // ===== Vessel track recorder =====
+  const TRACK_STORAGE_KEY = 'bycatch_tracks_v1';
+  const TRACK_POINT_INTERVAL_MS = 20000; // ~one point every 20 seconds
+
+  let trackActive = false;
+  let trackPoints = [];      // [{lat, lon, t}]
+  let trackStartTime = null;
+  let trackWatchId = null;
+  let trackIntervalId = null;
+  let trackUiTickId = null;
+  let trackLastFix = null;   // most recent geolocation fix, sampled on interval
+
+  function loadTracks(){
+    try{ return JSON.parse(localStorage.getItem(TRACK_STORAGE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveTracks(list){
+    localStorage.setItem(TRACK_STORAGE_KEY, JSON.stringify(list));
+  }
+
+  // Haversine distance in km between two lat/lon points — adequate for the
+  // short, local distances of a single haul; not meant to replace a real
+  // GIS distance calculation on the exported track in QGIS/R.
+  function haversineKm(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2-lat1) * Math.PI/180;
+    const dLon = (lon2-lon1) * Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function trackTotalDistanceKm(points){
+    let total = 0;
+    for(let i = 1; i < points.length; i++){
+      total += haversineKm(points[i-1].lat, points[i-1].lon, points[i].lat, points[i].lon);
+    }
+    return total;
+  }
+
+  function formatTrackDuration(ms){
+    const totalSec = Math.floor(ms/1000);
+    const mm = String(Math.floor(totalSec/60)).padStart(2,'0');
+    const ss = String(totalSec%60).padStart(2,'0');
+    return mm + ':' + ss;
+  }
+
+  function updateTrackUi(){
+    document.getElementById('trackPointCount').textContent = trackPoints.length;
+    document.getElementById('trackDistance').textContent = trackTotalDistanceKm(trackPoints).toFixed(2);
+    if(trackStartTime){
+      document.getElementById('trackDuration').textContent = formatTrackDuration(Date.now() - trackStartTime);
+    }
+  }
+
+  function startTracking(){
+    if(!navigator.geolocation){
+      showToast('GPS not available in this browser', true);
+      return;
+    }
+    trackActive = true;
+    trackPoints = [];
+    trackStartTime = Date.now();
+    trackLastFix = null;
+
+    const statusEl = document.getElementById('trackGpsStatus');
+    statusEl.textContent = 'Acquiring GPS…';
+    statusEl.classList.remove('live');
+
+    trackWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        trackLastFix = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
+        statusEl.textContent = 'GPS live · ±' + Math.round(pos.coords.accuracy) + 'm';
+        statusEl.classList.add('live');
+      },
+      () => {
+        statusEl.textContent = 'GPS signal lost — will retry';
+        statusEl.classList.remove('live');
+      },
+      { enableHighAccuracy: true, maximumAge: 5000 }
+    );
+
+    // Sample the latest fix on a fixed interval rather than recording every
+    // watchPosition callback, which can fire much more often than needed
+    // and would bloat the track with redundant points.
+    trackIntervalId = setInterval(() => {
+      if(trackLastFix){
+        trackPoints.push({ lat: trackLastFix.lat, lon: trackLastFix.lon, t: new Date().toISOString() });
+        updateTrackUi();
+      }
+    }, TRACK_POINT_INTERVAL_MS);
+
+    trackUiTickId = setInterval(updateTrackUi, 1000);
+
+    const btn = document.getElementById('trackToggleBtn');
+    btn.textContent = 'Stop & save track';
+    btn.classList.add('recording');
+  }
+
+  function stopTracking(){
+    trackActive = false;
+    if(trackWatchId !== null) navigator.geolocation.clearWatch(trackWatchId);
+    if(trackIntervalId !== null) clearInterval(trackIntervalId);
+    if(trackUiTickId !== null) clearInterval(trackUiTickId);
+    trackWatchId = null; trackIntervalId = null; trackUiTickId = null;
+
+    const btn = document.getElementById('trackToggleBtn');
+    btn.textContent = 'Start tracking';
+    btn.classList.remove('recording');
+    document.getElementById('trackGpsStatus').textContent = 'GPS not active';
+    document.getElementById('trackGpsStatus').classList.remove('live');
+
+    if(trackPoints.length < 2){
+      showToast('Track too short to save', true);
+      trackPoints = [];
+      trackStartTime = null;
+      updateTrackUi();
+      return;
+    }
+
+    const track = {
+      track_id: makeRecordId(),
+      observer: localStorage.getItem(LAST_OBSERVER_KEY) || '',
+      site: localStorage.getItem(LAST_SITE_KEY) || '',
+      started_at: new Date(trackStartTime).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_sec: Math.floor((Date.now() - trackStartTime)/1000),
+      distance_km: trackTotalDistanceKm(trackPoints),
+      points: trackPoints
+    };
+    const tracks = loadTracks();
+    tracks.push(track);
+    saveTracks(tracks);
+    showToast('Track saved — ' + trackPoints.length + ' points');
+
+    trackPoints = [];
+    trackStartTime = null;
+    updateTrackUi();
+    renderTrackList();
+  }
+
+  document.getElementById('trackToggleBtn').addEventListener('click', () => {
+    if(trackActive){ stopTracking(); } else { startTracking(); }
+  });
+
+  function renderTrackList(){
+    const tracks = loadTracks();
+    const listEl = document.getElementById('trackList');
+    if(tracks.length === 0){
+      listEl.innerHTML = '<div class="insight-empty">No saved tracks yet.</div>';
+      return;
+    }
+    listEl.innerHTML = tracks.slice().reverse().map((t, revIdx) => {
+      const idx = tracks.length - 1 - revIdx;
+      const when = new Date(t.started_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+      return '<div class="track-entry">'
+        + '<div><div class="te-main">'+(t.site || 'Unspecified site')+'</div>'
+        + '<div class="te-meta">'+t.points.length+' pts · '+t.distance_km.toFixed(2)+'km · '+formatTrackDuration(t.duration_sec*1000)+' · '+when+'</div></div>'
+        + '<button class="del" data-track-idx="'+idx+'" title="delete">×</button>'
+        + '</div>';
+    }).join('');
+  }
+  document.getElementById('trackList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.del');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.trackIdx, 10);
+    const tracks = loadTracks();
+    tracks.splice(idx, 1);
+    saveTracks(tracks);
+    renderTrackList();
+  });
+
+  document.getElementById('exportTracksBtn').addEventListener('click', () => {
+    const tracks = loadTracks();
+    if(tracks.length === 0){
+      showToast('No saved tracks to export', true);
+      return;
+    }
+    const today = new Date().toISOString().slice(0,10);
+    downloadFile(buildGeoJsonTracks(tracks), 'vessel_tracks_' + today + '.geojson', 'application/geo+json');
+    showToast('Tracks exported · ' + tracks.length + ' track(s)');
+  });
+
+  function renderTrackScreen(){
+    updateTrackUi();
+    renderTrackList();
+    const btn = document.getElementById('trackToggleBtn');
+    btn.textContent = trackActive ? 'Stop & save track' : 'Start tracking';
+    btn.classList.toggle('recording', trackActive);
+  }
+
+  // ===== Offline map tile downloader =====
+  // Tiles are cached via the standard Cache Storage API, in a dedicated
+  // cache separate from the app-shell cache the service worker manages —
+  // this keeps tile data alive even if the app-shell cache version bumps
+  // on a future update.
+  const TILE_CACHE_NAME = 'bycatch-map-tiles-v1';
+  const OFFLINE_AREAS_KEY = 'bycatch_offline_areas';
+  const DOWNLOAD_RADIUS_KM = 12; // fixed radius per "Download this area" tap
+  const DOWNLOAD_ZOOM_LEVELS = [11, 12, 13, 14]; // enough to recognize coastline/ports without huge storage cost
+
+  function lonLatToTile(lon, lat, zoom){
+    const x = Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+    const latRad = lat * Math.PI / 180;
+    const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1/Math.cos(latRad)) / Math.PI) / 2 * Math.pow(2, zoom));
+    return { x, y };
+  }
+
+  function tilesForRadius(centerLat, centerLon, radiusKm, zoom){
+    // Approximate degrees-per-km at this latitude, then find the tile range
+    // covering a bounding box of that size — simpler and reliable enough
+    // for the modest zoom levels and radius used here.
+    const kmPerDegLat = 111;
+    const kmPerDegLon = 111 * Math.cos(centerLat * Math.PI/180);
+    const dLat = radiusKm / kmPerDegLat;
+    const dLon = radiusKm / kmPerDegLon;
+
+    const nw = lonLatToTile(centerLon - dLon, centerLat + dLat, zoom);
+    const se = lonLatToTile(centerLon + dLon, centerLat - dLat, zoom);
+
+    const tiles = [];
+    for(let x = Math.min(nw.x, se.x); x <= Math.max(nw.x, se.x); x++){
+      for(let y = Math.min(nw.y, se.y); y <= Math.max(nw.y, se.y); y++){
+        tiles.push({ z: zoom, x, y });
+      }
+    }
+    return tiles;
+  }
+
+  function loadOfflineAreas(){
+    try{ return JSON.parse(localStorage.getItem(OFFLINE_AREAS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveOfflineAreas(list){
+    localStorage.setItem(OFFLINE_AREAS_KEY, JSON.stringify(list));
+  }
+
+  async function downloadCurrentMapArea(){
+    if(!leafletInstance){
+      showToast('Open the map first', true);
+      return;
+    }
+    if(!('caches' in window)){
+      showToast('Offline storage not supported on this browser', true);
+      return;
+    }
+    const center = leafletInstance.getCenter();
+    let allTiles = [];
+    DOWNLOAD_ZOOM_LEVELS.forEach(z => {
+      allTiles = allTiles.concat(tilesForRadius(center.lat, center.lng, DOWNLOAD_RADIUS_KM, z));
+    });
+
+    const progressEl = document.getElementById('offlineProgress');
+    progressEl.style.display = 'block';
+    progressEl.innerHTML = 'Downloading 0 / ' + allTiles.length + ' tiles…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" id="offlineProgressFill" style="width:0%;"></div></div>';
+
+    const cache = await caches.open(TILE_CACHE_NAME);
+    let done = 0, failed = 0;
+
+    // Sequential, modest concurrency to avoid hammering the tile server —
+    // OSM's usage policy expects light, considerate request patterns.
+    const CONCURRENCY = 4;
+    let cursor = 0;
+    async function worker(){
+      while(cursor < allTiles.length){
+        const tile = allTiles[cursor++];
+        const url = 'https://a.tile.openstreetmap.org/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
+        try{
+          const resp = await fetch(url);
+          if(resp.ok) await cache.put(url, resp);
+        } catch(e){ failed++; }
+        done++;
+        const pct = Math.round(done / allTiles.length * 100);
+        progressEl.innerHTML = 'Downloading ' + done + ' / ' + allTiles.length + ' tiles…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
+      }
+    }
+    await Promise.all(Array.from({length: CONCURRENCY}, worker));
+
+    const areas = loadOfflineAreas();
+    areas.push({
+      id: makeRecordId(),
+      lat: center.lat, lon: center.lng,
+      radius_km: DOWNLOAD_RADIUS_KM,
+      tile_count: allTiles.length - failed,
+      downloaded_at: new Date().toISOString()
+    });
+    saveOfflineAreas(areas);
+
+    progressEl.style.display = 'none';
+    showToast(failed === 0 ? 'Area saved for offline use' : 'Area saved (' + failed + ' tiles failed — retry if needed)');
+    renderOfflineAreasList();
+  }
+
+  document.getElementById('downloadAreaBtn').addEventListener('click', downloadCurrentMapArea);
+
+  function renderOfflineAreasList(){
+    const areas = loadOfflineAreas();
+    const listEl = document.getElementById('offlineAreasList');
+    if(areas.length === 0){
+      listEl.innerHTML = '';
+      return;
+    }
+    listEl.innerHTML = areas.map((a, idx) => {
+      const when = new Date(a.downloaded_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+      return '<div class="offline-area-entry">'
+        + '<div><div class="oa-main">' + a.lat.toFixed(3) + ', ' + a.lon.toFixed(3) + '</div>'
+        + '<div class="oa-meta">±' + a.radius_km + 'km · ' + a.tile_count + ' tiles · saved ' + when + '</div></div>'
+        + '<button class="del" data-area-idx="'+idx+'" title="delete">×</button>'
+        + '</div>';
+    }).join('');
+  }
+  document.getElementById('offlineAreasList').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.del');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.areaIdx, 10);
+    const areas = loadOfflineAreas();
+    areas.splice(idx, 1);
+    saveOfflineAreas(areas);
+    renderOfflineAreasList();
+    showToast('Offline area removed from list (cached tiles remain until cache is cleared)');
+  });
 
   // ===== Initial render =====
   renderHome();
