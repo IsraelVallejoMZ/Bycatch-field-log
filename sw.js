@@ -1,6 +1,7 @@
+
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v3';
+const CACHE_NAME = 'bycatch-log-v4';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -25,14 +26,40 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Separate, larger cache for map tiles, populated explicitly by the app's
+// "Download this area for offline use" feature — kept apart from the
+// app-shell cache so it isn't wiped out by app-shell version bumps.
+const TILE_CACHE_NAME = 'bycatch-map-tiles-v1';
+
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isOwnOrigin = url.origin === self.location.origin;
 
+  // OSM map tiles: try the network first (so the app's live/offline
+  // detection ping and normal browsing always prefer fresh tiles), but
+  // fall back to any tile pre-downloaded via "Download this area" when
+  // the network request fails. This is the one external-origin exception —
+  // everything else external (fonts, Leaflet library, connectivity checks)
+  // still passes straight through untouched.
+  //
+  // The app's own connectivity probe deliberately requests zoom-0 tile
+  // 0/0.png with a cache-busting ?check= param — explicitly excluded here
+  // so a cached tile can never make the probe falsely report "online".
+  const isConnectivityProbe = url.search.includes('check=');
+  const isOsmTile = url.hostname.endsWith('tile.openstreetmap.org') && !isConnectivityProbe;
+  if (isOsmTile) {
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        caches.open(TILE_CACHE_NAME).then((cache) => cache.match(event.request))
+      )
+    );
+    return;
+  }
+
   if (!isOwnOrigin) {
-    // Never intercept external requests (fonts, Leaflet, OSM tiles).
-    // Let them hit the network normally so the app's own online/offline
-    // detection for the map keeps working correctly.
+    // Never intercept other external requests (fonts, Leaflet, the
+    // connectivity-check ping). Let them hit the network normally so the
+    // app's own online/offline detection for the map keeps working correctly.
     return;
   }
 
