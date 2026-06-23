@@ -124,6 +124,41 @@
   }
   .backup-banner.urgent .bb-btn{ background: var(--coral); }
 
+  .campaign-banner{
+    background: var(--blue-deep); color: white; border-radius: var(--radius);
+    padding: 12px 16px; margin-bottom: 16px;
+  }
+  .cb-label{ font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.06em; color: #9fc8de; }
+  .cb-name{ font-family: var(--display); font-weight:600; font-size: 14px; margin-top: 2px; }
+
+  .campaign-active-card{ margin-bottom: 18px; }
+  .campaign-active-card:empty{ display:none; }
+  .campaign-active-inner{
+    background: var(--blue-deep); color: white; border-radius: var(--radius);
+    padding: 18px;
+  }
+  .ca-label{ font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.06em; color: #9fc8de; }
+  .ca-name{ font-family: var(--display); font-weight:700; font-size: 18px; margin: 4px 0 10px; }
+  .ca-meta{ font-family: var(--data); font-size: 11px; color: #cfe7f4; }
+  .ca-close-btn{
+    margin-top: 12px; width:100%; font-family: var(--data); font-size: 12px; font-weight:600;
+    background: rgba(255,255,255,0.15); color: white; border:none; padding: 10px; border-radius: var(--radius-sm); cursor:pointer;
+  }
+  .campaign-entry{
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .campaign-entry.is-active{ border-color: var(--blue); border-width: 1.5px; }
+  .campaign-entry .ce-main{ font-family: var(--display); font-weight:600; font-size: 13.5px; }
+  .campaign-entry .ce-meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .campaign-entry-actions{ display:flex; gap: 6px; flex-shrink:0; }
+  .campaign-entry-actions button{
+    font-family: var(--data); font-size: 10.5px; font-weight:600; border:none; border-radius: var(--radius-sm);
+    padding: 6px 10px; cursor:pointer;
+  }
+  .ce-reopen{ background: var(--blue-mist); color: var(--blue-deep); }
+  .ce-delete{ background: none; color: var(--coral); font-size: 17px; padding: 4px 6px; }
+
   .quick-actions{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .qa-btn{
     background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
@@ -144,11 +179,16 @@
 
   .map-placeholder{
     background: var(--panel); border: 1.5px dashed var(--line); border-radius: var(--radius);
-    padding: 30px 20px; text-align:center; color: var(--ink-soft);
+    padding: 16px; text-align:left; color: var(--ink-soft);
+    display:flex; align-items:center; gap: 14px;
   }
-  .map-placeholder .mp-icon{ font-size: 26px; margin-bottom: 8px; display:block; }
+  .mp-icon-wrap{
+    width: 52px; height: 52px; border-radius: var(--radius-sm); background: var(--blue-mist);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .mp-icon-wrap svg{ width: 30px; height: 30px; }
   .map-placeholder .mp-title{ font-family: var(--display); font-weight:600; font-size: 14px; color: var(--ink); }
-  .map-placeholder .mp-sub{ font-family: var(--data); font-size: 11px; margin-top: 6px; }
+  .map-placeholder .mp-sub{ font-family: var(--data); font-size: 11px; margin-top: 4px; line-height:1.4; }
 
   .recent-list .entry{ margin-bottom: 8px; }
 
@@ -473,6 +513,11 @@
       <button class="bb-btn" id="backupBtn">Back up now</button>
     </div>
 
+    <div class="campaign-banner" id="campaignBanner" data-go="campaigns" style="cursor:pointer;">
+      <div class="cb-label">Active campaign</div>
+      <div class="cb-name" id="campaignBannerName">None — records will be unassigned</div>
+    </div>
+
     <div class="quick-actions">
       <div class="qa-btn primary" data-go="record">
         <span class="qa-icon">＋</span>
@@ -488,23 +533,47 @@
 
     <div class="section-h">Survey map</div>
     <div class="map-placeholder" data-go="map" style="cursor:pointer;">
-      <span class="mp-icon">⌖</span>
-      <div class="mp-title">Open map view</div>
-      <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
+      <div class="mp-icon-wrap">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 6h36M6 16h36M6 26h36M6 36h36M16 6v36M26 6v36M36 6v36" stroke="#bcd6e6" stroke-width="1.2"/>
+          <path d="M24 14c-5 0-9 4-9 9 0 6.8 9 15 9 15s9-8.2 9-15c0-5-4-9-9-9z" fill="#0a5c8c"/>
+          <circle cx="24" cy="23" r="3.2" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mp-title">Open map view</div>
+        <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
+      </div>
     </div>
 
     <div class="section-h">Vessel track</div>
     <div class="map-placeholder" data-go="track" style="cursor:pointer;">
-      <span class="mp-icon">⟿</span>
-      <div class="mp-title">Open track recorder</div>
-      <div class="mp-sub" id="homeTrackSub">Record the vessel's path during a haul</div>
+      <div class="mp-icon-wrap">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 36c5-10 9 4 14-6s8 6 13-8" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5.5"/>
+          <circle cx="7" cy="36" r="3" fill="#2f7a52"/>
+          <circle cx="34" cy="22" r="3" fill="#c0532f"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mp-title">Open track recorder</div>
+        <div class="mp-sub" id="homeTrackSub">Record the vessel's path during a haul</div>
+      </div>
     </div>
 
     <div class="section-h">Survey insights</div>
     <div class="map-placeholder" data-go="insights" style="cursor:pointer;">
-      <span class="mp-icon">▤</span>
-      <div class="mp-title">Open insights</div>
-      <div class="mp-sub" id="homeInsightsSub">Species counts, length ranges, and condition breakdown</div>
+      <div class="mp-icon-wrap">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="26" width="7" height="14" rx="1.5" fill="#bcd6e6"/>
+          <rect x="20.5" y="16" width="7" height="24" rx="1.5" fill="#0a5c8c"/>
+          <rect x="33" y="21" width="7" height="19" rx="1.5" fill="#bcd6e6"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mp-title">Open insights</div>
+        <div class="mp-sub" id="homeInsightsSub">Species counts, length ranges, and condition breakdown</div>
+      </div>
     </div>
 
     <div class="section-h">Most recent</div>
@@ -604,8 +673,8 @@
           <input type="number" id="length" inputmode="decimal" placeholder="0.0">
         </div>
         <div>
-          <label for="weight">Weight (g)</label>
-          <input type="number" id="weight" inputmode="decimal" placeholder="optional">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" inputmode="decimal" step="0.001" placeholder="e.g. 0.085">
         </div>
       </div>
 
@@ -651,7 +720,26 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">6</span>Position</div>
+      <div class="card-label collapsible" id="envDataToggle">
+        <span class="step">6</span>Environmental data
+        <span class="collapse-chevron" id="envDataChevron">▾</span>
+      </div>
+      <div class="collapsible-body" id="envDataBody" style="display:none;">
+        <div class="grid2">
+          <div>
+            <label for="seaTemp">Water temperature (°C)</label>
+            <input type="number" id="seaTemp" inputmode="decimal" placeholder="e.g. 28.5">
+          </div>
+          <div>
+            <label for="salinity">Salinity (psu)</label>
+            <input type="number" id="salinity" inputmode="decimal" placeholder="e.g. 33.2">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="step">7</span>Position</div>
       <label>GPS coordinates</label>
       <div class="gpsbox" id="gpsBox">
         <span class="coords pending" id="coordsLabel">not captured</span>
@@ -660,7 +748,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">7</span>Evidence</div>
+      <div class="card-label"><span class="step">8</span>Evidence</div>
       <label>Photo</label>
       <div class="photobox" id="photoBox">
         <span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>
@@ -668,7 +756,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="step">8</span>Notes</div>
+      <div class="card-label"><span class="step">9</span>Notes</div>
       <label for="notes">Observations</label>
       <textarea id="notes" rows="2" placeholder="gear condition, estimated depth, etc."></textarea>
     </div>
@@ -694,6 +782,11 @@
       <input type="text" id="searchInput" placeholder="search species…">
       <select id="filterSite">
         <option value="">All sites</option>
+      </select>
+    </div>
+    <div class="filter-row">
+      <select id="filterCampaign" style="width:100%;">
+        <option value="">All campaigns</option>
       </select>
     </div>
     <div class="logh">
@@ -806,6 +899,33 @@
   </main>
 </section>
 
+<!-- ================= CAMPAIGNS ================= -->
+<section class="screen" id="screen-campaigns">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand">Campaigns</span>
+    </div>
+    <h1>Campaigns &amp; Projects</h1>
+    <div class="site-line">&nbsp;</div>
+  </div>
+  <main>
+    <div class="campaign-active-card" id="campaignActiveCard">
+      <!-- populated dynamically -->
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Start a new campaign</div>
+      <label for="newCampaignName">Campaign name</label>
+      <input type="text" id="newCampaignName" placeholder="e.g. Aleta 1, Survey trip March 2026">
+      <button class="track-toggle-btn" id="startCampaignBtn" style="margin-top:14px;">Start campaign</button>
+    </div>
+
+    <div class="section-h">All campaigns</div>
+    <div id="campaignsList"></div>
+  </main>
+</section>
+
 <!-- ================= TAB BAR ================= -->
 <nav class="tabbar">
   <button class="tab active" data-go="home"><span class="tab-icon">⌂</span>Home</button>
@@ -872,6 +992,27 @@
   }
   migrateOldEntries();
 
+  // One-time unit migration: weight was originally captured in grams;
+  // existing records are converted to kg to match the new field so old
+  // and new entries stay comparable in the same exported dataset.
+  const WEIGHT_UNIT_MIGRATION_KEY = 'bycatch_weight_unit_migrated_v1';
+  function migrateWeightUnits(){
+    if(localStorage.getItem(WEIGHT_UNIT_MIGRATION_KEY)) return;
+    try{
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const converted = list.map(e => {
+        const w = parseFloat(e.weight);
+        if(!isNaN(w) && w > 0){
+          return Object.assign({}, e, { weight: (w / 1000).toString() });
+        }
+        return e;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(converted));
+      localStorage.setItem(WEIGHT_UNIT_MIGRATION_KEY, 'true');
+    } catch(e){ /* nothing to migrate */ }
+  }
+  migrateWeightUnits();
+
   // ===== Screen navigation =====
   function goTo(screen){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -884,6 +1025,7 @@
     if(screen === 'map') renderMap();
     if(screen === 'insights') renderInsights();
     if(screen === 'track') renderTrackScreen();
+    if(screen === 'campaigns') renderCampaignsScreen();
     document.querySelector('.screen.active').scrollTop = 0;
   }
   document.querySelectorAll('[data-go]').forEach(el => {
@@ -991,13 +1133,17 @@
   document.getElementById('gearType').addEventListener('change', updateGearEffortFields);
 
   // ===== Advanced biological data (optional, collapsed by default) =====
-  document.getElementById('advBioToggle').addEventListener('click', () => {
-    const body = document.getElementById('advBioBody');
-    const chevron = document.getElementById('advBioChevron');
-    const isOpen = body.style.display !== 'none';
-    body.style.display = isOpen ? 'none' : 'block';
-    chevron.classList.toggle('open', !isOpen);
-  });
+  function wireCollapsible(toggleId, bodyId, chevronId){
+    document.getElementById(toggleId).addEventListener('click', () => {
+      const body = document.getElementById(bodyId);
+      const chevron = document.getElementById(chevronId);
+      const isOpen = body.style.display !== 'none';
+      body.style.display = isOpen ? 'none' : 'block';
+      chevron.classList.toggle('open', !isOpen);
+    });
+  }
+  wireCollapsible('advBioToggle', 'advBioBody', 'advBioChevron');
+  wireCollapsible('envDataToggle', 'envDataBody', 'envDataChevron');
 
   // ===== Fishing effort: haul duration =====
   function parseHHMM(str){
@@ -1132,6 +1278,7 @@
     document.getElementById('tallyCount').textContent = list.length + (list.length===1 ? ' record' : ' records');
     document.getElementById('homeCount').textContent = list.length;
     renderBackupStatus();
+    updateCampaignBanner();
 
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
     document.getElementById('homeMapSub').textContent = withGps > 0
@@ -1157,16 +1304,33 @@
     if(sites.includes(current)) select.value = current;
   }
 
+  function populateCampaignFilter(){
+    const select = document.getElementById('filterCampaign');
+    const current = select.value;
+    const campaigns = loadCampaigns();
+    select.innerHTML = '<option value="">All campaigns</option>'
+      + '<option value="__unassigned__">Unassigned records</option>'
+      + campaigns.map(c => '<option value="'+c.id+'">'+c.name.replace(/</g,'&lt;')+'</option>').join('');
+    if(campaigns.some(c => c.id === current) || current === '__unassigned__') select.value = current;
+  }
+
   function renderHistory(){
     populateSiteFilter();
+    populateCampaignFilter();
     const list = loadEntries();
     const search = (document.getElementById('searchInput').value || '').toLowerCase();
     const siteFilter = document.getElementById('filterSite').value;
+    const campaignFilter = document.getElementById('filterCampaign').value;
 
     const filtered = list
       .map((e, i) => ({...e, _idx: i}))
       .filter(e => !search || (e.species||'').toLowerCase().includes(search))
-      .filter(e => !siteFilter || e.site === siteFilter);
+      .filter(e => !siteFilter || e.site === siteFilter)
+      .filter(e => {
+        if(!campaignFilter) return true;
+        if(campaignFilter === '__unassigned__') return !e.campaign_id;
+        return e.campaign_id === campaignFilter;
+      });
 
     document.getElementById('historyCount').textContent = filtered.length + (filtered.length===1 ? ' entry' : ' entries') + (list.length !== filtered.length ? ' of ' + list.length : '');
 
@@ -1179,6 +1343,7 @@
   }
   document.getElementById('searchInput').addEventListener('input', renderHistory);
   document.getElementById('filterSite').addEventListener('change', renderHistory);
+  document.getElementById('filterCampaign').addEventListener('change', renderHistory);
   document.getElementById('insightsTaxonFilter').addEventListener('change', renderInsights);
 
   document.getElementById('logList').addEventListener('click', (e)=>{
@@ -1208,6 +1373,8 @@
     document.getElementById('hookSpacing').value = '';
     document.getElementById('gonadStage').value = '';
     document.getElementById('stomachContents').value = '';
+    document.getElementById('seaTemp').value = '';
+    document.getElementById('salinity').value = '';
     updateGearEffortFields();
     updateDuration();
     // Observer, survey date, and site intentionally persist across consecutive
@@ -1258,6 +1425,7 @@
     const entry = {
       record_id: makeRecordId(),
       timestamp: recordTimestamp,
+      campaign_id: (getActiveCampaign() || {}).id || '',
       observer: observer,
       site: siteVal,
       vessel: document.getElementById('vessel').value.trim(),
@@ -1279,6 +1447,8 @@
       condition: conditionVal || '',
       gonad_stage: document.getElementById('gonadStage').value,
       stomach_contents: document.getElementById('stomachContents').value.trim(),
+      sea_temp_c: document.getElementById('seaTemp').value,
+      salinity_psu: document.getElementById('salinity').value,
       lat: coords ? coords.lat : '',
       lon: coords ? coords.lon : '',
       gps_accuracy_m: coords ? Math.round(coords.acc) : '',
@@ -1306,7 +1476,7 @@
     return s;
   }
 
-  const CSV_COLS = ['record_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','lat','lon','gps_accuracy_m','notes','has_photo'];
+  const CSV_COLS = ['record_id','campaign_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','sea_temp_c','salinity_psu','lat','lon','gps_accuracy_m','notes','has_photo'];
 
   function buildCsv(list){
     const rows = [CSV_COLS.join(',')];
@@ -1724,6 +1894,35 @@
       html += '</tbody></table>';
     }
 
+    // --- total catch volume (kg), by species and overall ---
+    const weightStats = {};
+    let totalWeightKg = 0;
+    let recordsWithWeight = 0;
+    list.forEach(e => {
+      const sp = e.species || 'Unspecified';
+      const w = num(e.weight);
+      if(w === null) return;
+      weightStats[sp] = (weightStats[sp] || 0) + w;
+      totalWeightKg += w;
+      recordsWithWeight += 1;
+    });
+    const sortedWeights = Object.entries(weightStats).sort((a,b) => b[1]-a[1]);
+
+    html += '<div class="section-h">Catch volume (kg)' + taxonNote + '</div>';
+    if(sortedWeights.length === 0){
+      html += '<div class="insight-empty">No weight measurements recorded yet.</div>';
+    } else {
+      html += '<div class="insight-grid" style="grid-template-columns: 1fr;">';
+      html += '<div class="insight-stat"><div class="is-num">' + totalWeightKg.toFixed(2) + '</div><div class="is-label">Total kg captured (' + recordsWithWeight + ' weighed records)</div></div>';
+      html += '</div>';
+      html += '<table class="stat-table"><thead><tr><th>Species</th><th>Total kg</th><th>% of volume</th></tr></thead><tbody>';
+      sortedWeights.forEach(([sp, kg]) => {
+        const pct = (kg / totalWeightKg * 100).toFixed(1);
+        html += '<tr><td class="sp-name">' + sp + '</td><td class="num">' + kg.toFixed(2) + '</td><td class="num">' + pct + '%</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
     // --- gear type breakdown ---
     const gearCount = {};
     list.forEach(e => {
@@ -1922,6 +2121,7 @@
 
     const track = {
       track_id: makeRecordId(),
+      campaign_id: (getActiveCampaign() || {}).id || '',
       observer: localStorage.getItem(LAST_OBSERVER_KEY) || '',
       site: localStorage.getItem(LAST_SITE_KEY) || '',
       started_at: new Date(trackStartTime).toISOString(),
@@ -2120,6 +2320,131 @@
     saveOfflineAreas(areas);
     renderOfflineAreasList();
     showToast('Offline area removed from list (cached tiles remain until cache is cleared)');
+  });
+
+  // ===== Campaigns / projects =====
+  const CAMPAIGNS_KEY = 'bycatch_campaigns_v1';
+  const ACTIVE_CAMPAIGN_KEY = 'bycatch_active_campaign_id';
+
+  function loadCampaigns(){
+    try{ return JSON.parse(localStorage.getItem(CAMPAIGNS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveCampaigns(list){
+    localStorage.setItem(CAMPAIGNS_KEY, JSON.stringify(list));
+  }
+  function getActiveCampaign(){
+    const id = localStorage.getItem(ACTIVE_CAMPAIGN_KEY);
+    if(!id) return null;
+    return loadCampaigns().find(c => c.id === id) || null;
+  }
+
+  function updateCampaignBanner(){
+    const active = getActiveCampaign();
+    const nameEl = document.getElementById('campaignBannerName');
+    nameEl.textContent = active ? active.name : 'None — records will be unassigned';
+  }
+
+  document.getElementById('startCampaignBtn').addEventListener('click', () => {
+    const input = document.getElementById('newCampaignName');
+    const name = input.value.trim();
+    if(!name){
+      showToast('Campaign name is required', true);
+      input.focus();
+      return;
+    }
+    const campaigns = loadCampaigns();
+    const campaign = {
+      id: makeRecordId(),
+      name: name,
+      started_at: new Date().toISOString(),
+      closed_at: null
+    };
+    campaigns.push(campaign);
+    saveCampaigns(campaigns);
+    localStorage.setItem(ACTIVE_CAMPAIGN_KEY, campaign.id);
+    input.value = '';
+    showToast('Campaign "' + name + '" started');
+    renderCampaignsScreen();
+    updateCampaignBanner();
+  });
+
+  function closeCampaign(id){
+    const campaigns = loadCampaigns();
+    const campaign = campaigns.find(c => c.id === id);
+    if(campaign) campaign.closed_at = new Date().toISOString();
+    saveCampaigns(campaigns);
+    if(localStorage.getItem(ACTIVE_CAMPAIGN_KEY) === id){
+      localStorage.removeItem(ACTIVE_CAMPAIGN_KEY);
+    }
+    renderCampaignsScreen();
+    updateCampaignBanner();
+  }
+
+  function reopenCampaign(id){
+    // Reopening makes this campaign active again; any other active
+    // campaign is implicitly left as-is (still closed) — only one
+    // campaign can be active for new records at a time.
+    const campaigns = loadCampaigns();
+    const campaign = campaigns.find(c => c.id === id);
+    if(campaign) campaign.closed_at = null;
+    saveCampaigns(campaigns);
+    localStorage.setItem(ACTIVE_CAMPAIGN_KEY, id);
+    renderCampaignsScreen();
+    updateCampaignBanner();
+  }
+
+  function deleteCampaign(id){
+    let campaigns = loadCampaigns();
+    campaigns = campaigns.filter(c => c.id !== id);
+    saveCampaigns(campaigns);
+    if(localStorage.getItem(ACTIVE_CAMPAIGN_KEY) === id){
+      localStorage.removeItem(ACTIVE_CAMPAIGN_KEY);
+    }
+    renderCampaignsScreen();
+    updateCampaignBanner();
+  }
+
+  function renderCampaignsScreen(){
+    const active = getActiveCampaign();
+    const activeCard = document.getElementById('campaignActiveCard');
+    if(active){
+      const recordCount = loadEntries().filter(e => e.campaign_id === active.id).length;
+      activeCard.innerHTML = '<div class="campaign-active-inner">'
+        + '<div class="ca-label">Active campaign</div>'
+        + '<div class="ca-name">' + active.name + '</div>'
+        + '<div class="ca-meta">' + recordCount + ' record(s) logged so far</div>'
+        + '<button class="ca-close-btn" id="closeCampaignBtn">Close this campaign</button>'
+        + '</div>';
+      document.getElementById('closeCampaignBtn').addEventListener('click', () => closeCampaign(active.id));
+    } else {
+      activeCard.innerHTML = '';
+    }
+
+    const campaigns = loadCampaigns();
+    const listEl = document.getElementById('campaignsList');
+    if(campaigns.length === 0){
+      listEl.innerHTML = '<div class="insight-empty">No campaigns yet. Records logged without an active campaign stay unassigned.</div>';
+      return;
+    }
+    listEl.innerHTML = campaigns.slice().reverse().map(c => {
+      const recordCount = loadEntries().filter(e => e.campaign_id === c.id).length;
+      const isActive = !c.closed_at && localStorage.getItem(ACTIVE_CAMPAIGN_KEY) === c.id;
+      const status = c.closed_at ? 'Closed ' + new Date(c.closed_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'}) : 'Open';
+      return '<div class="campaign-entry' + (isActive ? ' is-active' : '') + '">'
+        + '<div><div class="ce-main">' + c.name + '</div>'
+        + '<div class="ce-meta">' + recordCount + ' records · ' + status + '</div></div>'
+        + '<div class="campaign-entry-actions">'
+        + (c.closed_at ? '<button class="ce-reopen" data-reopen="'+c.id+'">Reopen</button>' : '')
+        + '<button class="ce-delete" data-delete="'+c.id+'" title="delete">×</button>'
+        + '</div></div>';
+    }).join('');
+  }
+  document.getElementById('campaignsList').addEventListener('click', (e) => {
+    const reopenBtn = e.target.closest('[data-reopen]');
+    if(reopenBtn){ reopenCampaign(reopenBtn.dataset.reopen); return; }
+    const deleteBtn = e.target.closest('[data-delete]');
+    if(deleteBtn){ deleteCampaign(deleteBtn.dataset.delete); return; }
   });
 
   // ===== Initial render =====
