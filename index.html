@@ -303,6 +303,8 @@
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
     padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
   }
+  .entry.entry-clickable{ cursor:pointer; }
+  .entry.entry-clickable:active{ background: var(--blue-mist); }
   .entry .sp{ font-family: var(--display); font-weight: 600; font-size: 14px; font-style: italic; }
   .entry .meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top:2px; }
   .entry .del{
@@ -586,7 +588,7 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">New Record</span>
+      <span class="brand" id="recordScreenBrand">New Record</span>
     </div>
     <h1>Incidental Catch Entry</h1>
     <div class="site-line" id="siteLineRecord">No site selected</div>
@@ -949,6 +951,7 @@
   let conditionVal = null;
   let taxonVal = null;
   let bycatchVal = null;
+  let editingRecordIdx = null; // null = creating new; otherwise index of the record being edited
 
   // Stable short device tag so records made on different phones are
   // distinguishable even before any real sync exists.
@@ -1029,7 +1032,18 @@
     document.querySelector('.screen.active').scrollTop = 0;
   }
   document.querySelectorAll('[data-go]').forEach(el => {
-    el.addEventListener('click', () => goTo(el.dataset.go));
+    el.addEventListener('click', () => {
+      const target = el.dataset.go;
+      if(target === 'record' && editingRecordIdx !== null){
+        // A normal "New Record" tap (not the programmatic edit-open path)
+        // should always start a fresh record, never resume a stale edit.
+        editingRecordIdx = null;
+        document.getElementById('saveBtn').textContent = 'Save record';
+        document.getElementById('recordScreenBrand').textContent = 'New Record';
+        clearForm();
+      }
+      goTo(target);
+    });
   });
 
   // ===== Network indicator =====
@@ -1214,7 +1228,10 @@
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.capture = 'environment';
+    // No 'capture' attribute on purpose: forcing capture="environment" locks
+    // the picker to the camera only. Leaving it unset lets the OS show its
+    // normal chooser (camera or photo library), which is what field users
+    // expect when a specimen photo was already taken earlier.
     input.style.display = 'none';
     input.addEventListener('change', handlePhoto);
     return input;
@@ -1264,7 +1281,7 @@
 
   function entryRowHtml(e, idx, withDelete){
     const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-    return '<div class="entry">'
+    return '<div class="entry entry-clickable" data-edit-idx="'+idx+'">'
       + '<div><div class="sp">'+(e.species||'unnamed')+'</div>'
       + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div>'
       + '<div class="meta">obs: '+(e.observer||'—')+(e.record_id ? ' · '+e.record_id : '')+'</div></div>'
@@ -1346,14 +1363,108 @@
   document.getElementById('filterCampaign').addEventListener('change', renderHistory);
   document.getElementById('insightsTaxonFilter').addEventListener('change', renderInsights);
 
-  document.getElementById('logList').addEventListener('click', (e)=>{
-    const btn = e.target.closest('.del');
-    if(!btn) return;
-    const idx = parseInt(btn.dataset.idx, 10);
+  function openRecordForEdit(idx){
     const list = loadEntries();
-    list.splice(idx, 1);
-    saveEntries(list);
-    renderHistory();
+    const e = list[idx];
+    if(!e) return;
+    editingRecordIdx = idx;
+
+    document.getElementById('observer').value = e.observer || '';
+    document.getElementById('surveyDate').value = e.timestamp ? e.timestamp.slice(0,10) : formatSurveyDate();
+    document.getElementById('site').value = e.site || '';
+    setSiteDisplay(e.site || '');
+    document.getElementById('vessel').value = e.vessel || '';
+    document.getElementById('gearType').value = e.gear_type || '';
+    updateGearEffortFields();
+    document.getElementById('depth').value = e.depth || '';
+    document.getElementById('haulStart').value = e.haul_start || '';
+    document.getElementById('haulEnd').value = e.haul_end || '';
+    updateDuration();
+    document.getElementById('netWidth').value = e.net_width_m || '';
+    document.getElementById('meshSize').value = e.mesh_size_mm || '';
+    document.getElementById('hookCount').value = e.hook_count || '';
+    document.getElementById('hookSpacing').value = e.hook_spacing_m || '';
+
+    taxonVal = e.taxon_group || null;
+    document.querySelectorAll('#taxonRow .pill').forEach(p => p.classList.toggle('active', p.dataset.val === taxonVal));
+
+    document.getElementById('species').value = e.species || '';
+    document.getElementById('length').value = e.length || '';
+    document.getElementById('weight').value = e.weight || '';
+
+    sexVal = e.sex || null;
+    document.querySelectorAll('#sexRow .pill').forEach(p => p.classList.toggle('active', p.dataset.val === sexVal));
+    conditionVal = e.condition || null;
+    document.querySelectorAll('#conditionRow .pill').forEach(p => p.classList.toggle('active', p.dataset.val === conditionVal));
+    bycatchVal = e.is_bycatch || null;
+    document.querySelectorAll('#bycatchRow .pill').forEach(p => p.classList.toggle('active', p.dataset.val === bycatchVal));
+
+    document.getElementById('gonadStage').value = e.gonad_stage || '';
+    document.getElementById('stomachContents').value = e.stomach_contents || '';
+    // Open the advanced biology section automatically if it has data,
+    // so an edit doesn't hide information the record already has.
+    if(e.gonad_stage || e.stomach_contents){
+      document.getElementById('advBioBody').style.display = 'block';
+      document.getElementById('advBioChevron').classList.add('open');
+    }
+
+    document.getElementById('seaTemp').value = e.sea_temp_c || '';
+    document.getElementById('salinity').value = e.salinity_psu || '';
+    if(e.sea_temp_c || e.salinity_psu){
+      document.getElementById('envDataBody').style.display = 'block';
+      document.getElementById('envDataChevron').classList.add('open');
+    }
+
+    coords = (e.lat !== '' && e.lat != null) ? { lat: parseFloat(e.lat), lon: parseFloat(e.lon), acc: parseFloat(e.gps_accuracy_m) || 0 } : null;
+    const coordsLabel = document.getElementById('coordsLabel');
+    const gpsBox = document.getElementById('gpsBox');
+    if(coords){
+      coordsLabel.textContent = coords.lat.toFixed(5) + ', ' + coords.lon.toFixed(5) + (e.gps_accuracy_m ? ' (±' + Math.round(e.gps_accuracy_m) + 'm)' : '');
+      coordsLabel.classList.remove('pending');
+      gpsBox.classList.add('locked');
+    } else {
+      coordsLabel.textContent = 'not captured';
+      coordsLabel.classList.add('pending');
+      gpsBox.classList.remove('locked');
+    }
+
+    photoDataUrl = e.photo || null;
+    const photoBox = document.getElementById('photoBox');
+    if(photoDataUrl){
+      photoBox.classList.add('filled');
+      photoBox.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = photoDataUrl;
+      photoBox.appendChild(img);
+      photoBox.appendChild(buildPhotoInput());
+    } else {
+      photoBox.classList.remove('filled');
+      photoBox.innerHTML = '<span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>';
+      photoBox.appendChild(buildPhotoInput());
+    }
+
+    document.getElementById('notes').value = e.notes || '';
+
+    document.getElementById('saveBtn').textContent = 'Update record';
+    document.getElementById('recordScreenBrand').textContent = 'Edit Record';
+    goTo('record');
+  }
+
+  document.getElementById('logList').addEventListener('click', (e)=>{
+    const delBtn = e.target.closest('.del');
+    if(delBtn){
+      const idx = parseInt(delBtn.dataset.idx, 10);
+      const list = loadEntries();
+      list.splice(idx, 1);
+      saveEntries(list);
+      renderHistory();
+      return;
+    }
+    const row = e.target.closest('[data-edit-idx]');
+    if(row){
+      const idx = parseInt(row.dataset.editIdx, 10);
+      openRecordForEdit(idx);
+    }
   });
 
   // ===== Form clear =====
@@ -1422,10 +1533,13 @@
     const now = new Date();
     const recordTimestamp = new Date(dateValue + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0')).toISOString();
 
+    const existingList = loadEntries();
+    const editingOriginal = editingRecordIdx !== null ? existingList[editingRecordIdx] : null;
+
     const entry = {
-      record_id: makeRecordId(),
+      record_id: editingOriginal ? editingOriginal.record_id : makeRecordId(),
       timestamp: recordTimestamp,
-      campaign_id: (getActiveCampaign() || {}).id || '',
+      campaign_id: editingOriginal ? editingOriginal.campaign_id : ((getActiveCampaign() || {}).id || ''),
       observer: observer,
       site: siteVal,
       vessel: document.getElementById('vessel').value.trim(),
@@ -1456,16 +1570,35 @@
       has_photo: photoDataUrl ? 'yes' : 'no',
       photo: photoDataUrl || ''
     };
-    const list = loadEntries();
-    list.push(entry);
-    saveEntries(list);
-    bumpTally();
-    showToast('Record saved — ' + list.length + ' total');
-    clearForm();
-    goTo('home');
+    const list = existingList;
+    if(editingRecordIdx !== null){
+      list[editingRecordIdx] = entry;
+      saveEntries(list);
+      showToast('Record updated');
+      editingRecordIdx = null;
+      document.getElementById('saveBtn').textContent = 'Save record';
+      document.getElementById('recordScreenBrand').textContent = 'New Record';
+      clearForm();
+      goTo('history');
+    } else {
+      list.push(entry);
+      saveEntries(list);
+      bumpTally();
+      showToast('Record saved — ' + list.length + ' total');
+      clearForm();
+      goTo('home');
+    }
   });
 
-  document.getElementById('clearBtn').addEventListener('click', clearForm);
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if(editingRecordIdx !== null){
+      editingRecordIdx = null;
+      document.getElementById('saveBtn').textContent = 'Save record';
+      document.getElementById('recordScreenBrand').textContent = 'New Record';
+      showToast('Edit cancelled');
+    }
+    clearForm();
+  });
 
   // ===== CSV export =====
   function csvEscape(val){
