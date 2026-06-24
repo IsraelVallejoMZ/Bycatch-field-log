@@ -59,7 +59,7 @@
   .topbar{
     position: sticky; top:0; z-index: 20;
     background: var(--ink); color: var(--paper);
-    padding: 16px 18px 14px;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 18px 14px;
     border-bottom: 3px solid var(--blue);
   }
   .topbar-row{ display:flex; justify-content:space-between; align-items:flex-start; }
@@ -487,7 +487,7 @@
   /* ===== Mode select screen ===== */
   .mode-select-wrap{
     height:100%; display:flex; flex-direction:column; justify-content:center;
-    padding: 24px 20px; max-width: 420px; margin: 0 auto;
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 24px; max-width: 420px; margin: 0 auto;
   }
   .mode-select-header{ text-align:center; margin-bottom: 28px; }
   .mode-select-eyebrow{
@@ -518,9 +518,10 @@
   /* Mode visibility: research-only and fleet-only chrome stay hidden
      unless body carries the matching mode class. The mode-select screen
      itself is mode-agnostic and always eligible via its own .active flag. */
-  .research-only, .fleet-only{ display:none; }
+  .research-only, .fleet-captain-only, .fleet-operations-only{ display:none; }
   body.mode-research .research-only{ display:flex; }
-  body.mode-fleet .fleet-only{ display:flex; }
+  body.fleet-role-captain .fleet-captain-only{ display:flex; }
+  body.fleet-role-operations .fleet-operations-only{ display:flex; }
 </style>
 </head>
 <body>
@@ -1011,12 +1012,51 @@
 <!-- ================= FISHING OPERATIONS MODE ================= -->
 <!-- ============================================================= -->
 
-<!-- ================= FLEET: TRIP (home of fleet mode) ================= -->
+<!-- ================= FLEET: ROLE SELECT ================= -->
+<section class="screen" id="screen-fleet-role-select">
+  <div class="mode-select-wrap">
+    <div class="mode-select-header">
+      <div class="mode-select-eyebrow">Fishing Operations</div>
+      <div class="mode-select-title">Choose A Role</div>
+    </div>
+
+    <div class="mode-card" data-fleet-role="captain">
+      <div class="mode-card-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 8v22M16 16l8-5 8 5" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="13" r="2.3" fill="#0a5c8c"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mode-card-title">Captain</div>
+        <div class="mode-card-sub">Log trips, hauls, and catch — at sea</div>
+      </div>
+    </div>
+
+    <div class="mode-card" data-fleet-role="operations">
+      <div class="mode-card-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="9" height="18" stroke="#0a5c8c" stroke-width="2.2"/>
+          <rect x="20.5" y="12" width="9" height="26" stroke="#0a5c8c" stroke-width="2.2"/>
+          <rect x="31" y="24" width="9" height="14" stroke="#0a5c8c" stroke-width="2.2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mode-card-title">Operations</div>
+        <div class="mode-card-sub">Fleet dashboard, reconciliation, documents — on land</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FLEET: TRIP (home of captain role) ================= -->
 <section class="screen" id="screen-fleet-trip">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Fish Pulse · Fleet</span>
+      <span class="brand">Fish Pulse · Captain</span>
       <div style="display:flex; align-items:center; gap:8px;">
+        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
         <button class="switch-mode-btn" id="switchModeBtnFleet">Switch Mode</button>
       </div>
     </div>
@@ -1269,7 +1309,7 @@
 <section class="screen" id="screen-fleet-trip-log">
   <div class="topbar">
     <div class="back-row">
-      <button class="back-btn" data-go="fleet-trip">←</button>
+      <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand">Trip Log</span>
     </div>
     <h1>Past Trips</h1>
@@ -1285,12 +1325,31 @@
   </main>
 </section>
 
+<!-- ================= FLEET: TRIP DETAIL (landing report + settlement) ================= -->
+<section class="screen" id="screen-fleet-trip-detail">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip-log">←</button>
+      <span class="brand">Trip Detail</span>
+    </div>
+    <h1>Landing Report &amp; Settlement</h1>
+    <div class="site-line" id="fleetTripDetailVesselLine">&nbsp;</div>
+  </div>
+  <main>
+    <div id="fleetTripDetailLanding"></div>
+    <div id="fleetTripDetailSettlement"></div>
+  </main>
+</section>
+
 <!-- ================= FLEET: DASHBOARD ================= -->
 <section class="screen" id="screen-fleet-dashboard">
   <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="fleet-trip">←</button>
-      <span class="brand">Fleet</span>
+    <div class="topbar-row">
+      <span class="brand">Fish Pulse · Operations</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
+        <button class="switch-mode-btn" id="switchModeBtnOperations">Switch Mode</button>
+      </div>
     </div>
     <h1>Fleet Overview</h1>
     <div class="site-line">&nbsp;</div>
@@ -1304,11 +1363,96 @@
   </main>
 </section>
 
+<!-- ================= FLEET: FUEL LOG (captain, per day at sea) ================= -->
+<section class="screen" id="screen-fleet-fuel-log">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Fish Pulse · Captain</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
+      </div>
+    </div>
+    <h1>Daily Fuel Log</h1>
+    <div class="site-line" id="fleetFuelLogVesselLine">&nbsp;</div>
+  </div>
+  <main>
+    <div id="fleetFuelLogNoTripNote" style="display:none;">
+      <div class="empty">Start a trip from the Trip tab to begin logging daily fuel.</div>
+    </div>
+    <div id="fleetFuelLogBody" style="display:none;">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px;">Log Today's Reading</div>
+        <label for="fleetFuelLogReading">Fuel Remaining Today (L)</label>
+        <input type="number" id="fleetFuelLogReading" inputmode="decimal" placeholder="e.g. 140">
+        <div class="duration-line" id="fleetFuelLogConsumedLine">Consumed Since Last Reading: —</div>
+        <button class="btn btn-save" id="fleetFuelLogSaveBtn" style="width:100%; margin-top:16px;">Save Today's Reading</button>
+      </div>
+
+      <div class="section-h">Readings This Trip</div>
+      <div id="fleetFuelLogList"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= FLEET: RECONCILIATION (operations) ================= -->
+<section class="screen" id="screen-fleet-reconciliation">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-dashboard">←</button>
+      <span class="brand">Reconciliation</span>
+    </div>
+    <h1>Scale Vs. Logbook</h1>
+    <div class="site-line">&nbsp;</div>
+  </div>
+  <main>
+    <div class="filter-row">
+      <select id="fleetReconTripSelect" style="width:100%;">
+        <option value="">— Select A Closed Trip —</option>
+      </select>
+    </div>
+    <div id="fleetReconBody"></div>
+  </main>
+</section>
+
+<!-- ================= FLEET: DOCUMENTS (captain + operations) ================= -->
+<section class="screen" id="screen-fleet-documents">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" id="fleetDocumentsBackBtn">←</button>
+      <span class="brand">Documents</span>
+    </div>
+    <h1>Licenses &amp; Certificates</h1>
+    <div class="site-line">&nbsp;</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Add Document</div>
+      <label for="fleetDocVessel">Vessel</label>
+      <select id="fleetDocVessel"><option value="">— Select Vessel —</option></select>
+      <label for="fleetDocType">Document Type</label>
+      <select id="fleetDocType">
+        <option value="fishing_license">Fishing License</option>
+        <option value="safety_certificate">Safety Certificate</option>
+        <option value="seaman_book">Seaman's Book</option>
+        <option value="other">Other</option>
+      </select>
+      <label for="fleetDocLabel">Label <span class="optional-tag">e.g. captain name, if seaman's book</span></label>
+      <input type="text" id="fleetDocLabel" placeholder="e.g. J. Sombrero">
+      <label for="fleetDocExpiry">Expiry Date</label>
+      <input type="date" id="fleetDocExpiry">
+      <button class="btn btn-save" id="fleetDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
+    </div>
+
+    <div class="section-h">All Documents</div>
+    <div id="fleetDocumentsList"></div>
+  </main>
+</section>
+
 <!-- ================= FLEET: VESSELS (admin) ================= -->
 <section class="screen" id="screen-fleet-vessels">
   <div class="topbar">
     <div class="back-row">
-      <button class="back-btn" data-go="fleet-trip">←</button>
+      <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand">Vessels</span>
     </div>
     <h1>Vessels &amp; Captains</h1>
@@ -1340,11 +1484,19 @@
   </main>
 </section>
 
-<!-- ================= FLEET TAB BAR ================= -->
-<nav class="tabbar fleet-only" id="tabbarFleet">
+<!-- ================= FLEET TAB BAR: CAPTAIN ================= -->
+<nav class="tabbar fleet-captain-only" id="tabbarFleetCaptain">
   <button class="tab active" data-go="fleet-trip"><span class="tab-icon">⚓</span>Trip</button>
+  <button class="tab" data-go="fleet-fuel-log"><span class="tab-icon">⛽</span>Fuel Log</button>
+  <button class="tab" data-go="fleet-documents"><span class="tab-icon">📄</span>Documents</button>
+</nav>
+
+<!-- ================= FLEET TAB BAR: OPERATIONS ================= -->
+<nav class="tabbar fleet-operations-only" id="tabbarFleetOperations">
+  <button class="tab active" data-go="fleet-dashboard"><span class="tab-icon">📊</span>Fleet</button>
   <button class="tab" data-go="fleet-trip-log"><span class="tab-icon">☷</span>Trip Log</button>
-  <button class="tab" data-go="fleet-dashboard"><span class="tab-icon">📊</span>Fleet</button>
+  <button class="tab" data-go="fleet-reconciliation"><span class="tab-icon">⚖</span>Reconcile</button>
+  <button class="tab" data-go="fleet-documents"><span class="tab-icon">📄</span>Documents</button>
   <button class="tab" data-go="fleet-vessels"><span class="tab-icon">🚢</span>Vessels</button>
 </nav>
 
@@ -1362,17 +1514,28 @@
 // ===== Mode selection (Field Research vs Fishing Operations) =====
 // Runs before anything else. Decides whether to show the mode-select
 // screen or jump straight into whichever mode was chosen recently.
+// Fishing Operations has a second-level choice (Captain / Operations),
+// tracked independently so switching role doesn't reset the mode timer.
 (function(){
   const MODE_KEY = 'fishpulse_active_mode';
   const MODE_AT_KEY = 'fishpulse_mode_selected_at';
-  const MODE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+  const ROLE_KEY = 'fishpulse_fleet_role';
+  const ROLE_AT_KEY = 'fishpulse_fleet_role_selected_at';
+  const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours, applies to both mode and role
 
   function getStoredMode(){
     const mode = localStorage.getItem(MODE_KEY);
     const at = parseInt(localStorage.getItem(MODE_AT_KEY), 10);
     if(!mode || !at) return null;
-    if(Date.now() - at >= MODE_TTL_MS) return null; // expired, show selector again
+    if(Date.now() - at >= TTL_MS) return null;
     return mode;
+  }
+  function getStoredFleetRole(){
+    const role = localStorage.getItem(ROLE_KEY);
+    const at = parseInt(localStorage.getItem(ROLE_AT_KEY), 10);
+    if(!role || !at) return null;
+    if(Date.now() - at >= TTL_MS) return null;
+    return role;
   }
 
   function setMode(mode){
@@ -1380,11 +1543,17 @@
     localStorage.setItem(MODE_AT_KEY, String(Date.now()));
     applyMode(mode);
   }
+  function setFleetRole(role){
+    localStorage.setItem(ROLE_KEY, role);
+    localStorage.setItem(ROLE_AT_KEY, String(Date.now()));
+    applyFleetRole(role);
+  }
 
   // Swaps which top-level screen tree is visible: mode-select, the
-  // research screens (+ their tab bar), or the fleet screens (+ theirs).
+  // research screens (+ their tab bar), or the fleet role-select /
+  // fleet screens (+ the role-specific tab bar).
   function applyMode(mode){
-    document.body.classList.remove('mode-research', 'mode-fleet');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'fleet-role-captain', 'fleet-role-operations');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     if(mode === 'research'){
       document.body.classList.add('mode-research');
@@ -1392,29 +1561,60 @@
       if(typeof renderHome === 'function') renderHome();
     } else if(mode === 'fleet'){
       document.body.classList.add('mode-fleet');
+      const existingRole = getStoredFleetRole();
+      if(existingRole){
+        applyFleetRole(existingRole);
+      } else {
+        document.getElementById('screen-fleet-role-select').classList.add('active');
+      }
+    }
+  }
+
+  function applyFleetRole(role){
+    document.body.classList.remove('fleet-role-captain', 'fleet-role-operations');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    if(role === 'captain'){
+      document.body.classList.add('fleet-role-captain');
       document.getElementById('screen-fleet-trip').classList.add('active');
       if(typeof renderFleetTrip === 'function') renderFleetTrip();
+    } else if(role === 'operations'){
+      document.body.classList.add('fleet-role-operations');
+      document.getElementById('screen-fleet-dashboard').classList.add('active');
+      if(typeof renderFleetDashboard === 'function') renderFleetDashboard();
     }
   }
 
   function showModeSelect(){
-    document.body.classList.remove('mode-research', 'mode-fleet');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'fleet-role-captain', 'fleet-role-operations');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-mode-select').classList.add('active');
   }
+  function showFleetRoleSelect(){
+    document.body.classList.remove('fleet-role-captain', 'fleet-role-operations');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-fleet-role-select').classList.add('active');
+  }
 
-  document.querySelectorAll('.mode-card').forEach(card => {
+  document.querySelectorAll('.mode-card[data-mode]').forEach(card => {
     card.addEventListener('click', () => setMode(card.dataset.mode));
+  });
+  document.querySelectorAll('.mode-card[data-fleet-role]').forEach(card => {
+    card.addEventListener('click', () => setFleetRole(card.dataset.fleetRole));
   });
 
   document.addEventListener('click', (e) => {
-    if(e.target.closest('[data-switch-mode]') || e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet'){
+    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations'){
       showModeSelect();
+    }
+    if(e.target.closest('[data-switch-fleet-role]')){
+      showFleetRoleSelect();
     }
   });
 
   window.fishPulseGoToModeSelect = showModeSelect;
+  window.fishPulseGoToFleetRoleSelect = showFleetRoleSelect;
   window.fishPulseGetActiveMode = getStoredMode;
+  window.fishPulseGetActiveFleetRole = getStoredFleetRole;
   window.fishPulseReapplyIfActive = function(mode, renderFn){
     if(document.body.classList.contains('mode-' + mode) && typeof renderFn === 'function'){
       renderFn();
@@ -1467,13 +1667,17 @@
   function fleetGoTo(screen){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-fleet-' + screen).classList.add('active');
-    document.querySelectorAll('#tabbarFleet .tab').forEach(t => t.classList.remove('active'));
-    const tab = document.querySelector('#tabbarFleet .tab[data-go="fleet-' + screen + '"]');
+    document.querySelectorAll('#tabbarFleetCaptain .tab, #tabbarFleetOperations .tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector('#tabbarFleetCaptain .tab[data-go="fleet-' + screen + '"], #tabbarFleetOperations .tab[data-go="fleet-' + screen + '"]');
     if(tab) tab.classList.add('active');
     if(screen === 'trip') renderFleetTrip();
     if(screen === 'trip-log') renderFleetTripLog();
     if(screen === 'dashboard') renderFleetDashboard();
     if(screen === 'vessels') renderFleetVessels();
+    if(screen === 'fuel-log') renderFleetFuelLog();
+    if(screen === 'reconciliation') renderFleetReconciliation();
+    if(screen === 'documents') renderFleetDocuments();
+    if(screen === 'trip-detail') renderFleetTripDetail();
     const active = document.querySelector('.screen.active');
     if(active) active.scrollTop = 0;
   }
@@ -1867,12 +2071,104 @@
       const marginText = margin.complete
         ? fmtMoney(margin.minMargin, margin.currency)
         : fmtMoney(margin.minMargin, margin.currency) + ' – ' + fmtMoney(margin.maxMargin, margin.currency);
-      return '<div class="entry"><div><div class="sp">'+(vessel?vessel.name:'Unknown Vessel')+'</div>'
+      return '<div class="entry entry-clickable" data-trip-detail="'+t.trip_id+'"><div><div class="sp">'+(vessel?vessel.name:'Unknown Vessel')+'</div>'
         + '<div class="meta">'+when+' · '+(margin.complete?'Final Margin':'Preliminary Margin')+'</div></div>'
         + '<div class="duration-line" style="margin:0;">'+marginText+'</div></div>';
     }).join('');
+    document.querySelectorAll('[data-trip-detail]').forEach(el => {
+      el.addEventListener('click', () => openFleetTripDetail(el.dataset.tripDetail));
+    });
   }
   document.getElementById('fleetTripLogVesselFilter').addEventListener('change', renderFleetTripLog);
+
+  // ===== Trip detail: landing report + settlement (operations) =====
+  function openFleetTripDetail(tripId){
+    currentTripDetailId = tripId;
+    fleetGoTo('trip-detail');
+  }
+  let currentTripDetailId = null;
+
+  function renderFleetTripDetail(){
+    const trip = load(TRIPS_KEY).find(t => t.trip_id === currentTripDetailId);
+    if(!trip){ fleetGoTo('trip-log'); return; }
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const captain = load(CAPTAINS_KEY).find(c => c.captain_id === trip.captain_id);
+    const currency = vessel ? vessel.default_currency : 'THB';
+    document.getElementById('fleetTripDetailVesselLine').textContent = (vessel?vessel.name:'Unknown Vessel') + ' · ' + new Date(trip.started_at).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'});
+
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+    const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
+    const margin = computeTripMargin(trip);
+
+    // Landing report: what's in the hold, by species — estimated and,
+    // where reconciled, actual scale weight. This is the data a buyer,
+    // port authority, or capture-certificate process would need; we are
+    // generating the supporting report here, not issuing any certificate.
+    const totalEstKg = catches.reduce((s,c)=>s+(parseFloat(c.kg)||0),0);
+    const totalActualKg = catches.reduce((s,c)=>s+(c.actual_kg!=null&&c.actual_kg!==''?parseFloat(c.actual_kg):0),0);
+    const hasActuals = catches.some(c => c.actual_kg != null && c.actual_kg !== '');
+
+    document.getElementById('fleetTripDetailLanding').innerHTML =
+      '<div class="card">'
+      + '<div class="card-label" style="margin-bottom:14px;">Landing Report</div>'
+      + '<div class="grid2" style="margin-bottom:10px;">'
+      + '<div><label style="margin-top:0;">Vessel</label><div class="duration-line">'+(vessel?vessel.name:'—')+'</div></div>'
+      + '<div><label style="margin-top:0;">Captain</label><div class="duration-line">'+(captain?captain.name:'—')+'</div></div>'
+      + '</div>'
+      + catches.map(c => '<div class="entry"><div><div class="sp">'+c.species+'</div>'
+          + '<div class="meta">'+(c.actual_kg!=null&&c.actual_kg!==''?'Scale: '+c.actual_kg+' kg':'Estimated, not yet scaled')+'</div></div>'
+          + '<div class="duration-line" style="margin:0;">'+c.kg+' kg Est.</div></div>').join('')
+      + '<div class="duration-line" style="margin-top:10px;">Total: '+totalEstKg.toFixed(1)+' kg Estimated'+(hasActuals?' · '+totalActualKg.toFixed(1)+' kg Scaled':'')+'</div>'
+      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">This report supports a landing declaration or capture certificate application — it is not itself an official certificate.</div>'
+      + '<button class="track-toggle-btn" id="fleetExportLandingBtn" style="margin-top:14px;">Export As Text</button>'
+      + '</div>';
+
+    document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
+      const lines = [
+        'FISH PULSE — LANDING REPORT',
+        'Vessel: ' + (vessel?vessel.name:'—'),
+        'Captain: ' + (captain?captain.name:'—'),
+        'Trip started: ' + trip.started_at,
+        'Trip ended: ' + (trip.ended_at||'—'),
+        '',
+        'Catch by species:'
+      ].concat(catches.map(c => '  - ' + c.species + ': ' + c.kg + ' kg estimated' + (c.actual_kg!=null&&c.actual_kg!==''?', ' + c.actual_kg + ' kg scale weight':'')))
+       .concat(['', 'Total estimated: ' + totalEstKg.toFixed(1) + ' kg', hasActuals ? 'Total scaled: ' + totalActualKg.toFixed(1) + ' kg' : '']);
+      showFleetTextExport(lines.join('\n'), 'Landing Report');
+    });
+
+    // Settlement: real income (scale weight where available, else
+    // estimate) minus all logged costs, divided across the crew. Share
+    // scheme is a simple equal split among crew_count for now.
+    const incomeKg = hasActuals ? totalActualKg : totalEstKg;
+    const avgRefPrice = catches.length > 0 ? catches.reduce((s,c)=>s+(parseFloat(c.ref_price)||0),0) / catches.filter(c=>c.ref_price).length : 0;
+    const totalIncome = catches.reduce((s,c) => {
+      const kg = (c.actual_kg!=null&&c.actual_kg!=='') ? parseFloat(c.actual_kg) : parseFloat(c.kg);
+      return s + kg * (parseFloat(c.ref_price)||0);
+    }, 0);
+    const totalCosts = costs.reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
+    const netResult = totalIncome - totalCosts;
+    const crewCount = parseInt(trip.crew_count) || 0;
+    const perCrewShare = crewCount > 0 ? netResult / crewCount : null;
+
+    document.getElementById('fleetTripDetailSettlement').innerHTML =
+      '<div class="card">'
+      + '<div class="card-label" style="margin-bottom:14px;">Trip Settlement'+(hasActuals?'':' <span class="optional-tag">based on estimate, not yet scaled</span>')+'</div>'
+      + costs.map(c => '<div class="entry"><div><div class="sp" style="font-size:13px; font-style:normal;">'+(c.cost_type.charAt(0).toUpperCase()+c.cost_type.slice(1))+'</div></div>'
+          + '<div class="duration-line" style="margin:0;">-'+fmtMoney(c.amount, c.currency)+'</div></div>').join('')
+      + '<div class="duration-line" style="margin-top:10px;">Income ('+incomeKg.toFixed(1)+' kg): '+fmtMoney(totalIncome, currency)+'</div>'
+      + '<div class="duration-line">Total Costs: -'+fmtMoney(totalCosts, currency)+'</div>'
+      + '<div class="duration-line" style="font-size:16px; margin-top:6px;">Net Result: '+fmtMoney(netResult, currency)+'</div>'
+      + (perCrewShare != null ? '<div class="duration-line">Per Crew Member ('+crewCount+'): '+fmtMoney(perCrewShare, currency)+'</div>' : '<div class="meta" style="margin-top:8px;">Set crew count on the trip to compute a per-person share.</div>')
+      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">Equal split shown here — adjust manually if your crew uses a different share scheme.</div>'
+      + '</div>';
+  }
+
+  function showFleetTextExport(text, title){
+    const w = window.open('', '_blank');
+    if(!w){ showFleetToast('Allow pop-ups to export', true); return; }
+    w.document.write('<title>'+title+'</title><pre style="font-family:monospace; white-space:pre-wrap; padding:20px;">'+text.replace(/</g,'&lt;')+'</pre>');
+  }
 
   // ===== Fleet dashboard =====
   function renderFleetDashboard(){
@@ -1949,12 +2245,206 @@
       : captains.map(c => '<div class="entry"><div><div class="sp">'+c.name+'</div></div></div>').join('');
   }
 
+  // ===== Daily fuel log (captain) =====
+  // One reading per day at sea, kept separate from the single
+  // start/end fuel figures already captured on the trip itself. This is
+  // what powers the "anomaly vs. expected daily burn" comparison.
+  const FUEL_LOG_KEY = 'fleet_daily_fuel_log_v1';
+
+  function renderFleetFuelLog(){
+    const trip = getActiveTrip();
+    const noTripNote = document.getElementById('fleetFuelLogNoTripNote');
+    const body = document.getElementById('fleetFuelLogBody');
+    if(!trip){
+      noTripNote.style.display = 'block';
+      body.style.display = 'none';
+      return;
+    }
+    noTripNote.style.display = 'none';
+    body.style.display = 'block';
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    document.getElementById('fleetFuelLogVesselLine').textContent = vessel ? vessel.name : '';
+
+    const readings = load(FUEL_LOG_KEY).filter(r => r.trip_id === trip.trip_id).sort((a,b) => new Date(a.logged_at) - new Date(b.logged_at));
+    const list = document.getElementById('fleetFuelLogList');
+    list.innerHTML = readings.length === 0
+      ? '<div class="empty">No readings logged yet this trip.</div>'
+      : readings.slice().reverse().map((r,i) => {
+          const when = new Date(r.logged_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+          const flag = r.is_anomaly ? '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px; margin-left:8px;">Anomaly</span>' : '';
+          return '<div class="entry"><div><div class="sp">'+r.remaining_l+' L Remaining'+flag+'</div>'
+            + '<div class="meta">'+when+(r.consumed_l != null ? ' · '+r.consumed_l.toFixed(1)+' L Consumed' : '')+'</div></div></div>';
+        }).join('');
+
+    document.getElementById('fleetFuelLogReading').value = '';
+    document.getElementById('fleetFuelLogConsumedLine').textContent = 'Consumed Since Last Reading: —';
+  }
+
+  document.getElementById('fleetFuelLogReading').addEventListener('input', () => {
+    const trip = getActiveTrip();
+    if(!trip) return;
+    const readings = load(FUEL_LOG_KEY).filter(r => r.trip_id === trip.trip_id).sort((a,b) => new Date(a.logged_at) - new Date(b.logged_at));
+    const lastReading = readings.length > 0 ? readings[readings.length-1].remaining_l : parseFloat(trip.fuel_loaded_l) || 0;
+    const current = parseFloat(document.getElementById('fleetFuelLogReading').value);
+    const line = document.getElementById('fleetFuelLogConsumedLine');
+    line.textContent = isNaN(current) ? 'Consumed Since Last Reading: —' : 'Consumed Since Last Reading: ' + Math.max(0, lastReading - current).toFixed(1) + ' L';
+  });
+
+  document.getElementById('fleetFuelLogSaveBtn').addEventListener('click', () => {
+    const trip = getActiveTrip();
+    if(!trip){ showFleetToast('No active trip', true); return; }
+    const current = parseFloat(document.getElementById('fleetFuelLogReading').value);
+    if(isNaN(current)){ showFleetToast('Enter a fuel reading', true); return; }
+
+    const readings = load(FUEL_LOG_KEY).filter(r => r.trip_id === trip.trip_id).sort((a,b) => new Date(a.logged_at) - new Date(b.logged_at));
+    const lastReading = readings.length > 0 ? readings[readings.length-1].remaining_l : parseFloat(trip.fuel_loaded_l) || 0;
+    const consumed = Math.max(0, lastReading - current);
+
+    // Anomaly check: compare against the vessel's own historical average
+    // daily consumption (its own past closed trips), not a fleet-wide
+    // average — matches the "compare a vessel against itself" approach
+    // already used for efficiency targets, since gear/zone/species differ
+    // too much across vessels for a shared baseline to be meaningful.
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const pastTrips = load(TRIPS_KEY).filter(t => t.vessel_id === trip.vessel_id && t.ended_at);
+    const pastDailyAvgs = pastTrips.map(t => {
+      const days = Math.max(1, Math.ceil((new Date(t.ended_at) - new Date(t.started_at)) / 86400000));
+      return (parseFloat(t.fuel_consumed_l) || 0) / days;
+    });
+    const expectedDaily = pastDailyAvgs.length > 0 ? pastDailyAvgs.reduce((s,v)=>s+v,0) / pastDailyAvgs.length : null;
+    const isAnomaly = expectedDaily != null && expectedDaily > 0 && (consumed > expectedDaily * 1.5 || consumed < expectedDaily * 0.5);
+
+    const all = load(FUEL_LOG_KEY);
+    all.push({ reading_id: uid(), trip_id: trip.trip_id, remaining_l: current, consumed_l: consumed, logged_at: new Date().toISOString(), is_anomaly: isAnomaly });
+    save(FUEL_LOG_KEY, all);
+
+    showFleetToast(isAnomaly ? 'Saved — consumption looks unusual, worth a check' : 'Reading saved');
+    renderFleetFuelLog();
+  });
+
+  // ===== Reconciliation: scale weight vs. logbook estimate (operations) =====
+  function renderFleetReconciliation(){
+    const trips = load(TRIPS_KEY).filter(t => t.ended_at);
+    const vessels = load(VESSELS_KEY);
+    const sel = document.getElementById('fleetReconTripSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Select A Closed Trip —</option>'
+      + trips.map(t => {
+          const v = vessels.find(vv => vv.vessel_id === t.vessel_id);
+          const when = new Date(t.started_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+          return '<option value="'+t.trip_id+'">'+(v?v.name:'Unknown')+' · '+when+'</option>';
+        }).join('');
+    if(trips.some(t=>t.trip_id===cur)) sel.value = cur;
+    renderFleetReconciliationBody(sel.value);
+  }
+  document.getElementById('fleetReconTripSelect').addEventListener('change', (e) => renderFleetReconciliationBody(e.target.value));
+
+  function renderFleetReconciliationBody(tripId){
+    const body = document.getElementById('fleetReconBody');
+    if(!tripId){ body.innerHTML = '<div class="empty">Select a closed trip to reconcile its catch against scale weights.</div>'; return; }
+    const trip = load(TRIPS_KEY).find(t => t.trip_id === tripId);
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const currency = vessel ? vessel.default_currency : 'THB';
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === tripId);
+
+    if(catches.length === 0){ body.innerHTML = '<div class="empty">No catch was logged on this trip.</div>'; return; }
+
+    body.innerHTML = '<div class="section-h">Logbook Estimate Vs. Scale Weight</div>' + catches.map(c => {
+      const actualVal = c.actual_kg != null && c.actual_kg !== '' ? parseFloat(c.actual_kg) : null;
+      const diff = actualVal != null ? actualVal - parseFloat(c.kg) : null;
+      const diffPct = actualVal != null && parseFloat(c.kg) > 0 ? (diff / parseFloat(c.kg) * 100) : null;
+      const diffColor = diff == null ? '' : (Math.abs(diffPct) > 10 ? 'color:var(--coral);' : 'color:var(--released);');
+      return '<div class="entry" style="display:block;">'
+        + '<div class="sp" style="margin-bottom:8px;">'+c.species+'</div>'
+        + '<div class="grid2" style="grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">'
+        + '<div><label style="margin-top:0;">Logbook Estimate (kg)</label><div class="duration-line">'+c.kg+' kg</div></div>'
+        + '<div><label style="margin-top:0;">Scale Weight (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-catch-id="'+c.catch_id+'" value="'+(c.actual_kg||'')+'" placeholder="e.g. '+c.kg+'"></div>'
+        + '</div>'
+        + (diff != null ? '<div class="duration-line" style="'+diffColor+'">Difference: '+(diff>=0?'+':'')+diff.toFixed(1)+' kg ('+(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%)</div>' : '')
+        + '</div>';
+    }).join('') + '<button class="btn btn-save" id="fleetReconSaveBtn" style="width:100%; margin-top:14px;">Save Scale Weights</button>';
+
+    document.getElementById('fleetReconSaveBtn').addEventListener('click', () => {
+      const inputs = document.querySelectorAll('.fleet-recon-input');
+      const allCatches = load(CATCHES_KEY);
+      inputs.forEach(inp => {
+        const idx = allCatches.findIndex(c => c.catch_id === inp.dataset.catchId);
+        if(idx !== -1 && inp.value !== ''){
+          allCatches[idx].actual_kg = parseFloat(inp.value);
+        }
+      });
+      save(CATCHES_KEY, allCatches);
+      showFleetToast('Scale weights saved');
+      renderFleetReconciliationBody(tripId);
+    });
+  }
+
+  // ===== Documents: license / certificate expiry tracking =====
+  const DOCS_KEY = 'fleet_documents_v1';
+  const DOC_TYPE_LABELS = { fishing_license: 'Fishing License', safety_certificate: 'Safety Certificate', seaman_book: "Seaman's Book", other: 'Other' };
+
+  function renderFleetDocuments(){
+    const vessels = load(VESSELS_KEY);
+    const sel = document.getElementById('fleetDocVessel');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Select Vessel —</option>' + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('');
+    if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
+
+    // Back button goes to whichever role's home is currently active.
+    const backBtn = document.getElementById('fleetDocumentsBackBtn');
+    backBtn.onclick = () => fleetGoTo(document.body.classList.contains('fleet-role-operations') ? 'dashboard' : 'trip');
+
+    const docs = load(DOCS_KEY);
+    const list = document.getElementById('fleetDocumentsList');
+    if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents tracked yet.</div>'; return; }
+
+    const now = Date.now();
+    const sorted = docs.slice().sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+    list.innerHTML = sorted.map(d => {
+      const vessel = vessels.find(v => v.vessel_id === d.vessel_id);
+      const daysLeft = Math.ceil((new Date(d.expiry_date) - now) / 86400000);
+      let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
+      if(daysLeft < 0) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Expired</span>';
+      else if(daysLeft <= 30) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
+      return '<div class="entry"><div><div class="sp">'+(DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
+        + '<div class="meta">'+(vessel?vessel.name:'—')+' · Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>'
+        + badge + '</div>';
+    }).join('');
+  }
+
+  document.getElementById('fleetDocAddBtn').addEventListener('click', () => {
+    const vesselId = document.getElementById('fleetDocVessel').value;
+    const expiry = document.getElementById('fleetDocExpiry').value;
+    if(!vesselId || !expiry){ showFleetToast('Vessel and expiry date are required', true); return; }
+    const docs = load(DOCS_KEY);
+    docs.push({
+      doc_id: uid(), vessel_id: vesselId,
+      doc_type: document.getElementById('fleetDocType').value,
+      label: document.getElementById('fleetDocLabel').value.trim(),
+      expiry_date: expiry
+    });
+    save(DOCS_KEY, docs);
+    document.getElementById('fleetDocLabel').value = '';
+    document.getElementById('fleetDocExpiry').value = '';
+    showFleetToast('Document added');
+    renderFleetDocuments();
+  });
+
   window.renderFleetTrip = renderFleetTrip;
   window.renderFleetTripLog = renderFleetTripLog;
   window.renderFleetDashboard = renderFleetDashboard;
   window.renderFleetVessels = renderFleetVessels;
+  window.renderFleetFuelLog = renderFleetFuelLog;
+  window.renderFleetReconciliation = renderFleetReconciliation;
+  window.renderFleetDocuments = renderFleetDocuments;
+  window.renderFleetTripDetail = renderFleetTripDetail;
 
-  if(window.fishPulseReapplyIfActive) window.fishPulseReapplyIfActive('fleet', renderFleetTrip);
+  if(window.fishPulseReapplyIfActive){
+    window.fishPulseReapplyIfActive('fleet', () => {
+      if(document.body.classList.contains('fleet-role-operations')) renderFleetDashboard();
+      else if(document.body.classList.contains('fleet-role-captain')) renderFleetTrip();
+    });
+  }
 })();
 </script>
 
