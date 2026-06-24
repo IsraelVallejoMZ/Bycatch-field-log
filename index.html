@@ -483,18 +483,97 @@
   }
   .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
   .toast.error{ background: var(--coral); }
+
+  /* ===== Mode select screen ===== */
+  .mode-select-wrap{
+    height:100%; display:flex; flex-direction:column; justify-content:center;
+    padding: 24px 20px; max-width: 420px; margin: 0 auto;
+  }
+  .mode-select-header{ text-align:center; margin-bottom: 28px; }
+  .mode-select-eyebrow{
+    font-family: var(--data); font-size: 11.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .mode-select-title{
+    font-family: var(--display); font-size: 20px; font-weight: 600;
+    margin-top: 6px; color: var(--ink);
+  }
+  .mode-card{
+    display:flex; align-items:center; gap: 16px;
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    padding: 20px 18px; margin-bottom: 14px; cursor:pointer; text-align:left;
+  }
+  .mode-card:active{ transform: scale(0.98); }
+  .mode-card-icon{ flex-shrink:0; width: 30px; height:30px; }
+  .mode-card-icon svg{ width:100%; height:100%; }
+  .mode-card-title{ font-family: var(--display); font-weight:600; font-size: 16px; color: var(--ink); }
+  .mode-card-sub{ font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+
+  .switch-mode-btn{
+    background: rgba(255,255,255,0.1); border:none; color: var(--paper);
+    font-family: var(--data); font-size: 10.5px; font-weight:600; letter-spacing: 0.03em;
+    padding: 6px 11px; border-radius: 14px; cursor:pointer; flex-shrink:0;
+  }
+
+  /* Mode visibility: research-only and fleet-only chrome stay hidden
+     unless body carries the matching mode class. The mode-select screen
+     itself is mode-agnostic and always eligible via its own .active flag. */
+  .research-only, .fleet-only{ display:none; }
+  body.mode-research .research-only{ display:flex; }
+  body.mode-fleet .fleet-only{ display:flex; }
 </style>
 </head>
 <body>
 
+<!-- ================= MODE SELECT ================= -->
+<section class="screen active" id="screen-mode-select">
+  <div class="mode-select-wrap">
+    <div class="mode-select-header">
+      <div class="mode-select-eyebrow">Fish Pulse</div>
+      <div class="mode-select-title">Choose a mode</div>
+    </div>
+
+    <div class="mode-card" data-mode="research">
+      <div class="mode-card-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="20" r="10" stroke="#0a5c8c" stroke-width="2.4"/>
+          <line x1="31.5" y1="27.5" x2="40" y2="36" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="24" y1="13" x2="24" y2="9" stroke="#0a5c8c" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mode-card-title">Field Research</div>
+        <div class="mode-card-sub">Species, biology, bycatch, survey data</div>
+      </div>
+    </div>
+
+    <div class="mode-card" data-mode="fleet">
+      <div class="mode-card-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 8v22M16 16l8-5 8 5" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="13" r="2.3" fill="#0a5c8c"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mode-card-title">Fishing Operations</div>
+        <div class="mode-card-sub">Trips, costs, fleet efficiency, traceability</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= HOME ================= -->
-<section class="screen active" id="screen-home">
+<section class="screen" id="screen-home">
   <div class="topbar">
     <div class="topbar-row">
       <span class="brand">Fish Pulse</span>
-      <div class="tally" id="tally">
-        <span class="tally-dot off" id="netDot"></span>
-        <span id="tallyCount">0 records</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="switch-mode-btn" id="switchModeBtnResearch">Switch mode</button>
+        <div class="tally" id="tally">
+          <span class="tally-dot off" id="netDot"></span>
+          <span id="tallyCount">0 records</span>
+        </div>
       </div>
     </div>
     <h1>Today's Survey</h1>
@@ -928,8 +1007,349 @@
   </main>
 </section>
 
-<!-- ================= TAB BAR ================= -->
-<nav class="tabbar">
+<!-- ============================================================= -->
+<!-- ================= FISHING OPERATIONS MODE ================= -->
+<!-- ============================================================= -->
+
+<!-- ================= FLEET: TRIP (home of fleet mode) ================= -->
+<section class="screen" id="screen-fleet-trip">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Fish Pulse · Fleet</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="switch-mode-btn" id="switchModeBtnFleet">Switch Mode</button>
+      </div>
+    </div>
+    <h1>Active Trip</h1>
+    <div class="site-line" id="fleetVesselLine">No Vessel Selected</div>
+  </div>
+  <main>
+    <div id="fleetNoTripCard">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px;">Start A New Trip</div>
+        <label for="fleetCaptainSelect">Captain</label>
+        <select id="fleetCaptainSelect">
+          <option value="">— Select Captain —</option>
+          <option value="__new__">+ New Captain</option>
+        </select>
+        <div id="fleetNewCaptainBox" style="display:none; margin-top:10px;">
+          <label for="fleetNewCaptainName">Captain Name</label>
+          <input type="text" id="fleetNewCaptainName" placeholder="e.g. J. Sombrero">
+        </div>
+
+        <label for="fleetVesselSelect">Vessel</label>
+        <select id="fleetVesselSelect">
+          <option value="">— Select Vessel —</option>
+          <option value="__new__">+ New Vessel</option>
+        </select>
+        <div id="fleetNewVesselBox" style="display:none; margin-top:10px;">
+          <label for="fleetNewVesselName">Vessel Name</label>
+          <input type="text" id="fleetNewVesselName" placeholder="e.g. Vessel 04">
+          <label for="fleetNewVesselCurrency">Default Currency</label>
+          <select id="fleetNewVesselCurrency">
+            <option value="THB">THB</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="MXN">MXN</option>
+            <option value="VND">VND</option>
+          </select>
+        </div>
+
+        <label for="fleetCrewCount">Crew Count</label>
+        <input type="number" id="fleetCrewCount" inputmode="numeric" placeholder="e.g. 4">
+
+        <label for="fleetFuelLoaded">Fuel Loaded (L)</label>
+        <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
+
+        <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;">Start Trip</button>
+      </div>
+    </div>
+
+    <div id="fleetActiveTripCard" style="display:none;">
+      <div class="home-stat">
+        <div class="num" id="fleetTripDuration">0h 00m</div>
+        <div class="label">Trip Duration</div>
+        <span class="site-tag" id="fleetTripVesselTag">Vessel</span>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-btn primary" id="fleetLogHaulBtn">
+          <span class="qa-icon">⚓</span>
+          <div class="qa-title">Log Haul</div>
+          <div class="qa-sub">Gear, depth, duration</div>
+        </div>
+        <div class="qa-btn" id="fleetLogCatchBtn">
+          <span class="qa-icon">🐟</span>
+          <div class="qa-title">Log Catch</div>
+          <div class="qa-sub">Species, kg, ref. price</div>
+        </div>
+      </div>
+
+      <button class="track-toggle-btn" id="fleetCloseTripBtn" style="margin-bottom:20px;">Close Trip</button>
+
+      <div class="section-h">Catches Logged This Trip</div>
+      <div id="fleetTripCatchList"></div>
+
+      <div class="section-h">Hauls Logged This Trip</div>
+      <div id="fleetTripHaulList"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= FLEET: LOG HAUL ================= -->
+<section class="screen" id="screen-fleet-log-haul">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand">Log Haul</span>
+    </div>
+    <h1>Haul Details</h1>
+    <div class="site-line" id="fleetHaulVesselLine">&nbsp;</div>
+  </div>
+  <main>
+    <div class="card">
+      <label for="fleetGearType">Gear Type</label>
+      <select id="fleetGearType">
+        <option value="">— Select —</option>
+        <option value="Demersal trawl">Demersal Trawl</option>
+        <option value="Otter trawl">Otter Trawl</option>
+        <option value="Gillnet">Gillnet</option>
+        <option value="Longline">Longline</option>
+        <option value="Purse seine">Purse Seine</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="fleetDepth">Depth (m)</label>
+      <input type="number" id="fleetDepth" inputmode="decimal" placeholder="e.g. 35">
+
+      <div class="grid2">
+        <div>
+          <label for="fleetHaulStart">Haul Start</label>
+          <input type="time" id="fleetHaulStart">
+        </div>
+        <div>
+          <label for="fleetHaulEnd">Haul End</label>
+          <input type="time" id="fleetHaulEnd">
+        </div>
+      </div>
+      <div class="duration-line" id="fleetHaulDurationLine">Duration: —</div>
+
+      <div class="gear-effort-fields" id="fleetNetEffortFields" style="display:none;">
+        <label for="fleetNetWidth">Net Width / Mouth Opening (m)</label>
+        <input type="number" id="fleetNetWidth" inputmode="decimal" placeholder="e.g. 12">
+      </div>
+      <div class="gear-effort-fields" id="fleetHookEffortFields" style="display:none;">
+        <label for="fleetHookCount">Number Of Hooks</label>
+        <input type="number" id="fleetHookCount" inputmode="numeric" placeholder="e.g. 200">
+      </div>
+    </div>
+
+    <div class="card">
+      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:0;">
+        <input type="checkbox" id="fleetLogCatchNow" checked style="width:auto; margin:0;">
+        <span style="text-transform:none; font-family:var(--body); font-size:14px; color:var(--ink); letter-spacing:0;">Log Catch For This Haul Now</span>
+      </label>
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:6px;">Leave unchecked to log catch later, combined at end of trip</div>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="fleetHaulCancelBtn">Cancel</button>
+    <button class="btn btn-save" id="fleetHaulSaveBtn">Save Haul</button>
+  </div>
+</section>
+
+<!-- ================= FLEET: LOG CATCH ================= -->
+<section class="screen" id="screen-fleet-log-catch">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand" id="fleetCatchBrand">Log Catch</span>
+    </div>
+    <h1>Catch Entry</h1>
+    <div class="site-line" id="fleetCatchHaulLine">Not Linked To A Haul</div>
+  </div>
+  <main>
+    <div class="card">
+      <label for="fleetSpecies">Species / Commercial Category</label>
+      <input type="text" id="fleetSpecies" placeholder="e.g. Pomadasys kaakan, or 'mixed reef fish'" list="fleet-species-list">
+      <datalist id="fleet-species-list"></datalist>
+
+      <label for="fleetCatchKg">Weight (kg)</label>
+      <input type="number" id="fleetCatchKg" inputmode="decimal" placeholder="0.0">
+
+      <label>Reference Price <span class="optional-tag">optional, estimated</span></label>
+      <div class="grid2">
+        <input type="number" id="fleetRefPrice" inputmode="decimal" placeholder="e.g. 85">
+        <select id="fleetRefCurrency">
+          <option value="THB">THB</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="MXN">MXN</option>
+          <option value="VND">VND</option>
+        </select>
+      </div>
+      <div class="duration-line" id="fleetEstValueLine">Estimated Value: —</div>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="fleetCatchAddAnotherBtn">+ Add Another</button>
+    <button class="btn btn-save" id="fleetCatchSaveBtn">Save &amp; Return To Trip</button>
+  </div>
+</section>
+
+<!-- ================= FLEET: CLOSE TRIP ================= -->
+<section class="screen" id="screen-fleet-close-trip">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand">Close Trip</span>
+    </div>
+    <h1>Trip Summary &amp; Costs</h1>
+    <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Trip Summary</div>
+      <div class="grid2">
+        <div><label style="margin-top:0;">Duration</label><div class="duration-line" id="fleetCloseDuration">—</div></div>
+        <div><label style="margin-top:0;">Hauls Logged</label><div class="duration-line" id="fleetCloseHauls">—</div></div>
+        <div><label>Total Catch</label><div class="duration-line" id="fleetCloseTotalKg">—</div></div>
+        <div><label>Est. Catch Value</label><div class="duration-line" id="fleetCloseEstValue">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="fleetFuelRemaining">Fuel Loaded (L)</label>
+      <input type="number" id="fleetFuelLoadedDisplay" disabled>
+      <label for="fleetFuelRemaining">Fuel Remaining (L)</label>
+      <input type="number" id="fleetFuelRemaining" inputmode="decimal" placeholder="e.g. 52">
+      <div class="duration-line" id="fleetFuelConsumedLine">Fuel Consumed: —</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Costs You Can Log Now</div>
+
+      <label for="fleetCostCrew">Crew Payment <span class="optional-tag">per trip</span></label>
+      <div class="grid2">
+        <input type="number" id="fleetCostCrew" inputmode="decimal" placeholder="e.g. 2000">
+        <select id="fleetCostCrewCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+      </div>
+
+      <label for="fleetCostIce">Ice / Preservation <span class="optional-tag">per trip</span></label>
+      <div class="grid2">
+        <input type="number" id="fleetCostIce" inputmode="decimal" placeholder="e.g. 300">
+        <select id="fleetCostIceCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+      </div>
+
+      <label for="fleetCostProvisions">Provisions <span class="optional-tag">per day at sea</span></label>
+      <div class="grid2">
+        <input type="number" id="fleetCostProvisions" inputmode="decimal" placeholder="e.g. 250">
+        <select id="fleetCostProvisionsCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+      </div>
+
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:14px; line-height:1.5;">
+        Maintenance, permits, and port dues are usually added by the office afterward.
+      </div>
+    </div>
+
+    <div class="backup-banner stale" style="margin-bottom:18px;">
+      <div class="bb-text">
+        <div class="bb-title">Before You Close</div>
+        <div class="bb-sub">Closing locks new hauls and catch entries. The office can still add remaining costs later.</div>
+      </div>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="fleetCloseCancelBtn">Cancel</button>
+    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--amber);">Close Trip</button>
+  </div>
+</section>
+
+<!-- ================= FLEET: TRIP LOG ================= -->
+<section class="screen" id="screen-fleet-trip-log">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand">Trip Log</span>
+    </div>
+    <h1>Past Trips</h1>
+    <div class="site-line" id="fleetTripLogVesselLine">All Vessels</div>
+  </div>
+  <main>
+    <div class="filter-row">
+      <select id="fleetTripLogVesselFilter" style="width:100%;">
+        <option value="">All Vessels</option>
+      </select>
+    </div>
+    <div id="fleetTripLogList"></div>
+  </main>
+</section>
+
+<!-- ================= FLEET: DASHBOARD ================= -->
+<section class="screen" id="screen-fleet-dashboard">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand">Fleet</span>
+    </div>
+    <h1>Fleet Overview</h1>
+    <div class="site-line">&nbsp;</div>
+  </div>
+  <main>
+    <div id="fleetDashboardSummary"></div>
+    <div class="section-h">Efficiency By Vessel</div>
+    <div id="fleetDashboardVessels"></div>
+    <div class="section-h">Needs Attention</div>
+    <div id="fleetDashboardAlerts"></div>
+  </main>
+</section>
+
+<!-- ================= FLEET: VESSELS (admin) ================= -->
+<section class="screen" id="screen-fleet-vessels">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-trip">←</button>
+      <span class="brand">Vessels</span>
+    </div>
+    <h1>Vessels &amp; Captains</h1>
+    <div class="site-line">&nbsp;</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Add Vessel</div>
+      <label for="vesselsNewName">Vessel Name</label>
+      <input type="text" id="vesselsNewName" placeholder="e.g. Vessel 09">
+      <label for="vesselsNewCurrency">Default Currency</label>
+      <select id="vesselsNewCurrency">
+        <option value="THB">THB</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="MXN">MXN</option>
+        <option value="VND">VND</option>
+      </select>
+      <label for="vesselsNewTarget">Efficiency Target — Margin Per Trip <span class="optional-tag">optional</span></label>
+      <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
+      <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;">Add Vessel</button>
+    </div>
+
+    <div class="section-h">All Vessels</div>
+    <div id="vesselsList"></div>
+
+    <div class="section-h">All Captains</div>
+    <div id="captainsList"></div>
+  </main>
+</section>
+
+<!-- ================= FLEET TAB BAR ================= -->
+<nav class="tabbar fleet-only" id="tabbarFleet">
+  <button class="tab active" data-go="fleet-trip"><span class="tab-icon">⚓</span>Trip</button>
+  <button class="tab" data-go="fleet-trip-log"><span class="tab-icon">☷</span>Trip Log</button>
+  <button class="tab" data-go="fleet-dashboard"><span class="tab-icon">📊</span>Fleet</button>
+  <button class="tab" data-go="fleet-vessels"><span class="tab-icon">🚢</span>Vessels</button>
+</nav>
+
+<!-- ================= TAB BAR (RESEARCH) ================= -->
+<nav class="tabbar research-only" id="tabbarResearch">
   <button class="tab active" data-go="home"><span class="tab-icon">⌂</span>Home</button>
   <button class="tab" data-go="record"><span class="tab-icon">＋</span>New</button>
   <button class="tab" data-go="map"><span class="tab-icon">⌖</span>Map</button>
@@ -937,6 +1357,606 @@
 </nav>
 
 <div class="toast" id="toast"></div>
+
+<script>
+// ===== Mode selection (Field Research vs Fishing Operations) =====
+// Runs before anything else. Decides whether to show the mode-select
+// screen or jump straight into whichever mode was chosen recently.
+(function(){
+  const MODE_KEY = 'fishpulse_active_mode';
+  const MODE_AT_KEY = 'fishpulse_mode_selected_at';
+  const MODE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+  function getStoredMode(){
+    const mode = localStorage.getItem(MODE_KEY);
+    const at = parseInt(localStorage.getItem(MODE_AT_KEY), 10);
+    if(!mode || !at) return null;
+    if(Date.now() - at >= MODE_TTL_MS) return null; // expired, show selector again
+    return mode;
+  }
+
+  function setMode(mode){
+    localStorage.setItem(MODE_KEY, mode);
+    localStorage.setItem(MODE_AT_KEY, String(Date.now()));
+    applyMode(mode);
+  }
+
+  // Swaps which top-level screen tree is visible: mode-select, the
+  // research screens (+ their tab bar), or the fleet screens (+ theirs).
+  function applyMode(mode){
+    document.body.classList.remove('mode-research', 'mode-fleet');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    if(mode === 'research'){
+      document.body.classList.add('mode-research');
+      document.getElementById('screen-home').classList.add('active');
+      if(typeof renderHome === 'function') renderHome();
+    } else if(mode === 'fleet'){
+      document.body.classList.add('mode-fleet');
+      document.getElementById('screen-fleet-trip').classList.add('active');
+      if(typeof renderFleetTrip === 'function') renderFleetTrip();
+    }
+  }
+
+  function showModeSelect(){
+    document.body.classList.remove('mode-research', 'mode-fleet');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-mode-select').classList.add('active');
+  }
+
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => setMode(card.dataset.mode));
+  });
+
+  document.addEventListener('click', (e) => {
+    if(e.target.closest('[data-switch-mode]') || e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet'){
+      showModeSelect();
+    }
+  });
+
+  window.fishPulseGoToModeSelect = showModeSelect;
+  window.fishPulseGetActiveMode = getStoredMode;
+  window.fishPulseReapplyIfActive = function(mode, renderFn){
+    if(document.body.classList.contains('mode-' + mode) && typeof renderFn === 'function'){
+      renderFn();
+    }
+  };
+
+  const existing = getStoredMode();
+  if(existing){
+    applyMode(existing);
+  } else {
+    showModeSelect();
+  }
+})();
+</script>
+
+<script>
+// ===== Fishing Operations mode (fleet) =====
+// Self-contained module: its own storage namespace (fleet_*), its own
+// goTo() router scoped to fleet-* screen ids, independent from the
+// research segment's IIFE above.
+(function(){
+  const TRIPS_KEY = 'fleet_trips_v1';
+  const HAULS_KEY = 'fleet_hauls_v1';
+  const CATCHES_KEY = 'fleet_catches_v1';
+  const COSTS_KEY = 'fleet_trip_costs_v1';
+  const VESSELS_KEY = 'fleet_vessels_v1';
+  const CAPTAINS_KEY = 'fleet_captains_v1';
+  const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
+
+  function uid(){
+    return 'F-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+  }
+  function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
+  function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
+
+  function getActiveTrip(){
+    const id = localStorage.getItem(ACTIVE_TRIP_KEY);
+    if(!id) return null;
+    return load(TRIPS_KEY).find(t => t.trip_id === id) || null;
+  }
+
+  function fmtMoney(amount, currency){
+    if(amount == null || amount === '') return '—';
+    return Number(amount).toLocaleString('en-US', {maximumFractionDigits:0}) + ' ' + (currency || '');
+  }
+
+  // ===== Fleet-scoped navigation =====
+  // Mirrors the research segment's goTo() pattern, but only ever touches
+  // fleet-* screens, so it can't interfere with the research router.
+  function fleetGoTo(screen){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-fleet-' + screen).classList.add('active');
+    document.querySelectorAll('#tabbarFleet .tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector('#tabbarFleet .tab[data-go="fleet-' + screen + '"]');
+    if(tab) tab.classList.add('active');
+    if(screen === 'trip') renderFleetTrip();
+    if(screen === 'trip-log') renderFleetTripLog();
+    if(screen === 'dashboard') renderFleetDashboard();
+    if(screen === 'vessels') renderFleetVessels();
+    const active = document.querySelector('.screen.active');
+    if(active) active.scrollTop = 0;
+  }
+  document.querySelectorAll('[data-go^="fleet-"]').forEach(el => {
+    el.addEventListener('click', () => fleetGoTo(el.dataset.go.replace('fleet-','')));
+  });
+
+  // ===== Vessels & captains =====
+  function renderVesselOptions(){
+    const vessels = load(VESSELS_KEY);
+    const sel = document.getElementById('fleetVesselSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Select Vessel —</option>'
+      + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('')
+      + '<option value="__new__">+ New Vessel</option>';
+    if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
+
+    const filterSel = document.getElementById('fleetTripLogVesselFilter');
+    if(filterSel){
+      const curF = filterSel.value;
+      filterSel.innerHTML = '<option value="">All Vessels</option>'
+        + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('');
+      if(vessels.some(v=>v.vessel_id===curF)) filterSel.value = curF;
+    }
+  }
+  function renderCaptainOptions(){
+    const captains = load(CAPTAINS_KEY);
+    const sel = document.getElementById('fleetCaptainSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Select Captain —</option>'
+      + captains.map(c => '<option value="'+c.captain_id+'">'+c.name+'</option>').join('')
+      + '<option value="__new__">+ New Captain</option>';
+    if(captains.some(c=>c.captain_id===cur)) sel.value = cur;
+  }
+
+  document.getElementById('fleetVesselSelect').addEventListener('change', (e) => {
+    document.getElementById('fleetNewVesselBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
+  });
+  document.getElementById('fleetCaptainSelect').addEventListener('change', (e) => {
+    document.getElementById('fleetNewCaptainBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
+  });
+
+  document.getElementById('fleetStartTripBtn').addEventListener('click', () => {
+    let vesselId = document.getElementById('fleetVesselSelect').value;
+    let captainId = document.getElementById('fleetCaptainSelect').value;
+
+    if(vesselId === '__new__'){
+      const name = document.getElementById('fleetNewVesselName').value.trim();
+      if(!name){ showFleetToast('Vessel name is required', true); return; }
+      const vessel = { vessel_id: uid(), name, default_currency: document.getElementById('fleetNewVesselCurrency').value };
+      const vessels = load(VESSELS_KEY); vessels.push(vessel); save(VESSELS_KEY, vessels);
+      vesselId = vessel.vessel_id;
+    }
+    if(captainId === '__new__'){
+      const name = document.getElementById('fleetNewCaptainName').value.trim();
+      if(!name){ showFleetToast('Captain name is required', true); return; }
+      const captain = { captain_id: uid(), name };
+      const captains = load(CAPTAINS_KEY); captains.push(captain); save(CAPTAINS_KEY, captains);
+      captainId = captain.captain_id;
+    }
+    if(!vesselId || !captainId){ showFleetToast('Select or add a captain and vessel', true); return; }
+
+    const trip = {
+      trip_id: uid(),
+      vessel_id: vesselId,
+      captain_id: captainId,
+      started_at: new Date().toISOString(),
+      ended_at: null,
+      crew_count: document.getElementById('fleetCrewCount').value || '',
+      fuel_loaded_l: document.getElementById('fleetFuelLoaded').value || '',
+      fuel_consumed_l: ''
+    };
+    const trips = load(TRIPS_KEY); trips.push(trip); save(TRIPS_KEY, trips);
+    localStorage.setItem(ACTIVE_TRIP_KEY, trip.trip_id);
+    showFleetToast('Trip started');
+    renderFleetTrip();
+  });
+
+  document.getElementById('vesselsAddBtn').addEventListener('click', () => {
+    const name = document.getElementById('vesselsNewName').value.trim();
+    if(!name){ showFleetToast('Vessel name is required', true); return; }
+    const vessel = {
+      vessel_id: uid(), name,
+      default_currency: document.getElementById('vesselsNewCurrency').value,
+      margin_target: document.getElementById('vesselsNewTarget').value || ''
+    };
+    const vessels = load(VESSELS_KEY); vessels.push(vessel); save(VESSELS_KEY, vessels);
+    document.getElementById('vesselsNewName').value = '';
+    document.getElementById('vesselsNewTarget').value = '';
+    showFleetToast('Vessel added');
+    renderFleetVessels();
+  });
+
+  function showFleetToast(msg, isError){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', !!isError);
+    t.classList.add('show');
+    setTimeout(()=> t.classList.remove('show'), 1800);
+  }
+
+  // ===== Trip screen (fleet home) =====
+  function renderFleetTrip(){
+    renderVesselOptions();
+    renderCaptainOptions();
+    const trip = getActiveTrip();
+    const noTripCard = document.getElementById('fleetNoTripCard');
+    const activeCard = document.getElementById('fleetActiveTripCard');
+    if(!trip){
+      noTripCard.style.display = 'block';
+      activeCard.style.display = 'none';
+      document.getElementById('fleetVesselLine').textContent = 'No Vessel Selected';
+      return;
+    }
+    noTripCard.style.display = 'none';
+    activeCard.style.display = 'block';
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const vesselName = vessel ? vessel.name : 'Unknown Vessel';
+    document.getElementById('fleetVesselLine').textContent = vesselName;
+    document.getElementById('fleetTripVesselTag').textContent = vesselName;
+
+    const startedMs = new Date(trip.started_at).getTime();
+    const elapsed = Date.now() - startedMs;
+    const h = Math.floor(elapsed / 3600000);
+    const m = Math.floor((elapsed % 3600000) / 60000);
+    document.getElementById('fleetTripDuration').textContent = h + 'h ' + String(m).padStart(2,'0') + 'm';
+
+    const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+
+    const haulList = document.getElementById('fleetTripHaulList');
+    haulList.innerHTML = hauls.length === 0
+      ? '<div class="empty">No hauls logged yet this trip.</div>'
+      : hauls.slice().reverse().map(hl => '<div class="entry"><div><div class="sp">'+(hl.gear_type||'—')+'</div>'
+        + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+'</div></div></div>').join('');
+
+    const catchList = document.getElementById('fleetTripCatchList');
+    catchList.innerHTML = catches.length === 0
+      ? '<div class="empty">No catch logged yet this trip.</div>'
+      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+        + '<div class="meta">'+(c.ref_price ? 'Ref. '+c.ref_price+' '+c.currency+'/kg' : 'No Ref. Price')+'</div></div>'
+        + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
+  }
+
+  document.getElementById('fleetLogHaulBtn').addEventListener('click', () => {
+    document.getElementById('fleetHaulStart').value = new Date().toISOString().slice(11,16);
+    fleetGoTo('log-haul');
+  });
+  document.getElementById('fleetLogCatchBtn').addEventListener('click', () => {
+    currentHaulIdForCatch = null;
+    document.getElementById('fleetCatchHaulLine').textContent = 'Not Linked To A Haul';
+    fleetGoTo('log-catch');
+  });
+
+  // ===== Log haul =====
+  document.getElementById('fleetGearType').addEventListener('change', (e) => {
+    const isNet = ['Demersal trawl','Otter trawl','Purse seine'].includes(e.target.value);
+    const isHook = e.target.value === 'Longline';
+    document.getElementById('fleetNetEffortFields').style.display = isNet ? 'block' : 'none';
+    document.getElementById('fleetHookEffortFields').style.display = isHook ? 'block' : 'none';
+  });
+  function updateFleetHaulDuration(){
+    const s = document.getElementById('fleetHaulStart').value;
+    const e = document.getElementById('fleetHaulEnd').value;
+    const line = document.getElementById('fleetHaulDurationLine');
+    if(!s || !e){ line.textContent = 'Duration: —'; return; }
+    const [sh,sm] = s.split(':').map(Number);
+    const [eh,em] = e.split(':').map(Number);
+    let mins = (eh*60+em) - (sh*60+sm);
+    if(mins < 0) mins += 24*60;
+    line.textContent = 'Duration: ' + Math.floor(mins/60) + 'h ' + (mins%60) + 'm';
+  }
+  document.getElementById('fleetHaulStart').addEventListener('change', updateFleetHaulDuration);
+  document.getElementById('fleetHaulEnd').addEventListener('change', updateFleetHaulDuration);
+
+  let currentHaulIdForCatch = null;
+
+  document.getElementById('fleetHaulCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
+  document.getElementById('fleetHaulSaveBtn').addEventListener('click', () => {
+    const trip = getActiveTrip();
+    if(!trip){ showFleetToast('No active trip', true); return; }
+    const s = document.getElementById('fleetHaulStart').value;
+    const e = document.getElementById('fleetHaulEnd').value;
+    let durationMin = '';
+    if(s && e){
+      const [sh,sm] = s.split(':').map(Number);
+      const [eh,em] = e.split(':').map(Number);
+      let mins = (eh*60+em) - (sh*60+sm);
+      if(mins < 0) mins += 24*60;
+      durationMin = mins;
+    }
+    const haul = {
+      haul_id: uid(),
+      trip_id: trip.trip_id,
+      gear_type: document.getElementById('fleetGearType').value,
+      depth: document.getElementById('fleetDepth').value,
+      haul_start: s,
+      haul_end: e,
+      duration_min: durationMin,
+      net_width: document.getElementById('fleetNetWidth').value || '',
+      hook_count: document.getElementById('fleetHookCount').value || ''
+    };
+    const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
+    showFleetToast('Haul saved');
+
+    const logCatchNow = document.getElementById('fleetLogCatchNow').checked;
+    document.getElementById('fleetGearType').value = '';
+    document.getElementById('fleetDepth').value = '';
+    document.getElementById('fleetHaulStart').value = '';
+    document.getElementById('fleetHaulEnd').value = '';
+    document.getElementById('fleetNetWidth').value = '';
+    document.getElementById('fleetHookCount').value = '';
+    document.getElementById('fleetHaulDurationLine').textContent = 'Duration: —';
+
+    if(logCatchNow){
+      currentHaulIdForCatch = haul.haul_id;
+      document.getElementById('fleetCatchHaulLine').textContent = 'Linked To This Haul';
+      fleetGoTo('log-catch');
+    } else {
+      fleetGoTo('trip');
+    }
+  });
+
+  // ===== Log catch =====
+  function updateFleetEstValue(){
+    const kg = parseFloat(document.getElementById('fleetCatchKg').value) || 0;
+    const price = parseFloat(document.getElementById('fleetRefPrice').value) || 0;
+    const currency = document.getElementById('fleetRefCurrency').value;
+    const line = document.getElementById('fleetEstValueLine');
+    line.textContent = (kg && price) ? 'Estimated Value: ' + fmtMoney(kg*price, currency) : 'Estimated Value: —';
+  }
+  document.getElementById('fleetCatchKg').addEventListener('input', updateFleetEstValue);
+  document.getElementById('fleetRefPrice').addEventListener('input', updateFleetEstValue);
+  document.getElementById('fleetRefCurrency').addEventListener('change', updateFleetEstValue);
+
+  function clearFleetCatchForm(){
+    document.getElementById('fleetSpecies').value = '';
+    document.getElementById('fleetCatchKg').value = '';
+    document.getElementById('fleetRefPrice').value = '';
+    document.getElementById('fleetEstValueLine').textContent = 'Estimated Value: —';
+  }
+  function saveFleetCatch(){
+    const trip = getActiveTrip();
+    if(!trip){ showFleetToast('No active trip', true); return false; }
+    const species = document.getElementById('fleetSpecies').value.trim();
+    if(!species){ showFleetToast('Species or category is required', true); return false; }
+    const kg = parseFloat(document.getElementById('fleetCatchKg').value) || 0;
+    const price = document.getElementById('fleetRefPrice').value;
+    const currency = document.getElementById('fleetRefCurrency').value;
+    const record = {
+      catch_id: uid(),
+      trip_id: trip.trip_id,
+      haul_id: currentHaulIdForCatch,
+      species,
+      kg,
+      ref_price: price || '',
+      currency,
+      estimated_value: price ? kg * parseFloat(price) : '',
+      actual_sale_id: null,
+      actual_unit_price: null,
+      actual_value: null
+    };
+    const catches = load(CATCHES_KEY); catches.push(record); save(CATCHES_KEY, catches);
+    return true;
+  }
+  document.getElementById('fleetCatchAddAnotherBtn').addEventListener('click', () => {
+    if(saveFleetCatch()){ clearFleetCatchForm(); showFleetToast('Catch saved'); }
+  });
+  document.getElementById('fleetCatchSaveBtn').addEventListener('click', () => {
+    if(saveFleetCatch()){ clearFleetCatchForm(); showFleetToast('Catch saved'); fleetGoTo('trip'); }
+  });
+
+  // ===== Close trip =====
+  document.getElementById('fleetCloseTripBtn').addEventListener('click', () => {
+    const trip = getActiveTrip();
+    if(!trip) return;
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    document.getElementById('fleetCloseVesselLine').textContent = vessel ? vessel.name : '';
+
+    const startedMs = new Date(trip.started_at).getTime();
+    const elapsed = Date.now() - startedMs;
+    const h = Math.floor(elapsed / 3600000);
+    const m = Math.floor((elapsed % 3600000) / 60000);
+    document.getElementById('fleetCloseDuration').textContent = h + 'h ' + String(m).padStart(2,'0') + 'm';
+
+    const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+    document.getElementById('fleetCloseHauls').textContent = String(hauls.length);
+    const totalKg = catches.reduce((s,c) => s + (parseFloat(c.kg)||0), 0);
+    document.getElementById('fleetCloseTotalKg').textContent = totalKg.toFixed(1) + ' kg';
+    const vesselCurrency = vessel ? vessel.default_currency : 'THB';
+    const totalEstValue = catches.reduce((s,c) => s + (parseFloat(c.estimated_value)||0), 0);
+    document.getElementById('fleetCloseEstValue').textContent = fmtMoney(totalEstValue, vesselCurrency);
+
+    document.getElementById('fleetFuelLoadedDisplay').value = trip.fuel_loaded_l || '';
+    document.getElementById('fleetFuelRemaining').value = '';
+    document.getElementById('fleetFuelConsumedLine').textContent = 'Fuel Consumed: —';
+    document.getElementById('fleetCostCrew').value = '';
+    document.getElementById('fleetCostIce').value = '';
+    document.getElementById('fleetCostProvisions').value = '';
+
+    fleetGoTo('close-trip');
+  });
+  document.getElementById('fleetFuelRemaining').addEventListener('input', () => {
+    const trip = getActiveTrip();
+    if(!trip) return;
+    const loaded = parseFloat(trip.fuel_loaded_l) || 0;
+    const remaining = parseFloat(document.getElementById('fleetFuelRemaining').value);
+    const line = document.getElementById('fleetFuelConsumedLine');
+    line.textContent = isNaN(remaining) ? 'Fuel Consumed: —' : 'Fuel Consumed: ' + Math.max(0, loaded - remaining).toFixed(1) + ' L';
+  });
+  document.getElementById('fleetCloseCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
+  document.getElementById('fleetCloseConfirmBtn').addEventListener('click', () => {
+    const trip = getActiveTrip();
+    if(!trip) return;
+    const trips = load(TRIPS_KEY);
+    const idx = trips.findIndex(t => t.trip_id === trip.trip_id);
+    if(idx === -1) return;
+
+    const loaded = parseFloat(trip.fuel_loaded_l) || 0;
+    const remaining = parseFloat(document.getElementById('fleetFuelRemaining').value) || 0;
+    trips[idx].ended_at = new Date().toISOString();
+    trips[idx].fuel_consumed_l = Math.max(0, loaded - remaining);
+    save(TRIPS_KEY, trips);
+
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const currency = vessel ? vessel.default_currency : 'THB';
+    const costs = load(COSTS_KEY);
+    const daysAtSea = Math.max(1, Math.ceil((new Date(trips[idx].ended_at) - new Date(trip.started_at)) / 86400000));
+
+    costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'fuel', basis: 'per_trip', amount: trips[idx].fuel_consumed_l, currency, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+
+    const crew = document.getElementById('fleetCostCrew').value;
+    if(crew) costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'crew', basis: 'per_trip', amount: parseFloat(crew), currency: document.getElementById('fleetCostCrewCurrency').value, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+
+    const ice = document.getElementById('fleetCostIce').value;
+    if(ice) costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'ice', basis: 'per_trip', amount: parseFloat(ice), currency: document.getElementById('fleetCostIceCurrency').value, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+
+    const provisions = document.getElementById('fleetCostProvisions').value;
+    if(provisions) costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'provisions', basis: 'per_day_at_sea', amount: parseFloat(provisions) * daysAtSea, currency: document.getElementById('fleetCostProvisionsCurrency').value, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+
+    save(COSTS_KEY, costs);
+    localStorage.removeItem(ACTIVE_TRIP_KEY);
+    showFleetToast('Trip closed');
+    fleetGoTo('trip');
+  });
+
+  // ===== Trip log =====
+  function computeTripMargin(trip){
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const currency = vessel ? vessel.default_currency : 'THB';
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+    const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
+    const estValue = catches.reduce((s,c) => s + (parseFloat(c.estimated_value)||0), 0);
+    const knownCosts = costs.reduce((s,c) => s + (parseFloat(c.amount)||0), 0);
+
+    // Costs we expect to eventually exist for every trip, beyond what the
+    // captain can log at close time. If any are missing, the minimum
+    // margin assumes they will cost something (conservative); the maximum
+    // margin assumes they turn out to be zero (best case, fully known).
+    const expectedTypes = ['fuel','crew','ice','provisions','maintenance','permits_fees','port_dues'];
+    const loggedTypes = new Set(costs.map(c => c.cost_type));
+    const missing = expectedTypes.filter(t => !loggedTypes.has(t));
+
+    // Rough placeholder for "some unknown cost exists": the average of
+    // costs already logged, applied once per missing type. This keeps the
+    // minimum estimate from being a token 1-unit gap when costs are large,
+    // without pretending to know the real figure.
+    const avgKnownCost = costs.length > 0 ? knownCosts / costs.length : 0;
+    const assumedMissingCost = missing.length * avgKnownCost;
+
+    const maxMargin = estValue - knownCosts; // best case: missing costs turn out to be zero
+    const minMargin = estValue - knownCosts - assumedMissingCost; // conservative: missing costs are real
+    return { minMargin, maxMargin, complete: missing.length === 0, currency, missing };
+  }
+
+  function renderFleetTripLog(){
+    renderVesselOptions();
+    const vessels = load(VESSELS_KEY);
+    const filterVessel = document.getElementById('fleetTripLogVesselFilter').value;
+    const trips = load(TRIPS_KEY).filter(t => t.ended_at).filter(t => !filterVessel || t.vessel_id === filterVessel);
+    const list = document.getElementById('fleetTripLogList');
+    if(trips.length === 0){
+      list.innerHTML = '<div class="empty">No closed trips yet.</div>';
+      return;
+    }
+    list.innerHTML = trips.slice().reverse().map(t => {
+      const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
+      const margin = computeTripMargin(t);
+      const when = new Date(t.started_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+      const marginText = margin.complete
+        ? fmtMoney(margin.minMargin, margin.currency)
+        : fmtMoney(margin.minMargin, margin.currency) + ' – ' + fmtMoney(margin.maxMargin, margin.currency);
+      return '<div class="entry"><div><div class="sp">'+(vessel?vessel.name:'Unknown Vessel')+'</div>'
+        + '<div class="meta">'+when+' · '+(margin.complete?'Final Margin':'Preliminary Margin')+'</div></div>'
+        + '<div class="duration-line" style="margin:0;">'+marginText+'</div></div>';
+    }).join('');
+  }
+  document.getElementById('fleetTripLogVesselFilter').addEventListener('change', renderFleetTripLog);
+
+  // ===== Fleet dashboard =====
+  function renderFleetDashboard(){
+    const vessels = load(VESSELS_KEY);
+    const trips = load(TRIPS_KEY).filter(t => t.ended_at);
+    const catches = load(CATCHES_KEY);
+    const costs = load(COSTS_KEY);
+
+    const totalKg = trips.reduce((s,t) => s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
+    const totalFuel = trips.reduce((s,t) => s + (parseFloat(t.fuel_consumed_l)||0), 0);
+
+    document.getElementById('fleetDashboardSummary').innerHTML =
+      '<div class="quick-actions" style="grid-template-columns:1fr 1fr;">'
+      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Trips Completed</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+trips.length+'</div></div>'
+      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Total Catch</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+totalKg.toFixed(0)+' kg</div></div>'
+      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Total Fuel</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+totalFuel.toFixed(0)+' L</div></div>'
+      + '</div>';
+
+    const vesselsHtml = vessels.map(v => {
+      const vTrips = trips.filter(t => t.vessel_id === v.vessel_id);
+      if(vTrips.length === 0) return '<div class="entry"><div><div class="sp">'+v.name+'</div><div class="meta">No closed trips yet</div></div></div>';
+      const vCatchesKg = vTrips.reduce((s,t)=> s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
+      const vFuel = vTrips.reduce((s,t)=> s + (parseFloat(t.fuel_consumed_l)||0), 0);
+      const totalHours = vTrips.reduce((s,t)=> s + (new Date(t.ended_at)-new Date(t.started_at))/3600000, 0);
+      const fuelPerKg = vCatchesKg > 0 ? (vFuel / vCatchesKg).toFixed(2) : '—';
+      const kgPerHour = totalHours >= 0.1 ? (vCatchesKg / totalHours).toFixed(1) : '—';
+      const margins = vTrips.map(t => computeTripMargin(t));
+      const avgMargin = margins.reduce((s,m)=>s+m.minMargin,0) / margins.length;
+      let statusBadge = '';
+      if(v.margin_target){
+        const target = parseFloat(v.margin_target);
+        statusBadge = avgMargin >= target
+          ? '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">Efficient</span>'
+          : '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Review</span>';
+      }
+      return '<div class="entry" style="display:block;">'
+        + '<div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">'
+        + '<div class="sp">'+v.name+'</div>'+statusBadge+'</div>'
+        + '<div class="grid2" style="grid-template-columns: 1fr 1fr 1fr; gap:6px;">'
+        + '<div><div class="meta">L / kg</div><div class="duration-line" style="margin:0;">'+fuelPerKg+'</div></div>'
+        + '<div><div class="meta">kg / hour</div><div class="duration-line" style="margin:0;">'+kgPerHour+'</div></div>'
+        + '<div><div class="meta">Avg. Margin</div><div class="duration-line" style="margin:0;">'+fmtMoney(avgMargin, v.default_currency)+'</div></div>'
+        + '</div></div>';
+    }).join('');
+    document.getElementById('fleetDashboardVessels').innerHTML = vesselsHtml || '<div class="empty">No vessels yet. Add one from the Vessels tab.</div>';
+
+    const alerts = [];
+    trips.forEach(t => {
+      const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
+      const tCatches = catches.filter(c => c.trip_id === t.trip_id);
+      if(tCatches.length === 0){
+        alerts.push((vessel?vessel.name:'Unknown')+' — Trip Closed Without Catch');
+      }
+      const margin = computeTripMargin(t);
+      if(!margin.complete){
+        alerts.push((vessel?vessel.name:'Unknown')+' — Costs Pending: '+margin.missing.join(', '));
+      }
+    });
+    document.getElementById('fleetDashboardAlerts').innerHTML = alerts.length === 0
+      ? '<div class="empty">No alerts. Everything looks current.</div>'
+      : alerts.slice(0,8).map(a => '<div class="entry"><div class="sp" style="font-size:13px; font-style:normal;">'+a+'</div></div>').join('');
+  }
+
+  // ===== Vessels admin screen =====
+  function renderFleetVessels(){
+    const vessels = load(VESSELS_KEY);
+    const captains = load(CAPTAINS_KEY);
+    document.getElementById('vesselsList').innerHTML = vessels.length === 0
+      ? '<div class="empty">No vessels yet.</div>'
+      : vessels.map(v => '<div class="entry"><div><div class="sp">'+v.name+'</div>'
+        + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')+'</div></div></div>').join('');
+    document.getElementById('captainsList').innerHTML = captains.length === 0
+      ? '<div class="empty">No captains yet.</div>'
+      : captains.map(c => '<div class="entry"><div><div class="sp">'+c.name+'</div></div></div>').join('');
+  }
+
+  window.renderFleetTrip = renderFleetTrip;
+  window.renderFleetTripLog = renderFleetTripLog;
+  window.renderFleetDashboard = renderFleetDashboard;
+  window.renderFleetVessels = renderFleetVessels;
+
+  if(window.fishPulseReapplyIfActive) window.fishPulseReapplyIfActive('fleet', renderFleetTrip);
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
@@ -1031,7 +2051,7 @@
     if(screen === 'campaigns') renderCampaignsScreen();
     document.querySelector('.screen.active').scrollTop = 0;
   }
-  document.querySelectorAll('[data-go]').forEach(el => {
+  document.querySelectorAll('[data-go]:not([data-go^="fleet-"])').forEach(el => {
     el.addEventListener('click', () => {
       const target = el.dataset.go;
       if(target === 'record' && editingRecordIdx !== null){
