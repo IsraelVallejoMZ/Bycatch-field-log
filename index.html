@@ -54,6 +54,7 @@
     -webkit-overflow-scrolling: touch;
   }
   .screen.active{ display:block; }
+  #screen-fleet-trip-detail{ position: relative; }
 
   /* ===== Top bar (shared) ===== */
   .topbar{
@@ -483,6 +484,28 @@
   }
   .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
   .toast.error{ background: var(--coral); }
+
+  /* ===== Export overlay (Landing Report share/copy panel) ===== */
+  .fleet-export-overlay{
+    position: absolute; inset: 0; z-index: 60;
+    background: var(--paper);
+    display: flex; flex-direction: column;
+  }
+  .fleet-export-panel{
+    display: flex; flex-direction: column; height: 100%;
+  }
+  .fleet-export-header{
+    display:flex; justify-content:space-between; align-items:center;
+    background: var(--ink); color: var(--paper);
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 18px 14px;
+    border-bottom: 3px solid var(--blue); flex-shrink:0;
+  }
+  .fleet-export-header .back-btn{ background: rgba(255,255,255,0.12); color: var(--paper); }
+  .fleet-export-text{
+    flex: 1; overflow-y: auto; margin:0; padding: 18px;
+    font-family: var(--data); font-size: 12.5px; line-height: 1.6;
+    white-space: pre-wrap; color: var(--ink);
+  }
 
   /* ===== Mode select screen ===== */
   .mode-select-wrap{
@@ -1337,8 +1360,43 @@
   </div>
   <main>
     <div id="fleetTripDetailLanding"></div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Add A Cost To This Trip</div>
+      <label for="fleetDetailCostType">Cost Type</label>
+      <select id="fleetDetailCostType">
+        <option value="ice">Ice / Preservation</option>
+        <option value="provisions">Provisions</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="permits_fees">Permits / Fees</option>
+        <option value="port_dues">Port Dues</option>
+        <option value="crew">Crew Payment</option>
+        <option value="other">Other</option>
+      </select>
+      <label for="fleetDetailCostAmount">Amount</label>
+      <div class="grid2">
+        <input type="number" id="fleetDetailCostAmount" inputmode="decimal" placeholder="e.g. 300">
+        <select id="fleetDetailCostCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
+      </div>
+      <button class="btn btn-save" id="fleetDetailAddCostBtn" style="width:100%; margin-top:14px;">Add Cost</button>
+    </div>
+
     <div id="fleetTripDetailSettlement"></div>
   </main>
+
+  <div id="fleetExportOverlay" class="fleet-export-overlay" style="display:none;">
+    <div class="fleet-export-panel">
+      <div class="fleet-export-header">
+        <span class="brand" id="fleetExportTitle">Export</span>
+        <button class="back-btn" id="fleetExportCloseBtn">✕</button>
+      </div>
+      <pre id="fleetExportText" class="fleet-export-text"></pre>
+      <div class="savebar" style="position:relative;">
+        <button class="btn btn-clear" id="fleetExportCloseBtn2">Close</button>
+        <button class="btn btn-save" id="fleetExportShareBtn">Share</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ================= FLEET: DASHBOARD ================= -->
@@ -1473,6 +1531,8 @@
       </select>
       <label for="vesselsNewTarget">Efficiency Target — Margin Per Trip <span class="optional-tag">optional</span></label>
       <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
+      <label for="vesselsNewExpectedDailyFuel">Expected Daily Fuel Use (L/Day) <span class="optional-tag">optional — overrides the automatic average</span></label>
+      <input type="number" id="vesselsNewExpectedDailyFuel" inputmode="decimal" placeholder="e.g. 25, if you already know this vessel's normal consumption">
       <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;">Add Vessel</button>
     </div>
 
@@ -1640,6 +1700,7 @@
   const HAULS_KEY = 'fleet_hauls_v1';
   const CATCHES_KEY = 'fleet_catches_v1';
   const COSTS_KEY = 'fleet_trip_costs_v1';
+  const CREW_SHARES_KEY = 'fleet_crew_shares_v1';
   const VESSELS_KEY = 'fleet_vessels_v1';
   const CAPTAINS_KEY = 'fleet_captains_v1';
   const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
@@ -1762,11 +1823,13 @@
     const vessel = {
       vessel_id: uid(), name,
       default_currency: document.getElementById('vesselsNewCurrency').value,
-      margin_target: document.getElementById('vesselsNewTarget').value || ''
+      margin_target: document.getElementById('vesselsNewTarget').value || '',
+      expected_daily_fuel_l: document.getElementById('vesselsNewExpectedDailyFuel').value || ''
     };
     const vessels = load(VESSELS_KEY); vessels.push(vessel); save(VESSELS_KEY, vessels);
     document.getElementById('vesselsNewName').value = '';
     document.getElementById('vesselsNewTarget').value = '';
+    document.getElementById('vesselsNewExpectedDailyFuel').value = '';
     showFleetToast('Vessel added');
     renderFleetVessels();
   });
@@ -2088,6 +2151,32 @@
   }
   let currentTripDetailId = null;
 
+  // Lets anyone with access to a trip's detail screen — captain or
+  // office — log a cost at any time, including well after the trip is
+  // closed. This is what was missing before: ice, provisions, permits,
+  // etc. could only be entered during the Close Trip flow, with no way
+  // back in if the invoice arrived later.
+  document.getElementById('fleetDetailAddCostBtn').addEventListener('click', () => {
+    const trip = load(TRIPS_KEY).find(t => t.trip_id === currentTripDetailId);
+    if(!trip) return;
+    const amount = document.getElementById('fleetDetailCostAmount').value;
+    if(!amount){ showFleetToast('Enter an amount', true); return; }
+    const costs = load(COSTS_KEY);
+    costs.push({
+      cost_id: uid(), trip_id: trip.trip_id,
+      cost_type: document.getElementById('fleetDetailCostType').value,
+      basis: 'per_trip',
+      amount: parseFloat(amount),
+      currency: document.getElementById('fleetDetailCostCurrency').value,
+      entered_by_role: document.body.classList.contains('fleet-role-operations') ? 'office' : 'captain',
+      entered_at: new Date().toISOString()
+    });
+    save(COSTS_KEY, costs);
+    document.getElementById('fleetDetailCostAmount').value = '';
+    showFleetToast('Cost added');
+    renderFleetTripDetail();
+  });
+
   function renderFleetTripDetail(){
     const trip = load(TRIPS_KEY).find(t => t.trip_id === currentTripDetailId);
     if(!trip){ fleetGoTo('trip-log'); return; }
@@ -2104,9 +2193,22 @@
     // where reconciled, actual scale weight. This is the data a buyer,
     // port authority, or capture-certificate process would need; we are
     // generating the supporting report here, not issuing any certificate.
-    const totalEstKg = catches.reduce((s,c)=>s+(parseFloat(c.kg)||0),0);
-    const totalActualKg = catches.reduce((s,c)=>s+(c.actual_kg!=null&&c.actual_kg!==''?parseFloat(c.actual_kg):0),0);
-    const hasActuals = catches.some(c => c.actual_kg != null && c.actual_kg !== '');
+    // Grouped by species for the same reason reconciliation is: once
+    // multiple hauls of a species are landed together, scale weight only
+    // exists as one number for that species, not per individual haul.
+    const landingBySpecies = {};
+    catches.forEach(c => {
+      if(!landingBySpecies[c.species]) landingBySpecies[c.species] = { species: c.species, estKg: 0, actualKg: null, hasActual: false };
+      landingBySpecies[c.species].estKg += parseFloat(c.kg) || 0;
+      if(c.actual_kg != null && c.actual_kg !== ''){
+        landingBySpecies[c.species].actualKg = (landingBySpecies[c.species].actualKg || 0) + parseFloat(c.actual_kg);
+        landingBySpecies[c.species].hasActual = true;
+      }
+    });
+    const landingGroups = Object.values(landingBySpecies);
+    const totalEstKg = landingGroups.reduce((s,g)=>s+g.estKg,0);
+    const totalActualKg = landingGroups.reduce((s,g)=>s+(g.hasActual?g.actualKg:0),0);
+    const hasActuals = landingGroups.some(g => g.hasActual);
 
     document.getElementById('fleetTripDetailLanding').innerHTML =
       '<div class="card">'
@@ -2115,9 +2217,9 @@
       + '<div><label style="margin-top:0;">Vessel</label><div class="duration-line">'+(vessel?vessel.name:'—')+'</div></div>'
       + '<div><label style="margin-top:0;">Captain</label><div class="duration-line">'+(captain?captain.name:'—')+'</div></div>'
       + '</div>'
-      + catches.map(c => '<div class="entry"><div><div class="sp">'+c.species+'</div>'
-          + '<div class="meta">'+(c.actual_kg!=null&&c.actual_kg!==''?'Scale: '+c.actual_kg+' kg':'Estimated, not yet scaled')+'</div></div>'
-          + '<div class="duration-line" style="margin:0;">'+c.kg+' kg Est.</div></div>').join('')
+      + landingGroups.map(g => '<div class="entry"><div><div class="sp">'+g.species+'</div>'
+          + '<div class="meta">'+(g.hasActual?'Scale: '+g.actualKg.toFixed(1)+' kg':'Estimated, not yet scaled')+'</div></div>'
+          + '<div class="duration-line" style="margin:0;">'+g.estKg.toFixed(1)+' kg Est.</div></div>').join('')
       + '<div class="duration-line" style="margin-top:10px;">Total: '+totalEstKg.toFixed(1)+' kg Estimated'+(hasActuals?' · '+totalActualKg.toFixed(1)+' kg Scaled':'')+'</div>'
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">This report supports a landing declaration or capture certificate application — it is not itself an official certificate.</div>'
       + '<button class="track-toggle-btn" id="fleetExportLandingBtn" style="margin-top:14px;">Export As Text</button>'
@@ -2132,24 +2234,26 @@
         'Trip ended: ' + (trip.ended_at||'—'),
         '',
         'Catch by species:'
-      ].concat(catches.map(c => '  - ' + c.species + ': ' + c.kg + ' kg estimated' + (c.actual_kg!=null&&c.actual_kg!==''?', ' + c.actual_kg + ' kg scale weight':'')))
+      ].concat(landingGroups.map(g => '  - ' + g.species + ': ' + g.estKg.toFixed(1) + ' kg estimated' + (g.hasActual ? ', ' + g.actualKg.toFixed(1) + ' kg scale weight' : '')))
        .concat(['', 'Total estimated: ' + totalEstKg.toFixed(1) + ' kg', hasActuals ? 'Total scaled: ' + totalActualKg.toFixed(1) + ' kg' : '']);
       showFleetTextExport(lines.join('\n'), 'Landing Report');
     });
 
     // Settlement: real income (scale weight where available, else
-    // estimate) minus all logged costs, divided across the crew. Share
-    // scheme is a simple equal split among crew_count for now.
+    // estimate) minus all logged costs. The net result is split among
+    // crew according to manually-entered shares for this specific trip —
+    // crew composition and pay arrangements vary trip to trip, so nothing
+    // is assumed or carried over automatically from a fixed roster.
     const incomeKg = hasActuals ? totalActualKg : totalEstKg;
-    const avgRefPrice = catches.length > 0 ? catches.reduce((s,c)=>s+(parseFloat(c.ref_price)||0),0) / catches.filter(c=>c.ref_price).length : 0;
     const totalIncome = catches.reduce((s,c) => {
       const kg = (c.actual_kg!=null&&c.actual_kg!=='') ? parseFloat(c.actual_kg) : parseFloat(c.kg);
       return s + kg * (parseFloat(c.ref_price)||0);
     }, 0);
     const totalCosts = costs.reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
     const netResult = totalIncome - totalCosts;
-    const crewCount = parseInt(trip.crew_count) || 0;
-    const perCrewShare = crewCount > 0 ? netResult / crewCount : null;
+
+    const crewShares = load(CREW_SHARES_KEY).filter(cs => cs.trip_id === trip.trip_id);
+    const totalPct = crewShares.reduce((s,cs)=>s+(parseFloat(cs.percent)||0),0);
 
     document.getElementById('fleetTripDetailSettlement').innerHTML =
       '<div class="card">'
@@ -2159,16 +2263,89 @@
       + '<div class="duration-line" style="margin-top:10px;">Income ('+incomeKg.toFixed(1)+' kg): '+fmtMoney(totalIncome, currency)+'</div>'
       + '<div class="duration-line">Total Costs: -'+fmtMoney(totalCosts, currency)+'</div>'
       + '<div class="duration-line" style="font-size:16px; margin-top:6px;">Net Result: '+fmtMoney(netResult, currency)+'</div>'
-      + (perCrewShare != null ? '<div class="duration-line">Per Crew Member ('+crewCount+'): '+fmtMoney(perCrewShare, currency)+'</div>' : '<div class="meta" style="margin-top:8px;">Set crew count on the trip to compute a per-person share.</div>')
-      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">Equal split shown here — adjust manually if your crew uses a different share scheme.</div>'
+      + '</div>'
+      + '<div class="card">'
+      + '<div class="card-label" style="margin-bottom:14px;">Crew Share — This Trip Only</div>'
+      + (crewShares.length === 0 ? (() => {
+          const lastTrip = load(TRIPS_KEY)
+            .filter(t => t.vessel_id === trip.vessel_id && t.ended_at && t.trip_id !== trip.trip_id && new Date(t.started_at) < new Date(trip.started_at))
+            .sort((a,b) => new Date(b.started_at) - new Date(a.started_at))[0];
+          const lastShares = lastTrip ? load(CREW_SHARES_KEY).filter(cs => cs.trip_id === lastTrip.trip_id) : [];
+          return '<div class="empty">No crew members added yet for this trip.</div>'
+            + (lastShares.length > 0 ? '<button class="track-toggle-btn" id="fleetCopyLastCrewBtn" style="margin-top:10px;">Copy From Last Trip ('+lastShares.length+' '+(lastShares.length===1?'Member':'Members')+')</button>' : '');
+        })() : crewShares.map(cs => {
+          const amount = netResult * (parseFloat(cs.percent)||0) / 100;
+          return '<div class="entry"><div><div class="sp">'+cs.name+'</div><div class="meta">'+cs.percent+'%</div></div>'
+            + '<div style="display:flex; align-items:center; gap:8px;"><div class="duration-line" style="margin:0;">'+fmtMoney(amount, currency)+'</div>'
+            + '<button class="del" data-remove-crew-share="'+cs.share_id+'" title="remove">×</button></div></div>';
+        }).join(''))
+      + (totalPct !== 100 && crewShares.length > 0 ? '<div class="meta" style="margin-top:8px; color:var(--coral);">Percentages add up to '+totalPct+'%, not 100% — amounts shown won\'t cover the full net result.</div>' : '')
+      + '<div class="grid2" style="margin-top:14px;">'
+      + '<input type="text" id="fleetCrewShareName" placeholder="e.g. J. Sombrero (captain)">'
+      + '<input type="number" id="fleetCrewSharePercent" inputmode="decimal" placeholder="e.g. 10">'
+      + '</div>'
+      + '<button class="btn btn-save" id="fleetCrewShareAddBtn" style="width:100%; margin-top:10px;">Add Crew Member</button>'
+      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">Add each crew member with their share of this trip\'s net result. Percentages are specific to this trip and don\'t carry over to the next one.</div>'
       + '</div>';
+
+    document.getElementById('fleetCrewShareAddBtn').addEventListener('click', () => {
+      const name = document.getElementById('fleetCrewShareName').value.trim();
+      const percent = parseFloat(document.getElementById('fleetCrewSharePercent').value);
+      if(!name || isNaN(percent)){ showFleetToast('Name and percentage are required', true); return; }
+      const all = load(CREW_SHARES_KEY);
+      all.push({ share_id: uid(), trip_id: trip.trip_id, name, percent });
+      save(CREW_SHARES_KEY, all);
+      renderFleetTripDetail();
+    });
+    document.querySelectorAll('[data-remove-crew-share]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const all = load(CREW_SHARES_KEY).filter(cs => cs.share_id !== btn.dataset.removeCrewShare);
+        save(CREW_SHARES_KEY, all);
+        renderFleetTripDetail();
+      });
+    });
+    const copyLastBtn = document.getElementById('fleetCopyLastCrewBtn');
+    if(copyLastBtn){
+      copyLastBtn.addEventListener('click', () => {
+        const lastTrip = load(TRIPS_KEY)
+          .filter(t => t.vessel_id === trip.vessel_id && t.ended_at && t.trip_id !== trip.trip_id && new Date(t.started_at) < new Date(trip.started_at))
+          .sort((a,b) => new Date(b.started_at) - new Date(a.started_at))[0];
+        if(!lastTrip) return;
+        const lastShares = load(CREW_SHARES_KEY).filter(cs => cs.trip_id === lastTrip.trip_id);
+        const all = load(CREW_SHARES_KEY);
+        lastShares.forEach(cs => all.push({ share_id: uid(), trip_id: trip.trip_id, name: cs.name, percent: cs.percent }));
+        save(CREW_SHARES_KEY, all);
+        showFleetToast('Crew copied from last trip — feel free to adjust');
+        renderFleetTripDetail();
+      });
+    }
   }
 
   function showFleetTextExport(text, title){
-    const w = window.open('', '_blank');
-    if(!w){ showFleetToast('Allow pop-ups to export', true); return; }
-    w.document.write('<title>'+title+'</title><pre style="font-family:monospace; white-space:pre-wrap; padding:20px;">'+text.replace(/</g,'&lt;')+'</pre>');
+    document.getElementById('fleetExportTitle').textContent = title;
+    document.getElementById('fleetExportText').textContent = text;
+    document.getElementById('fleetExportOverlay').style.display = 'flex';
+    document.getElementById('fleetExportOverlay').dataset.text = text;
+    document.getElementById('fleetExportOverlay').dataset.title = title;
   }
+  function hideFleetTextExport(){
+    document.getElementById('fleetExportOverlay').style.display = 'none';
+  }
+  document.getElementById('fleetExportCloseBtn').addEventListener('click', hideFleetTextExport);
+  document.getElementById('fleetExportCloseBtn2').addEventListener('click', hideFleetTextExport);
+  document.getElementById('fleetExportShareBtn').addEventListener('click', async () => {
+    const text = document.getElementById('fleetExportOverlay').dataset.text || '';
+    const title = document.getElementById('fleetExportOverlay').dataset.title || 'Fish Pulse Report';
+    if(navigator.share){
+      try{ await navigator.share({ title, text }); }
+      catch(e){ /* user cancelled the share sheet — not an error */ }
+    } else if(navigator.clipboard){
+      try{ await navigator.clipboard.writeText(text); showFleetToast('Copied to clipboard'); }
+      catch(e){ showFleetToast('Could not copy — select and copy the text manually', true); }
+    } else {
+      showFleetToast('Sharing is not supported on this browser', true);
+    }
+  });
 
   // ===== Fleet dashboard =====
   function renderFleetDashboard(){
@@ -2239,7 +2416,8 @@
     document.getElementById('vesselsList').innerHTML = vessels.length === 0
       ? '<div class="empty">No vessels yet.</div>'
       : vessels.map(v => '<div class="entry"><div><div class="sp">'+v.name+'</div>'
-        + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')+'</div></div></div>').join('');
+        + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')
+        + (v.expected_daily_fuel_l ? ' · Expected: '+v.expected_daily_fuel_l+' L/Day' : ' · Auto Baseline After 5 Trips')+'</div></div></div>').join('');
     document.getElementById('captainsList').innerHTML = captains.length === 0
       ? '<div class="empty">No captains yet.</div>'
       : captains.map(c => '<div class="entry"><div><div class="sp">'+c.name+'</div></div></div>').join('');
@@ -2300,18 +2478,28 @@
     const lastReading = readings.length > 0 ? readings[readings.length-1].remaining_l : parseFloat(trip.fuel_loaded_l) || 0;
     const consumed = Math.max(0, lastReading - current);
 
-    // Anomaly check: compare against the vessel's own historical average
-    // daily consumption (its own past closed trips), not a fleet-wide
-    // average — matches the "compare a vessel against itself" approach
-    // already used for efficiency targets, since gear/zone/species differ
-    // too much across vessels for a shared baseline to be meaningful.
+    // Anomaly check: prefer a manually-set "expected daily fuel use" on
+    // the vessel (set in Vessels admin) if the captain or office already
+    // knows this vessel's normal consumption from before using the app.
+    // Otherwise, fall back to the vessel's own historical average — but
+    // only once there's enough history (MIN_TRIPS_FOR_AUTO_BASELINE closed
+    // trips) for that average to mean something; a 1-2 trip average is
+    // too noisy to flag anything against.
+    const MIN_TRIPS_FOR_AUTO_BASELINE = 5;
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
-    const pastTrips = load(TRIPS_KEY).filter(t => t.vessel_id === trip.vessel_id && t.ended_at);
-    const pastDailyAvgs = pastTrips.map(t => {
-      const days = Math.max(1, Math.ceil((new Date(t.ended_at) - new Date(t.started_at)) / 86400000));
-      return (parseFloat(t.fuel_consumed_l) || 0) / days;
-    });
-    const expectedDaily = pastDailyAvgs.length > 0 ? pastDailyAvgs.reduce((s,v)=>s+v,0) / pastDailyAvgs.length : null;
+    let expectedDaily = null;
+    if(vessel && vessel.expected_daily_fuel_l){
+      expectedDaily = parseFloat(vessel.expected_daily_fuel_l);
+    } else {
+      const pastTrips = load(TRIPS_KEY).filter(t => t.vessel_id === trip.vessel_id && t.ended_at);
+      if(pastTrips.length >= MIN_TRIPS_FOR_AUTO_BASELINE){
+        const pastDailyAvgs = pastTrips.map(t => {
+          const days = Math.max(1, Math.ceil((new Date(t.ended_at) - new Date(t.started_at)) / 86400000));
+          return (parseFloat(t.fuel_consumed_l) || 0) / days;
+        });
+        expectedDaily = pastDailyAvgs.reduce((s,v)=>s+v,0) / pastDailyAvgs.length;
+      }
+    }
     const isAnomaly = expectedDaily != null && expectedDaily > 0 && (consumed > expectedDaily * 1.5 || consumed < expectedDaily * 0.5);
 
     const all = load(FUEL_LOG_KEY);
@@ -2349,29 +2537,62 @@
 
     if(catches.length === 0){ body.innerHTML = '<div class="empty">No catch was logged on this trip.</div>'; return; }
 
-    body.innerHTML = '<div class="section-h">Logbook Estimate Vs. Scale Weight</div>' + catches.map(c => {
-      const actualVal = c.actual_kg != null && c.actual_kg !== '' ? parseFloat(c.actual_kg) : null;
-      const diff = actualVal != null ? actualVal - parseFloat(c.kg) : null;
-      const diffPct = actualVal != null && parseFloat(c.kg) > 0 ? (diff / parseFloat(c.kg) * 100) : null;
+    // Reconciliation happens per species, not per individual haul entry.
+    // Once different hauls of the same species are landed, they're mixed
+    // in the same hold — the port scale gives one total weight for that
+    // species, with no way to attribute the difference back to a
+    // specific haul. Grouping here matches what's physically possible.
+    const bySpecies = {};
+    catches.forEach(c => {
+      const key = c.species;
+      if(!bySpecies[key]) bySpecies[key] = { species: key, estKg: 0, haulCount: 0, catchIds: [], actualKg: null };
+      bySpecies[key].estKg += parseFloat(c.kg) || 0;
+      bySpecies[key].haulCount += 1;
+      bySpecies[key].catchIds.push(c.catch_id);
+      if(c.actual_kg != null && c.actual_kg !== ''){
+        bySpecies[key].actualKg = (bySpecies[key].actualKg || 0) + parseFloat(c.actual_kg);
+      }
+    });
+    const speciesGroups = Object.values(bySpecies);
+
+    body.innerHTML = '<div class="section-h">Logbook Estimate Vs. Scale Weight, By Species</div>' + speciesGroups.map(g => {
+      const diff = g.actualKg != null ? g.actualKg - g.estKg : null;
+      const diffPct = diff != null && g.estKg > 0 ? (diff / g.estKg * 100) : null;
       const diffColor = diff == null ? '' : (Math.abs(diffPct) > 10 ? 'color:var(--coral);' : 'color:var(--released);');
       return '<div class="entry" style="display:block;">'
-        + '<div class="sp" style="margin-bottom:8px;">'+c.species+'</div>'
+        + '<div class="sp" style="margin-bottom:2px;">'+g.species+'</div>'
+        + '<div class="meta" style="margin-bottom:8px;">'+g.haulCount+' haul'+(g.haulCount>1?'s':'')+' of this species, combined in the same hold</div>'
         + '<div class="grid2" style="grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">'
-        + '<div><label style="margin-top:0;">Logbook Estimate (kg)</label><div class="duration-line">'+c.kg+' kg</div></div>'
-        + '<div><label style="margin-top:0;">Scale Weight (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-catch-id="'+c.catch_id+'" value="'+(c.actual_kg||'')+'" placeholder="e.g. '+c.kg+'"></div>'
+        + '<div><label style="margin-top:0;">Logbook Estimate, Combined (kg)</label><div class="duration-line">'+g.estKg.toFixed(1)+' kg</div></div>'
+        + '<div><label style="margin-top:0;">Scale Weight, Total (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(g.actualKg!=null?g.actualKg:'')+'" placeholder="e.g. '+g.estKg.toFixed(1)+'"></div>'
         + '</div>'
         + (diff != null ? '<div class="duration-line" style="'+diffColor+'">Difference: '+(diff>=0?'+':'')+diff.toFixed(1)+' kg ('+(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%)</div>' : '')
         + '</div>';
-    }).join('') + '<button class="btn btn-save" id="fleetReconSaveBtn" style="width:100%; margin-top:14px;">Save Scale Weights</button>';
+    }).join('')
+      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin:10px 0 4px; line-height:1.5;">Enter the total scale weight for each species as landed — not per individual haul. Once different hauls of the same species are unloaded together, the scale can no longer tell them apart.</div>'
+      + '<button class="btn btn-save" id="fleetReconSaveBtn" style="width:100%; margin-top:10px;">Save Scale Weights</button>';
 
     document.getElementById('fleetReconSaveBtn').addEventListener('click', () => {
       const inputs = document.querySelectorAll('.fleet-recon-input');
       const allCatches = load(CATCHES_KEY);
       inputs.forEach(inp => {
-        const idx = allCatches.findIndex(c => c.catch_id === inp.dataset.catchId);
-        if(idx !== -1 && inp.value !== ''){
-          allCatches[idx].actual_kg = parseFloat(inp.value);
-        }
+        if(inp.value === '') return;
+        const group = speciesGroups.find(g => g.species === inp.dataset.species);
+        if(!group) return;
+        const totalActual = parseFloat(inp.value);
+        // The scale gives one number for the whole species; we record it
+        // against each underlying haul entry proportionally to its share
+        // of the estimate, purely so every record carries a consistent
+        // actual_kg for other screens (Landing Report, Settlement) that
+        // sum actual_kg per catch entry. The species total above is the
+        // number that's actually true — this split is bookkeeping, not a
+        // claim about which haul really weighed what.
+        group.catchIds.forEach(catchId => {
+          const idx = allCatches.findIndex(c => c.catch_id === catchId);
+          if(idx === -1) return;
+          const share = group.estKg > 0 ? (parseFloat(allCatches[idx].kg) || 0) / group.estKg : 1 / group.catchIds.length;
+          allCatches[idx].actual_kg = totalActual * share;
+        });
       });
       save(CATCHES_KEY, allCatches);
       showFleetToast('Scale weights saved');
