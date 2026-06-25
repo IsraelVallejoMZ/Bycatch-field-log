@@ -772,6 +772,10 @@
       <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
       <datalist id="species-list"></datalist>
 
+      <label for="commonName">Common Name <span class="optional-tag">optional</span></label>
+      <input type="text" id="commonName" placeholder="e.g. Spot-tail shark" list="common-name-list">
+      <datalist id="common-name-list"></datalist>
+
       <div class="grid2">
         <div>
           <label for="length">Length (cm)</label>
@@ -848,7 +852,23 @@
       <label>GPS coordinates</label>
       <div class="gpsbox" id="gpsBox">
         <span class="coords pending" id="coordsLabel">not captured</span>
-        <button class="gps-btn" id="gpsBtn" type="button">Capture</button>
+        <div style="display:flex; gap:6px;">
+          <button class="gps-btn" id="gpsBtn" type="button">Capture</button>
+          <button class="gps-btn" id="gpsManualToggleBtn" type="button" style="background:var(--panel); color:var(--ink); border:1px solid var(--line);">Manual</button>
+        </div>
+      </div>
+      <div id="gpsManualFields" style="display:none; margin-top:10px;">
+        <div class="grid2">
+          <div>
+            <label for="manualLat">Latitude</label>
+            <input type="number" id="manualLat" inputmode="decimal" step="any" placeholder="e.g. 9.12340">
+          </div>
+          <div>
+            <label for="manualLon">Longitude</label>
+            <input type="number" id="manualLon" inputmode="decimal" step="any" placeholder="e.g. 99.56780">
+          </div>
+        </div>
+        <button class="track-toggle-btn" id="gpsManualApplyBtn" style="margin-top:8px;">Use These Coordinates</button>
       </div>
     </div>
 
@@ -899,6 +919,7 @@
       <div class="export-btn-row">
         <button class="exportbtn" id="exportBtn">CSV</button>
         <button class="exportbtn" id="exportGeoJsonBtn">GeoJSON</button>
+        <button class="exportbtn" id="exportPhotosBtn">Photos</button>
       </div>
     </div>
     <div id="logList"></div>
@@ -1109,7 +1130,7 @@
           <label for="fleetNewVesselName">Vessel Name</label>
           <input type="text" id="fleetNewVesselName" placeholder="e.g. Vessel 04">
           <label for="fleetNewVesselCurrency">Default Currency</label>
-          <select id="fleetNewVesselCurrency">
+          <select id="fleetNewVesselCurrency" class="currency-select">
             <option value="THB">THB</option>
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
@@ -1153,7 +1174,10 @@
       <div class="section-h">Catches Logged This Trip</div>
       <div id="fleetTripCatchList"></div>
 
-      <div class="section-h">Hauls Logged This Trip</div>
+      <div class="section-h" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Hauls Logged This Trip</span>
+        <button class="switch-mode-btn" id="fleetViewMapBtn" style="background:var(--blue); color:var(--paper);">View Map</button>
+      </div>
       <div id="fleetTripHaulList"></div>
     </div>
   </main>
@@ -1205,6 +1229,12 @@
         <label for="fleetHookCount">Number Of Hooks</label>
         <input type="number" id="fleetHookCount" inputmode="numeric" placeholder="e.g. 200">
       </div>
+
+      <label>Haul Location <span class="optional-tag">optional</span></label>
+      <div class="gpsbox" id="fleetGpsBox">
+        <span class="coords pending" id="fleetCoordsLabel">not captured</span>
+        <button class="gps-btn" id="fleetGpsBtn" type="button">Capture</button>
+      </div>
     </div>
 
     <div class="card">
@@ -1243,7 +1273,7 @@
       <label>Reference Price <span class="optional-tag">optional, estimated</span></label>
       <div class="grid2">
         <input type="number" id="fleetRefPrice" inputmode="decimal" placeholder="e.g. 85">
-        <select id="fleetRefCurrency">
+        <select id="fleetRefCurrency" class="currency-select">
           <option value="THB">THB</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -1251,6 +1281,7 @@
           <option value="VND">VND</option>
         </select>
       </div>
+      <div class="duration-line" id="fleetPriceSuggestionLine" style="display:none; cursor:pointer;"></div>
       <div class="duration-line" id="fleetEstValueLine">Estimated Value: —</div>
     </div>
   </main>
@@ -1295,19 +1326,19 @@
       <label for="fleetCostCrew">Crew Payment <span class="optional-tag">per trip</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostCrew" inputmode="decimal" placeholder="e.g. 2000">
-        <select id="fleetCostCrewCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+        <select id="fleetCostCrewCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
       <label for="fleetCostIce">Ice / Preservation <span class="optional-tag">per trip</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostIce" inputmode="decimal" placeholder="e.g. 300">
-        <select id="fleetCostIceCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+        <select id="fleetCostIceCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
       <label for="fleetCostProvisions">Provisions <span class="optional-tag">per day at sea</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostProvisions" inputmode="decimal" placeholder="e.g. 250">
-        <select id="fleetCostProvisionsCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+        <select id="fleetCostProvisionsCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
       <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:14px; line-height:1.5;">
@@ -1361,6 +1392,8 @@
   <main>
     <div id="fleetTripDetailLanding"></div>
 
+    <button class="track-toggle-btn" id="fleetDetailViewMapBtn" style="margin-bottom:18px;">View Haul Map</button>
+
     <div class="card">
       <div class="card-label" style="margin-bottom:14px;">Add A Cost To This Trip</div>
       <label for="fleetDetailCostType">Cost Type</label>
@@ -1376,7 +1409,7 @@
       <label for="fleetDetailCostAmount">Amount</label>
       <div class="grid2">
         <input type="number" id="fleetDetailCostAmount" inputmode="decimal" placeholder="e.g. 300">
-        <select id="fleetDetailCostCurrency"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
+        <select id="fleetDetailCostCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
       <button class="btn btn-save" id="fleetDetailAddCostBtn" style="width:100%; margin-top:14px;">Add Cost</button>
     </div>
@@ -1390,7 +1423,7 @@
         <span class="brand" id="fleetExportTitle">Export</span>
         <button class="back-btn" id="fleetExportCloseBtn">✕</button>
       </div>
-      <pre id="fleetExportText" class="fleet-export-text"></pre>
+      <div id="fleetExportText" class="fleet-export-text"></div>
       <div class="savebar" style="position:relative;">
         <button class="btn btn-clear" id="fleetExportCloseBtn2">Close</button>
         <button class="btn btn-save" id="fleetExportShareBtn">Share</button>
@@ -1418,6 +1451,30 @@
     <div id="fleetDashboardVessels"></div>
     <div class="section-h">Needs Attention</div>
     <div id="fleetDashboardAlerts"></div>
+  </main>
+</section>
+
+<!-- ================= FLEET: HAUL MAP ================= -->
+<section class="screen" id="screen-fleet-haul-map">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" id="fleetMapBackBtn">←</button>
+      <span class="brand">Haul Map</span>
+    </div>
+    <h1>Fishing Zones</h1>
+    <div class="site-line" id="fleetMapVesselLine">&nbsp;</div>
+  </div>
+  <main>
+    <div class="map-mode-banner" id="fleetMapModeBanner">
+      <span class="mb-dot"></span>
+      <span id="fleetMapModeText">Checking connection…</span>
+    </div>
+
+    <div id="fleetLeafletMap"></div>
+    <div class="schematic-wrap" id="fleetSchematicMap" style="display:none;"></div>
+
+    <div class="section-h">Hauls Without GPS</div>
+    <div id="fleetNoGpsNote" class="empty" style="display:none;"></div>
   </main>
 </section>
 
@@ -1501,6 +1558,9 @@
       <button class="btn btn-save" id="fleetDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
     </div>
 
+    <div class="section-h">Maintenance</div>
+    <div id="fleetMaintenanceList"></div>
+
     <div class="section-h">All Documents</div>
     <div id="fleetDocumentsList"></div>
   </main>
@@ -1518,11 +1578,23 @@
   </div>
   <main>
     <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">App Currency Preference</div>
+      <label for="fleetDefaultCurrency">Default Currency <span class="optional-tag">used as the starting option everywhere — still changeable per entry</span></label>
+      <select id="fleetDefaultCurrency">
+        <option value="THB">THB — Thai Baht</option>
+        <option value="USD">USD — US Dollar</option>
+        <option value="EUR">EUR — Euro</option>
+        <option value="MXN">MXN — Mexican Peso</option>
+        <option value="VND">VND — Vietnamese Dong</option>
+      </select>
+    </div>
+
+    <div class="card">
       <div class="card-label" style="margin-bottom:14px;">Add Vessel</div>
       <label for="vesselsNewName">Vessel Name</label>
       <input type="text" id="vesselsNewName" placeholder="e.g. Vessel 09">
       <label for="vesselsNewCurrency">Default Currency</label>
-      <select id="vesselsNewCurrency">
+      <select id="vesselsNewCurrency" class="currency-select">
         <option value="THB">THB</option>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
@@ -1533,6 +1605,10 @@
       <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
       <label for="vesselsNewExpectedDailyFuel">Expected Daily Fuel Use (L/Day) <span class="optional-tag">optional — overrides the automatic average</span></label>
       <input type="number" id="vesselsNewExpectedDailyFuel" inputmode="decimal" placeholder="e.g. 25, if you already know this vessel's normal consumption">
+      <label for="vesselsNewMaintenanceInterval">Maintenance Interval (Hours At Sea) <span class="optional-tag">optional</span></label>
+      <input type="number" id="vesselsNewMaintenanceInterval" inputmode="numeric" placeholder="e.g. 200">
+      <label for="vesselsNewLastMaintenanceHours">Hours At Sea Since Last Maintenance <span class="optional-tag">optional, today</span></label>
+      <input type="number" id="vesselsNewLastMaintenanceHours" inputmode="numeric" placeholder="e.g. 0, if just serviced">
       <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;">Add Vessel</button>
     </div>
 
@@ -1569,6 +1645,16 @@
 </nav>
 
 <div class="toast" id="toast"></div>
+
+<div id="photoExportConfirmOverlay" class="fleet-export-overlay" style="display:none; position:fixed;">
+  <div class="fleet-export-panel">
+    <div class="fleet-export-header">
+      <span class="brand">Photos Exported</span>
+      <button class="back-btn" id="photoExportConfirmCloseBtn">✕</button>
+    </div>
+    <div class="fleet-export-text" id="photoExportConfirmBody"></div>
+  </div>
+</div>
 
 <script>
 // ===== Mode selection (Field Research vs Fishing Operations) =====
@@ -1701,7 +1787,39 @@
   const CATCHES_KEY = 'fleet_catches_v1';
   const COSTS_KEY = 'fleet_trip_costs_v1';
   const CREW_SHARES_KEY = 'fleet_crew_shares_v1';
+  const SALES_KEY = 'fleet_sales_v1';
   const VESSELS_KEY = 'fleet_vessels_v1';
+  const DEFAULT_CURRENCY_KEY = 'fishpulse_default_currency';
+
+  function getDefaultCurrency(){
+    return localStorage.getItem(DEFAULT_CURRENCY_KEY) || 'THB';
+  }
+  // Re-orders each currency <select> so the preferred currency sits first
+  // and pre-selected, without removing any options — every select still
+  // offers the full list, the preference only changes the starting point.
+  // Called after every fleet screen render, since several of these
+  // selects (cost rows, new-vessel forms) are rebuilt from scratch on
+  // each render rather than persisting in the DOM.
+  function applyDefaultCurrencyToSelects(){
+    const pref = getDefaultCurrency();
+    document.querySelectorAll('select.currency-select').forEach(sel => {
+      const hasPref = Array.from(sel.options).some(o => o.value === pref);
+      if(!hasPref) return;
+      if(sel.options[0].value !== pref){
+        const prefOption = Array.from(sel.options).find(o => o.value === pref);
+        sel.insertBefore(prefOption, sel.options[0]);
+      }
+      if(!sel.dataset.userTouched) sel.value = pref;
+    });
+  }
+  // Marks a select as user-touched on manual change, so a later render
+  // doesn't override a choice the person just made for that one field.
+  document.addEventListener('change', (e) => {
+    if(e.target.matches && e.target.matches('select.currency-select')){
+      e.target.dataset.userTouched = '1';
+    }
+  });
+
   const CAPTAINS_KEY = 'fleet_captains_v1';
   const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
 
@@ -1739,6 +1857,7 @@
     if(screen === 'reconciliation') renderFleetReconciliation();
     if(screen === 'documents') renderFleetDocuments();
     if(screen === 'trip-detail') renderFleetTripDetail();
+    if(screen === 'haul-map') renderFleetHaulMap();
     const active = document.querySelector('.screen.active');
     if(active) active.scrollTop = 0;
   }
@@ -1813,23 +1932,43 @@
     };
     const trips = load(TRIPS_KEY); trips.push(trip); save(TRIPS_KEY, trips);
     localStorage.setItem(ACTIVE_TRIP_KEY, trip.trip_id);
+    delete document.getElementById('fleetNewVesselCurrency').dataset.userTouched;
     showFleetToast('Trip started');
     renderFleetTrip();
   });
 
+  document.getElementById('fleetDefaultCurrency').addEventListener('change', (e) => {
+    localStorage.setItem(DEFAULT_CURRENCY_KEY, e.target.value);
+    // Existing fields the person already touched keep their explicit
+    // choice; only untouched selects adopt the new preference immediately.
+    applyDefaultCurrencyToSelects();
+    showFleetToast('Default currency updated');
+  });
   document.getElementById('vesselsAddBtn').addEventListener('click', () => {
     const name = document.getElementById('vesselsNewName').value.trim();
     if(!name){ showFleetToast('Vessel name is required', true); return; }
+    const lastMaintHours = parseFloat(document.getElementById('vesselsNewLastMaintenanceHours').value);
+    // Hours-since-last-maintenance is tracked as a reference timestamp,
+    // not a running counter, so it never drifts out of sync with trip
+    // history. If the person enters a starting hour count (e.g. "this
+    // vessel already has 40 hours since its last service"), we back-date
+    // maintenance_done_at by that many hours from now as the baseline;
+    // future trips simply add their duration on top when calculated.
     const vessel = {
       vessel_id: uid(), name,
       default_currency: document.getElementById('vesselsNewCurrency').value,
       margin_target: document.getElementById('vesselsNewTarget').value || '',
-      expected_daily_fuel_l: document.getElementById('vesselsNewExpectedDailyFuel').value || ''
+      expected_daily_fuel_l: document.getElementById('vesselsNewExpectedDailyFuel').value || '',
+      maintenance_interval_hours: document.getElementById('vesselsNewMaintenanceInterval').value || '',
+      maintenance_done_at: !isNaN(lastMaintHours) ? new Date(Date.now() - lastMaintHours * 3600000).toISOString() : new Date().toISOString()
     };
     const vessels = load(VESSELS_KEY); vessels.push(vessel); save(VESSELS_KEY, vessels);
     document.getElementById('vesselsNewName').value = '';
     document.getElementById('vesselsNewTarget').value = '';
     document.getElementById('vesselsNewExpectedDailyFuel').value = '';
+    document.getElementById('vesselsNewMaintenanceInterval').value = '';
+    document.getElementById('vesselsNewLastMaintenanceHours').value = '';
+    delete document.getElementById('vesselsNewCurrency').dataset.userTouched;
     showFleetToast('Vessel added');
     renderFleetVessels();
   });
@@ -1853,6 +1992,7 @@
       noTripCard.style.display = 'block';
       activeCard.style.display = 'none';
       document.getElementById('fleetVesselLine').textContent = 'No Vessel Selected';
+      applyDefaultCurrencyToSelects();
       return;
     }
     noTripCard.style.display = 'none';
@@ -1875,7 +2015,7 @@
     haulList.innerHTML = hauls.length === 0
       ? '<div class="empty">No hauls logged yet this trip.</div>'
       : hauls.slice().reverse().map(hl => '<div class="entry"><div><div class="sp">'+(hl.gear_type||'—')+'</div>'
-        + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+'</div></div></div>').join('');
+        + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+(hl.lat?' · '+hl.lat.toFixed(3)+', '+hl.lon.toFixed(3):'')+'</div></div></div>').join('');
 
     const catchList = document.getElementById('fleetTripCatchList');
     catchList.innerHTML = catches.length === 0
@@ -1883,6 +2023,7 @@
       : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
         + '<div class="meta">'+(c.ref_price ? 'Ref. '+c.ref_price+' '+c.currency+'/kg' : 'No Ref. Price')+'</div></div>'
         + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
+    applyDefaultCurrencyToSelects();
   }
 
   document.getElementById('fleetLogHaulBtn').addEventListener('click', () => {
@@ -1893,6 +2034,7 @@
     currentHaulIdForCatch = null;
     document.getElementById('fleetCatchHaulLine').textContent = 'Not Linked To A Haul';
     fleetGoTo('log-catch');
+    applyDefaultCurrencyToSelects();
   });
 
   // ===== Log haul =====
@@ -1917,6 +2059,41 @@
   document.getElementById('fleetHaulEnd').addEventListener('change', updateFleetHaulDuration);
 
   let currentHaulIdForCatch = null;
+  let fleetHaulCoords = null;
+
+  // Reuses the same capture pattern as the research segment's GPS field —
+  // single getCurrentPosition call, high accuracy, 8s timeout — so haul
+  // location behaves identically to the species-record GPS the person
+  // already knows from Field Research.
+  document.getElementById('fleetGpsBtn').addEventListener('click', () => {
+    const label = document.getElementById('fleetCoordsLabel');
+    const box = document.getElementById('fleetGpsBox');
+    if(!navigator.geolocation){
+      label.textContent = 'GPS not available in this browser';
+      return;
+    }
+    label.textContent = 'locating…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        fleetHaulCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
+        label.classList.remove('pending');
+        label.textContent = fleetHaulCoords.lat.toFixed(5) + ', ' + fleetHaulCoords.lon.toFixed(5) + ' (±' + Math.round(fleetHaulCoords.acc) + 'm)';
+        box.classList.add('locked');
+      },
+      err => {
+        label.textContent = 'no GPS signal — try again';
+        box.classList.remove('locked');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+  function resetFleetHaulGps(){
+    fleetHaulCoords = null;
+    const label = document.getElementById('fleetCoordsLabel');
+    label.textContent = 'not captured';
+    label.classList.add('pending');
+    document.getElementById('fleetGpsBox').classList.remove('locked');
+  }
 
   document.getElementById('fleetHaulCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
   document.getElementById('fleetHaulSaveBtn').addEventListener('click', () => {
@@ -1941,7 +2118,9 @@
       haul_end: e,
       duration_min: durationMin,
       net_width: document.getElementById('fleetNetWidth').value || '',
-      hook_count: document.getElementById('fleetHookCount').value || ''
+      hook_count: document.getElementById('fleetHookCount').value || '',
+      lat: fleetHaulCoords ? fleetHaulCoords.lat : '',
+      lon: fleetHaulCoords ? fleetHaulCoords.lon : ''
     };
     const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
     showFleetToast('Haul saved');
@@ -1954,11 +2133,13 @@
     document.getElementById('fleetNetWidth').value = '';
     document.getElementById('fleetHookCount').value = '';
     document.getElementById('fleetHaulDurationLine').textContent = 'Duration: —';
+    resetFleetHaulGps();
 
     if(logCatchNow){
       currentHaulIdForCatch = haul.haul_id;
       document.getElementById('fleetCatchHaulLine').textContent = 'Linked To This Haul';
       fleetGoTo('log-catch');
+      applyDefaultCurrencyToSelects();
     } else {
       fleetGoTo('trip');
     }
@@ -1976,11 +2157,39 @@
   document.getElementById('fleetRefPrice').addEventListener('input', updateFleetEstValue);
   document.getElementById('fleetRefCurrency').addEventListener('change', updateFleetEstValue);
 
+  // Suggests a reference price from this vessel's own past actual sale
+  // prices for the species being entered — not a fleet-wide average, for
+  // the same reason fuel baselines are vessel-specific: different
+  // vessels can sell into different markets. It's a suggestion shown
+  // next to the field, not an auto-filled value, so the captain always
+  // makes the final call.
+  function updateFleetPriceSuggestion(){
+    const trip = getActiveTrip();
+    const line = document.getElementById('fleetPriceSuggestionLine');
+    const species = document.getElementById('fleetSpecies').value.trim();
+    if(!trip || !species){ line.style.display = 'none'; return; }
+    const sales = load(SALES_KEY).filter(s => s.vessel_id === trip.vessel_id && s.species.toLowerCase() === species.toLowerCase());
+    if(sales.length === 0){ line.style.display = 'none'; return; }
+    const avgPrice = sales.reduce((s,r)=>s+(parseFloat(r.unit_price)||0),0) / sales.length;
+    const currency = sales[sales.length-1].currency;
+    line.style.display = 'block';
+    line.innerHTML = 'Suggested: ' + avgPrice.toFixed(0) + ' ' + currency + ' (avg. of ' + sales.length + ' past sale' + (sales.length>1?'s':'') + ') <span style="text-decoration:underline;">Use This</span>';
+    line.onclick = () => {
+      document.getElementById('fleetRefPrice').value = avgPrice.toFixed(0);
+      document.getElementById('fleetRefCurrency').value = currency;
+      updateFleetEstValue();
+    };
+  }
+  document.getElementById('fleetSpecies').addEventListener('input', updateFleetPriceSuggestion);
+  document.getElementById('fleetSpecies').addEventListener('change', updateFleetPriceSuggestion);
+
   function clearFleetCatchForm(){
     document.getElementById('fleetSpecies').value = '';
     document.getElementById('fleetCatchKg').value = '';
     document.getElementById('fleetRefPrice').value = '';
     document.getElementById('fleetEstValueLine').textContent = 'Estimated Value: —';
+    document.getElementById('fleetPriceSuggestionLine').style.display = 'none';
+    delete document.getElementById('fleetRefCurrency').dataset.userTouched;
   }
   function saveFleetCatch(){
     const trip = getActiveTrip();
@@ -2007,7 +2216,7 @@
     return true;
   }
   document.getElementById('fleetCatchAddAnotherBtn').addEventListener('click', () => {
-    if(saveFleetCatch()){ clearFleetCatchForm(); showFleetToast('Catch saved'); }
+    if(saveFleetCatch()){ clearFleetCatchForm(); applyDefaultCurrencyToSelects(); showFleetToast('Catch saved'); }
   });
   document.getElementById('fleetCatchSaveBtn').addEventListener('click', () => {
     if(saveFleetCatch()){ clearFleetCatchForm(); showFleetToast('Catch saved'); fleetGoTo('trip'); }
@@ -2041,8 +2250,12 @@
     document.getElementById('fleetCostCrew').value = '';
     document.getElementById('fleetCostIce').value = '';
     document.getElementById('fleetCostProvisions').value = '';
+    delete document.getElementById('fleetCostCrewCurrency').dataset.userTouched;
+    delete document.getElementById('fleetCostIceCurrency').dataset.userTouched;
+    delete document.getElementById('fleetCostProvisionsCurrency').dataset.userTouched;
 
     fleetGoTo('close-trip');
+    applyDefaultCurrencyToSelects();
   });
   document.getElementById('fleetFuelRemaining').addEventListener('input', () => {
     const trip = getActiveTrip();
@@ -2173,6 +2386,7 @@
     });
     save(COSTS_KEY, costs);
     document.getElementById('fleetDetailCostAmount').value = '';
+    delete document.getElementById('fleetDetailCostCurrency').dataset.userTouched;
     showFleetToast('Cost added');
     renderFleetTripDetail();
   });
@@ -2222,33 +2436,28 @@
           + '<div class="duration-line" style="margin:0;">'+g.estKg.toFixed(1)+' kg Est.</div></div>').join('')
       + '<div class="duration-line" style="margin-top:10px;">Total: '+totalEstKg.toFixed(1)+' kg Estimated'+(hasActuals?' · '+totalActualKg.toFixed(1)+' kg Scaled':'')+'</div>'
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">This report supports a landing declaration or capture certificate application — it is not itself an official certificate.</div>'
-      + '<button class="track-toggle-btn" id="fleetExportLandingBtn" style="margin-top:14px;">Export As Text</button>'
+      + '<button class="track-toggle-btn" id="fleetExportLandingBtn" style="margin-top:14px;">Export As PDF</button>'
       + '</div>';
 
     document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
-      const lines = [
-        'FISH PULSE — LANDING REPORT',
-        'Vessel: ' + (vessel?vessel.name:'—'),
-        'Captain: ' + (captain?captain.name:'—'),
-        'Trip started: ' + trip.started_at,
-        'Trip ended: ' + (trip.ended_at||'—'),
-        '',
-        'Catch by species:'
-      ].concat(landingGroups.map(g => '  - ' + g.species + ': ' + g.estKg.toFixed(1) + ' kg estimated' + (g.hasActual ? ', ' + g.actualKg.toFixed(1) + ' kg scale weight' : '')))
-       .concat(['', 'Total estimated: ' + totalEstKg.toFixed(1) + ' kg', hasActuals ? 'Total scaled: ' + totalActualKg.toFixed(1) + ' kg' : '']);
-      showFleetTextExport(lines.join('\n'), 'Landing Report');
+      generateFleetLandingReportPdf({ vessel, captain, trip, landingGroups, totalEstKg, totalActualKg, hasActuals });
     });
 
-    // Settlement: real income (scale weight where available, else
-    // estimate) minus all logged costs. The net result is split among
-    // crew according to manually-entered shares for this specific trip —
-    // crew composition and pay arrangements vary trip to trip, so nothing
-    // is assumed or carried over automatically from a fixed roster.
+    // Settlement: real income (scale weight and actual sale price where
+    // available, else estimates) minus all logged costs. The net result
+    // is split among crew according to manually-entered shares for this
+    // specific trip — crew composition and pay arrangements vary trip to
+    // trip, so nothing is assumed or carried over automatically from a
+    // fixed roster.
     const incomeKg = hasActuals ? totalActualKg : totalEstKg;
-    const totalIncome = catches.reduce((s,c) => {
-      const kg = (c.actual_kg!=null&&c.actual_kg!=='') ? parseFloat(c.actual_kg) : parseFloat(c.kg);
-      return s + kg * (parseFloat(c.ref_price)||0);
+    const tripSales = load(SALES_KEY).filter(s => s.trip_id === trip.trip_id);
+    const totalIncome = landingGroups.reduce((s,g) => {
+      const sale = tripSales.find(sr => sr.species === g.species);
+      const kg = g.hasActual ? g.actualKg : g.estKg;
+      const price = sale ? parseFloat(sale.unit_price) : (catches.find(c => c.species === g.species && c.ref_price) ? parseFloat(catches.find(c => c.species === g.species && c.ref_price).ref_price) : 0);
+      return s + kg * price;
     }, 0);
+    const hasActualSales = tripSales.length > 0;
     const totalCosts = costs.reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
     const netResult = totalIncome - totalCosts;
 
@@ -2257,9 +2466,14 @@
 
     document.getElementById('fleetTripDetailSettlement').innerHTML =
       '<div class="card">'
-      + '<div class="card-label" style="margin-bottom:14px;">Trip Settlement'+(hasActuals?'':' <span class="optional-tag">based on estimate, not yet scaled</span>')+'</div>'
+      + '<div class="card-label" style="margin-bottom:14px;">Trip Settlement'+(!hasActuals?' <span class="optional-tag">based on estimate, not yet scaled</span>':(!hasActualSales?' <span class="optional-tag">scaled, price still estimated</span>':''))+'</div>'
       + costs.map(c => '<div class="entry"><div><div class="sp" style="font-size:13px; font-style:normal;">'+(c.cost_type.charAt(0).toUpperCase()+c.cost_type.slice(1))+'</div></div>'
-          + '<div class="duration-line" style="margin:0;">-'+fmtMoney(c.amount, c.currency)+'</div></div>').join('')
+          + '<div style="display:flex; align-items:center; gap:4px;">'
+          + '<span style="font-family:var(--data); font-size:13px;">-</span>'
+          + '<input type="number" inputmode="decimal" class="fleet-cost-edit-input" data-cost-id="'+c.cost_id+'" value="'+c.amount+'" style="width:80px; text-align:right; padding:4px 6px;">'
+          + '<span style="font-family:var(--data); font-size:13px;">'+c.currency+'</span>'
+          + '<button class="del" data-remove-cost="'+c.cost_id+'" title="remove">×</button>'
+          + '</div></div>').join('')
       + '<div class="duration-line" style="margin-top:10px;">Income ('+incomeKg.toFixed(1)+' kg): '+fmtMoney(totalIncome, currency)+'</div>'
       + '<div class="duration-line">Total Costs: -'+fmtMoney(totalCosts, currency)+'</div>'
       + '<div class="duration-line" style="font-size:16px; margin-top:6px;">Net Result: '+fmtMoney(netResult, currency)+'</div>'
@@ -2319,31 +2533,152 @@
         renderFleetTripDetail();
       });
     }
+
+    // Lets a fat-finger amount be fixed in place rather than forcing a
+    // delete-and-recreate. Saves on blur (when the field loses focus),
+    // not on every keystroke, so typing isn't interrupted by re-renders.
+    document.querySelectorAll('.fleet-cost-edit-input').forEach(inp => {
+      inp.addEventListener('blur', () => {
+        const val = parseFloat(inp.value);
+        if(isNaN(val)) return;
+        const all = load(COSTS_KEY);
+        const idx = all.findIndex(c => c.cost_id === inp.dataset.costId);
+        if(idx === -1) return;
+        if(all[idx].amount === val) return;
+        all[idx].amount = val;
+        save(COSTS_KEY, all);
+        showFleetToast('Cost updated');
+        renderFleetTripDetail();
+      });
+      inp.addEventListener('keydown', (e) => { if(e.key === 'Enter') inp.blur(); });
+    });
+    document.querySelectorAll('[data-remove-cost]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const all = load(COSTS_KEY).filter(c => c.cost_id !== btn.dataset.removeCost);
+        save(COSTS_KEY, all);
+        showFleetToast('Cost removed');
+        renderFleetTripDetail();
+      });
+    });
+    applyDefaultCurrencyToSelects();
   }
 
-  function showFleetTextExport(text, title){
-    document.getElementById('fleetExportTitle').textContent = title;
-    document.getElementById('fleetExportText').textContent = text;
-    document.getElementById('fleetExportOverlay').style.display = 'flex';
-    document.getElementById('fleetExportOverlay').dataset.text = text;
-    document.getElementById('fleetExportOverlay').dataset.title = title;
+  // Builds an actual PDF (not text-as-image) so the file looks like a
+  // real document when shared via WhatsApp/email, and can be saved or
+  // printed. jsPDF runs entirely client-side — no server round trip,
+  // consistent with the rest of the app's offline-first design.
+  function generateFleetLandingReportPdf(data){
+    if(typeof jspdf === 'undefined'){ showFleetToast('PDF library not loaded — check your connection', true); return; }
+    const { vessel, captain, trip, landingGroups, totalEstKg, totalActualKg, hasActuals } = data;
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 48;
+    let y = 56;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Landing report', margin, y);
+    y += 22;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(110, 110, 110);
+    doc.text('Fish Pulse — Fishing Operations', margin, y);
+    y += 28;
+
+    doc.setDrawColor(220, 220, 220);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 24;
+
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(11);
+    const infoRows = [
+      ['Vessel', vessel ? vessel.name : '—'],
+      ['Captain', captain ? captain.name : '—'],
+      ['Trip started', new Date(trip.started_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })],
+      ['Trip ended', trip.ended_at ? new Date(trip.ended_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—']
+    ];
+    infoRows.forEach(([label, value]) => {
+      doc.setFont('helvetica', 'bold');
+      doc.text(label + ':', margin, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(value, margin + 110, y);
+      y += 18;
+    });
+    y += 14;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('Catch by species', margin, y);
+    y += 20;
+
+    const colSpeciesX = margin, colEstX = margin + 230, colScaleX = margin + 340;
+    doc.setFontSize(10);
+    doc.setTextColor(110, 110, 110);
+    doc.text('Species', colSpeciesX, y);
+    doc.text('Estimated', colEstX, y);
+    doc.text('Scale weight', colScaleX, y);
+    y += 8;
+    doc.setDrawColor(220, 220, 220);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 16;
+
+    doc.setTextColor(20, 20, 20);
+    landingGroups.forEach(g => {
+      doc.setFont('helvetica', 'normal');
+      doc.text(g.species, colSpeciesX, y, { maxWidth: 220 });
+      doc.text(g.estKg.toFixed(1) + ' kg', colEstX, y);
+      doc.text(g.hasActual ? g.actualKg.toFixed(1) + ' kg' : 'not yet scaled', colScaleX, y);
+      y += 20;
+    });
+    y += 6;
+    doc.setDrawColor(220, 220, 220);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 20;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total: ' + totalEstKg.toFixed(1) + ' kg estimated' + (hasActuals ? ' · ' + totalActualKg.toFixed(1) + ' kg scaled' : ''), margin, y);
+    y += 36;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(140, 140, 140);
+    const disclaimer = 'This report supports a landing declaration or capture certificate application. It is not itself an official certificate.';
+    doc.text(disclaimer, margin, y, { maxWidth: pageWidth - margin*2 });
+
+    const filename = 'landing-report-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, 'Landing Report');
   }
+
+  function showFleetPdfExport(blob, filename, title){
+    document.getElementById('fleetExportTitle').textContent = title;
+    const url = URL.createObjectURL(blob);
+    document.getElementById('fleetExportText').innerHTML =
+      '<div style="text-align:center; padding:40px 20px;">'
+      + '<div style="font-family:var(--data); font-size:13px; color:var(--ink-soft); margin-bottom:16px;">PDF ready — ' + filename + '</div>'
+      + '<a href="' + url + '" download="' + filename + '" style="display:inline-block; background:var(--blue); color:var(--paper); padding:10px 18px; border-radius:8px; text-decoration:none; font-family:var(--data); font-size:13px; font-weight:600;">Download PDF</a>'
+      + '</div>';
+    document.getElementById('fleetExportOverlay').style.display = 'flex';
+    document.getElementById('fleetExportOverlay').dataset.title = title;
+    fleetExportBlob = blob;
+    fleetExportFilename = filename;
+  }
+  let fleetExportBlob = null;
+  let fleetExportFilename = '';
   function hideFleetTextExport(){
     document.getElementById('fleetExportOverlay').style.display = 'none';
   }
   document.getElementById('fleetExportCloseBtn').addEventListener('click', hideFleetTextExport);
   document.getElementById('fleetExportCloseBtn2').addEventListener('click', hideFleetTextExport);
   document.getElementById('fleetExportShareBtn').addEventListener('click', async () => {
-    const text = document.getElementById('fleetExportOverlay').dataset.text || '';
-    const title = document.getElementById('fleetExportOverlay').dataset.title || 'Fish Pulse Report';
-    if(navigator.share){
-      try{ await navigator.share({ title, text }); }
+    if(!fleetExportBlob){ showFleetToast('Nothing to share yet', true); return; }
+    const file = new File([fleetExportBlob], fleetExportFilename, { type: 'application/pdf' });
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      try{ await navigator.share({ files: [file], title: document.getElementById('fleetExportOverlay').dataset.title || 'Fish Pulse Report' }); }
       catch(e){ /* user cancelled the share sheet — not an error */ }
-    } else if(navigator.clipboard){
-      try{ await navigator.clipboard.writeText(text); showFleetToast('Copied to clipboard'); }
-      catch(e){ showFleetToast('Could not copy — select and copy the text manually', true); }
     } else {
-      showFleetToast('Sharing is not supported on this browser', true);
+      showFleetToast('Sharing files is not supported on this browser — use Download instead', true);
     }
   });
 
@@ -2410,17 +2745,63 @@
   }
 
   // ===== Vessels admin screen =====
+  // Hours at sea since maintenance_done_at, summed from this vessel's
+  // closed trips that started after that reference point. A trip that
+  // started before maintenance_done_at but ended after it is counted
+  // only from maintenance_done_at onward, so a service done mid-trip
+  // doesn't get double-counted or under-counted.
+  function hoursSinceMaintenance(vessel){
+    if(!vessel.maintenance_done_at) return 0;
+    const ref = new Date(vessel.maintenance_done_at).getTime();
+    const trips = load(TRIPS_KEY).filter(t => t.vessel_id === vessel.vessel_id && t.ended_at);
+    return trips.reduce((sum, t) => {
+      const start = Math.max(new Date(t.started_at).getTime(), ref);
+      const end = new Date(t.ended_at).getTime();
+      if(end <= start) return sum;
+      return sum + (end - start) / 3600000;
+    }, 0);
+  }
+
   function renderFleetVessels(){
+    document.getElementById('fleetDefaultCurrency').value = getDefaultCurrency();
     const vessels = load(VESSELS_KEY);
     const captains = load(CAPTAINS_KEY);
     document.getElementById('vesselsList').innerHTML = vessels.length === 0
       ? '<div class="empty">No vessels yet.</div>'
-      : vessels.map(v => '<div class="entry"><div><div class="sp">'+v.name+'</div>'
-        + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')
-        + (v.expected_daily_fuel_l ? ' · Expected: '+v.expected_daily_fuel_l+' L/Day' : ' · Auto Baseline After 5 Trips')+'</div></div></div>').join('');
+      : vessels.map(v => {
+          const maintHtml = v.maintenance_interval_hours ? (() => {
+            const hrs = hoursSinceMaintenance(v);
+            const interval = parseFloat(v.maintenance_interval_hours);
+            const pctUsed = interval > 0 ? (hrs / interval * 100) : 0;
+            const isDue = pctUsed >= 100;
+            const isSoon = pctUsed >= 80 && pctUsed < 100;
+            const color = isDue ? 'color:var(--coral);' : (isSoon ? 'color:var(--amber);' : '');
+            return '<div class="meta" style="'+color+' margin-top:2px;">'+hrs.toFixed(0)+' / '+interval.toFixed(0)+' Hours Since Maintenance'+(isDue?' — Due Now':(isSoon?' — Due Soon':''))+'</div>';
+          })() : '';
+          return '<div class="entry" style="display:block;">'
+            + '<div style="display:flex; justify-content:space-between; align-items:flex-start;">'
+            + '<div><div class="sp">'+v.name+'</div>'
+            + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')
+            + (v.expected_daily_fuel_l ? ' · Expected: '+v.expected_daily_fuel_l+' L/Day' : ' · Auto Baseline After 5 Trips')+'</div>'
+            + maintHtml + '</div>'
+            + (v.maintenance_interval_hours ? '<button class="switch-mode-btn" style="background:var(--blue); color:var(--paper); flex-shrink:0;" data-log-maintenance="'+v.vessel_id+'">Log Service</button>' : '')
+            + '</div></div>';
+        }).join('');
+    document.querySelectorAll('[data-log-maintenance]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const all = load(VESSELS_KEY);
+        const idx = all.findIndex(v => v.vessel_id === btn.dataset.logMaintenance);
+        if(idx === -1) return;
+        all[idx].maintenance_done_at = new Date().toISOString();
+        save(VESSELS_KEY, all);
+        showFleetToast('Maintenance logged — hour counter reset');
+        renderFleetVessels();
+      });
+    });
     document.getElementById('captainsList').innerHTML = captains.length === 0
       ? '<div class="empty">No captains yet.</div>'
       : captains.map(c => '<div class="entry"><div><div class="sp">'+c.name+'</div></div></div>').join('');
+    applyDefaultCurrencyToSelects();
   }
 
   // ===== Daily fuel log (captain) =====
@@ -2554,11 +2935,13 @@
       }
     });
     const speciesGroups = Object.values(bySpecies);
+    const existingSales = load(SALES_KEY).filter(s => s.trip_id === tripId);
 
     body.innerHTML = '<div class="section-h">Logbook Estimate Vs. Scale Weight, By Species</div>' + speciesGroups.map(g => {
       const diff = g.actualKg != null ? g.actualKg - g.estKg : null;
       const diffPct = diff != null && g.estKg > 0 ? (diff / g.estKg * 100) : null;
       const diffColor = diff == null ? '' : (Math.abs(diffPct) > 10 ? 'color:var(--coral);' : 'color:var(--released);');
+      const sale = existingSales.find(s => s.species === g.species);
       return '<div class="entry" style="display:block;">'
         + '<div class="sp" style="margin-bottom:2px;">'+g.species+'</div>'
         + '<div class="meta" style="margin-bottom:8px;">'+g.haulCount+' haul'+(g.haulCount>1?'s':'')+' of this species, combined in the same hold</div>'
@@ -2567,6 +2950,9 @@
         + '<div><label style="margin-top:0;">Scale Weight, Total (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(g.actualKg!=null?g.actualKg:'')+'" placeholder="e.g. '+g.estKg.toFixed(1)+'"></div>'
         + '</div>'
         + (diff != null ? '<div class="duration-line" style="'+diffColor+'">Difference: '+(diff>=0?'+':'')+diff.toFixed(1)+' kg ('+(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%)</div>' : '')
+        + '<label>Actual Sale Price <span class="optional-tag">optional, per kg</span></label>'
+        + '<div class="grid2"><input type="number" inputmode="decimal" class="fleet-recon-price" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(sale?sale.unit_price:'')+'" placeholder="e.g. 90">'
+        + '<select disabled style="opacity:0.6;"><option>'+currency+'</option></select></div>'
         + '</div>';
     }).join('')
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin:10px 0 4px; line-height:1.5;">Enter the total scale weight for each species as landed — not per individual haul. Once different hauls of the same species are unloaded together, the scale can no longer tell them apart.</div>'
@@ -2595,6 +2981,26 @@
         });
       });
       save(CATCHES_KEY, allCatches);
+
+      const priceInputs = document.querySelectorAll('.fleet-recon-price');
+      const allSales = load(SALES_KEY);
+      priceInputs.forEach(inp => {
+        if(inp.value === '') return;
+        const existingIdx = allSales.findIndex(s => s.trip_id === tripId && s.species === inp.dataset.species);
+        const vesselForSale = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+        const record = {
+          sale_id: existingIdx !== -1 ? allSales[existingIdx].sale_id : uid(),
+          trip_id: tripId,
+          vessel_id: trip.vessel_id,
+          species: inp.dataset.species,
+          unit_price: parseFloat(inp.value),
+          currency: vesselForSale ? vesselForSale.default_currency : 'THB',
+          recorded_at: new Date().toISOString()
+        };
+        if(existingIdx !== -1) allSales[existingIdx] = record; else allSales.push(record);
+      });
+      save(SALES_KEY, allSales);
+
       showFleetToast('Scale weights saved');
       renderFleetReconciliationBody(tripId);
     });
@@ -2617,6 +3023,26 @@
 
     const docs = load(DOCS_KEY);
     const list = document.getElementById('fleetDocumentsList');
+    // Maintenance status lives on this same "alerts" screen, alongside
+    // license/certificate expiry — same purpose (things that need
+    // attention before they become a problem), different measurement
+    // (hours at sea instead of calendar date).
+    const maintList = document.getElementById('fleetMaintenanceList');
+    const trackedVessels = vessels.filter(v => v.maintenance_interval_hours);
+    maintList.innerHTML = trackedVessels.length === 0
+      ? '<div class="empty">No vessels have a maintenance interval set. Add one from the Vessels tab.</div>'
+      : trackedVessels.map(v => {
+          const hrs = hoursSinceMaintenance(v);
+          const interval = parseFloat(v.maintenance_interval_hours);
+          const pctUsed = interval > 0 ? (hrs / interval * 100) : 0;
+          let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+hrs.toFixed(0)+' / '+interval.toFixed(0)+' Hrs</span>';
+          if(pctUsed >= 100) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Due Now</span>';
+          else if(pctUsed >= 80) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Due Soon</span>';
+          return '<div class="entry"><div><div class="sp">'+v.name+'</div>'
+            + '<div class="meta">'+hrs.toFixed(0)+' Of '+interval.toFixed(0)+' Hours At Sea</div></div>'
+            + badge + '</div>';
+        }).join('');
+
     if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents tracked yet.</div>'; return; }
 
     const now = Date.now();
@@ -2659,6 +3085,147 @@
   window.renderFleetReconciliation = renderFleetReconciliation;
   window.renderFleetDocuments = renderFleetDocuments;
   window.renderFleetTripDetail = renderFleetTripDetail;
+  window.renderFleetHaulMap = renderFleetHaulMap;
+
+  // ===== Haul map: reuses the research segment's Leaflet + offline
+  // schematic fallback pattern, scoped to one trip's hauls instead of all
+  // species records. fleetMapTripId is null for "the active trip" (set
+  // when opened from the Trip screen) or a specific trip_id (set when
+  // opened from Trip Detail for a closed trip).
+  let fleetMapTripId = null;
+  let fleetMapReturnScreen = 'trip';
+  let fleetLeafletInstance = null;
+
+  document.getElementById('fleetViewMapBtn').addEventListener('click', () => {
+    const trip = getActiveTrip();
+    if(!trip){ showFleetToast('No active trip', true); return; }
+    fleetMapTripId = trip.trip_id;
+    fleetMapReturnScreen = 'trip';
+    fleetGoTo('haul-map');
+  });
+  document.getElementById('fleetDetailViewMapBtn').addEventListener('click', () => {
+    fleetMapTripId = currentTripDetailId;
+    fleetMapReturnScreen = 'trip-detail';
+    fleetGoTo('haul-map');
+  });
+  document.getElementById('fleetMapBackBtn').addEventListener('click', () => fleetGoTo(fleetMapReturnScreen));
+
+  function fleetCheckTilesReachable(callback){
+    if(!navigator.onLine){ callback(false); return; }
+    const testImg = new Image();
+    let settled = false;
+    const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
+    testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
+    testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
+    testImg.src = 'https://tile.openstreetmap.org/0/0/0.png?check=' + Date.now();
+  }
+
+  function renderFleetHaulMap(){
+    const trip = load(TRIPS_KEY).find(t => t.trip_id === fleetMapTripId);
+    if(!trip){ fleetGoTo(fleetMapReturnScreen); return; }
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    document.getElementById('fleetMapVesselLine').textContent = (vessel?vessel.name:'—') + ' · ' + new Date(trip.started_at).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'});
+
+    const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
+    const withGps = hauls.filter(hl => hl.lat !== '' && hl.lon !== '' && hl.lat != null && hl.lon != null);
+    const withoutGps = hauls.length - withGps.length;
+
+    const noGpsNote = document.getElementById('fleetNoGpsNote');
+    if(withoutGps > 0){
+      noGpsNote.style.display = 'block';
+      noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' haul has' : ' hauls have') + ' no GPS position and cannot be shown on the map.';
+    } else {
+      noGpsNote.style.display = 'none';
+    }
+
+    const banner = document.getElementById('fleetMapModeBanner');
+    const bannerText = document.getElementById('fleetMapModeText');
+
+    fleetCheckTilesReachable((isLive) => {
+      if(isLive){
+        banner.className = 'map-mode-banner live';
+        bannerText.textContent = 'Live map · tiles loaded from connection';
+        document.getElementById('fleetLeafletMap').style.display = 'block';
+        document.getElementById('fleetSchematicMap').style.display = 'none';
+        renderFleetLeaflet(withGps);
+      } else {
+        banner.className = 'map-mode-banner offline';
+        bannerText.textContent = 'Offline mode · schematic coordinate plot';
+        document.getElementById('fleetLeafletMap').style.display = 'none';
+        document.getElementById('fleetSchematicMap').style.display = 'block';
+        renderFleetSchematic(withGps);
+      }
+    });
+  }
+
+  function renderFleetLeaflet(hauls){
+    if(!fleetLeafletInstance){
+      fleetLeafletInstance = L.map('fleetLeafletMap');
+      L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(fleetLeafletInstance);
+    }
+    fleetLeafletInstance.eachLayer(layer => {
+      if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
+        fleetLeafletInstance.removeLayer(layer);
+      }
+    });
+
+    if(hauls.length === 0){
+      fleetLeafletInstance.setView([10.5, 99.5], 6);
+      setTimeout(()=> fleetLeafletInstance.invalidateSize(), 50);
+      return;
+    }
+
+    const bounds = [];
+    hauls.forEach(hl => {
+      const lat = parseFloat(hl.lat), lon = parseFloat(hl.lon);
+      bounds.push([lat, lon]);
+      const marker = L.circleMarker([lat, lon], {
+        radius: 7, color: '#0a5c8c', fillColor: '#0a5c8c', fillOpacity: 0.85, weight: 2
+      }).addTo(fleetLeafletInstance);
+      marker.bindPopup('<div class="map-point-popup"><b>' + (hl.gear_type||'haul') + '</b><br>Depth: ' + (hl.depth||'—') + 'm · ' + (hl.duration_min ? hl.duration_min+' min' : '—') + '</div>');
+    });
+    fleetLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
+    setTimeout(()=> fleetLeafletInstance.invalidateSize(), 50);
+  }
+
+  function renderFleetSchematic(hauls){
+    const wrap = document.getElementById('fleetSchematicMap');
+    wrap.innerHTML = '';
+
+    if(hauls.length === 0){
+      wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet for this trip.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
+      return;
+    }
+
+    const lats = hauls.map(hl => parseFloat(hl.lat));
+    const lons = hauls.map(hl => parseFloat(hl.lon));
+    let minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    let minLon = Math.min(...lons), maxLon = Math.max(...lons);
+    const padLat = Math.max((maxLat - minLat) * 0.2, 0.001);
+    const padLon = Math.max((maxLon - minLon) * 0.2, 0.001);
+    minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+
+    const w = wrap.clientWidth || 320, h = wrap.clientHeight || 240;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+    hauls.forEach(hl => {
+      const lat = parseFloat(hl.lat), lon = parseFloat(hl.lon);
+      const x = ((lon - minLon) / (maxLon - minLon || 1)) * w;
+      const y = h - ((lat - minLat) / (maxLat - minLat || 1)) * h;
+      const circle = document.createElementNS(svgNS, 'circle');
+      circle.setAttribute('cx', x); circle.setAttribute('cy', y); circle.setAttribute('r', 6);
+      circle.setAttribute('fill', '#0a5c8c'); circle.setAttribute('fill-opacity', '0.85');
+      svg.appendChild(circle);
+    });
+    wrap.appendChild(svg);
+  }
 
   if(window.fishPulseReapplyIfActive){
     window.fishPulseReapplyIfActive('fleet', () => {
@@ -2670,6 +3237,8 @@
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 (function(){
   const STORAGE_KEY = 'bycatch_entries_app_v2';
@@ -2856,6 +3425,8 @@
   const lastObserver = localStorage.getItem(LAST_OBSERVER_KEY);
   if(lastObserver) document.getElementById('observer').value = lastObserver;
 
+  populateDatalist('common-name-list', 'bycatch_known_common_names');
+
   const LAST_SITE_KEY = 'bycatch_last_site';
   populateDatalist('site-list', LAST_SITE_KEY);
 
@@ -2954,6 +3525,41 @@
     );
   });
 
+  // Manual coordinate entry: a fallback for when GPS signal genuinely
+  // isn't available (no satellite fix, permission denied, indoor testing)
+  // or when the person already knows the exact coordinates from another
+  // source and wants to type them directly rather than relying on the
+  // device's own fix at this exact moment.
+  document.getElementById('gpsManualToggleBtn').addEventListener('click', () => {
+    const fields = document.getElementById('gpsManualFields');
+    const isOpen = fields.style.display !== 'none';
+    fields.style.display = isOpen ? 'none' : 'block';
+    if(!isOpen && coords){
+      document.getElementById('manualLat').value = coords.lat;
+      document.getElementById('manualLon').value = coords.lon;
+    }
+  });
+  document.getElementById('gpsManualApplyBtn').addEventListener('click', () => {
+    const lat = parseFloat(document.getElementById('manualLat').value);
+    const lon = parseFloat(document.getElementById('manualLon').value);
+    const label = document.getElementById('coordsLabel');
+    const box = document.getElementById('gpsBox');
+    if(isNaN(lat) || isNaN(lon)){
+      showToast('Enter both latitude and longitude', true);
+      return;
+    }
+    if(lat < -90 || lat > 90 || lon < -180 || lon > 180){
+      showToast('Latitude must be -90 to 90, longitude -180 to 180', true);
+      return;
+    }
+    coords = { lat, lon, acc: 0 };
+    label.classList.remove('pending');
+    label.textContent = lat.toFixed(5) + ', ' + lon.toFixed(5) + ' (manual)';
+    box.classList.add('locked');
+    document.getElementById('gpsManualFields').style.display = 'none';
+    showToast('Manual coordinates applied');
+  });
+
   // ===== Photo =====
   function buildPhotoInput(){
     const input = document.createElement('input');
@@ -3013,7 +3619,7 @@
   function entryRowHtml(e, idx, withDelete){
     const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
     return '<div class="entry entry-clickable" data-edit-idx="'+idx+'">'
-      + '<div><div class="sp">'+(e.species||'unnamed')+'</div>'
+      + '<div><div class="sp">'+(e.species||'unnamed')+(e.common_name ? ' <span style="font-style:normal; color:var(--ink-soft);">('+e.common_name+')</span>' : '')+'</div>'
       + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div>'
       + '<div class="meta">obs: '+(e.observer||'—')+(e.record_id ? ' · '+e.record_id : '')+'</div></div>'
       + (withDelete ? '<button class="del" data-idx="'+idx+'" title="delete">×</button>' : '')
@@ -3072,7 +3678,7 @@
 
     const filtered = list
       .map((e, i) => ({...e, _idx: i}))
-      .filter(e => !search || (e.species||'').toLowerCase().includes(search))
+      .filter(e => !search || (e.species||'').toLowerCase().includes(search) || (e.common_name||'').toLowerCase().includes(search))
       .filter(e => !siteFilter || e.site === siteFilter)
       .filter(e => {
         if(!campaignFilter) return true;
@@ -3120,6 +3726,7 @@
     document.querySelectorAll('#taxonRow .pill').forEach(p => p.classList.toggle('active', p.dataset.val === taxonVal));
 
     document.getElementById('species').value = e.species || '';
+    document.getElementById('commonName').value = e.common_name || '';
     document.getElementById('length').value = e.length || '';
     document.getElementById('weight').value = e.weight || '';
 
@@ -3147,10 +3754,11 @@
     }
 
     coords = (e.lat !== '' && e.lat != null) ? { lat: parseFloat(e.lat), lon: parseFloat(e.lon), acc: parseFloat(e.gps_accuracy_m) || 0 } : null;
+    document.getElementById('gpsManualFields').style.display = 'none';
     const coordsLabel = document.getElementById('coordsLabel');
     const gpsBox = document.getElementById('gpsBox');
     if(coords){
-      coordsLabel.textContent = coords.lat.toFixed(5) + ', ' + coords.lon.toFixed(5) + (e.gps_accuracy_m ? ' (±' + Math.round(e.gps_accuracy_m) + 'm)' : '');
+      coordsLabel.textContent = coords.lat.toFixed(5) + ', ' + coords.lon.toFixed(5) + (e.gps_accuracy_m ? ' (±' + Math.round(e.gps_accuracy_m) + 'm)' : ' (manual)');
       coordsLabel.classList.remove('pending');
       gpsBox.classList.add('locked');
     } else {
@@ -3201,6 +3809,7 @@
   // ===== Form clear =====
   function clearForm(){
     document.getElementById('species').value = '';
+    document.getElementById('commonName').value = '';
     document.getElementById('length').value = '';
     document.getElementById('weight').value = '';
     document.getElementById('vessel').value = '';
@@ -3229,6 +3838,9 @@
     document.getElementById('coordsLabel').textContent = 'not captured';
     document.getElementById('coordsLabel').classList.add('pending');
     document.getElementById('gpsBox').classList.remove('locked');
+    document.getElementById('manualLat').value = '';
+    document.getElementById('manualLon').value = '';
+    document.getElementById('gpsManualFields').style.display = 'none';
     const box = document.getElementById('photoBox');
     box.classList.remove('filled');
     box.innerHTML = '<span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>';
@@ -3252,9 +3864,12 @@
     rememberValue(LAST_OBSERVER_KEY, observer);
     rememberValue(LAST_SITE_KEY, siteVal);
     rememberValue('bycatch_known_species', species);
+    const commonNameVal = document.getElementById('commonName').value.trim();
+    if(commonNameVal) rememberValue('bycatch_known_common_names', commonNameVal);
     populateDatalist('observer-list', LAST_OBSERVER_KEY);
     populateDatalist('site-list', LAST_SITE_KEY);
     populateDatalist('species-list', 'bycatch_known_species', SPECIES_SUGGESTIONS);
+    populateDatalist('common-name-list', 'bycatch_known_common_names');
 
     // Build the record timestamp from the editable survey date plus the
     // current time-of-day, so backfilling a past date doesn't get silently
@@ -3286,6 +3901,7 @@
       taxon_group: taxonVal || '',
       is_bycatch: bycatchVal || '',
       species: species,
+      common_name: document.getElementById('commonName').value.trim(),
       length: document.getElementById('length').value,
       weight: document.getElementById('weight').value,
       sex: sexVal || '',
@@ -3340,7 +3956,7 @@
     return s;
   }
 
-  const CSV_COLS = ['record_id','campaign_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','sea_temp_c','salinity_psu','lat','lon','gps_accuracy_m','notes','has_photo'];
+  const CSV_COLS = ['record_id','campaign_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','common_name','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','sea_temp_c','salinity_psu','lat','lon','gps_accuracy_m','notes','has_photo'];
 
   function buildCsv(list){
     const rows = [CSV_COLS.join(',')];
@@ -3377,6 +3993,99 @@
       }));
     return JSON.stringify({ type: 'FeatureCollection', features: features }, null, 2);
   }
+
+  // Exports photos as a .zip, one file per record that has one, named by
+  // record_id so they can be matched back to the CSV/GeoJSON rows once
+  // uploaded elsewhere (e.g. Google Drive). Runs entirely client-side via
+  // JSZip — consistent with the rest of the app staying offline-first;
+  // the only network dependency is loading the JSZip library itself.
+  function dataUrlToBlobParts(dataUrl){
+    const match = dataUrl.match(/^data:([^;]+);base64,(.*)$/);
+    if(!match) return null;
+    const mime = match[1];
+    const ext = mime === 'image/png' ? 'png' : (mime === 'image/webp' ? 'webp' : 'jpg');
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for(let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return { bytes, ext, mime };
+  }
+
+  async function exportPhotosAsZip(entries, labelForFilename){
+    if(typeof JSZip === 'undefined'){ showToast('Zip library not loaded — check your connection', true); return; }
+    const withPhotos = entries.filter(e => e.photo);
+    if(withPhotos.length === 0){ showToast('No photos in this set of records', true); return; }
+
+    showToast('Building zip of ' + withPhotos.length + ' photo' + (withPhotos.length>1?'s':'') + '…');
+    const zip = new JSZip();
+    withPhotos.forEach(e => {
+      const parts = dataUrlToBlobParts(e.photo);
+      if(!parts) return;
+      zip.file((e.record_id || 'unnamed') + '.' + parts.ext, parts.bytes);
+    });
+
+    try {
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const safeLabel = (labelForFilename || 'photos').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+      const filename = 'photos-' + safeLabel + '-' + new Date().toISOString().slice(0,10) + '.zip';
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(withPhotos.length + ' photo' + (withPhotos.length>1?'s':'') + ' exported as ' + filename);
+      showPhotoExportConfirm(withPhotos.map(e => e.record_id));
+    } catch(err){
+      showToast('Could not build zip — try again', true);
+    }
+  }
+
+  // Offers to delete the exported photos from localStorage afterward,
+  // since exporting doesn't free up space on its own — the photos stay
+  // in every record's `photo` field until removed. Shown only after a
+  // successful export of this exact set, so there's no path to deleting
+  // photos that weren't just backed up in this same action.
+  function showPhotoExportConfirm(recordIds){
+    const body = document.getElementById('photoExportConfirmBody');
+    body.innerHTML =
+      '<div style="padding:8px 4px;">'
+      + '<p style="font-family:var(--body); font-size:14px; color:var(--ink); line-height:1.6; margin:0 0 16px;">The zip download has started. The original photos are still stored in this app — exporting a copy doesn\'t remove them.</p>'
+      + '<p style="font-family:var(--body); font-size:14px; color:var(--ink); line-height:1.6; margin:0 0 18px;">If you want to free up space now that you have a backup, you can delete these '+recordIds.length+' exported photo'+(recordIds.length>1?'s':'')+' from the app. The records themselves stay — only the photo attachment is removed from each.</p>'
+      + '<button class="btn btn-clear" id="photoExportKeepBtn" style="width:100%; margin-bottom:10px;">Keep Photos In The App</button>'
+      + '<button class="btn btn-save" id="photoExportDeleteBtn" style="width:100%; background:var(--coral);">Delete These '+recordIds.length+' Exported Photo'+(recordIds.length>1?'s':'')+'</button>'
+      + '</div>';
+    document.getElementById('photoExportConfirmOverlay').style.display = 'flex';
+
+    document.getElementById('photoExportKeepBtn').onclick = () => {
+      document.getElementById('photoExportConfirmOverlay').style.display = 'none';
+    };
+    document.getElementById('photoExportDeleteBtn').onclick = () => {
+      const idSet = new Set(recordIds);
+      const all = loadEntries();
+      let removedCount = 0;
+      all.forEach(e => {
+        if(idSet.has(e.record_id) && e.photo){
+          e.photo = '';
+          e.has_photo = 'no';
+          removedCount++;
+        }
+      });
+      saveEntries(all);
+      document.getElementById('photoExportConfirmOverlay').style.display = 'none';
+      showToast(removedCount + ' photo' + (removedCount>1?'s':'') + ' deleted from the app');
+      renderHistory();
+      renderCampaignsScreen();
+    };
+  }
+  document.getElementById('photoExportConfirmCloseBtn').addEventListener('click', () => {
+    document.getElementById('photoExportConfirmOverlay').style.display = 'none';
+  });
+
+  document.getElementById('exportPhotosBtn').addEventListener('click', () => {
+    exportPhotosAsZip(loadEntries(), 'all-records');
+  });
 
   function buildGeoJsonTracks(tracks){
     const features = tracks.map(t => ({
@@ -4299,6 +5008,7 @@
         + '<div><div class="ce-main">' + c.name + '</div>'
         + '<div class="ce-meta">' + recordCount + ' records · ' + status + '</div></div>'
         + '<div class="campaign-entry-actions">'
+        + '<button class="ce-reopen" data-export-photos="'+c.id+'">Photos</button>'
         + (c.closed_at ? '<button class="ce-reopen" data-reopen="'+c.id+'">Reopen</button>' : '')
         + '<button class="ce-delete" data-delete="'+c.id+'" title="delete">×</button>'
         + '</div></div>';
@@ -4309,6 +5019,13 @@
     if(reopenBtn){ reopenCampaign(reopenBtn.dataset.reopen); return; }
     const deleteBtn = e.target.closest('[data-delete]');
     if(deleteBtn){ deleteCampaign(deleteBtn.dataset.delete); return; }
+    const exportPhotosBtn = e.target.closest('[data-export-photos]');
+    if(exportPhotosBtn){
+      const campaignId = exportPhotosBtn.dataset.exportPhotos;
+      const campaignEntries = loadEntries().filter(en => en.campaign_id === campaignId);
+      exportPhotosAsZip(campaignEntries, (loadCampaigns().find(c => c.id === campaignId) || {}).name || 'campaign');
+      return;
+    }
   });
 
   // ===== Initial render =====
