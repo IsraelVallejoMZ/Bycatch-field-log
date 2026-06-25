@@ -288,6 +288,7 @@
   .btn:active{ transform: scale(0.97); }
   .btn-save{ background: var(--blue); color: white; flex:2; }
   .btn-clear{ background: transparent; color: #aab6bb; border:1.5px solid #2d3d45; flex:1; }
+  .btn-clear.active{ background: var(--blue-mist); color: var(--blue-deep); border-color: var(--blue-deep); }
 
   /* ===== History screen ===== */
   .filter-row{ display:flex; gap:8px; margin-bottom: 16px; }
@@ -541,10 +542,11 @@
   /* Mode visibility: research-only and fleet-only chrome stay hidden
      unless body carries the matching mode class. The mode-select screen
      itself is mode-agnostic and always eligible via its own .active flag. */
-  .research-only, .fleet-captain-only, .fleet-operations-only{ display:none; }
+  .research-only, .fleet-captain-only, .fleet-operations-only, .sport-only{ display:none; }
   body.mode-research .research-only{ display:flex; }
   body.fleet-role-captain .fleet-captain-only{ display:flex; }
   body.fleet-role-operations .fleet-operations-only{ display:flex; }
+  body.mode-sport .sport-only{ display:flex; }
 </style>
 </head>
 <body>
@@ -582,6 +584,21 @@
       <div>
         <div class="mode-card-title">Fishing Operations</div>
         <div class="mode-card-sub">Trips, costs, fleet efficiency, traceability</div>
+      </div>
+    </div>
+
+    <div class="mode-card" data-mode="sport">
+      <div class="mode-card-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 38c6-14 12-24 24-30" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M34 8c2 3 2 7-1 11" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="16" cy="30" r="3.2" stroke="#0a5c8c" stroke-width="2.2"/>
+          <path d="M13.2 30h-4.5M16 26.8v-4.3" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="mode-card-title">Sport / Recreational Fishing</div>
+        <div class="mode-card-sub">Sessions, catches, personal log</div>
       </div>
     </div>
   </div>
@@ -1255,13 +1272,18 @@
 <section class="screen" id="screen-fleet-log-catch">
   <div class="topbar">
     <div class="back-row">
-      <button class="back-btn" data-go="fleet-trip">←</button>
+      <button class="back-btn" id="fleetCatchBackBtn" data-go="fleet-trip">←</button>
       <span class="brand" id="fleetCatchBrand">Log Catch</span>
     </div>
     <h1>Catch Entry</h1>
     <div class="site-line" id="fleetCatchHaulLine">Not Linked To A Haul</div>
   </div>
   <main>
+    <div class="card">
+      <label for="fleetCatchHaulSelect">Haul <span class="optional-tag">this catch belongs to</span></label>
+      <select id="fleetCatchHaulSelect"></select>
+      <div class="duration-line" id="fleetCatchHaulCountLine" style="display:none;"></div>
+    </div>
     <div class="card">
       <label for="fleetSpecies">Species / Commercial Category</label>
       <input type="text" id="fleetSpecies" placeholder="e.g. Pomadasys kaakan, or 'mixed reef fish'" list="fleet-species-list">
@@ -1391,6 +1413,14 @@
   </div>
   <main>
     <div id="fleetTripDetailLanding"></div>
+
+    <div class="card">
+      <div class="card-label collapsible" id="fleetIndividualCatchesToggle">Individual Catches Logged <span id="fleetIndividualCatchesChevron">▾</span></div>
+      <div class="collapsible-body" id="fleetIndividualCatchesBody" style="display:none;">
+        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5;">Tap a catch to fix its species, weight, or which haul it belongs to. The Landing Report above always reflects the latest values.</div>
+        <div id="fleetTripDetailCatchList"></div>
+      </div>
+    </div>
 
     <button class="track-toggle-btn" id="fleetDetailViewMapBtn" style="margin-bottom:18px;">View Haul Map</button>
 
@@ -1636,12 +1666,235 @@
   <button class="tab" data-go="fleet-vessels"><span class="tab-icon">🚢</span>Vessels</button>
 </nav>
 
+<!-- ================= SPORT: SESSION ================= -->
+<section class="screen" id="screen-sport-session">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Fish Pulse · Sport</span>
+      <button class="switch-mode-btn" id="switchModeBtnSport">Switch Mode</button>
+    </div>
+    <h1>Session</h1>
+    <div class="site-line" id="sportSpotLine">No Spot Selected</div>
+  </div>
+  <main>
+    <div id="sportNoSessionCard">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px;">Start A New Session</div>
+        <label for="sportSpotSelect">Spot</label>
+        <select id="sportSpotSelect">
+          <option value="">— No Spot / Open Water —</option>
+          <option value="__new__">+ New Spot</option>
+        </select>
+        <div id="sportNewSpotBox" style="display:none; margin-top:10px;">
+          <label for="sportNewSpotName">Spot Name</label>
+          <input type="text" id="sportNewSpotName" placeholder="e.g. North Pier">
+        </div>
+
+        <label for="sportFishingMethod">Method</label>
+        <select id="sportFishingMethod">
+          <option value="Shore">Shore</option>
+          <option value="Boat">Boat</option>
+          <option value="Kayak">Kayak</option>
+          <option value="Fly">Fly Fishing</option>
+          <option value="Ice">Ice Fishing</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label for="sportConditionsNote">Conditions <span class="optional-tag">optional — weather, water, notes</span></label>
+        <input type="text" id="sportConditionsNote" placeholder="e.g. Overcast, light chop, incoming tide">
+
+        <button class="btn btn-save" id="sportStartSessionBtn" style="width:100%; margin-top:16px;">Start Session</button>
+      </div>
+    </div>
+
+    <div id="sportActiveSessionCard" style="display:none;">
+      <div class="home-stat">
+        <div class="num" id="sportSessionDuration">0h 00m</div>
+        <div class="label">Session Duration</div>
+        <span class="site-tag" id="sportSessionSpotTag">Open Water</span>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-btn primary" id="sportLogCatchBtn" style="grid-column: 1 / -1;">
+          <span class="qa-icon">🐟</span>
+          <div class="qa-title">Log Catch</div>
+          <div class="qa-sub">Species, size, photo, kept or released</div>
+        </div>
+      </div>
+
+      <button class="track-toggle-btn" id="sportEndSessionBtn" style="margin-bottom:20px;">End Session</button>
+
+      <div class="section-h">Catches Logged This Session</div>
+      <div id="sportSessionCatchList"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= SPORT: LOG CATCH ================= -->
+<section class="screen" id="screen-sport-log-catch">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" id="sportCatchBackBtn" data-go="sport-session">←</button>
+      <span class="brand" id="sportCatchBrand">Log Catch</span>
+    </div>
+    <h1>Catch Entry</h1>
+    <div class="site-line" id="sportCatchSessionLine">Not Linked To A Session</div>
+  </div>
+  <main>
+    <div class="card">
+      <label for="sportSpecies">Species</label>
+      <input type="text" id="sportSpecies" placeholder="e.g. Largemouth bass" list="sport-species-list">
+      <datalist id="sport-species-list"></datalist>
+
+      <label for="sportCatchWeight">Weight (kg) <span class="optional-tag">optional</span></label>
+      <input type="number" id="sportCatchWeight" inputmode="decimal" placeholder="0.0">
+
+      <label for="sportCatchLength">Length (cm) <span class="optional-tag">optional</span></label>
+      <input type="number" id="sportCatchLength" inputmode="decimal" placeholder="0.0">
+
+      <label for="sportLureUsed">Lure / Bait <span class="optional-tag">optional</span></label>
+      <input type="text" id="sportLureUsed" placeholder="e.g. Soft plastic worm" list="sport-lure-list">
+      <datalist id="sport-lure-list"></datalist>
+
+      <label>Outcome</label>
+      <div class="grid2">
+        <button type="button" class="btn btn-clear" id="sportKeptBtn">Kept</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn">Released</button>
+      </div>
+
+      <label for="sportCatchNotes">Notes <span class="optional-tag">optional</span></label>
+      <input type="text" id="sportCatchNotes" placeholder="e.g. Caught near submerged log">
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Photo</div>
+      <div class="photobox" id="sportPhotoBox"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Location</div>
+      <div id="sportGpsBox" class="gpsbox">
+        <span class="coords pending" id="sportCoordsLabel">not captured</span>
+        <button class="gps-btn" id="sportCaptureGpsBtn" type="button">Capture</button>
+      </div>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="sportCatchAddAnotherBtn">+ Add Another</button>
+    <button class="btn btn-save" id="sportCatchSaveBtn">Save &amp; Return To Session</button>
+  </div>
+</section>
+
+<!-- ================= SPORT: CATCH LOG ================= -->
+<section class="screen" id="screen-sport-catch-log">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Catch Log</span>
+    </div>
+    <h1>All Catches</h1>
+    <div class="site-line" id="sportCatchLogCountLine">0 catches logged</div>
+  </div>
+  <main>
+    <label for="sportCatchLogSpeciesFilter">Filter By Species</label>
+    <select id="sportCatchLogSpeciesFilter" style="width:100%; margin-bottom:14px;">
+      <option value="">— All Species —</option>
+    </select>
+    <div id="sportCatchLogList"></div>
+  </main>
+</section>
+
+<!-- ================= SPORT: SPOTS ================= -->
+<section class="screen" id="screen-sport-spots">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Spots</span>
+    </div>
+    <h1>Saved Spots</h1>
+    <div class="site-line">Private — stored only on this device</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Add A Spot</div>
+      <label for="sportSpotName">Name</label>
+      <input type="text" id="sportSpotName" placeholder="e.g. North Pier">
+      <label for="sportSpotNote">Note <span class="optional-tag">optional</span></label>
+      <input type="text" id="sportSpotNote" placeholder="e.g. Best at dawn, drop-off 20m out">
+      <div id="sportSpotGpsBox" class="gpsbox">
+        <span class="coords pending" id="sportSpotCoordsLabel">not captured</span>
+        <button class="gps-btn" id="sportSpotCaptureGpsBtn" type="button">Capture</button>
+      </div>
+      <button class="btn btn-save" id="sportAddSpotBtn" style="width:100%; margin-top:14px;">Save Spot</button>
+    </div>
+
+    <div class="section-h">Your Spots</div>
+    <div id="sportSpotsList"></div>
+
+    <button class="track-toggle-btn" id="sportSpotsViewMapBtn" style="margin-top:14px;">View Map</button>
+  </main>
+</section>
+
+<!-- ================= SPORT: DOCUMENTS ================= -->
+<section class="screen" id="screen-sport-documents">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Documents</span>
+    </div>
+    <h1>Licenses &amp; Permits</h1>
+    <div class="site-line">Keep your license handy for inspection</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:14px;">Add A Document</div>
+      <label for="sportDocType">Document Type</label>
+      <select id="sportDocType">
+        <option value="license">Fishing License</option>
+        <option value="boat_permit">Boat Permit</option>
+        <option value="species_tag">Species Tag / Stamp</option>
+        <option value="other">Other</option>
+      </select>
+      <label for="sportDocLabel">Label <span class="optional-tag">optional — e.g. folio number</span></label>
+      <input type="text" id="sportDocLabel" placeholder="e.g. 2026 Season">
+      <label for="sportDocExpiry">Expiry Date</label>
+      <input type="date" id="sportDocExpiry">
+      <div class="card-label" style="margin-bottom:10px; margin-top:14px;">Photo / Scan</div>
+      <div class="photobox" id="sportDocPhotoBox"></div>
+      <button class="btn btn-save" id="sportDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
+    </div>
+
+    <div class="section-h">Your Documents</div>
+    <div id="sportDocumentsList"></div>
+  </main>
+</section>
+
+<!-- ================= SPORT: STATS ================= -->
+<section class="screen" id="screen-sport-stats">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="brand">Stats</span>
+    </div>
+    <h1>Personal Stats</h1>
+    <div class="site-line">Calculated from your own logged catches</div>
+  </div>
+  <main>
+    <div id="sportStatsBody"></div>
+  </main>
+</section>
+
 <!-- ================= TAB BAR (RESEARCH) ================= -->
 <nav class="tabbar research-only" id="tabbarResearch">
   <button class="tab active" data-go="home"><span class="tab-icon">⌂</span>Home</button>
   <button class="tab" data-go="record"><span class="tab-icon">＋</span>New</button>
   <button class="tab" data-go="map"><span class="tab-icon">⌖</span>Map</button>
   <button class="tab" data-go="history"><span class="tab-icon">☷</span>History</button>
+</nav>
+
+<!-- ================= TAB BAR (SPORT) ================= -->
+<nav class="tabbar sport-only" id="tabbarSport">
+  <button class="tab active" data-go="sport-session"><span class="tab-icon">⌂</span>Session</button>
+  <button class="tab" data-go="sport-catch-log"><span class="tab-icon">☷</span>Catch Log</button>
+  <button class="tab" data-go="sport-spots"><span class="tab-icon">⌖</span>Spots</button>
+  <button class="tab" data-go="sport-documents"><span class="tab-icon">📄</span>Documents</button>
+  <button class="tab" data-go="sport-stats"><span class="tab-icon">📊</span>Stats</button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -1699,7 +1952,7 @@
   // research screens (+ their tab bar), or the fleet role-select /
   // fleet screens (+ the role-specific tab bar).
   function applyMode(mode){
-    document.body.classList.remove('mode-research', 'mode-fleet', 'fleet-role-captain', 'fleet-role-operations');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'fleet-role-captain', 'fleet-role-operations');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     if(mode === 'research'){
       document.body.classList.add('mode-research');
@@ -1713,6 +1966,10 @@
       } else {
         document.getElementById('screen-fleet-role-select').classList.add('active');
       }
+    } else if(mode === 'sport'){
+      document.body.classList.add('mode-sport');
+      document.getElementById('screen-sport-session').classList.add('active');
+      if(typeof renderSportSession === 'function') renderSportSession();
     }
   }
 
@@ -1731,7 +1988,7 @@
   }
 
   function showModeSelect(){
-    document.body.classList.remove('mode-research', 'mode-fleet', 'fleet-role-captain', 'fleet-role-operations');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'fleet-role-captain', 'fleet-role-operations');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-mode-select').classList.add('active');
   }
@@ -1749,7 +2006,7 @@
   });
 
   document.addEventListener('click', (e) => {
-    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations'){
+    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport'){
       showModeSelect();
     }
     if(e.target.closest('[data-switch-fleet-role]')){
@@ -2014,15 +2271,26 @@
     const haulList = document.getElementById('fleetTripHaulList');
     haulList.innerHTML = hauls.length === 0
       ? '<div class="empty">No hauls logged yet this trip.</div>'
-      : hauls.slice().reverse().map(hl => '<div class="entry"><div><div class="sp">'+(hl.gear_type||'—')+'</div>'
-        + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+(hl.lat?' · '+hl.lat.toFixed(3)+', '+hl.lon.toFixed(3):'')+'</div></div></div>').join('');
+      : hauls.slice().reverse().map(hl => {
+          const n = catches.filter(c => c.haul_id === hl.haul_id).length;
+          return '<div class="entry"><div><div class="sp">'+(hl.gear_type||'—')+'</div>'
+            + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+(hl.lat?' · '+hl.lat.toFixed(3)+', '+hl.lon.toFixed(3):'')+' · '+n+' species</div></div></div>';
+        }).join('');
 
     const catchList = document.getElementById('fleetTripCatchList');
+    const haulShortLabel = hId => {
+      if(!hId) return 'No haul';
+      const h = hauls.find(x => x.haul_id === hId);
+      return h ? (h.gear_type||'Haul') + ' ' + (h.haul_start||'') : 'No haul';
+    };
     catchList.innerHTML = catches.length === 0
       ? '<div class="empty">No catch logged yet this trip.</div>'
-      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-        + '<div class="meta">'+(c.ref_price ? 'Ref. '+c.ref_price+' '+c.currency+'/kg' : 'No Ref. Price')+'</div></div>'
+      : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+        + '<div class="meta">'+haulShortLabel(c.haul_id)+' · '+(c.ref_price ? 'Ref. '+c.ref_price+' '+c.currency+'/kg' : 'No Ref. Price')+'</div></div>'
         + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
+    document.querySelectorAll('[data-catch-edit]').forEach(el => {
+      el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
+    });
     applyDefaultCurrencyToSelects();
   }
 
@@ -2031,10 +2299,102 @@
     fleetGoTo('log-haul');
   });
   document.getElementById('fleetLogCatchBtn').addEventListener('click', () => {
-    currentHaulIdForCatch = null;
-    document.getElementById('fleetCatchHaulLine').textContent = 'Not Linked To A Haul';
+    enterFleetLogCatch(null);
+  });
+
+  // Builds the haul picker shown on Log Catch and sets the status line.
+  // haulId === null means "no haul selected yet" (e.g. entering loose,
+  // not via "log catch now" after saving a haul). The captain can still
+  // pick one from the dropdown, change it later, or leave it unlinked
+  // for gear types like longline where there's no discrete haul.
+  let currentHaulIdForCatch = null;
+  let currentEditingCatchId = null;
+  let currentEditingCatchTripId = null;
+  // Trip whose hauls should populate the picker: the catch's own trip
+  // when editing (which may be closed — getActiveTrip() would be null
+  // or wrong in that case), otherwise the currently active trip.
+  function fleetCatchContextTripId(){
+    if(currentEditingCatchId) return currentEditingCatchTripId;
+    const trip = getActiveTrip();
+    return trip ? trip.trip_id : null;
+  }
+  function populateFleetCatchHaulSelect(haulId){
+    const tripId = fleetCatchContextTripId();
+    const sel = document.getElementById('fleetCatchHaulSelect');
+    const hauls = tripId ? load(HAULS_KEY).filter(h => h.trip_id === tripId) : [];
+    const haulLabel = h => (h.gear_type||'Haul') + ' · ' + (h.haul_start||'—') + (h.haul_end ? '–'+h.haul_end : '') + (h.depth ? ' · '+h.depth+'m' : '');
+    sel.innerHTML = '<option value="">No haul (loose catch)</option>'
+      + hauls.slice().reverse().map(h => '<option value="'+h.haul_id+'">'+haulLabel(h)+'</option>').join('');
+    sel.value = haulId || '';
+    updateFleetCatchHaulStatus();
+  }
+  // Refreshes the status line and species-logged-so-far count for
+  // whichever haul is currently selected in the dropdown.
+  function updateFleetCatchHaulStatus(){
+    const tripId = fleetCatchContextTripId();
+    const sel = document.getElementById('fleetCatchHaulSelect');
+    const line = document.getElementById('fleetCatchHaulLine');
+    const countLine = document.getElementById('fleetCatchHaulCountLine');
+    currentHaulIdForCatch = sel.value || null;
+    if(!currentHaulIdForCatch){
+      line.textContent = 'Not Linked To A Haul';
+      countLine.style.display = 'none';
+      return;
+    }
+    const haul = load(HAULS_KEY).find(h => h.haul_id === currentHaulIdForCatch);
+    if(!haul){ line.textContent = 'Not Linked To A Haul'; countLine.style.display = 'none'; return; }
+    line.textContent = 'Haul: ' + (haul.gear_type||'—') + ' · ' + (haul.haul_start||'—') + (haul.haul_end ? '–'+haul.haul_end : '');
+    const n = tripId ? load(CATCHES_KEY).filter(c => c.trip_id === tripId && c.haul_id === currentHaulIdForCatch).length : 0;
+    countLine.style.display = 'block';
+    countLine.textContent = n === 0 ? 'No species logged yet for this haul' : n + ' species logged so far for this haul';
+  }
+  document.getElementById('fleetCatchHaulSelect').addEventListener('change', updateFleetCatchHaulStatus);
+  // Single entry point into Log Catch, used whether arriving fresh from
+  // the trip screen, right after saving a haul, or via "Add Another".
+  function enterFleetLogCatch(haulId){
+    currentEditingCatchId = null;
+    currentEditingCatchTripId = null;
+    setFleetCatchScreenMode();
+    populateFleetCatchHaulSelect(haulId);
     fleetGoTo('log-catch');
     applyDefaultCurrencyToSelects();
+  }
+  // Opens an existing catch for editing — used when the captain taps a
+  // catch already logged this trip (e.g. to fix which haul it belongs
+  // to, including cases where the haul was already closed). Reuses the
+  // same screen as new-catch entry instead of a separate editor.
+  function openFleetCatchEdit(catchId){
+    const record = load(CATCHES_KEY).find(c => c.catch_id === catchId);
+    if(!record) return;
+    currentEditingCatchId = catchId;
+    currentEditingCatchTripId = record.trip_id;
+    const isClosedTrip = !load(TRIPS_KEY).some(t => t.trip_id === record.trip_id && !t.ended_at);
+    if(isClosedTrip) currentTripDetailId = record.trip_id;
+    setFleetCatchScreenMode();
+    populateFleetCatchHaulSelect(record.haul_id);
+    document.getElementById('fleetSpecies').value = record.species || '';
+    document.getElementById('fleetCatchKg').value = record.kg || '';
+    document.getElementById('fleetRefPrice').value = record.ref_price || '';
+    if(record.currency) document.getElementById('fleetRefCurrency').value = record.currency;
+    updateFleetEstValue();
+    fleetGoTo('log-catch');
+  }
+  // Toggles the Log Catch screen's labels/buttons between "logging a new
+  // catch" and "editing an existing one" without needing a second screen.
+  function setFleetCatchScreenMode(){
+    const editing = !!currentEditingCatchId;
+    const editingClosedTrip = editing && currentEditingCatchTripId && !load(TRIPS_KEY).some(t => t.trip_id === currentEditingCatchTripId && !t.ended_at);
+    document.getElementById('fleetCatchBrand').textContent = editing ? 'Edit Catch' : 'Log Catch';
+    document.getElementById('fleetCatchAddAnotherBtn').style.display = editing ? 'none' : '';
+    document.getElementById('fleetCatchSaveBtn').textContent = editing ? 'Save Changes' : 'Save & Return To Trip';
+    document.getElementById('fleetCatchBackBtn').dataset.go = editingClosedTrip ? 'fleet-trip-detail' : 'fleet-trip';
+  }
+  document.getElementById('fleetIndividualCatchesToggle').addEventListener('click', () => {
+    const body = document.getElementById('fleetIndividualCatchesBody');
+    const chevron = document.getElementById('fleetIndividualCatchesChevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.textContent = isOpen ? '▾' : '▴';
   });
 
   // ===== Log haul =====
@@ -2058,7 +2418,6 @@
   document.getElementById('fleetHaulStart').addEventListener('change', updateFleetHaulDuration);
   document.getElementById('fleetHaulEnd').addEventListener('change', updateFleetHaulDuration);
 
-  let currentHaulIdForCatch = null;
   let fleetHaulCoords = null;
 
   // Reuses the same capture pattern as the research segment's GPS field —
@@ -2136,10 +2495,7 @@
     resetFleetHaulGps();
 
     if(logCatchNow){
-      currentHaulIdForCatch = haul.haul_id;
-      document.getElementById('fleetCatchHaulLine').textContent = 'Linked To This Haul';
-      fleetGoTo('log-catch');
-      applyDefaultCurrencyToSelects();
+      enterFleetLogCatch(haul.haul_id);
     } else {
       fleetGoTo('trip');
     }
@@ -2192,13 +2548,27 @@
     delete document.getElementById('fleetRefCurrency').dataset.userTouched;
   }
   function saveFleetCatch(){
-    const trip = getActiveTrip();
-    if(!trip){ showFleetToast('No active trip', true); return false; }
     const species = document.getElementById('fleetSpecies').value.trim();
     if(!species){ showFleetToast('Species or category is required', true); return false; }
     const kg = parseFloat(document.getElementById('fleetCatchKg').value) || 0;
     const price = document.getElementById('fleetRefPrice').value;
     const currency = document.getElementById('fleetRefCurrency').value;
+    const catches = load(CATCHES_KEY);
+    if(currentEditingCatchId){
+      const idx = catches.findIndex(c => c.catch_id === currentEditingCatchId);
+      if(idx === -1) return false;
+      catches[idx] = Object.assign({}, catches[idx], {
+        haul_id: currentHaulIdForCatch,
+        species, kg,
+        ref_price: price || '',
+        currency,
+        estimated_value: price ? kg * parseFloat(price) : ''
+      });
+      save(CATCHES_KEY, catches);
+      return true;
+    }
+    const trip = getActiveTrip();
+    if(!trip){ showFleetToast('No active trip', true); return false; }
     const record = {
       catch_id: uid(),
       trip_id: trip.trip_id,
@@ -2212,14 +2582,29 @@
       actual_unit_price: null,
       actual_value: null
     };
-    const catches = load(CATCHES_KEY); catches.push(record); save(CATCHES_KEY, catches);
+    catches.push(record); save(CATCHES_KEY, catches);
     return true;
   }
   document.getElementById('fleetCatchAddAnotherBtn').addEventListener('click', () => {
-    if(saveFleetCatch()){ clearFleetCatchForm(); applyDefaultCurrencyToSelects(); showFleetToast('Catch saved'); }
+    if(currentEditingCatchId) return;
+    if(saveFleetCatch()){ clearFleetCatchForm(); applyDefaultCurrencyToSelects(); updateFleetCatchHaulStatus(); showFleetToast('Catch saved'); }
   });
   document.getElementById('fleetCatchSaveBtn').addEventListener('click', () => {
-    if(saveFleetCatch()){ clearFleetCatchForm(); showFleetToast('Catch saved'); fleetGoTo('trip'); }
+    const wasEditing = !!currentEditingCatchId;
+    const wasEditingClosedTrip = wasEditing && currentEditingCatchTripId && !load(TRIPS_KEY).some(t => t.trip_id === currentEditingCatchTripId && !t.ended_at);
+    if(saveFleetCatch()){
+      clearFleetCatchForm();
+      currentEditingCatchId = null;
+      showFleetToast(wasEditing ? 'Catch updated' : 'Catch saved');
+      if(wasEditingClosedTrip){
+        currentTripDetailId = currentEditingCatchTripId;
+        currentEditingCatchTripId = null;
+        fleetGoTo('trip-detail');
+      } else {
+        currentEditingCatchTripId = null;
+        fleetGoTo('trip');
+      }
+    }
   });
 
   // ===== Close trip =====
@@ -2441,6 +2826,26 @@
 
     document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
       generateFleetLandingReportPdf({ vessel, captain, trip, landingGroups, totalEstKg, totalActualKg, hasActuals });
+    });
+
+    // Individual catches, collapsed by default — lets a correction (wrong
+    // species, wrong haul) be made on a single record even after the trip
+    // is closed and the report above is grouped by species, without
+    // reopening the trip itself or its settlement.
+    const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const detailHaulLabel = hId => {
+      if(!hId) return 'No haul';
+      const h = tripHauls.find(x => x.haul_id === hId);
+      return h ? (h.gear_type||'Haul') + ' ' + (h.haul_start||'') : 'No haul';
+    };
+    const catchListEl = document.getElementById('fleetTripDetailCatchList');
+    catchListEl.innerHTML = catches.length === 0
+      ? '<div class="empty">No catches logged.</div>'
+      : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+          + '<div class="meta">'+detailHaulLabel(c.haul_id)+(c.ref_price ? ' · Ref. '+c.ref_price+' '+c.currency+'/kg' : '')+'</div></div>'
+          + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
+    catchListEl.querySelectorAll('[data-catch-edit]').forEach(el => {
+      el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
     });
 
     // Settlement: real income (scale weight and actual sale price where
@@ -3232,6 +3637,380 @@
       if(document.body.classList.contains('fleet-role-operations')) renderFleetDashboard();
       else if(document.body.classList.contains('fleet-role-captain')) renderFleetTrip();
     });
+  }
+})();
+</script>
+
+<script>
+// ===== Sport / Recreational Fishing mode =====
+// Self-contained module, same shape as the Fishing Operations module:
+// its own storage namespace (sport_*), its own goTo() router scoped to
+// sport-* screen ids. No role split here — it's always a single person
+// fishing, so there's no Captain/Operations equivalent.
+(function(){
+  const SESSIONS_KEY = 'sport_sessions_v1';
+  const CATCHES_KEY = 'sport_catches_v1';
+  const SPOTS_KEY = 'sport_spots_v1';
+  const DOCS_KEY = 'sport_docs_v1';
+  const ACTIVE_SESSION_KEY = 'sport_active_session_id';
+
+  function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
+  function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
+  function uid(){ return 'S-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase(); }
+
+  function getActiveSession(){
+    const id = localStorage.getItem(ACTIVE_SESSION_KEY);
+    if(!id) return null;
+    return load(SESSIONS_KEY).find(s => s.session_id === id) || null;
+  }
+
+  function showSportToast(msg, isError){
+    // Reuses the same #toast element the other modes already render into.
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.toggle('error', !!isError);
+    t.classList.add('show');
+    setTimeout(()=> t.classList.remove('show'), 1800);
+  }
+
+  // ===== Sport-scoped navigation =====
+  // Mirrors fleetGoTo(): only ever touches sport-* screens.
+  function sportGoTo(screen){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-sport-' + screen).classList.add('active');
+    document.querySelectorAll('#tabbarSport .tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector('#tabbarSport .tab[data-go="sport-' + screen + '"]');
+    if(tab) tab.classList.add('active');
+    if(screen === 'session') renderSportSession();
+    if(screen === 'catch-log') renderSportCatchLog();
+    if(screen === 'spots') renderSportSpots();
+    if(screen === 'documents') renderSportDocuments();
+    if(screen === 'stats') renderSportStats();
+    const active = document.querySelector('.screen.active');
+    if(active) active.scrollTop = 0;
+  }
+  document.querySelectorAll('[data-go^="sport-"]').forEach(el => {
+    el.addEventListener('click', () => sportGoTo(el.dataset.go.replace('sport-','')));
+  });
+
+  // ===== Photo capture (pending) =====
+  // sportPhotoBox (Log Catch) and sportDocPhotoBox (Documents) are placed
+  // in the markup but not yet wired to handlePhoto()/buildPhotoInput()
+  // like the research segment's #photoBox. window.sportCurrentPhotoDataUrl
+  // and window.sportCurrentDocPhotoDataUrl are read by saveSportCatch()
+  // and the document-add handler but nothing sets them yet — next step
+  // is reusing the same FileReader pattern against these two boxes.
+
+  // ===== Session (home screen) =====
+  function renderSportSpotOptions(){
+    const spots = load(SPOTS_KEY);
+    const sel = document.getElementById('sportSpotSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— No Spot / Open Water —</option>'
+      + spots.map(s => '<option value="'+s.spot_id+'">'+s.name+'</option>').join('')
+      + '<option value="__new__">+ New Spot</option>';
+    if(spots.some(s=>s.spot_id===cur) || cur === '') sel.value = cur;
+  }
+  document.getElementById('sportSpotSelect').addEventListener('change', (e) => {
+    document.getElementById('sportNewSpotBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
+  });
+
+  function renderSportSession(){
+    renderSportSpotOptions();
+    const session = getActiveSession();
+    const noCard = document.getElementById('sportNoSessionCard');
+    const activeCard = document.getElementById('sportActiveSessionCard');
+    if(!session){
+      noCard.style.display = 'block';
+      activeCard.style.display = 'none';
+      document.getElementById('sportSpotLine').textContent = 'No Spot Selected';
+      return;
+    }
+    noCard.style.display = 'none';
+    activeCard.style.display = 'block';
+    const spot = session.spot_id ? load(SPOTS_KEY).find(s => s.spot_id === session.spot_id) : null;
+    const spotName = spot ? spot.name : 'Open Water';
+    document.getElementById('sportSpotLine').textContent = spotName;
+    document.getElementById('sportSessionSpotTag').textContent = spotName;
+
+    const startedMs = new Date(session.started_at).getTime();
+    const elapsed = Date.now() - startedMs;
+    const h = Math.floor(elapsed / 3600000);
+    const m = Math.floor((elapsed % 3600000) / 60000);
+    document.getElementById('sportSessionDuration').textContent = h + 'h ' + String(m).padStart(2,'0') + 'm';
+
+    const catches = load(CATCHES_KEY).filter(c => c.session_id === session.session_id);
+    const list = document.getElementById('sportSessionCatchList');
+    list.innerHTML = catches.length === 0
+      ? '<div class="empty">No catches logged yet this session.</div>'
+      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+        + '<div class="meta">'+(c.kept_or_released === 'kept' ? 'Kept' : 'Released')+(c.weight_kg?' · '+c.weight_kg+' kg':'')+'</div></div></div>').join('');
+  }
+
+  document.getElementById('sportStartSessionBtn').addEventListener('click', () => {
+    let spotId = document.getElementById('sportSpotSelect').value;
+    if(spotId === '__new__'){
+      const name = document.getElementById('sportNewSpotName').value.trim();
+      if(!name){ showSportToast('Enter a name for the new spot', true); return; }
+      const spots = load(SPOTS_KEY);
+      const spot = { spot_id: uid(), name, note: '', lat: '', lon: '' };
+      spots.push(spot); save(SPOTS_KEY, spots);
+      spotId = spot.spot_id;
+    }
+    const session = {
+      session_id: uid(),
+      spot_id: spotId || null,
+      method: document.getElementById('sportFishingMethod').value,
+      conditions_note: document.getElementById('sportConditionsNote').value.trim(),
+      started_at: new Date().toISOString(),
+      ended_at: null
+    };
+    const sessions = load(SESSIONS_KEY); sessions.push(session); save(SESSIONS_KEY, sessions);
+    localStorage.setItem(ACTIVE_SESSION_KEY, session.session_id);
+    document.getElementById('sportNewSpotName').value = '';
+    document.getElementById('sportConditionsNote').value = '';
+    showSportToast('Session started');
+    renderSportSession();
+  });
+
+  document.getElementById('sportEndSessionBtn').addEventListener('click', () => {
+    const session = getActiveSession();
+    if(!session) return;
+    const sessions = load(SESSIONS_KEY);
+    const idx = sessions.findIndex(s => s.session_id === session.session_id);
+    if(idx !== -1){ sessions[idx].ended_at = new Date().toISOString(); save(SESSIONS_KEY, sessions); }
+    localStorage.removeItem(ACTIVE_SESSION_KEY);
+    showSportToast('Session ended');
+    renderSportSession();
+  });
+
+  document.getElementById('sportLogCatchBtn').addEventListener('click', () => {
+    enterSportLogCatch();
+  });
+
+  // ===== Log catch =====
+  let currentSportEditingCatchId = null;
+  let sportCatchCoords = null;
+
+  function setSportCatchScreenMode(){
+    const editing = !!currentSportEditingCatchId;
+    document.getElementById('sportCatchBrand').textContent = editing ? 'Edit Catch' : 'Log Catch';
+    document.getElementById('sportCatchAddAnotherBtn').style.display = editing ? 'none' : '';
+    document.getElementById('sportCatchSaveBtn').textContent = editing ? 'Save Changes' : 'Save & Return To Session';
+  }
+  function resetSportCatchGps(){
+    sportCatchCoords = null;
+    const label = document.getElementById('sportCoordsLabel');
+    label.textContent = 'not captured';
+    label.classList.add('pending');
+    document.getElementById('sportGpsBox').classList.remove('locked');
+  }
+  function clearSportCatchForm(){
+    document.getElementById('sportSpecies').value = '';
+    document.getElementById('sportCatchWeight').value = '';
+    document.getElementById('sportCatchLength').value = '';
+    document.getElementById('sportLureUsed').value = '';
+    document.getElementById('sportCatchNotes').value = '';
+    document.getElementById('sportKeptBtn').classList.remove('active');
+    document.getElementById('sportReleasedBtn').classList.remove('active');
+    sportKeptOrReleased = null;
+    resetSportCatchGps();
+  }
+  let sportKeptOrReleased = null;
+  document.getElementById('sportKeptBtn').addEventListener('click', () => {
+    sportKeptOrReleased = 'kept';
+    document.getElementById('sportKeptBtn').classList.add('active');
+    document.getElementById('sportReleasedBtn').classList.remove('active');
+  });
+  document.getElementById('sportReleasedBtn').addEventListener('click', () => {
+    sportKeptOrReleased = 'released';
+    document.getElementById('sportReleasedBtn').classList.add('active');
+    document.getElementById('sportKeptBtn').classList.remove('active');
+  });
+  document.getElementById('sportCaptureGpsBtn').addEventListener('click', () => {
+    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    const box = document.getElementById('sportGpsBox');
+    const label = document.getElementById('sportCoordsLabel');
+    label.textContent = 'capturing…';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        sportCatchCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
+        label.textContent = pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5);
+        label.classList.remove('pending');
+        box.classList.add('locked');
+      },
+      () => {
+        label.textContent = 'capture failed — tap to retry';
+        box.classList.remove('locked');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  function enterSportLogCatch(){
+    currentSportEditingCatchId = null;
+    setSportCatchScreenMode();
+    clearSportCatchForm();
+    const session = getActiveSession();
+    document.getElementById('sportCatchSessionLine').textContent = session ? 'Linked To Current Session' : 'Not Linked To A Session';
+    sportGoToScreenRaw('log-catch');
+  }
+  // Direct screen swap without the tab-bar bookkeeping sportGoTo does,
+  // since Log Catch isn't one of the tab-bar destinations.
+  function sportGoToScreenRaw(screen){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-sport-' + screen).classList.add('active');
+  }
+
+  function saveSportCatch(){
+    const species = document.getElementById('sportSpecies').value.trim();
+    if(!species){ showSportToast('Species is required', true); return false; }
+    const session = getActiveSession();
+    const catches = load(CATCHES_KEY);
+    const record = {
+      catch_id: currentSportEditingCatchId || uid(),
+      session_id: session ? session.session_id : null,
+      species,
+      weight_kg: document.getElementById('sportCatchWeight').value || '',
+      length_cm: document.getElementById('sportCatchLength').value || '',
+      lure: document.getElementById('sportLureUsed').value.trim(),
+      kept_or_released: sportKeptOrReleased || 'released',
+      notes: document.getElementById('sportCatchNotes').value.trim(),
+      lat: sportCatchCoords ? sportCatchCoords.lat : '',
+      lon: sportCatchCoords ? sportCatchCoords.lon : '',
+      photo: window.sportCurrentPhotoDataUrl || null,
+      logged_at: new Date().toISOString()
+    };
+    if(currentSportEditingCatchId){
+      const idx = catches.findIndex(c => c.catch_id === currentSportEditingCatchId);
+      if(idx !== -1) catches[idx] = Object.assign({}, catches[idx], record);
+    } else {
+      catches.push(record);
+    }
+    save(CATCHES_KEY, catches);
+    return true;
+  }
+  document.getElementById('sportCatchAddAnotherBtn').addEventListener('click', () => {
+    if(saveSportCatch()){ clearSportCatchForm(); showSportToast('Catch saved'); renderSportSession(); }
+  });
+  document.getElementById('sportCatchSaveBtn').addEventListener('click', () => {
+    if(saveSportCatch()){ showSportToast('Catch saved'); sportGoTo('session'); }
+  });
+
+  // ===== Catch log (placeholder list — full filtering/editing comes next) =====
+  function renderSportCatchLog(){
+    const catches = load(CATCHES_KEY);
+    document.getElementById('sportCatchLogCountLine').textContent = catches.length + ' catches logged';
+    const list = document.getElementById('sportCatchLogList');
+    list.innerHTML = catches.length === 0
+      ? '<div class="empty">No catches logged yet.</div>'
+      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+        + '<div class="meta">'+new Date(c.logged_at).toLocaleDateString()+(c.weight_kg?' · '+c.weight_kg+' kg':'')+'</div></div></div>').join('');
+  }
+
+  // ===== Spots =====
+  let sportSpotCoords = null;
+  document.getElementById('sportSpotCaptureGpsBtn').addEventListener('click', () => {
+    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    const box = document.getElementById('sportSpotGpsBox');
+    const label = document.getElementById('sportSpotCoordsLabel');
+    label.textContent = 'capturing…';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        sportSpotCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        label.textContent = pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5);
+        label.classList.remove('pending');
+        box.classList.add('locked');
+      },
+      () => { label.textContent = 'capture failed — tap to retry'; },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+  document.getElementById('sportAddSpotBtn').addEventListener('click', () => {
+    const name = document.getElementById('sportSpotName').value.trim();
+    if(!name){ showSportToast('Spot name is required', true); return; }
+    const spots = load(SPOTS_KEY);
+    spots.push({
+      spot_id: uid(), name,
+      note: document.getElementById('sportSpotNote').value.trim(),
+      lat: sportSpotCoords ? sportSpotCoords.lat : '',
+      lon: sportSpotCoords ? sportSpotCoords.lon : ''
+    });
+    save(SPOTS_KEY, spots);
+    document.getElementById('sportSpotName').value = '';
+    document.getElementById('sportSpotNote').value = '';
+    sportSpotCoords = null;
+    document.getElementById('sportSpotCoordsLabel').textContent = 'not captured';
+    document.getElementById('sportSpotGpsBox').classList.remove('locked');
+    showSportToast('Spot saved');
+    renderSportSpots();
+  });
+  function renderSportSpots(){
+    const spots = load(SPOTS_KEY);
+    const list = document.getElementById('sportSpotsList');
+    list.innerHTML = spots.length === 0
+      ? '<div class="empty">No spots saved yet.</div>'
+      : spots.slice().reverse().map(s => '<div class="entry"><div><div class="sp">'+s.name+'</div>'
+        + '<div class="meta">'+(s.note||'No notes')+(s.lat?' · '+Number(s.lat).toFixed(3)+', '+Number(s.lon).toFixed(3):'')+'</div></div></div>').join('');
+  }
+
+  // ===== Documents =====
+  const SPORT_DOC_TYPE_LABELS = { license: 'Fishing License', boat_permit: 'Boat Permit', species_tag: 'Species Tag / Stamp', other: 'Other' };
+  document.getElementById('sportDocAddBtn').addEventListener('click', () => {
+    const expiry = document.getElementById('sportDocExpiry').value;
+    if(!expiry){ showSportToast('Expiry date is required', true); return; }
+    const docs = load(DOCS_KEY);
+    docs.push({
+      doc_id: uid(),
+      doc_type: document.getElementById('sportDocType').value,
+      label: document.getElementById('sportDocLabel').value.trim(),
+      expiry_date: expiry,
+      photo: window.sportCurrentDocPhotoDataUrl || null
+    });
+    save(DOCS_KEY, docs);
+    document.getElementById('sportDocLabel').value = '';
+    document.getElementById('sportDocExpiry').value = '';
+    showSportToast('Document added');
+    renderSportDocuments();
+  });
+  function renderSportDocuments(){
+    const docs = load(DOCS_KEY);
+    const list = document.getElementById('sportDocumentsList');
+    if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents added yet.</div>'; return; }
+    const now = Date.now();
+    const sorted = docs.slice().sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+    list.innerHTML = sorted.map(d => {
+      const daysLeft = Math.ceil((new Date(d.expiry_date) - now) / 86400000);
+      let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
+      if(daysLeft < 0) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Expired</span>';
+      else if(daysLeft <= 30) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
+      return '<div class="entry"><div><div class="sp">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
+        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>'
+        + badge + '</div>';
+    }).join('');
+  }
+
+  // ===== Stats (placeholder) =====
+  function renderSportStats(){
+    const catches = load(CATCHES_KEY);
+    const body = document.getElementById('sportStatsBody');
+    if(catches.length === 0){ body.innerHTML = '<div class="empty">Log a few catches to see your stats.</div>'; return; }
+    const bySpecies = {};
+    catches.forEach(c => { bySpecies[c.species] = (bySpecies[c.species]||0) + 1; });
+    const topSpecies = Object.entries(bySpecies).sort((a,b)=>b[1]-a[1])[0];
+    body.innerHTML = '<div class="home-stat"><div class="num">'+catches.length+'</div><div class="label">total catches logged</div></div>'
+      + '<div class="card"><div class="card-label" style="margin-bottom:10px;">Most Caught Species</div><div class="duration-line">'+topSpecies[0]+' ('+topSpecies[1]+')</div></div>';
+  }
+
+  window.renderSportSession = renderSportSession;
+  window.renderSportCatchLog = renderSportCatchLog;
+  window.renderSportSpots = renderSportSpots;
+  window.renderSportDocuments = renderSportDocuments;
+  window.renderSportStats = renderSportStats;
+
+  if(window.fishPulseReapplyIfActive){
+    window.fishPulseReapplyIfActive('sport', renderSportSession);
   }
 })();
 </script>
