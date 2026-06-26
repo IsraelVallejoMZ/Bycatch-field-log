@@ -397,6 +397,11 @@
 
   .map-point-popup{ font-family: var(--body); font-size: 12.5px; line-height:1.4; }
   .map-point-popup b{ font-family: var(--display); font-style: italic; }
+  /* Strip Leaflet's default white-box-with-border icon chrome so the
+     inline SVG pins (balloon for fleet, dot-ring for research) render
+     as plain shapes with no extra background. */
+  .map-pin-balloon, .map-pin-research{ background: transparent; border: none; }
+  .map-pin-balloon svg, .map-pin-research svg{ display:block; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35)); }
 
   /* ===== Insights screen ===== */
   .insights-filter-row{ margin-bottom: 14px; }
@@ -1830,6 +1835,7 @@
     <div id="sportSpotsList"></div>
 
     <button class="track-toggle-btn" id="sportSpotsViewMapBtn" style="margin-top:14px;">View Map</button>
+    <div id="sportLeafletMap" style="display:none; height:320px; border-radius:var(--radius-sm); margin-top:14px; overflow:hidden;"></div>
   </main>
 </section>
 
@@ -2042,6 +2048,12 @@
   const TRIPS_KEY = 'fleet_trips_v1';
   const HAULS_KEY = 'fleet_hauls_v1';
   const CATCHES_KEY = 'fleet_catches_v1';
+  // No offline tile-download system in this segment (unlike Field
+  // Research), so a fixed subdomain isn't strictly required here — kept
+  // anyway for visual/behavioral consistency across segments.
+  const TILE_URL_TEMPLATE = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+  const TILE_TEST_URL = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
+  const TILE_ATTRIBUTION = '© OpenStreetMap contributors © CARTO';
   const COSTS_KEY = 'fleet_trip_costs_v1';
   const CREW_SHARES_KEY = 'fleet_crew_shares_v1';
   const SALES_KEY = 'fleet_sales_v1';
@@ -3522,7 +3534,7 @@
     const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
     testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
     testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
-    testImg.src = 'https://tile.openstreetmap.org/0/0/0.png?check=' + Date.now();
+    testImg.src = TILE_TEST_URL + '?check=' + Date.now();
   }
 
   function renderFleetHaulMap(){
@@ -3563,12 +3575,28 @@
     });
   }
 
+  // Teardrop "balloon" pin — anchored at its bottom point, the standard
+  // commercial/operational map marker shape. One fixed color (vessel
+  // operations don't carry a per-point status the way research catches do).
+  // Dot-and-ring marker — same professional register as the research
+  // segment's points, not a casual balloon pin. Fixed color: vessel
+  // operations don't carry a per-point status the way research catches do.
+  function fleetHaulPinIcon(){
+    const svg = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'
+      + '<circle cx="12" cy="12" r="10.5" fill="none" stroke="#0a5c8c" stroke-width="1.8" opacity="0.55"/>'
+      + '<circle cx="12" cy="12" r="6" fill="#0a5c8c" stroke="#fff" stroke-width="2"/>'
+      + '</svg>';
+    return L.divIcon({ html: svg, className: 'map-pin-research', iconSize: [24,24], iconAnchor: [12,12], popupAnchor: [0,-11] });
+  }
+
   function renderFleetLeaflet(hauls){
     if(!fleetLeafletInstance){
       fleetLeafletInstance = L.map('fleetLeafletMap');
-      L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18
+      // CartoDB Voyager via the shared TILE_URL_TEMPLATE constant — see
+      // its definition above for why a fixed subdomain is used.
+      L.tileLayer(TILE_URL_TEMPLATE, {
+        attribution: TILE_ATTRIBUTION,
+        maxZoom: 20
       }).addTo(fleetLeafletInstance);
     }
     fleetLeafletInstance.eachLayer(layer => {
@@ -3587,9 +3615,7 @@
     hauls.forEach(hl => {
       const lat = parseFloat(hl.lat), lon = parseFloat(hl.lon);
       bounds.push([lat, lon]);
-      const marker = L.circleMarker([lat, lon], {
-        radius: 7, color: '#0a5c8c', fillColor: '#0a5c8c', fillOpacity: 0.85, weight: 2
-      }).addTo(fleetLeafletInstance);
+      const marker = L.marker([lat, lon], { icon: fleetHaulPinIcon() }).addTo(fleetLeafletInstance);
       marker.bindPopup('<div class="map-point-popup"><b>' + (hl.gear_type||'haul') + '</b><br>Depth: ' + (hl.depth||'—') + 'm · ' + (hl.duration_min ? hl.duration_min+' min' : '—') + '</div>');
     });
     fleetLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
@@ -3653,6 +3679,11 @@
   const SPOTS_KEY = 'sport_spots_v1';
   const DOCS_KEY = 'sport_docs_v1';
   const ACTIVE_SESSION_KEY = 'sport_active_session_id';
+  // No offline tile-download system in this segment (same situation as
+  // Fishing Operations) — fixed subdomain kept for consistency across
+  // segments rather than out of strict necessity here.
+  const TILE_URL_TEMPLATE = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+  const TILE_ATTRIBUTION = '© OpenStreetMap contributors © CARTO';
 
   function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
   function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
@@ -3955,6 +3986,51 @@
         + '<div class="meta">'+(s.note||'No notes')+(s.lat?' · '+Number(s.lat).toFixed(3)+', '+Number(s.lon).toFixed(3):'')+'</div></div></div>').join('');
   }
 
+  // Balloon "teardrop" pin — the casual, recreational-register marker
+  // shape for this segment, distinct from the formal dot-and-ring pins
+  // shared by Field Research and Fishing Operations.
+  function sportSpotPinIcon(){
+    const svg = '<svg width="28" height="38" viewBox="0 0 28 38" xmlns="http://www.w3.org/2000/svg">'
+      + '<path d="M14 0C6.3 0 0 6.3 0 14c0 9.8 14 24 14 24s14-14.2 14-24C28 6.3 21.7 0 14 0z" fill="#2f7a52" stroke="#fff" stroke-width="1.5"/>'
+      + '<circle cx="14" cy="14" r="5.5" fill="#fff"/>'
+      + '</svg>';
+    return L.divIcon({ html: svg, className: 'map-pin-balloon', iconSize: [28,38], iconAnchor: [14,38], popupAnchor: [0,-34] });
+  }
+
+  let sportLeafletInstance = null;
+  let sportMapVisible = false;
+  function renderSportSpotsMap(){
+    const spots = load(SPOTS_KEY).filter(s => s.lat !== '' && s.lat != null);
+    if(!sportLeafletInstance){
+      sportLeafletInstance = L.map('sportLeafletMap');
+      L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 }).addTo(sportLeafletInstance);
+    }
+    sportLeafletInstance.eachLayer(layer => {
+      if(layer instanceof L.Marker) sportLeafletInstance.removeLayer(layer);
+    });
+    if(spots.length === 0){
+      sportLeafletInstance.setView([10.5, 99.5], 6);
+      setTimeout(()=> sportLeafletInstance.invalidateSize(), 50);
+      return;
+    }
+    const bounds = [];
+    spots.forEach(s => {
+      const lat = parseFloat(s.lat), lon = parseFloat(s.lon);
+      bounds.push([lat, lon]);
+      const marker = L.marker([lat, lon], { icon: sportSpotPinIcon() }).addTo(sportLeafletInstance);
+      marker.bindPopup('<div class="map-point-popup"><b>' + s.name + '</b><br>' + (s.note||'No notes') + '</div>');
+    });
+    sportLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
+    setTimeout(()=> sportLeafletInstance.invalidateSize(), 50);
+  }
+  document.getElementById('sportSpotsViewMapBtn').addEventListener('click', () => {
+    sportMapVisible = !sportMapVisible;
+    const mapEl = document.getElementById('sportLeafletMap');
+    mapEl.style.display = sportMapVisible ? 'block' : 'none';
+    document.getElementById('sportSpotsViewMapBtn').textContent = sportMapVisible ? 'Hide Map' : 'View Map';
+    if(sportMapVisible) renderSportSpotsMap();
+  });
+
   // ===== Documents =====
   const SPORT_DOC_TYPE_LABELS = { license: 'Fishing License', boat_permit: 'Boat Permit', species_tag: 'Species Tag / Stamp', other: 'Other' };
   document.getElementById('sportDocAddBtn').addEventListener('click', () => {
@@ -4024,6 +4100,17 @@
   const OLD_STORAGE_KEY = 'bycatch_entries_app_v1';
   const LAST_OBSERVER_KEY = 'bycatch_last_observer';
   const DEVICE_ID_KEY = 'bycatch_device_id';
+  // Single source of truth for the tile provider used by both the live
+  // map and the offline download system. A fixed subdomain (no {s}
+  // round-robin) is required — Leaflet's subdomain choice per tile isn't
+  // deterministic, so caching under one fixed host guarantees the exact
+  // URL requested on screen is the exact URL found in the offline cache.
+  // Changing providers only ever requires editing this constant +
+  // TILE_CACHE_NAME below (bump the cache version so old tiles from a
+  // different provider aren't mistakenly reused).
+  const TILE_URL_TEMPLATE = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+  const TILE_TEST_URL = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
+  const TILE_ATTRIBUTION = '© OpenStreetMap contributors © CARTO';
   let coords = null;
   let photoDataUrl = null;
   let sexVal = null;
@@ -4980,6 +5067,18 @@
   let leafletInstance = null;
   let leafletReady = false;
 
+  // Dot-and-ring marker: the shared professional/formal marker language
+  // used by both Field Research and Fishing Operations — distinct from
+  // the balloon pin used in the Sport segment. Color carries the same
+  // condition meaning conditionColor() always encoded (alive/dead/released).
+  function researchPointIcon(color){
+    const svg = '<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">'
+      + '<circle cx="11" cy="11" r="9.5" fill="none" stroke="' + color + '" stroke-width="1.6" opacity="0.55"/>'
+      + '<circle cx="11" cy="11" r="5.5" fill="' + color + '" stroke="#fff" stroke-width="1.8"/>'
+      + '</svg>';
+    return L.divIcon({ html: svg, className: 'map-pin-research', iconSize: [22,22], iconAnchor: [11,11], popupAnchor: [0,-10] });
+  }
+
   function conditionColor(condition){
     if(condition === 'dead') return '#c0532f';
     if(condition === 'released') return '#2f7a52';
@@ -4994,7 +5093,7 @@
     const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
     testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
     testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
-    testImg.src = 'https://tile.openstreetmap.org/0/0/0.png?check=' + Date.now();
+    testImg.src = TILE_TEST_URL + '?check=' + Date.now();
   }
 
   function renderMap(){
@@ -5034,12 +5133,14 @@
   function renderLeaflet(points){
     if(!leafletInstance){
       leafletInstance = L.map('leafletMap');
-      // A single fixed subdomain (no {s} placeholder) so the exact tile URLs
-      // requested by Leaflet match exactly what the offline downloader caches —
-      // using the {s} round-robin would make pre-cached tiles unreliable to find.
-      L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18
+      // CartoDB Voyager via the shared TILE_URL_TEMPLATE constant defined
+      // at the top of this module. The offline-download system below
+      // (TILE_CACHE_NAME) was migrated alongside this change — its cache
+      // version was bumped so any tiles a user already downloaded under
+      // the old OSM-based cache are simply superseded, not corrupted.
+      L.tileLayer(TILE_URL_TEMPLATE, {
+        attribution: TILE_ATTRIBUTION,
+        maxZoom: 20
       }).addTo(leafletInstance);
     }
     // clear old markers
@@ -5059,10 +5160,7 @@
     points.forEach(p => {
       const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
       bounds.push([lat, lon]);
-      const marker = L.circleMarker([lat, lon], {
-        radius: 7, color: conditionColor(p.condition), fillColor: conditionColor(p.condition),
-        fillOpacity: 0.85, weight: 2
-      }).addTo(leafletInstance);
+      const marker = L.marker([lat, lon], { icon: researchPointIcon(conditionColor(p.condition)) }).addTo(leafletInstance);
       marker.bindPopup('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + '</div>');
     });
     leafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
@@ -5547,8 +5645,10 @@
   // Tiles are cached via the standard Cache Storage API, in a dedicated
   // cache separate from the app-shell cache the service worker manages —
   // this keeps tile data alive even if the app-shell cache version bumps
-  // on a future update.
-  const TILE_CACHE_NAME = 'bycatch-map-tiles-v1';
+  // on a future update. TILE_URL_TEMPLATE lives at the top of this module
+  // alongside the other shared constants; bump this version string
+  // whenever the tile provider changes so old cached tiles aren't reused.
+  const TILE_CACHE_NAME = 'bycatch-map-tiles-v2';
   const OFFLINE_AREAS_KEY = 'bycatch_offline_areas';
   const DOWNLOAD_RADIUS_KM = 12; // fixed radius per "Download this area" tap
   const DOWNLOAD_ZOOM_LEVELS = [11, 12, 13, 14]; // enough to recognize coastline/ports without huge storage cost
@@ -5618,7 +5718,7 @@
     async function worker(){
       while(cursor < allTiles.length){
         const tile = allTiles[cursor++];
-        const url = 'https://a.tile.openstreetmap.org/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
+        const url = TILE_URL_TEMPLATE.replace('{z}', tile.z).replace('{x}', tile.x).replace('{y}', tile.y);
         try{
           const resp = await fetch(url);
           if(resp.ok) await cache.put(url, resp);
