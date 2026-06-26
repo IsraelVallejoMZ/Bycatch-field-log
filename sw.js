@@ -1,6 +1,6 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v4';
+const CACHE_NAME = 'bycatch-log-v5';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -28,25 +28,32 @@ self.addEventListener('activate', (event) => {
 // Separate, larger cache for map tiles, populated explicitly by the app's
 // "Download this area for offline use" feature — kept apart from the
 // app-shell cache so it isn't wiped out by app-shell version bumps.
-const TILE_CACHE_NAME = 'bycatch-map-tiles-v1';
+// Must match TILE_CACHE_NAME in index.html exactly — the page writes to
+// this cache by name, the service worker reads from it by name, so the
+// two are only ever connected through this string matching.
+const TILE_CACHE_NAME = 'bycatch-map-tiles-v2';
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isOwnOrigin = url.origin === self.location.origin;
 
-  // OSM map tiles: try the network first (so the app's live/offline
-  // detection ping and normal browsing always prefer fresh tiles), but
-  // fall back to any tile pre-downloaded via "Download this area" when
-  // the network request fails. This is the one external-origin exception —
-  // everything else external (fonts, Leaflet library, connectivity checks)
-  // still passes straight through untouched.
+  // Map tiles: try the network first (so the app's live/offline detection
+  // ping and normal browsing always prefer fresh tiles), but fall back to
+  // any tile pre-downloaded via "Download this area" when the network
+  // request fails. This is the one external-origin exception — everything
+  // else external (fonts, Leaflet library, connectivity checks) still
+  // passes straight through untouched.
+  //
+  // Tile provider is CartoDB (basemaps.cartocdn.com), matching
+  // TILE_URL_TEMPLATE in index.html. If that constant ever changes
+  // providers again, update the hostname check below to match.
   //
   // The app's own connectivity probe deliberately requests zoom-0 tile
   // 0/0.png with a cache-busting ?check= param — explicitly excluded here
   // so a cached tile can never make the probe falsely report "online".
   const isConnectivityProbe = url.search.includes('check=');
-  const isOsmTile = url.hostname.endsWith('tile.openstreetmap.org') && !isConnectivityProbe;
-  if (isOsmTile) {
+  const isMapTile = url.hostname.endsWith('basemaps.cartocdn.com') && !isConnectivityProbe;
+  if (isMapTile) {
     event.respondWith(
       fetch(event.request).catch(() =>
         caches.open(TILE_CACHE_NAME).then((cache) => cache.match(event.request))
