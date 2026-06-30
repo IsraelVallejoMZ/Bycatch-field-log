@@ -478,26 +478,49 @@
   .map-pin-balloon svg, .map-pin-research svg{ display:block; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35)); }
 
   /* ===== Insights screen ===== */
-  .insights-filter-row{ margin-bottom: 14px; }
-  .insights-filter-row select{ font-size: 14px; }
+  /* ===== Insights view toggle ===== */
+  .insights-view-toggle{ display:flex; background:rgba(255,255,255,0.08); border-radius:10px; padding:3px; gap:3px; }
+  .ivt-btn{ flex:1; padding:7px; border:none; border-radius:8px; background:transparent; font-family:var(--display); font-size:12px; font-weight:500; color:#7fa3b5; cursor:pointer; }
+  .ivt-btn.active{ background:#0a5c8c; color:white; font-weight:600; }
 
+  /* ===== KPI 4-col dark grid ===== */
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+  .kpi-cell{ background:#0e1b26; border-radius:10px; padding:12px 6px; text-align:center; }
+  .kpi-cell .kn{ font-family:var(--display); font-weight:700; font-size:20px; color:white; line-height:1; }
+  .kpi-cell .kn.accent{ color:#5fc7ee; }
+  .kpi-cell .kl{ font-family:var(--data); font-size:9px; color:#7fa3b5; margin-top:3px; text-transform:uppercase; letter-spacing:0.04em; }
+
+  /* ===== Insight card wrapper ===== */
+  .insight-card{ background:white; border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+  .insight-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#41545f; margin-bottom:10px; }
+
+  /* kept for weight stat block */
   .insight-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-  .insight-stat{
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 14px 16px;
-  }
+  .insight-stat{ background:var(--panel); border-radius:var(--radius-sm); padding:14px 16px; }
   .insight-stat .is-num{ font-family: var(--display); font-size: 26px; font-weight:700; color: var(--blue-deep); line-height:1; }
   .insight-stat .is-label{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px; }
 
+  /* Stats bars */
   .bar-row{ margin-bottom: 10px; }
   .bar-row-top{ display:flex; justify-content:space-between; font-family: var(--data); font-size: 11.5px; color: var(--ink); margin-bottom: 4px; }
   .bar-row-top .bn{ font-style: italic; font-family: var(--display); font-weight:600; font-size: 13px; }
-  .bar-track{ background: var(--blue-mist); border-radius: 4px; height: 9px; overflow:hidden; }
+  .bar-track{ background: var(--blue-mist); border-radius: 4px; height: 6px; overflow:hidden; }
   .bar-fill{ height:100%; background: var(--blue); border-radius:4px; transition: width 0.4s ease; }
 
-  .cond-bars{ display:flex; gap: 4px; height: 22px; border-radius: 5px; overflow:hidden; margin-bottom: 6px; }
-  .cond-seg{ height:100%; }
-  .cond-legend{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom: 22px; }
+  /* Condition stacked bar */
+  .cond-bar-stack{ display:flex; border-radius:6px; overflow:hidden; height:14px; margin-bottom:10px; }
+  .cond-seg{ flex-shrink:0; height:100%; }
+  .cond-legend{ display:flex; gap:12px; flex-wrap:wrap; }
+  .cond-legend .legend-item{ display:flex; align-items:center; gap:5px; font-family:var(--display); font-size:12px; color:var(--ink); }
+  .cond-legend .legend-item .lcount{ font-family:var(--data); font-size:11px; color:#41545f; margin-left:3px; }
+
+  /* Charts: donut */
+  .chart-card{ background:white; border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+  .chart-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#41545f; margin-bottom:10px; }
+  .donut-row{ display:flex; align-items:center; gap:16px; }
+  .donut-legend{ display:flex; flex-direction:column; gap:7px; }
+  .donut-legend .dl-item{ display:flex; align-items:center; gap:7px; font-family:var(--display); font-size:12px; color:var(--ink); }
+  .donut-legend .dl-item .dlc{ font-family:var(--data); font-size:11px; color:#41545f; margin-left:3px; }
 
   table.stat-table{ width:100%; border-collapse: collapse; font-size: 12.5px; }
   table.stat-table th{
@@ -1166,10 +1189,8 @@
     </div>
     <h1>Survey Statistics</h1>
     <div class="site-line" id="siteLineInsights">&nbsp;</div>
-  </div>
-  <main>
-    <div class="insights-filter-row">
-      <select id="insightsTaxonFilter">
+    <div style="margin-top:10px;">
+      <select id="insightsTaxonFilter" style="font-size:13px;width:100%;">
         <option value="">All taxon groups</option>
         <option value="Elasmobranchii">Elasmobranch</option>
         <option value="Teleostei">Teleost fish</option>
@@ -1178,6 +1199,12 @@
         <option value="Other">Other</option>
       </select>
     </div>
+    <div class="insights-view-toggle" id="insightsViewToggle" style="display:none; margin-top:10px;">
+      <button class="ivt-btn active" id="ivtStats">Stats</button>
+      <button class="ivt-btn" id="ivtCharts">Charts</button>
+    </div>
+  </div>
+  <main>
     <div id="insightsMain">
       <!-- populated dynamically by renderInsights() -->
     </div>
@@ -5129,7 +5156,7 @@
       ? withGps + ' PT' + (withGps===1?'':'S')
       : 'NO GPS YET';
 
-    const trackCount = loadTracks().length;
+    const trackCount = (function(){ try{ return JSON.parse(localStorage.getItem('bycatch_tracks_v1'))||[]; }catch(e){ return []; } })().length;
     document.getElementById('homeTrackSub').textContent = trackCount + ' SAVED';
 
     const speciesSeen = new Set(list.map(e => (e.species || '').trim()).filter(Boolean)).size;
@@ -5878,247 +5905,187 @@
     return isNaN(n) ? null : n;
   }
 
+  let insightsView = 'stats';
+
   function renderInsights(){
     const allRecords = loadEntries();
     const taxonFilter = document.getElementById('insightsTaxonFilter').value;
     const taxonNote = taxonFilter ? ' (filtered to ' + taxonFilter + ')' : '';
     const list = taxonFilter ? allRecords.filter(e => e.taxon_group === taxonFilter) : allRecords;
     const main = document.getElementById('insightsMain');
+    const toggle = document.getElementById('insightsViewToggle');
 
     if(allRecords.length === 0){
+      toggle.style.display = 'none';
       main.innerHTML = '<div class="insight-empty">No records yet.<br>Log a few specimens to see counts, length ranges, and condition breakdown here.</div>';
       return;
     }
     if(list.length === 0){
+      toggle.style.display = 'none';
       main.innerHTML = '<div class="insight-empty">No records match this taxon group filter.</div>';
       return;
     }
+    toggle.style.display = 'flex';
 
-    // --- top-level stats ---
     const sitesUsed = new Set(list.map(e => e.site).filter(Boolean)).size;
     const speciesUsed = new Set(list.map(e => e.species).filter(Boolean)).size;
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
 
-    let html = '';
-    html += '<div class="insight-grid">';
-    html += '<div class="insight-stat"><div class="is-num">' + list.length + '</div><div class="is-label">Total records</div></div>';
-    html += '<div class="insight-stat"><div class="is-num">' + speciesUsed + '</div><div class="is-label">Species</div></div>';
-    html += '<div class="insight-stat"><div class="is-num">' + sitesUsed + '</div><div class="is-label">Sites surveyed</div></div>';
-    html += '<div class="insight-stat"><div class="is-num">' + withGps + '</div><div class="is-label">With GPS</div></div>';
-    html += '</div>';
+    const condCounts = { alive:0, dead:0, released:0, '':0 };
+    list.forEach(e => { condCounts[e.condition||''] = (condCounts[e.condition||'']||0)+1; });
+    const condColors = { alive:'#0a5c8c', dead:'#c0532f', released:'#2f7a52', '':'#cdd6d6' };
+    const condLabels = { alive:'Alive', dead:'Dead', released:'Released', '':'Unspecified' };
 
-    // --- condition breakdown (stacked bar) ---
-    const condCounts = { alive: 0, dead: 0, released: 0, '': 0 };
-    list.forEach(e => { condCounts[e.condition || ''] = (condCounts[e.condition || ''] || 0) + 1; });
-    const condColors = { alive: '#0a5c8c', dead: '#c0532f', released: '#2f7a52', '': '#cdd6d6' };
-    const condLabels = { alive: 'Alive', dead: 'Dead', released: 'Released', '': 'Unspecified' };
-
-    html += '<div class="section-h">Condition breakdown</div>';
-    html += '<div class="cond-bars">';
-    Object.keys(condCounts).forEach(key => {
-      if(condCounts[key] === 0) return;
-      const pct = (condCounts[key] / list.length * 100).toFixed(1);
-      html += '<div class="cond-seg" style="width:' + pct + '%; background:' + condColors[key] + ';"></div>';
-    });
-    html += '</div>';
-    html += '<div class="cond-legend">';
-    Object.keys(condCounts).forEach(key => {
-      if(condCounts[key] === 0) return;
-      html += '<div class="legend-item"><span class="legend-dot" style="background:' + condColors[key] + ';"></span>' + condLabels[key] + ' · ' + condCounts[key] + '</div>';
-    });
-    html += '</div>';
-
-    // --- taxon group breakdown (only shown if at least one record has it set) ---
-    const taxonCount = {};
-    list.forEach(e => {
-      if(!e.taxon_group) return;
-      taxonCount[e.taxon_group] = (taxonCount[e.taxon_group] || 0) + 1;
-    });
-    const taxonEntries = Object.entries(taxonCount).sort((a,b) => b[1]-a[1]);
-    if(taxonEntries.length > 0){
-      const taxonLabels = { 'Elasmobranchii':'Elasmobranch', 'Teleostei':'Teleost fish', 'Crustacea':'Crustacean', 'Mollusca':'Mollusc', 'Other':'Other' };
-      const taxonRecorded = taxonEntries.reduce((sum, [,c]) => sum + c, 0);
-      html += '<div class="section-h">Records by taxon group</div>';
-      taxonEntries.forEach(([tg, count]) => {
-        const pct = (count / taxonRecorded * 100).toFixed(0);
-        html += '<div class="bar-row">'
-          + '<div class="bar-row-top"><span>' + (taxonLabels[tg] || tg) + '</span><span>' + count + ' (' + pct + '%)</span></div>'
-          + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
-          + '</div>';
-      });
-      if(taxonRecorded < list.length){
-        html += '<div class="insight-empty" style="text-align:left; padding: 8px 2px;">' + (list.length - taxonRecorded) + ' record(s) have no taxon group set.</div>';
-      }
-    }
-
-    // --- species frequency (bar list) ---
     const speciesCount = {};
-    list.forEach(e => {
-      const sp = e.species || 'Unspecified';
-      speciesCount[sp] = (speciesCount[sp] || 0) + 1;
-    });
-    const sortedSpecies = Object.entries(speciesCount).sort((a,b) => b[1]-a[1]);
-    const maxCount = sortedSpecies.length ? sortedSpecies[0][1] : 1;
+    list.forEach(e => { const sp = e.species||'Unspecified'; speciesCount[sp]=(speciesCount[sp]||0)+1; });
+    const sortedSpecies = Object.entries(speciesCount).sort((a,b)=>b[1]-a[1]);
+    const maxSpeciesCount = sortedSpecies.length ? sortedSpecies[0][1] : 1;
 
-    html += '<div class="section-h">Records by species</div>';
-    sortedSpecies.forEach(([sp, count]) => {
-      const pct = (count / maxCount * 100).toFixed(0);
-      html += '<div class="bar-row">'
-        + '<div class="bar-row-top"><span class="bn">' + sp + '</span><span>' + count + '</span></div>'
-        + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
-        + '</div>';
-    });
+    const taxonCount = {};
+    list.forEach(e => { if(!e.taxon_group) return; taxonCount[e.taxon_group]=(taxonCount[e.taxon_group]||0)+1; });
+    const taxonEntries = Object.entries(taxonCount).sort((a,b)=>b[1]-a[1]);
+    const taxonLabels = {'Elasmobranchii':'Elasmobranch','Teleostei':'Teleost fish','Crustacea':'Crustacean','Mollusca':'Mollusc','Other':'Other'};
+    const taxonRecorded = taxonEntries.reduce((s,[,c])=>s+c, 0);
 
-    // --- length stats per species (table) ---
     const lengthStats = {};
-    list.forEach(e => {
-      const sp = e.species || 'Unspecified';
-      const len = num(e.length);
-      if(len === null) return;
-      if(!lengthStats[sp]) lengthStats[sp] = [];
-      lengthStats[sp].push(len);
-    });
+    list.forEach(e => { const sp=e.species||'Unspecified'; const len=num(e.length); if(len===null) return; if(!lengthStats[sp]) lengthStats[sp]=[]; lengthStats[sp].push(len); });
     const speciesWithLength = Object.keys(lengthStats);
+    const allLengths = list.map(e=>num(e.length)).filter(v=>v!==null);
 
-    html += '<div class="section-h">Length by species (cm)</div>';
-    if(speciesWithLength.length === 0){
-      html += '<div class="insight-empty">No length measurements recorded yet.</div>';
-    } else {
-      html += '<table class="stat-table"><thead><tr><th>Species</th><th>n</th><th>Mean</th><th>Min</th><th>Max</th></tr></thead><tbody>';
-      speciesWithLength.forEach(sp => {
-        const vals = lengthStats[sp];
-        const mean = (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(1);
-        const min = Math.min(...vals).toFixed(1);
-        const max = Math.max(...vals).toFixed(1);
-        html += '<tr><td class="sp-name">' + sp + '</td><td class="num">' + vals.length + '</td><td class="num">' + mean + '</td><td class="num">' + min + '</td><td class="num">' + max + '</td></tr>';
-      });
-      html += '</tbody></table>';
-    }
-
-    // --- total catch volume (kg), by species and overall ---
     const weightStats = {};
-    let totalWeightKg = 0;
-    let recordsWithWeight = 0;
-    list.forEach(e => {
-      const sp = e.species || 'Unspecified';
-      const w = num(e.weight);
-      if(w === null) return;
-      weightStats[sp] = (weightStats[sp] || 0) + w;
-      totalWeightKg += w;
-      recordsWithWeight += 1;
-    });
-    const sortedWeights = Object.entries(weightStats).sort((a,b) => b[1]-a[1]);
+    let totalWeightKg=0, recordsWithWeight=0;
+    list.forEach(e => { const sp=e.species||'Unspecified'; const w=num(e.weight); if(w===null) return; weightStats[sp]=(weightStats[sp]||0)+w; totalWeightKg+=w; recordsWithWeight+=1; });
+    const sortedWeights = Object.entries(weightStats).sort((a,b)=>b[1]-a[1]);
 
-    html += '<div class="section-h">Catch volume (kg)' + taxonNote + '</div>';
-    if(sortedWeights.length === 0){
-      html += '<div class="insight-empty">No weight measurements recorded yet.</div>';
-    } else {
-      html += '<div class="insight-grid" style="grid-template-columns: 1fr;">';
-      html += '<div class="insight-stat"><div class="is-num">' + totalWeightKg.toFixed(2) + '</div><div class="is-label">Total kg captured (' + recordsWithWeight + ' weighed records)</div></div>';
-      html += '</div>';
-      html += '<table class="stat-table"><thead><tr><th>Species</th><th>Total kg</th><th>% of volume</th></tr></thead><tbody>';
-      sortedWeights.forEach(([sp, kg]) => {
-        const pct = (kg / totalWeightKg * 100).toFixed(1);
-        html += '<tr><td class="sp-name">' + sp + '</td><td class="num">' + kg.toFixed(2) + '</td><td class="num">' + pct + '%</td></tr>';
-      });
-      html += '</tbody></table>';
-    }
-
-    // --- gear type breakdown ---
     const gearCount = {};
-    list.forEach(e => {
-      const g = e.gear_type || 'Unspecified';
-      gearCount[g] = (gearCount[g] || 0) + 1;
-    });
-    const sortedGear = Object.entries(gearCount).sort((a,b) => b[1]-a[1]);
+    list.forEach(e => { const g=e.gear_type||'Unspecified'; gearCount[g]=(gearCount[g]||0)+1; });
+    const sortedGear = Object.entries(gearCount).sort((a,b)=>b[1]-a[1]);
     const maxGear = sortedGear.length ? sortedGear[0][1] : 1;
 
-    html += '<div class="section-h">Records by gear type</div>';
-    sortedGear.forEach(([g, count]) => {
-      const pct = (count / maxGear * 100).toFixed(0);
-      html += '<div class="bar-row">'
-        + '<div class="bar-row-top"><span>' + g + '</span><span>' + count + '</span></div>'
-        + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>'
-        + '</div>';
-    });
-
-    // --- CPUE: supports both time-based (specimens/hour) and hook-based
-    // (specimens/100 hooks) effort units, since a single "per hour" number
-    // doesn't make sense for longline gear, where soak time matters less
-    // than hook count. Each unit is only shown if the filtered records
-    // actually have that kind of effort logged. ---
-    const effortByHourSite = {};
-    const effortByHookSite = {};
+    const effortByHourSite = {}, effortByHookSite = {};
     list.forEach(e => {
-      const site = e.site || 'Unspecified';
-      const mins = num(e.haul_duration_min);
-      if(mins !== null && mins > 0){
-        if(!effortByHourSite[site]) effortByHourSite[site] = { specimens: 0, minutes: 0, hauls: 0 };
-        effortByHourSite[site].specimens += 1;
-        effortByHourSite[site].minutes += mins;
-        effortByHourSite[site].hauls += 1;
-      }
-      const hooks = num(e.hook_count);
-      if(hooks !== null && hooks > 0){
-        if(!effortByHookSite[site]) effortByHookSite[site] = { specimens: 0, hooks: 0, sets: 0 };
-        effortByHookSite[site].specimens += 1;
-        effortByHookSite[site].hooks += hooks;
-        effortByHookSite[site].sets += 1;
-      }
+      const site=e.site||'Unspecified';
+      const mins=num(e.haul_duration_min);
+      if(mins!==null&&mins>0){ if(!effortByHourSite[site]) effortByHourSite[site]={specimens:0,minutes:0,hauls:0}; effortByHourSite[site].specimens+=1; effortByHourSite[site].minutes+=mins; effortByHourSite[site].hauls+=1; }
+      const hooks=num(e.hook_count);
+      if(hooks!==null&&hooks>0){ if(!effortByHookSite[site]) effortByHookSite[site]={specimens:0,hooks:0,sets:0}; effortByHookSite[site].specimens+=1; effortByHookSite[site].hooks+=hooks; effortByHookSite[site].sets+=1; }
     });
     const sitesWithHourEffort = Object.keys(effortByHourSite);
     const sitesWithHookEffort = Object.keys(effortByHookSite);
 
-    html += '<div class="section-h">CPUE' + taxonNote + '</div>';
-    if(sitesWithHourEffort.length === 0 && sitesWithHookEffort.length === 0){
-      html += '<div class="insight-empty">No haul duration or hook count recorded yet.<br>Log fishing effort details to see catch-per-unit-effort here.</div>';
+    // KPI grid (shared)
+    let html = '<div class="kpi-grid">'
+      + '<div class="kpi-cell"><div class="kn">' + list.length + '</div><div class="kl">Records</div></div>'
+      + '<div class="kpi-cell"><div class="kn">' + speciesUsed + '</div><div class="kl">Species</div></div>'
+      + '<div class="kpi-cell"><div class="kn">' + sitesUsed + '</div><div class="kl">Sites</div></div>'
+      + '<div class="kpi-cell"><div class="kn accent">' + withGps + '</div><div class="kl">GPS</div></div>'
+      + '</div>';
+
+    if(insightsView === 'stats'){
+      // Condition breakdown
+      html += '<div class="insight-card"><div class="insight-card-label">Condition breakdown</div>';
+      html += '<div class="cond-bar-stack">';
+      Object.keys(condCounts).forEach(k => {
+        if(!condCounts[k]) return;
+        const pct = (condCounts[k]/list.length*100).toFixed(1);
+        html += '<div class="cond-seg" style="width:'+pct+'%;background:'+condColors[k]+';"></div>';
+      });
+      html += '</div><div class="cond-legend">';
+      Object.keys(condCounts).forEach(k => {
+        if(!condCounts[k]) return;
+        html += '<div class="legend-item"><span class="legend-dot" style="background:'+condColors[k]+';"></span>'+condLabels[k]+'<span class="lcount">'+condCounts[k]+'</span></div>';
+      });
+      html += '</div></div>';
+
+      if(taxonEntries.length > 0){
+        html += '<div class="insight-card"><div class="insight-card-label">Records by taxon group</div>';
+        taxonEntries.forEach(([tg,count]) => {
+          const pct = (count/taxonRecorded*100).toFixed(0);
+          html += '<div class="bar-row"><div class="bar-row-top"><span>'+(taxonLabels[tg]||tg)+'</span><span>'+count+' ('+pct+'%)</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+        });
+        html += '</div>';
+      }
+
+      html += '<div class="insight-card"><div class="insight-card-label">Records by species</div>';
+      sortedSpecies.forEach(([sp,count]) => {
+        const pct = (count/maxSpeciesCount*100).toFixed(0);
+        html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span>'+count+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+      });
+      html += '</div>';
+
+      html += '<div class="insight-card"><div class="insight-card-label">Length by species (cm)</div>';
+      if(speciesWithLength.length === 0){
+        html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+      } else {
+        html += '<table class="stat-table"><thead><tr><th>Species</th><th>n</th><th>Mean</th><th>Min</th><th>Max</th></tr></thead><tbody>';
+        speciesWithLength.forEach(sp => {
+          const vals=lengthStats[sp]; const mean=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1); const mn=Math.min(...vals).toFixed(1); const mx=Math.max(...vals).toFixed(1);
+          html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+vals.length+'</td><td class="num">'+mean+'</td><td class="num">'+mn+'</td><td class="num">'+mx+'</td></tr>';
+        });
+        html += '</tbody></table>';
+      }
+      html += '</div>';
+
+      html += '<div class="insight-card"><div class="insight-card-label">Catch volume (kg)'+taxonNote+'</div>';
+      if(sortedWeights.length === 0){
+        html += '<div class="insight-empty">No weight measurements recorded yet.</div>';
+      } else {
+        html += '<div style="margin-bottom:10px;"><div class="insight-stat"><div class="is-num">'+totalWeightKg.toFixed(2)+'</div><div class="is-label">Total kg ('+recordsWithWeight+' weighed records)</div></div></div>';
+        html += '<table class="stat-table"><thead><tr><th>Species</th><th>Total kg</th><th>%</th></tr></thead><tbody>';
+        sortedWeights.forEach(([sp,kg]) => { const pct=(kg/totalWeightKg*100).toFixed(1); html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+kg.toFixed(2)+'</td><td class="num">'+pct+'%</td></tr>'; });
+        html += '</tbody></table>';
+      }
+      html += '</div>';
+
+      html += '<div class="insight-card"><div class="insight-card-label">Records by gear type</div>';
+      sortedGear.forEach(([g,count]) => { const pct=(count/maxGear*100).toFixed(0); html += '<div class="bar-row"><div class="bar-row-top"><span>'+g+'</span><span>'+count+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>'; });
+      html += '</div>';
+
+      html += '<div class="insight-card"><div class="insight-card-label">CPUE'+taxonNote+'</div>';
+      if(sitesWithHourEffort.length===0 && sitesWithHookEffort.length===0){
+        html += '<div class="insight-empty">No haul duration or hook count recorded yet.</div>';
+      } else {
+        if(sitesWithHourEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:0 0 6px;">By time · specimens / hour</p><table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Spec.</th><th>CPUE /hr</th></tr></thead><tbody>'; sitesWithHourEffort.forEach(site => { const d=effortByHourSite[site]; const h=d.minutes/60; const c=h>0?(d.specimens/h).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.hauls+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
+        if(sitesWithHookEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:14px 0 6px;">By hooks · specimens / 100 hooks</p><table class="stat-table"><thead><tr><th>Site</th><th>Sets</th><th>Spec.</th><th>CPUE /100hk</th></tr></thead><tbody>'; sitesWithHookEffort.forEach(site => { const d=effortByHookSite[site]; const c=d.hooks>0?(d.specimens/d.hooks*100).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.sets+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Quick field reference only. Use the exported CSV in R for formal analysis.</div>';
+      }
+      html += '</div>';
+
     } else {
-      if(sitesWithHourEffort.length > 0){
-        html += '<div class="bar-row-top" style="margin-bottom:6px;"><span class="bn" style="font-style:normal;">By time — specimens / hour</span></div>';
-        html += '<table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Specimens</th><th>CPUE /hr</th></tr></thead><tbody>';
-        sitesWithHourEffort.forEach(site => {
-          const d = effortByHourSite[site];
-          const hours = d.minutes / 60;
-          const cpue = hours > 0 ? (d.specimens / hours).toFixed(2) : '—';
-          html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.hauls + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
-        });
-        html += '</tbody></table>';
+      // CHARTS view
+      const donutR=28, circ=2*Math.PI*donutR;
+      const condKeys = Object.keys(condCounts).filter(k=>condCounts[k]>0);
+      let donutOff=0; let segs='';
+      condKeys.forEach(k => { const frac=condCounts[k]/list.length; const dash=frac*circ; segs+=`<circle cx="40" cy="40" r="28" fill="none" stroke="${condColors[k]}" stroke-width="14" stroke-dasharray="${dash.toFixed(1)} ${(circ-dash).toFixed(1)}" stroke-dashoffset="${(-(donutOff)+circ*0.25).toFixed(1)}" />`; donutOff+=dash; });
+      html += '<div class="chart-card"><div class="chart-card-label">Condition</div><div class="donut-row">';
+      html += `<svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink:0;"><circle cx="40" cy="40" r="28" fill="none" stroke="#f1f3f3" stroke-width="14"/>${segs}<text x="40" y="44" text-anchor="middle" font-family="monospace" font-size="11" fill="#0e1b26" font-weight="700">${list.length}</text></svg>`;
+      html += '<div class="donut-legend">';
+      condKeys.forEach(k => { const pct=(condCounts[k]/list.length*100).toFixed(0); html += `<div class="dl-item"><span style="width:9px;height:9px;border-radius:50%;background:${condColors[k]};display:inline-block;flex-shrink:0;"></span>${condLabels[k]}<span class="dlc">${condCounts[k]} · ${pct}%</span></div>`; });
+      html += '</div></div></div>';
+
+      const topSp=sortedSpecies.slice(0,6), maxSp=topSp.length?topSp[0][1]:1;
+      const bW=Math.floor(270/Math.max(topSp.length,1))-5;
+      let bars='',bLabels='',bCounts='';
+      topSp.forEach(([sp,count],i) => { const bH=Math.round((count/maxSp)*65); const x=10+i*(bW+5); const y=70-bH; const op=(1-i*0.12).toFixed(2); bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="#0a5c8c" opacity="${op}"/>`; bCounts+=`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-family="monospace" font-size="9" fill="#0e1b26">${count}</text>`; const sn=sp.length>9?sp.slice(0,8)+'.':sp; bLabels+=`<text x="${x+bW/2}" y="95" text-anchor="middle" font-family="monospace" font-size="8" fill="#7fa3b5">${sn}</text>`; });
+      html += `<div class="chart-card"><div class="chart-card-label">Species frequency</div><svg width="100%" height="100" viewBox="0 0 290 100">${bars}${bCounts}${bLabels}</svg></div>`;
+
+      if(allLengths.length > 1){
+        const minL=Math.min(...allLengths), maxL=Math.max(...allLengths), meanL=allLengths.reduce((a,b)=>a+b,0)/allLengths.length;
+        const nBins=8, bSize=(maxL-minL)/nBins||1, bins=Array(nBins).fill(0);
+        allLengths.forEach(v=>{ bins[Math.min(Math.floor((v-minL)/bSize),nBins-1)]++; });
+        const maxB=Math.max(...bins)||1, hbW=Math.floor(270/nBins)-3;
+        let hBars='',hXl='';
+        bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="#0a5c8c" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
+        const mX=10+((meanL-minL)/((maxL-minL)||1))*270;
+        html += `<div class="chart-card"><div class="chart-card-label">Length distribution (cm)</div><svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="#5fc7ee" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="#5fc7ee">μ ${meanL.toFixed(0)}</text>${hXl}</svg></div>`;
       }
-      if(sitesWithHookEffort.length > 0){
-        html += '<div class="bar-row-top" style="margin-bottom:6px; margin-top:16px;"><span class="bn" style="font-style:normal;">By hooks — specimens / 100 hooks</span></div>';
-        html += '<table class="stat-table"><thead><tr><th>Site</th><th>Sets</th><th>Specimens</th><th>CPUE /100 hooks</th></tr></thead><tbody>';
-        sitesWithHookEffort.forEach(site => {
-          const d = effortByHookSite[site];
-          const cpue = d.hooks > 0 ? (d.specimens / d.hooks * 100).toFixed(2) : '—';
-          html += '<tr><td class="sp-name">' + site + '</td><td class="num">' + d.sets + '</td><td class="num">' + d.specimens + '</td><td class="num">' + cpue + '</td></tr>';
-        });
-        html += '</tbody></table>';
-      }
-      html += '<div class="insight-empty" style="text-align:left; padding: 10px 2px;">Quick field reference only. Use the exported CSV in R for the full effort-standardized CPUE used in formal analysis.</div>';
     }
 
     main.innerHTML = html;
   }
 
-  // ===== Vessel track recorder =====
-  const TRACK_STORAGE_KEY = 'bycatch_tracks_v1';
-  const TRACK_POINT_INTERVAL_MS = 20000; // ~one point every 20 seconds
-
-  let trackActive = false;
-  let trackPoints = [];      // [{lat, lon, t}]
-  let trackStartTime = null;
-  let trackWatchId = null;
-  let trackIntervalId = null;
-  let trackUiTickId = null;
-  let trackLastFix = null;   // most recent geolocation fix, sampled on interval
-
-  function loadTracks(){
-    try{ return JSON.parse(localStorage.getItem(TRACK_STORAGE_KEY)) || []; }
-    catch(e){ return []; }
-  }
-  function saveTracks(list){
-    localStorage.setItem(TRACK_STORAGE_KEY, JSON.stringify(list));
-  }
+  document.getElementById('ivtStats').addEventListener('click', () => { insightsView='stats'; document.getElementById('ivtStats').classList.add('active'); document.getElementById('ivtCharts').classList.remove('active'); renderInsights(); });
+  document.getElementById('ivtCharts').addEventListener('click', () => { insightsView='charts'; document.getElementById('ivtCharts').classList.add('active'); document.getElementById('ivtStats').classList.remove('active'); renderInsights(); });
 
   // Haversine distance in km between two lat/lon points — adequate for the
   // short, local distances of a single haul; not meant to replace a real
