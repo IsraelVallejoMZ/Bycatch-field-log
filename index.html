@@ -34,6 +34,7 @@
 
     --radius: 10px;
     --radius-sm: 6px;
+    --ink-panel: #16303f;
   }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -107,6 +108,53 @@
     display:inline-block; margin-top:14px; font-family: var(--data); font-size:11.5px;
     background: rgba(255,255,255,0.12); padding:5px 11px; border-radius:14px;
   }
+
+  /* ===== Home hero (icon + number + mono meta) ===== */
+  .home-hero{
+    background: var(--blue-deep); color: white; border-radius: var(--radius);
+    padding: 20px 18px; margin-bottom: 16px; display:flex; align-items:center; gap:16px;
+  }
+  .home-hero .hh-icon{ flex-shrink:0; width:34px; height:34px; }
+  .home-hero .hh-icon svg{ width:100%; height:100%; }
+  .home-hero .num{ font-family: var(--display); font-size: 32px; font-weight:700; line-height:1; }
+  .home-hero .hh-meta{
+    font-family: var(--data); font-size: 11px; color:#cfe7f4; margin-top:5px;
+    letter-spacing:0.02em; text-transform:uppercase;
+  }
+
+  /* ===== Square-soft action tiles ===== */
+  .action-tile{
+    background: var(--panel); border: none; border-radius: var(--radius);
+    padding: 16px 14px; text-align:left; cursor:pointer; display:flex; flex-direction:column;
+    align-items:flex-start; gap:10px;
+  }
+  .action-tile:active{ transform: scale(0.97); }
+  .action-tile .at-icon-box{
+    width:38px; height:38px; border-radius:10px; background: var(--blue-mist);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .action-tile .at-icon-box svg{ width:19px; height:19px; }
+  .action-tile .at-title{ font-family: var(--display); font-weight:600; font-size: 13px; color: var(--ink); }
+  .action-tile.primary{ background: var(--blue); }
+  .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.18); }
+  .action-tile.primary .at-icon-box svg{ filter: brightness(0) invert(1); }
+  .action-tile.primary .at-title{ color: white; }
+
+  /* ===== Compact info row (dark, icon + title left, metric + chevron right) ===== */
+  .info-row{
+    grid-column: 1/3; background: var(--ink-panel); border:none; border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer; gap:10px; text-align:left; width:100%;
+  }
+  .info-row:active{ transform: scale(0.98); }
+  .info-row .ir-left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .info-row .ir-icon{ width:18px; height:18px; flex-shrink:0; }
+  .info-row .ir-icon svg{ width:100%; height:100%; }
+  .info-row .ir-title{ font-family: var(--display); font-weight:600; font-size: 12.5px; color:#e6eef0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .info-row .ir-metric{ font-family: var(--data); font-size: 10px; color:#7fa3b5; flex-shrink:0; letter-spacing:0.02em; }
+  .info-row .ir-metric.warn{ color: #e0a868; }
+  .info-row .ir-metric.good{ color: #6fc99a; }
+  .info-row-group{ display:grid; grid-template-columns: 1fr 1fr; }
 
   /* ===== Backup banner ===== */
   .backup-banner{
@@ -642,10 +690,18 @@
     <div class="site-line" id="siteLineHome">No site selected</div>
   </div>
   <main>
-    <div class="home-stat">
-      <div class="num" id="homeCount">0</div>
-      <div class="label">specimens logged</div>
-      <span class="site-tag" id="homeSiteTag">No site selected</span>
+    <div class="home-hero">
+      <div class="hh-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 24c7-9 18-13 27-9-2 4-2 14 0 18-9 4-20 0-27-9z" fill="#5fc7ee"/>
+          <path d="M33 19c4-2 8-2 9-2-1 3-1 8 0 11-1 0-5 0-9-2" fill="#5fc7ee"/>
+          <circle cx="14" cy="22" r="1.6" fill="#06384f"/>
+        </svg>
+      </div>
+      <div>
+        <div class="num" id="homeCount">0</div>
+        <div class="hh-meta">Specimens · <span id="homeSiteTag">No site selected</span></div>
+      </div>
     </div>
 
     <div class="backup-banner" id="backupBanner">
@@ -662,61 +718,65 @@
     </div>
 
     <div class="quick-actions">
-      <div class="qa-btn primary" data-go="record">
-        <span class="qa-icon">＋</span>
-        <div class="qa-title">New Record</div>
-        <div class="qa-sub">Log a specimen</div>
+      <div class="action-tile primary" data-go="record">
+        <div class="at-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12h14M12 5v14" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="at-title">New Record</div>
       </div>
-      <div class="qa-btn" data-go="history">
-        <span class="qa-icon">☷</span>
-        <div class="qa-title">History</div>
-        <div class="qa-sub">Browse & filter</div>
-      </div>
-    </div>
-
-    <div class="section-h">Survey map</div>
-    <div class="map-placeholder" data-go="map" style="cursor:pointer;">
-      <div class="mp-icon-wrap">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 6h36M6 16h36M6 26h36M6 36h36M16 6v36M26 6v36M36 6v36" stroke="#bcd6e6" stroke-width="1.2"/>
-          <path d="M24 14c-5 0-9 4-9 9 0 6.8 9 15 9 15s9-8.2 9-15c0-5-4-9-9-9z" fill="#0a5c8c"/>
-          <circle cx="24" cy="23" r="3.2" fill="white"/>
-        </svg>
-      </div>
-      <div>
-        <div class="mp-title">Open map view</div>
-        <div class="mp-sub" id="homeMapSub">GPS points are already being saved with every record</div>
+      <div class="action-tile" data-go="history">
+        <div class="at-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="5" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
+            <rect x="4" y="10.5" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
+            <rect x="4" y="16" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
+          </svg>
+        </div>
+        <div class="at-title">History</div>
       </div>
     </div>
 
-    <div class="section-h">Vessel track</div>
-    <div class="map-placeholder" data-go="track" style="cursor:pointer;">
-      <div class="mp-icon-wrap">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 36c5-10 9 4 14-6s8 6 13-8" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5.5"/>
-          <circle cx="7" cy="36" r="3" fill="#2f7a52"/>
-          <circle cx="34" cy="22" r="3" fill="#c0532f"/>
-        </svg>
-      </div>
-      <div>
-        <div class="mp-title">Open track recorder</div>
-        <div class="mp-sub" id="homeTrackSub">Record the vessel's path during a haul</div>
-      </div>
-    </div>
-
-    <div class="section-h">Survey insights</div>
-    <div class="map-placeholder" data-go="insights" style="cursor:pointer;">
-      <div class="mp-icon-wrap">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="26" width="7" height="14" rx="1.5" fill="#bcd6e6"/>
-          <rect x="20.5" y="16" width="7" height="24" rx="1.5" fill="#0a5c8c"/>
-          <rect x="33" y="21" width="7" height="19" rx="1.5" fill="#bcd6e6"/>
-        </svg>
-      </div>
-      <div>
-        <div class="mp-title">Open insights</div>
-        <div class="mp-sub" id="homeInsightsSub">Species counts, length ranges, and condition breakdown</div>
-      </div>
+    <div class="section-h">Quick links</div>
+    <div class="info-row-group">
+      <button class="info-row" data-go="map">
+        <div class="ir-left">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#5fc7ee"/>
+              <circle cx="12" cy="9" r="2" fill="#06384f"/>
+            </svg>
+          </div>
+          <div class="ir-title">Survey map</div>
+        </div>
+        <div class="ir-metric" id="homeMapSub">NO GPS YET</div>
+      </button>
+      <button class="info-row" data-go="track">
+        <div class="ir-left">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 17c2.5-5 4.5 2 7-3s4 3 6.5-4" stroke="#5fc7ee" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.5 3"/>
+              <circle cx="3" cy="17" r="1.8" fill="#2f7a52"/>
+            </svg>
+          </div>
+          <div class="ir-title">Vessel track</div>
+        </div>
+        <div class="ir-metric" id="homeTrackSub">0 SAVED</div>
+      </button>
+      <button class="info-row" data-go="insights">
+        <div class="ir-left">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="13" width="3.5" height="7" rx="0.8" fill="#5fc7ee"/>
+              <rect x="10.2" y="8" width="3.5" height="12" rx="0.8" fill="#5fc7ee"/>
+              <rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8" fill="#5fc7ee"/>
+            </svg>
+          </div>
+          <div class="ir-title">Survey insights</div>
+        </div>
+        <div class="ir-metric" id="homeInsightsSub">0 SPECIES</div>
+      </button>
     </div>
 
     <div class="section-h">Most recent</div>
@@ -1189,22 +1249,37 @@
     </div>
 
     <div id="fleetActiveTripCard" style="display:none;">
-      <div class="home-stat">
-        <div class="num" id="fleetTripDuration">0h 00m</div>
-        <div class="label">Trip Duration</div>
-        <span class="site-tag" id="fleetTripVesselTag">Vessel</span>
+      <div class="home-hero">
+        <div class="hh-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 6v20M16 14l8 6 8-6M14 22c0 8 4 14 10 18 6-4 10-10 10-18" stroke="#5fc7ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="10" r="3" fill="#5fc7ee"/>
+          </svg>
+        </div>
+        <div>
+          <div class="num" id="fleetTripDuration">0h 00m</div>
+          <div class="hh-meta">Trip duration · <span id="fleetTripVesselTag">Vessel</span></div>
+        </div>
       </div>
 
       <div class="quick-actions">
-        <div class="qa-btn primary" id="fleetLogHaulBtn">
-          <span class="qa-icon">⚓</span>
-          <div class="qa-title">Log Haul</div>
-          <div class="qa-sub">Gear, depth, duration</div>
+        <div class="action-tile primary" id="fleetLogHaulBtn">
+          <div class="at-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4v9M8 8l4-4 4 4" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="at-title">Log Haul</div>
         </div>
-        <div class="qa-btn" id="fleetLogCatchBtn">
-          <span class="qa-icon">🐟</span>
-          <div class="qa-title">Log Catch</div>
-          <div class="qa-sub">Species, kg, ref. price</div>
+        <div class="action-tile" id="fleetLogCatchBtn">
+          <div class="at-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/>
+              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
+            </svg>
+          </div>
+          <div class="at-title">Log Catch</div>
         </div>
       </div>
 
@@ -1740,17 +1815,28 @@
     </div>
 
     <div id="sportActiveSessionCard" style="display:none;">
-      <div class="home-stat">
-        <div class="num" id="sportSessionDuration">0h 00m</div>
-        <div class="label">Session Duration</div>
-        <span class="site-tag" id="sportSessionSpotTag">Open Water</span>
+      <div class="home-hero">
+        <div class="hh-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 6c0 8-2 10-2 16a6 6 0 1 0 8 0c-4-3-6-7-6-16z" stroke="#5fc7ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="14" r="2" fill="#5fc7ee"/>
+          </svg>
+        </div>
+        <div>
+          <div class="num" id="sportSessionDuration">0h 00m</div>
+          <div class="hh-meta">Session duration · <span id="sportSessionSpotTag">Open Water</span></div>
+        </div>
       </div>
 
       <div class="quick-actions">
-        <div class="qa-btn primary" id="sportLogCatchBtn" style="grid-column: 1 / -1;">
-          <span class="qa-icon">🐟</span>
-          <div class="qa-title">Log Catch</div>
-          <div class="qa-sub">Species, size, photo, kept or released</div>
+        <div class="action-tile primary" id="sportLogCatchBtn" style="grid-column: 1 / -1; flex-direction:row; align-items:center;">
+          <div class="at-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/>
+              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
+            </svg>
+          </div>
+          <div class="at-title">Log Catch</div>
         </div>
       </div>
 
@@ -4894,8 +4980,14 @@
 
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
     document.getElementById('homeMapSub').textContent = withGps > 0
-      ? withGps + ' point' + (withGps===1?'':'s') + ' plotted so far'
-      : 'GPS points are saved with every record';
+      ? withGps + ' PT' + (withGps===1?'':'S')
+      : 'NO GPS YET';
+
+    const trackCount = loadTracks().length;
+    document.getElementById('homeTrackSub').textContent = trackCount + ' SAVED';
+
+    const speciesSeen = new Set(list.map(e => (e.species || '').trim()).filter(Boolean)).size;
+    document.getElementById('homeInsightsSub').textContent = speciesSeen + ' SPECIES';
 
     const recent = document.getElementById('recentList');
     if(list.length === 0){
