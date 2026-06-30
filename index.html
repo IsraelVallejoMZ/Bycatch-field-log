@@ -513,6 +513,22 @@
     white-space: pre-wrap; color: var(--ink);
   }
 
+  /* Full-screen photo viewer — used to show a document's photo large
+     enough to be read by an inspector directly from the device. */
+  .photo-viewer-overlay{
+    position: fixed; inset: 0; z-index: 70;
+    background: rgba(8,12,14,0.95);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-viewer-overlay img{
+    max-width: 92vw; max-height: 88vh; object-fit: contain;
+    border-radius: var(--radius-sm);
+  }
+  .photo-viewer-close{
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(255,255,255,0.12); color: var(--paper);
+  }
+
   /* ===== Mode select screen ===== */
   .mode-select-wrap{
     height:100%; display:flex; flex-direction:column; justify-content:center;
@@ -1913,6 +1929,11 @@
     </div>
     <div class="fleet-export-text" id="photoExportConfirmBody"></div>
   </div>
+</div>
+
+<div id="photoViewerOverlay" class="photo-viewer-overlay" style="display:none; position:fixed;">
+  <button class="back-btn photo-viewer-close" id="photoViewerCloseBtn">✕</button>
+  <img id="photoViewerImg" src="" alt="Document photo">
 </div>
 
 <script>
@@ -3725,13 +3746,54 @@
     el.addEventListener('click', () => sportGoTo(el.dataset.go.replace('sport-','')));
   });
 
-  // ===== Photo capture (pending) =====
-  // sportPhotoBox (Log Catch) and sportDocPhotoBox (Documents) are placed
-  // in the markup but not yet wired to handlePhoto()/buildPhotoInput()
-  // like the research segment's #photoBox. window.sportCurrentPhotoDataUrl
-  // and window.sportCurrentDocPhotoDataUrl are read by saveSportCatch()
-  // and the document-add handler but nothing sets them yet — next step
-  // is reusing the same FileReader pattern against these two boxes.
+  // ===== Photo capture =====
+  // Same pattern as the research segment's #photoBox: a hidden file
+  // input with no 'capture' attribute (lets the OS show its normal
+  // camera-or-library chooser), re-created after every selection so the
+  // box can be tapped again to replace the photo with a new one.
+  let sportCatchPhotoDataUrl = null;
+  let sportDocPhotoDataUrl = null;
+  function buildSportPhotoInput(boxId, onPicked){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        onPicked(ev.target.result);
+        const box = document.getElementById(boxId);
+        box.classList.add('filled');
+        box.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        box.appendChild(img);
+        box.appendChild(buildSportPhotoInput(boxId, onPicked));
+      };
+      reader.readAsDataURL(file);
+    });
+    return input;
+  }
+  // Clears the box back to its empty "tap to take or attach a photo"
+  // state and re-attaches a fresh input — used when a form is reset
+  // (clearSportCatchForm) so a previous photo doesn't linger visually
+  // on the next new catch/document.
+  function resetSportPhotoBox(boxId, onPicked){
+    const box = document.getElementById(boxId);
+    box.classList.remove('filled');
+    box.innerHTML = '<span class="photo-hint">tap to take or attach a photo</span>';
+    box.appendChild(buildSportPhotoInput(boxId, onPicked));
+  }
+  resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
+  resetSportPhotoBox('sportDocPhotoBox', (d) => { sportDocPhotoDataUrl = d; });
+  document.getElementById('sportPhotoBox').addEventListener('click', () => {
+    document.getElementById('sportPhotoBox').querySelector('input[type=file]').click();
+  });
+  document.getElementById('sportDocPhotoBox').addEventListener('click', () => {
+    document.getElementById('sportDocPhotoBox').querySelector('input[type=file]').click();
+  });
 
   // ===== Session (home screen) =====
   function renderSportSpotOptions(){
@@ -3829,6 +3891,7 @@
     document.getElementById('sportCatchBrand').textContent = editing ? 'Edit Catch' : 'Log Catch';
     document.getElementById('sportCatchAddAnotherBtn').style.display = editing ? 'none' : '';
     document.getElementById('sportCatchSaveBtn').textContent = editing ? 'Save Changes' : 'Save & Return To Session';
+    document.getElementById('sportCatchBackBtn').dataset.go = editing ? 'sport-catch-log' : 'sport-session';
   }
   function resetSportCatchGps(){
     sportCatchCoords = null;
@@ -3847,6 +3910,8 @@
     document.getElementById('sportReleasedBtn').classList.remove('active');
     sportKeptOrReleased = null;
     resetSportCatchGps();
+    sportCatchPhotoDataUrl = null;
+    resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
   }
   let sportKeptOrReleased = null;
   document.getElementById('sportKeptBtn').addEventListener('click', () => {
@@ -3887,6 +3952,47 @@
     document.getElementById('sportCatchSessionLine').textContent = session ? 'Linked To Current Session' : 'Not Linked To A Session';
     sportGoToScreenRaw('log-catch');
   }
+  // Opens an existing catch for correction — used from the Catch Log
+  // list. Preserves its original session_id/logged_at (see saveSportCatch)
+  // rather than reattaching it to whatever session happens to be active.
+  function openSportCatchEdit(catchId){
+    const record = load(CATCHES_KEY).find(c => c.catch_id === catchId);
+    if(!record) return;
+    currentSportEditingCatchId = catchId;
+    setSportCatchScreenMode();
+    document.getElementById('sportSpecies').value = record.species || '';
+    document.getElementById('sportCatchWeight').value = record.weight_kg || '';
+    document.getElementById('sportCatchLength').value = record.length_cm || '';
+    document.getElementById('sportLureUsed').value = record.lure || '';
+    document.getElementById('sportCatchNotes').value = record.notes || '';
+    sportKeptOrReleased = record.kept_or_released || 'released';
+    document.getElementById('sportKeptBtn').classList.toggle('active', sportKeptOrReleased === 'kept');
+    document.getElementById('sportReleasedBtn').classList.toggle('active', sportKeptOrReleased === 'released');
+    if(record.lat){
+      sportCatchCoords = { lat: record.lat, lon: record.lon };
+      const label = document.getElementById('sportCoordsLabel');
+      label.textContent = Number(record.lat).toFixed(5) + ', ' + Number(record.lon).toFixed(5);
+      label.classList.remove('pending');
+      document.getElementById('sportGpsBox').classList.add('locked');
+    } else {
+      resetSportCatchGps();
+    }
+    sportCatchPhotoDataUrl = record.photo || null;
+    if(record.photo){
+      const box = document.getElementById('sportPhotoBox');
+      box.classList.add('filled');
+      box.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = record.photo;
+      box.appendChild(img);
+      box.appendChild(buildSportPhotoInput('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; }));
+    } else {
+      resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
+    }
+    const session = record.session_id ? load(SESSIONS_KEY).find(s => s.session_id === record.session_id) : null;
+    document.getElementById('sportCatchSessionLine').textContent = session ? 'Linked To Session Started ' + new Date(session.started_at).toLocaleDateString() : 'Not Linked To A Session';
+    sportGoToScreenRaw('log-catch');
+  }
   // Direct screen swap without the tab-bar bookkeeping sportGoTo does,
   // since Log Catch isn't one of the tab-bar destinations.
   function sportGoToScreenRaw(screen){
@@ -3897,11 +4003,8 @@
   function saveSportCatch(){
     const species = document.getElementById('sportSpecies').value.trim();
     if(!species){ showSportToast('Species is required', true); return false; }
-    const session = getActiveSession();
     const catches = load(CATCHES_KEY);
-    const record = {
-      catch_id: currentSportEditingCatchId || uid(),
-      session_id: session ? session.session_id : null,
+    const fields = {
       species,
       weight_kg: document.getElementById('sportCatchWeight').value || '',
       length_cm: document.getElementById('sportCatchLength').value || '',
@@ -3910,14 +4013,22 @@
       notes: document.getElementById('sportCatchNotes').value.trim(),
       lat: sportCatchCoords ? sportCatchCoords.lat : '',
       lon: sportCatchCoords ? sportCatchCoords.lon : '',
-      photo: window.sportCurrentPhotoDataUrl || null,
-      logged_at: new Date().toISOString()
+      photo: sportCatchPhotoDataUrl
     };
     if(currentSportEditingCatchId){
+      // Editing an existing catch: preserve its original session_id and
+      // logged_at — don't reattach it to whatever session happens to be
+      // active right now, which could silently move it to the wrong
+      // session (or detach it entirely if there's no active session).
       const idx = catches.findIndex(c => c.catch_id === currentSportEditingCatchId);
-      if(idx !== -1) catches[idx] = Object.assign({}, catches[idx], record);
+      if(idx !== -1) catches[idx] = Object.assign({}, catches[idx], fields);
     } else {
-      catches.push(record);
+      const session = getActiveSession();
+      catches.push(Object.assign({
+        catch_id: uid(),
+        session_id: session ? session.session_id : null,
+        logged_at: new Date().toISOString()
+      }, fields));
     }
     save(CATCHES_KEY, catches);
     return true;
@@ -3926,19 +4037,48 @@
     if(saveSportCatch()){ clearSportCatchForm(); showSportToast('Catch saved'); renderSportSession(); }
   });
   document.getElementById('sportCatchSaveBtn').addEventListener('click', () => {
-    if(saveSportCatch()){ showSportToast('Catch saved'); sportGoTo('session'); }
+    const wasEditing = !!currentSportEditingCatchId;
+    if(saveSportCatch()){
+      clearSportCatchForm();
+      currentSportEditingCatchId = null;
+      showSportToast(wasEditing ? 'Catch updated' : 'Catch saved');
+      sportGoTo(wasEditing ? 'catch-log' : 'session');
+    }
   });
 
-  // ===== Catch log (placeholder list — full filtering/editing comes next) =====
-  function renderSportCatchLog(){
+  // ===== Catch log =====
+  function renderSportCatchLogSpeciesOptions(){
     const catches = load(CATCHES_KEY);
-    document.getElementById('sportCatchLogCountLine').textContent = catches.length + ' catches logged';
+    const species = Array.from(new Set(catches.map(c => c.species).filter(Boolean))).sort();
+    const sel = document.getElementById('sportCatchLogSpeciesFilter');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— All Species —</option>'
+      + species.map(s => '<option value="'+s+'">'+s+'</option>').join('');
+    if(species.includes(cur)) sel.value = cur;
+  }
+  // Re-renders just the list + count for whatever species filter is
+  // currently selected, without touching the <select> itself — used both
+  // on initial render and on every filter change.
+  function renderSportCatchLogList(){
+    const filterSpecies = document.getElementById('sportCatchLogSpeciesFilter').value;
+    const all = load(CATCHES_KEY);
+    const catches = filterSpecies ? all.filter(c => c.species === filterSpecies) : all;
+    document.getElementById('sportCatchLogCountLine').textContent = catches.length + ' catches logged'
+      + (filterSpecies ? ' (filtered)' : '');
     const list = document.getElementById('sportCatchLogList');
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet.</div>'
-      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-        + '<div class="meta">'+new Date(c.logged_at).toLocaleDateString()+(c.weight_kg?' · '+c.weight_kg+' kg':'')+'</div></div></div>').join('');
+      : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-sport-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
+        + '<div class="meta">'+new Date(c.logged_at).toLocaleDateString()+(c.weight_kg?' · '+c.weight_kg+' kg':'')+' · '+(c.kept_or_released==='kept'?'Kept':'Released')+'</div></div></div>').join('');
+    list.querySelectorAll('[data-sport-catch-edit]').forEach(el => {
+      el.addEventListener('click', () => openSportCatchEdit(el.dataset.sportCatchEdit));
+    });
   }
+  function renderSportCatchLog(){
+    renderSportCatchLogSpeciesOptions();
+    renderSportCatchLogList();
+  }
+  document.getElementById('sportCatchLogSpeciesFilter').addEventListener('change', renderSportCatchLogList);
 
   // ===== Spots =====
   let sportSpotCoords = null;
@@ -4042,11 +4182,13 @@
       doc_type: document.getElementById('sportDocType').value,
       label: document.getElementById('sportDocLabel').value.trim(),
       expiry_date: expiry,
-      photo: window.sportCurrentDocPhotoDataUrl || null
+      photo: sportDocPhotoDataUrl
     });
     save(DOCS_KEY, docs);
     document.getElementById('sportDocLabel').value = '';
     document.getElementById('sportDocExpiry').value = '';
+    sportDocPhotoDataUrl = null;
+    resetSportPhotoBox('sportDocPhotoBox', (d) => { sportDocPhotoDataUrl = d; });
     showSportToast('Document added');
     renderSportDocuments();
   });
@@ -4061,11 +4203,26 @@
       let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
       if(daysLeft < 0) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Expired</span>';
       else if(daysLeft <= 30) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
-      return '<div class="entry"><div><div class="sp">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
-        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>'
+      const clickable = d.photo ? ' entry-clickable" data-doc-photo="'+d.doc_id+'"' : '"';
+      return '<div class="entry'+clickable+'><div><div class="sp">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
+        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · tap to view':'')+'</div></div>'
         + badge + '</div>';
     }).join('');
+    list.querySelectorAll('[data-doc-photo]').forEach(el => {
+      el.addEventListener('click', () => {
+        const doc = docs.find(d => d.doc_id === el.dataset.docPhoto);
+        if(doc && doc.photo) openPhotoViewer(doc.photo);
+      });
+    });
   }
+  function openPhotoViewer(dataUrl){
+    document.getElementById('photoViewerImg').src = dataUrl;
+    document.getElementById('photoViewerOverlay').style.display = 'flex';
+  }
+  document.getElementById('photoViewerCloseBtn').addEventListener('click', () => {
+    document.getElementById('photoViewerOverlay').style.display = 'none';
+    document.getElementById('photoViewerImg').src = '';
+  });
 
   // ===== Stats (placeholder) =====
   function renderSportStats(){
