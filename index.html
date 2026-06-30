@@ -895,6 +895,7 @@
           <button class="gps-btn" id="gpsManualToggleBtn" type="button" style="background:var(--panel); color:var(--ink); border:1px solid var(--line);">Manual</button>
         </div>
       </div>
+      <div id="researchWeatherBox" style="display:none; margin-top:10px;"></div>
       <div id="gpsManualFields" style="display:none; margin-top:10px;">
         <div class="grid2">
           <div>
@@ -1273,6 +1274,7 @@
         <span class="coords pending" id="fleetCoordsLabel">not captured</span>
         <button class="gps-btn" id="fleetGpsBtn" type="button">Capture</button>
       </div>
+      <div id="fleetWeatherBox" style="display:none; margin-top:10px;"></div>
     </div>
 
     <div class="card">
@@ -1698,6 +1700,11 @@
     <div class="site-line" id="sportSpotLine">No Spot Selected</div>
   </div>
   <main>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:10px;">Solunar Forecast <span class="optional-tag">today, your local time</span></div>
+      <div id="sportSolunarBox"></div>
+    </div>
+
     <div id="sportNoSessionCard">
       <div class="card">
         <div class="card-label" style="margin-bottom:14px;">Start A New Session</div>
@@ -1720,6 +1727,10 @@
           <option value="Ice">Ice Fishing</option>
           <option value="Other">Other</option>
         </select>
+
+        <div class="card-label" style="margin-bottom:10px; margin-top:18px;">Weather &amp; Tide <span class="optional-tag">at your current location</span></div>
+        <button type="button" class="btn btn-clear" id="sportFetchWeatherBtn" style="width:100%;">Get Conditions</button>
+        <div id="sportWeatherBox" style="display:none; margin-top:10px;"></div>
 
         <label for="sportConditionsNote">Conditions <span class="optional-tag">optional — weather, water, notes</span></label>
         <input type="text" id="sportConditionsNote" placeholder="e.g. Overcast, light chop, incoming tide">
@@ -2457,6 +2468,40 @@
   // single getCurrentPosition call, high accuracy, 8s timeout — so haul
   // location behaves identically to the species-record GPS the person
   // already knows from Field Research.
+  // ===== Weather & tide (Open-Meteo, no API key) =====
+  // Same approach as the Sport segment's fetchSportWeather — duplicated
+  // here rather than shared because each segment lives in its own IIFE
+  // with its own scope. Triggered automatically right after a haul's GPS
+  // is captured, since deciding whether conditions are fishable is the
+  // natural moment to want this, not a separate manual step.
+  async function fetchFleetWeather(lat, lon){
+    const box = document.getElementById('fleetWeatherBox');
+    box.style.display = 'block';
+    box.className = 'duration-line';
+    box.textContent = 'Fetching conditions…';
+    try{
+      const [wxRes, marineRes] = await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
+        fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=wave_height,sea_surface_temperature,sea_level_height_msl')
+      ]);
+      const wx = await wxRes.json();
+      const marine = marineRes.ok ? await marineRes.json() : null;
+      const c = wx.current || {};
+      const m = marine && marine.current ? marine.current : {};
+      let html = '<div><b>'+(c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'—')+'</b> air · '
+        + (c.wind_speed_10m!=null?Math.round(c.wind_speed_10m)+' km/h wind':'wind —') + ' · '
+        + (c.pressure_msl!=null?Math.round(c.pressure_msl)+' hPa':'—') + '</div>';
+      if(m && (m.wave_height!=null || m.sea_surface_temperature!=null)){
+        html += '<div style="margin-top:4px;">'
+          + (m.sea_surface_temperature!=null?Math.round(m.sea_surface_temperature)+'°C water':'water —') + ' · '
+          + (m.wave_height!=null?m.wave_height.toFixed(1)+'m waves':'waves —') + '</div>';
+      }
+      html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Tide/wave data is an estimate (model resolution ~8km) — reference only.</div>';
+      box.innerHTML = html;
+    } catch(err){
+      box.textContent = 'Could not fetch conditions — check your connection.';
+    }
+  }
   document.getElementById('fleetGpsBtn').addEventListener('click', () => {
     const label = document.getElementById('fleetCoordsLabel');
     const box = document.getElementById('fleetGpsBox');
@@ -2471,6 +2516,7 @@
         label.classList.remove('pending');
         label.textContent = fleetHaulCoords.lat.toFixed(5) + ', ' + fleetHaulCoords.lon.toFixed(5) + ' (±' + Math.round(fleetHaulCoords.acc) + 'm)';
         box.classList.add('locked');
+        fetchFleetWeather(fleetHaulCoords.lat, fleetHaulCoords.lon);
       },
       err => {
         label.textContent = 'no GPS signal — try again';
@@ -2485,6 +2531,7 @@
     label.textContent = 'not captured';
     label.classList.add('pending');
     document.getElementById('fleetGpsBox').classList.remove('locked');
+    document.getElementById('fleetWeatherBox').style.display = 'none';
   }
 
   document.getElementById('fleetHaulCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
@@ -2748,6 +2795,36 @@
     return { minMargin, maxMargin, complete: missing.length === 0, currency, missing };
   }
 
+  // Visual income-vs-costs bar for Trip Detail: the underlying numbers
+  // (income, costs) already existed in Settlement as plain text — this
+  // adds a glanceable summary above that detail, not a new calculation,
+  // so a small-fleet owner can see at a glance whether a trip was
+  // profitable without reading a table line by line.
+  function buildFleetProfitabilityBar(income, costs, currency){
+    const net = income - costs;
+    const total = Math.max(income, costs, 1); // avoid divide-by-zero when both are 0
+    const incomePct = Math.min(100, (income / total) * 100);
+    const costsPct = Math.min(100, (costs / total) * 100);
+    const netColor = net >= 0 ? '#2f7a52' : 'var(--coral)';
+    const netBg = net >= 0 ? '#e1ede6' : 'var(--coral-soft)';
+    return '<div style="font-family:var(--display); font-weight:700; font-size:22px; color:'+netColor+'; margin-bottom:12px;">'
+      + (net >= 0 ? '+' : '') + fmtMoney(net, currency) + '</div>'
+      + '<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">'
+      + '<div style="width:62px; font-family:var(--data); font-size:11px; color:var(--ink-soft);">Income</div>'
+      + '<div style="flex:1; height:14px; background:var(--panel); border-radius:7px; overflow:hidden;">'
+      + '<div style="width:'+incomePct+'%; height:100%; background:var(--blue-deep);"></div></div>'
+      + '<div style="font-family:var(--data); font-size:11px; min-width:70px; text-align:right;">'+fmtMoney(income, currency)+'</div>'
+      + '</div>'
+      + '<div style="display:flex; align-items:center; gap:8px;">'
+      + '<div style="width:62px; font-family:var(--data); font-size:11px; color:var(--ink-soft);">Costs</div>'
+      + '<div style="flex:1; height:14px; background:var(--panel); border-radius:7px; overflow:hidden;">'
+      + '<div style="width:'+costsPct+'%; height:100%; background:var(--coral);"></div></div>'
+      + '<div style="font-family:var(--data); font-size:11px; min-width:70px; text-align:right;">'+fmtMoney(costs, currency)+'</div>'
+      + '</div>'
+      + '<div style="margin-top:10px; padding:8px 10px; background:'+netBg+'; border-radius:var(--radius-sm); font-family:var(--data); font-size:11px; color:'+netColor+';">'
+      + (net >= 0 ? 'Profitable trip' : 'Trip operated at a loss') + '</div>';
+  }
+
   function renderFleetTripLog(){
     renderVesselOptions();
     const vessels = load(VESSELS_KEY);
@@ -2904,6 +2981,10 @@
 
     document.getElementById('fleetTripDetailSettlement').innerHTML =
       '<div class="card">'
+      + '<div class="card-label" style="margin-bottom:14px;">Trip Profitability At A Glance</div>'
+      + buildFleetProfitabilityBar(totalIncome, totalCosts, currency)
+      + '</div>'
+      + '<div class="card">'
       + '<div class="card-label" style="margin-bottom:14px;">Trip Settlement'+(!hasActuals?' <span class="optional-tag">based on estimate, not yet scaled</span>':(!hasActualSales?' <span class="optional-tag">scaled, price still estimated</span>':''))+'</div>'
       + costs.map(c => '<div class="entry"><div><div class="sp" style="font-size:13px; font-style:normal;">'+(c.cost_type.charAt(0).toUpperCase()+c.cost_type.slice(1))+'</div></div>'
           + '<div style="display:flex; align-items:center; gap:4px;">'
@@ -3809,7 +3890,117 @@
     document.getElementById('sportNewSpotBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
   });
 
+  // ===== Weather & tide (Open-Meteo, no API key, free up to 10k calls/day) =====
+  // Two separate Open-Meteo endpoints: /v1/forecast for wind/pressure/air
+  // temp, and the marine-api host for wave height/sea surface temp/tide.
+  // Both are public, no key, no backend needed. Tide specifically is
+  // flagged by Open-Meteo itself as approximate (8km model resolution) —
+  // shown here as a reference for trip planning, not for navigation.
+  async function fetchSportWeather(lat, lon){
+    const box = document.getElementById('sportWeatherBox');
+    box.style.display = 'block';
+    box.className = 'duration-line';
+    box.textContent = 'Fetching conditions…';
+    try{
+      const [wxRes, marineRes] = await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
+        fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=wave_height,sea_surface_temperature,sea_level_height_msl')
+      ]);
+      const wx = await wxRes.json();
+      const marine = marineRes.ok ? await marineRes.json() : null;
+      const c = wx.current || {};
+      const m = marine && marine.current ? marine.current : {};
+      let html = '<div><b>'+(c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'—')+'</b> air · '
+        + (c.wind_speed_10m!=null?Math.round(c.wind_speed_10m)+' km/h wind':'wind —') + ' · '
+        + (c.pressure_msl!=null?Math.round(c.pressure_msl)+' hPa':'—') + '</div>';
+      if(m && (m.wave_height!=null || m.sea_surface_temperature!=null)){
+        html += '<div style="margin-top:4px;">'
+          + (m.sea_surface_temperature!=null?Math.round(m.sea_surface_temperature)+'°C water':'water —') + ' · '
+          + (m.wave_height!=null?m.wave_height.toFixed(1)+'m waves':'waves —') + '</div>';
+      }
+      html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Tide/wave data is an estimate (model resolution ~8km) — treat as trip-planning reference, not for navigation.</div>';
+      box.innerHTML = html;
+    } catch(err){
+      box.textContent = 'Could not fetch conditions — check your connection.';
+    }
+  }
+  document.getElementById('sportFetchWeatherBtn').addEventListener('click', () => {
+    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    document.getElementById('sportWeatherBox').style.display = 'block';
+    document.getElementById('sportWeatherBox').className = 'duration-line';
+    document.getElementById('sportWeatherBox').textContent = 'Getting your location…';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchSportWeather(pos.coords.latitude, pos.coords.longitude),
+      () => {
+        document.getElementById('sportWeatherBox').textContent = 'Could not get your location.';
+        document.getElementById('sportWeatherBox').className = 'duration-line warn';
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  // ===== Solunar forecast (client-side, no API, no backend) =====
+  // Moon phase uses the standard synodic-month calculation from a known
+  // new moon reference — accurate to well under a day, which is all that
+  // matters for a phase label and illumination percentage.
+  //
+  // Major/minor period times are an APPROXIMATION, not a full ephemeris
+  // calculation: real solunar tables compute the moon's actual transit,
+  // rise, and set times for the observer's exact lat/lon via spherical
+  // astronomy (see SunCalc / Meeus algorithms). Doing that correctly is a
+  // substantial chunk of code on its own. This instead distributes two
+  // major periods (~2h each) and two minor periods (~1h each) across the
+  // day based on the moon's age in its 24h50m cycle relative to local
+  // solar noon — directionally correct and useful for trip planning, but
+  // explicitly labeled as an estimate rather than precision astronomy.
+  function getMoonPhase(date){
+    const synodicMonth = 29.53058867;
+    const knownNewMoon = Date.UTC(2000, 0, 6, 18, 14); // a known new moon reference (Jan 6 2000)
+    const daysSince = (date.getTime() - knownNewMoon) / 86400000;
+    const age = ((daysSince % synodicMonth) + synodicMonth) % synodicMonth;
+    const illumination = (1 - Math.cos((age / synodicMonth) * 2 * Math.PI)) / 2;
+    let label;
+    if(age < 1.84) label = 'New Moon';
+    else if(age < 5.53) label = 'Waxing Crescent';
+    else if(age < 9.22) label = 'First Quarter';
+    else if(age < 12.91) label = 'Waxing Gibbous';
+    else if(age < 16.61) label = 'Full Moon';
+    else if(age < 20.30) label = 'Waning Gibbous';
+    else if(age < 23.99) label = 'Last Quarter';
+    else if(age < 27.68) label = 'Waning Crescent';
+    else label = 'New Moon';
+    return { age, illumination, label };
+  }
+  function formatHM(totalMinutes){
+    const h = Math.floor(((totalMinutes % 1440) + 1440) % 1440 / 60);
+    const m = Math.round(((totalMinutes % 1440) + 1440) % 1440 % 60);
+    const period = h < 12 ? 'AM' : 'PM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ':' + String(m).padStart(2,'0') + ' ' + period;
+  }
+  function renderSportSolunar(){
+    const box = document.getElementById('sportSolunarBox');
+    const now = new Date();
+    const moon = getMoonPhase(now);
+    // Moon's position cycles roughly every 24h50m (lunar day). Major
+    // periods occur at lunar transit (overhead) and anti-transit
+    // (underfoot) — approximated here as evenly spaced across that
+    // cycle, offset by how far into its cycle the moon currently is.
+    const lunarDayMin = 24 * 60 + 50;
+    const cycleOffset = (moon.age / 29.53058867) * lunarDayMin;
+    const majorOffsets = [cycleOffset % lunarDayMin, (cycleOffset + lunarDayMin/2) % lunarDayMin];
+    const minorOffsets = [(cycleOffset + lunarDayMin/4) % lunarDayMin, (cycleOffset + 3*lunarDayMin/4) % lunarDayMin];
+    const majorTimes = majorOffsets.map(o => formatHM(o)).sort();
+    const minorTimes = minorOffsets.map(o => formatHM(o)).sort();
+    const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? 'Strong' : (moon.illumination > 0.6 || moon.illumination < 0.4 ? 'Moderate' : 'Mild');
+    box.innerHTML = '<div style="font-family:var(--display); font-weight:600; font-style:italic; margin-bottom:6px;">'+moon.label+' · '+Math.round(moon.illumination*100)+'% illuminated</div>'
+      + '<div class="duration-line" style="margin-top:0;">Major: '+majorTimes.join(' · ')+'</div>'
+      + '<div class="duration-line" style="margin-top:8px;">Minor: '+minorTimes.join(' · ')+'</div>'
+      + '<div style="margin-top:8px; font-size:10.5px; color:var(--ink-soft);">'+strength+' activity expected near '+(moon.label==='Full Moon'||moon.label==='New Moon'?'this':'the next full/new')+' moon. Estimated periods — not a precision ephemeris.</div>';
+  }
+
   function renderSportSession(){
+    renderSportSolunar();
     renderSportSpotOptions();
     const session = getActiveSession();
     const noCard = document.getElementById('sportNoSessionCard');
@@ -4525,6 +4716,49 @@
   }
 
   // ===== GPS =====
+  // ===== Weather & sea temperature (Open-Meteo, no API key) =====
+  // Same pattern as the other two segments. Here it also offers to
+  // auto-fill the existing "Sea Temp (°C)" field if the observer hasn't
+  // typed a value yet — saves a manual lookup without overriding a
+  // measurement the observer already entered themselves.
+  async function fetchResearchWeather(lat, lon){
+    const box = document.getElementById('researchWeatherBox');
+    box.style.display = 'block';
+    box.className = 'duration-line';
+    box.textContent = 'Fetching conditions…';
+    try{
+      const [wxRes, marineRes] = await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
+        fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=wave_height,sea_surface_temperature')
+      ]);
+      const wx = await wxRes.json();
+      const marine = marineRes.ok ? await marineRes.json() : null;
+      const c = wx.current || {};
+      const m = marine && marine.current ? marine.current : {};
+      let html = '<div><b>'+(c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'—')+'</b> air · '
+        + (c.wind_speed_10m!=null?Math.round(c.wind_speed_10m)+' km/h wind':'wind —') + ' · '
+        + (c.pressure_msl!=null?Math.round(c.pressure_msl)+' hPa':'—') + '</div>';
+      const seaTempField = document.getElementById('seaTemp');
+      if(m.sea_surface_temperature!=null){
+        html += '<div style="margin-top:4px;">'+Math.round(m.sea_surface_temperature*10)/10+'°C sea surface (modeled)';
+        if(!seaTempField.value){
+          html += ' · <a href="#" id="researchUseSeaTempLink" style="color:var(--blue-deep); text-decoration:underline;">use this value</a>';
+        }
+        html += '</div>';
+      }
+      html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Modeled estimate (~8km resolution) — not a substitute for an in-situ reading where precision matters.</div>';
+      box.innerHTML = html;
+      const useLink = document.getElementById('researchUseSeaTempLink');
+      if(useLink){
+        useLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          seaTempField.value = Math.round(m.sea_surface_temperature*10)/10;
+        });
+      }
+    } catch(err){
+      box.textContent = 'Could not fetch conditions — check your connection.';
+    }
+  }
   document.getElementById('gpsBtn').addEventListener('click', ()=>{
     const label = document.getElementById('coordsLabel');
     const box = document.getElementById('gpsBox');
@@ -4539,6 +4773,7 @@
         label.classList.remove('pending');
         label.textContent = coords.lat.toFixed(5) + ', ' + coords.lon.toFixed(5) + ' (±' + Math.round(coords.acc) + 'm)';
         box.classList.add('locked');
+        fetchResearchWeather(coords.lat, coords.lon);
       },
       err => {
         label.textContent = 'no GPS signal — try again';
@@ -4855,6 +5090,7 @@
     // records — a single sampling session usually logs many specimens at
     // the same site before the observer moves to a new one.
     coords = null;
+    document.getElementById('researchWeatherBox').style.display = 'none';
     photoDataUrl = null;
     sexVal = null; conditionVal = null; taxonVal = null; bycatchVal = null;
     document.querySelectorAll('#sexRow .pill, #conditionRow .pill, #taxonRow .pill, #bycatchRow .pill').forEach(p=>p.classList.remove('active'));
@@ -5318,7 +5554,7 @@
       const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
       bounds.push([lat, lon]);
       const marker = L.marker([lat, lon], { icon: researchPointIcon(conditionColor(p.condition)) }).addTo(leafletInstance);
-      marker.bindPopup('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + '</div>');
+      marker.bindPopup('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + (p.gps_accuracy_m ? ' · ±'+Math.round(p.gps_accuracy_m)+'m' : '') + '</div>');
     });
     leafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
     setTimeout(()=> leafletInstance.invalidateSize(), 50);
