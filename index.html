@@ -1572,6 +1572,12 @@
   </div>
   <main>
     <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="white"/></svg>
+        </div>
+        <span class="sc-title">Gear &amp; effort</span>
+      </div>
       <label for="fleetGearType">Gear Type</label>
       <select id="fleetGearType">
         <option value="">— Select —</option>
@@ -1606,8 +1612,15 @@
         <label for="fleetHookCount">Number Of Hooks</label>
         <input type="number" id="fleetHookCount" inputmode="numeric" placeholder="e.g. 200">
       </div>
+    </div>
 
-      <label>Haul Location <span class="optional-tag">optional</span></label>
+    <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title">Position <span class="optional-tag">optional</span></span>
+      </div>
       <div class="gpsbox" id="fleetGpsBox">
         <span class="coords pending" id="fleetCoordsLabel">not captured</span>
         <button class="gps-btn" id="fleetGpsBtn" type="button">Capture</button>
@@ -1615,12 +1628,12 @@
       <div id="fleetWeatherBox" style="display:none; margin-top:10px;"></div>
     </div>
 
-    <div class="card">
-      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:0;">
-        <input type="checkbox" id="fleetLogCatchNow" checked style="width:auto; margin:0;">
-        <span style="text-transform:none; font-family:var(--body); font-size:14px; color:var(--ink); letter-spacing:0;">Log Catch For This Haul Now</span>
+    <div class="track-note" style="margin-bottom:0;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin:0;">
+        <input type="checkbox" id="fleetLogCatchNow" checked style="width:16px; height:16px; margin:0; flex-shrink:0;">
+        <span style="font-family:var(--display); font-size:13px; color:#cfe7f4; font-weight:600; text-transform:none; letter-spacing:0;">Log catch for this haul now</span>
       </label>
-      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:6px;">Leave unchecked to log catch later, combined at end of trip</div>
+      <div style="font-family:var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; line-height:1.5; padding-left:26px;">Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.</div>
     </div>
   </main>
   <div class="savebar">
@@ -1641,19 +1654,38 @@
   </div>
   <main>
     <div class="card">
-      <label for="fleetCatchHaulSelect">Haul <span class="optional-tag">this catch belongs to</span></label>
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title">Haul <span class="optional-tag">this catch belongs to</span></span>
+      </div>
       <select id="fleetCatchHaulSelect"></select>
       <div class="duration-line" id="fleetCatchHaulCountLine" style="display:none;"></div>
     </div>
+
     <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title">Species &amp; weight</span>
+      </div>
       <label for="fleetSpecies">Species / Commercial Category</label>
       <input type="text" id="fleetSpecies" placeholder="e.g. Pomadasys kaakan, or 'mixed reef fish'" list="fleet-species-list">
       <datalist id="fleet-species-list"></datalist>
 
       <label for="fleetCatchKg">Weight (kg)</label>
       <input type="number" id="fleetCatchKg" inputmode="decimal" placeholder="0.0">
+    </div>
 
-      <label>Reference Price <span class="optional-tag">optional, estimated</span></label>
+    <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="3" rx="1" fill="#0a5c8c"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="#0a5c8c"/><rect x="4" y="16" width="10" height="3" rx="1" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title">Reference price <span class="optional-tag">optional</span></span>
+      </div>
       <div class="grid2">
         <input type="number" id="fleetRefPrice" inputmode="decimal" placeholder="e.g. 85">
         <select id="fleetRefCurrency" class="currency-select">
@@ -1685,26 +1717,30 @@
     <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
   </div>
   <main>
-    <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Trip Summary</div>
-      <div class="grid2">
-        <div><label style="margin-top:0;">Duration</label><div class="duration-line" id="fleetCloseDuration">—</div></div>
-        <div><label style="margin-top:0;">Hauls Logged</label><div class="duration-line" id="fleetCloseHauls">—</div></div>
-        <div><label>Total Catch</label><div class="duration-line" id="fleetCloseTotalKg">—</div></div>
-        <div><label>Est. Catch Value</label><div class="duration-line" id="fleetCloseEstValue">—</div></div>
-      </div>
+    <div class="kpi-grid" style="margin-bottom:10px;">
+      <div class="kpi-cell"><div class="kn" id="fleetCloseDuration">—</div><div class="kl">Duration</div></div>
+      <div class="kpi-cell"><div class="kn" id="fleetCloseHauls">—</div><div class="kl">Hauls</div></div>
+      <div class="kpi-cell"><div class="kn" id="fleetCloseTotalKg">—</div><div class="kl">Total kg</div></div>
+      <div class="kpi-cell"><div class="kn accent" id="fleetCloseEstValue">—</div><div class="kl">Est. value</div></div>
     </div>
 
     <div class="card">
-      <label for="fleetFuelRemaining">Fuel Loaded (L)</label>
-      <input type="number" id="fleetFuelLoadedDisplay" disabled>
-      <label for="fleetFuelRemaining">Fuel Remaining (L)</label>
-      <input type="number" id="fleetFuelRemaining" inputmode="decimal" placeholder="e.g. 52">
+      <div class="insight-card-label" style="margin-bottom:10px;">Fuel</div>
+      <div class="grid2">
+        <div>
+          <label for="fleetFuelLoadedDisplay">Loaded (L)</label>
+          <input type="number" id="fleetFuelLoadedDisplay" disabled>
+        </div>
+        <div>
+          <label for="fleetFuelRemaining">Remaining (L)</label>
+          <input type="number" id="fleetFuelRemaining" inputmode="decimal" placeholder="e.g. 52">
+        </div>
+      </div>
       <div class="duration-line" id="fleetFuelConsumedLine">Fuel Consumed: —</div>
     </div>
 
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Costs You Can Log Now</div>
+      <div class="insight-card-label" style="margin-bottom:10px;">Costs you can log now</div>
 
       <label for="fleetCostCrew">Crew Payment <span class="optional-tag">per trip</span></label>
       <div class="grid2">
@@ -1724,21 +1760,18 @@
         <select id="fleetCostProvisionsCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
-      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:14px; line-height:1.5;">
+      <div class="track-note" style="margin-top:14px;margin-bottom:0;">
         Maintenance, permits, and port dues are usually added by the office afterward.
       </div>
     </div>
 
-    <div class="backup-banner stale" style="margin-bottom:18px;">
-      <div class="bb-text">
-        <div class="bb-title">Before You Close</div>
-        <div class="bb-sub">Closing locks new hauls and catch entries. The office can still add remaining costs later.</div>
-      </div>
+    <div class="track-note">
+      Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.
     </div>
   </main>
   <div class="savebar">
     <button class="btn btn-clear" id="fleetCloseCancelBtn">Cancel</button>
-    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--amber);">Close Trip</button>
+    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--coral);">Close Trip</button>
   </div>
 </section>
 
