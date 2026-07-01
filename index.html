@@ -2116,14 +2116,14 @@
     <div class="site-line" id="sportSpotLine">No Spot Selected</div>
   </div>
   <main>
-    <div class="card">
-      <div class="card-label" style="margin-bottom:10px;">Solunar Forecast <span class="optional-tag">today, your local time</span></div>
+    <div class="card" style="background:#0e1b26;border:none;">
+      <div class="insight-card-label" style="color:#8fb4c9;margin-bottom:10px;">Solunar Forecast · Today</div>
       <div id="sportSolunarBox"></div>
     </div>
 
     <div id="sportNoSessionCard">
       <div class="card">
-        <div class="card-label" style="margin-bottom:14px;">Start A New Session</div>
+        <div class="insight-card-label" style="margin-bottom:12px;">Start a new session</div>
         <label for="sportSpotSelect">Spot</label>
         <select id="sportSpotSelect">
           <option value="">— No Spot / Open Water —</option>
@@ -2144,11 +2144,16 @@
           <option value="Other">Other</option>
         </select>
 
-        <div class="card-label" style="margin-bottom:10px; margin-top:18px;">Weather &amp; Tide <span class="optional-tag">at your current location</span></div>
+        <div class="step-card-header" style="margin:16px 0 10px;">
+          <div class="sc-icon-box" style="background:var(--blue-mist);">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <span class="sc-title">Weather &amp; Tide <span class="optional-tag">at your current location</span></span>
+        </div>
         <button type="button" class="btn btn-clear" id="sportFetchWeatherBtn" style="width:100%;">Get Conditions</button>
         <div id="sportWeatherBox" style="display:none; margin-top:10px;"></div>
 
-        <label for="sportConditionsNote">Conditions <span class="optional-tag">optional — weather, water, notes</span></label>
+        <label for="sportConditionsNote" style="margin-top:14px;">Conditions <span class="optional-tag">optional — water, notes</span></label>
         <input type="text" id="sportConditionsNote" placeholder="e.g. Overcast, light chop, incoming tide">
 
         <button class="btn btn-save" id="sportStartSessionBtn" style="width:100%; margin-top:16px;">Start Session</button>
@@ -2181,9 +2186,11 @@
         </div>
       </div>
 
-      <button class="track-toggle-btn" id="sportEndSessionBtn" style="margin-bottom:20px;">End Session</button>
+      <button class="fleet-close-trip-btn" id="sportEndSessionBtn">End Session</button>
 
-      <div class="section-h">Catches Logged This Session</div>
+      <div class="hist-meta-row">
+        <span class="insight-card-label" style="margin:0;">Catches this session</span>
+      </div>
       <div id="sportSessionCatchList"></div>
     </div>
   </main>
@@ -2201,15 +2208,26 @@
   </div>
   <main>
     <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title">Species &amp; size</span>
+      </div>
       <label for="sportSpecies">Species</label>
       <input type="text" id="sportSpecies" placeholder="e.g. Largemouth bass" list="sport-species-list">
       <datalist id="sport-species-list"></datalist>
 
-      <label for="sportCatchWeight">Weight (kg) <span class="optional-tag">optional</span></label>
-      <input type="number" id="sportCatchWeight" inputmode="decimal" placeholder="0.0">
-
-      <label for="sportCatchLength">Length (cm) <span class="optional-tag">optional</span></label>
-      <input type="number" id="sportCatchLength" inputmode="decimal" placeholder="0.0">
+      <div class="grid2">
+        <div>
+          <label for="sportCatchWeight">Weight (kg) <span class="optional-tag">opt.</span></label>
+          <input type="number" id="sportCatchWeight" inputmode="decimal" placeholder="0.0">
+        </div>
+        <div>
+          <label for="sportCatchLength">Length (cm) <span class="optional-tag">opt.</span></label>
+          <input type="number" id="sportCatchLength" inputmode="decimal" placeholder="0.0">
+        </div>
+      </div>
 
       <label for="sportLureUsed">Lure / Bait <span class="optional-tag">optional</span></label>
       <input type="text" id="sportLureUsed" placeholder="e.g. Soft plastic worm" list="sport-lure-list">
@@ -2217,21 +2235,34 @@
 
       <label>Outcome</label>
       <div class="grid2">
-        <button type="button" class="btn btn-clear" id="sportKeptBtn">Kept</button>
-        <button type="button" class="btn btn-clear" id="sportReleasedBtn">Released</button>
+        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#dff0e8;color:#2f7a52;font-weight:600;">Kept</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#dfeaf0;color:#0a5c8c;font-weight:600;">Released</button>
       </div>
 
-      <label for="sportCatchNotes">Notes <span class="optional-tag">optional</span></label>
+      <label for="sportCatchNotes" style="margin-top:14px;">Notes <span class="optional-tag">optional</span></label>
       <input type="text" id="sportCatchNotes" placeholder="e.g. Caught near submerged log">
     </div>
 
-    <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Photo</div>
+    <div class="quick-actions">
+      <div class="action-tile" id="sportPhotoBtnTile">
+        <div class="at-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="at-title">Photo</div>
+      </div>
+      <div class="action-tile" id="sportGpsBtnTile">
+        <div class="at-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/><circle cx="12" cy="9" r="2" fill="white"/></svg>
+        </div>
+        <div class="at-title">GPS</div>
+      </div>
+    </div>
+
+    <div class="card" id="sportPhotoCard" style="display:none;">
       <div class="photobox" id="sportPhotoBox"></div>
     </div>
 
-    <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Location</div>
+    <div class="card" id="sportGpsCard" style="display:none;">
       <div id="sportGpsBox" class="gpsbox">
         <span class="coords pending" id="sportCoordsLabel">not captured</span>
         <button class="gps-btn" id="sportCaptureGpsBtn" type="button">Capture</button>
@@ -2240,7 +2271,7 @@
   </main>
   <div class="savebar">
     <button class="btn btn-clear" id="sportCatchAddAnotherBtn">+ Add Another</button>
-    <button class="btn btn-save" id="sportCatchSaveBtn">Save &amp; Return To Session</button>
+    <button class="btn btn-save" id="sportCatchSaveBtn">Save &amp; Return</button>
   </div>
 </section>
 
@@ -2251,13 +2282,17 @@
       <span class="brand">Catch Log</span>
     </div>
     <h1>All Catches</h1>
-    <div class="site-line" id="sportCatchLogCountLine">0 catches logged</div>
+    <div class="hist-search-wrap" style="margin-top:10px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
+      <select id="sportCatchLogSpeciesFilter" style="background:none;border:none;outline:none;font-family:var(--display);font-size:13px;color:white;flex:1;padding:0;">
+        <option value="">All species</option>
+      </select>
+    </div>
   </div>
   <main>
-    <label for="sportCatchLogSpeciesFilter">Filter By Species</label>
-    <select id="sportCatchLogSpeciesFilter" style="width:100%; margin-bottom:14px;">
-      <option value="">— All Species —</option>
-    </select>
+    <div class="hist-meta-row">
+      <span class="count" id="sportCatchLogCountLine">0 catches</span>
+    </div>
     <div id="sportCatchLogList"></div>
   </main>
 </section>
@@ -2273,23 +2308,29 @@
   </div>
   <main>
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Add A Spot</div>
+      <div class="insight-card-label" style="margin-bottom:12px;">Add a spot</div>
       <label for="sportSpotName">Name</label>
       <input type="text" id="sportSpotName" placeholder="e.g. North Pier">
       <label for="sportSpotNote">Note <span class="optional-tag">optional</span></label>
       <input type="text" id="sportSpotNote" placeholder="e.g. Best at dawn, drop-off 20m out">
-      <div id="sportSpotGpsBox" class="gpsbox">
+      <div id="sportSpotGpsBox" class="gpsbox" style="margin-top:10px;">
         <span class="coords pending" id="sportSpotCoordsLabel">not captured</span>
         <button class="gps-btn" id="sportSpotCaptureGpsBtn" type="button">Capture</button>
       </div>
       <button class="btn btn-save" id="sportAddSpotBtn" style="width:100%; margin-top:14px;">Save Spot</button>
     </div>
 
-    <div class="section-h">Your Spots</div>
+    <div class="hist-meta-row">
+      <span class="insight-card-label" style="margin:0;">Your spots</span>
+    </div>
     <div id="sportSpotsList"></div>
 
-    <button class="track-toggle-btn" id="sportSpotsViewMapBtn" style="margin-top:14px;">View Map</button>
-    <div id="sportLeafletMap" style="display:none; height:320px; border-radius:var(--radius-sm); margin-top:14px; overflow:hidden;"></div>
+    <!-- Map: always visible with layer toggle -->
+    <div class="map-layer-toggle" id="sportMapLayerToggle" style="margin-top:14px;">
+      <button class="mlt-btn active" id="sportMltStreet">Street</button>
+      <button class="mlt-btn" id="sportMltSatellite">Satellite</button>
+    </div>
+    <div id="sportLeafletMap" style="height:320px; border-radius:var(--radius); margin-top:8px; overflow:hidden;"></div>
   </main>
 </section>
 
@@ -2304,7 +2345,7 @@
   </div>
   <main>
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Add A Document</div>
+      <div class="insight-card-label" style="margin-bottom:12px;">Add a document</div>
       <label for="sportDocType">Document Type</label>
       <select id="sportDocType">
         <option value="license">Fishing License</option>
@@ -2316,12 +2357,19 @@
       <input type="text" id="sportDocLabel" placeholder="e.g. 2026 Season">
       <label for="sportDocExpiry">Expiry Date</label>
       <input type="date" id="sportDocExpiry">
-      <div class="card-label" style="margin-bottom:10px; margin-top:14px;">Photo / Scan</div>
+      <div class="step-card-header" style="margin:14px 0 10px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <span class="sc-title">Photo / Scan <span class="optional-tag">optional</span></span>
+      </div>
       <div class="photobox" id="sportDocPhotoBox"></div>
       <button class="btn btn-save" id="sportDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
     </div>
 
-    <div class="section-h">Your Documents</div>
+    <div class="hist-meta-row">
+      <span class="insight-card-label" style="margin:0;">Your documents</span>
+    </div>
     <div id="sportDocumentsList"></div>
   </main>
 </section>
@@ -2333,7 +2381,7 @@
       <span class="brand">Stats</span>
     </div>
     <h1>Personal Stats</h1>
-    <div class="site-line">Calculated from your own logged catches</div>
+    <div class="site-line">From your logged catches</div>
   </div>
   <main>
     <div id="sportStatsBody"></div>
@@ -2362,11 +2410,26 @@
 
 <!-- ================= TAB BAR (SPORT) ================= -->
 <nav class="tabbar sport-only" id="tabbarSport">
-  <button class="tab active" data-go="sport-session"><span class="tab-icon">⌂</span>Session</button>
-  <button class="tab" data-go="sport-catch-log"><span class="tab-icon">☷</span>Catch Log</button>
-  <button class="tab" data-go="sport-spots"><span class="tab-icon">⌖</span>Spots</button>
-  <button class="tab" data-go="sport-documents"><span class="tab-icon">📄</span>Documents</button>
-  <button class="tab" data-go="sport-stats"><span class="tab-icon">📊</span>Stats</button>
+  <button class="tab active" data-go="sport-session">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4c0 5-1 6-1 10a4 4 0 1 0 5 0c-2-2-4-5-4-10z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Session
+  </button>
+  <button class="tab" data-go="sport-catch-log">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
+    Catch Log
+  </button>
+  <button class="tab" data-go="sport-spots">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg></span>
+    Spots
+  </button>
+  <button class="tab" data-go="sport-documents">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    Docs
+  </button>
+  <button class="tab" data-go="sport-stats">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg></span>
+    Stats
+  </button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -4274,6 +4337,8 @@
   // segments rather than out of strict necessity here.
   const TILE_URL_TEMPLATE = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   const TILE_ATTRIBUTION = '© OpenStreetMap contributors © CARTO';
+  const ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  const ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
 
   function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
   function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
@@ -4305,7 +4370,7 @@
     if(tab) tab.classList.add('active');
     if(screen === 'session') renderSportSession();
     if(screen === 'catch-log') renderSportCatchLog();
-    if(screen === 'spots') renderSportSpots();
+    if(screen === 'spots'){ renderSportSpots(); renderSportSpotsMap(); }
     if(screen === 'documents') renderSportDocuments();
     if(screen === 'stats') renderSportStats();
     const active = document.querySelector('.screen.active');
@@ -4355,6 +4420,17 @@
     box.innerHTML = '<span class="photo-hint">tap to take or attach a photo</span>';
     box.appendChild(buildSportPhotoInput(boxId, onPicked));
   }
+  // Photo and GPS tile toggles in Log Catch
+  document.getElementById('sportPhotoBtnTile').addEventListener('click', () => {
+    const card = document.getElementById('sportPhotoCard');
+    card.style.display = card.style.display === 'none' ? 'block' : 'none';
+  });
+  document.getElementById('sportGpsBtnTile').addEventListener('click', () => {
+    const card = document.getElementById('sportGpsCard');
+    const isNowVisible = card.style.display === 'none';
+    card.style.display = isNowVisible ? 'block' : 'none';
+  });
+
   resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
   resetSportPhotoBox('sportDocPhotoBox', (d) => { sportDocPhotoDataUrl = d; });
   document.getElementById('sportPhotoBox').addEventListener('click', () => {
@@ -4470,10 +4546,6 @@
     const box = document.getElementById('sportSolunarBox');
     const now = new Date();
     const moon = getMoonPhase(now);
-    // Moon's position cycles roughly every 24h50m (lunar day). Major
-    // periods occur at lunar transit (overhead) and anti-transit
-    // (underfoot) — approximated here as evenly spaced across that
-    // cycle, offset by how far into its cycle the moon currently is.
     const lunarDayMin = 24 * 60 + 50;
     const cycleOffset = (moon.age / 29.53058867) * lunarDayMin;
     const majorOffsets = [cycleOffset % lunarDayMin, (cycleOffset + lunarDayMin/2) % lunarDayMin];
@@ -4481,10 +4553,22 @@
     const majorTimes = majorOffsets.map(o => formatHM(o)).sort();
     const minorTimes = minorOffsets.map(o => formatHM(o)).sort();
     const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? 'Strong' : (moon.illumination > 0.6 || moon.illumination < 0.4 ? 'Moderate' : 'Mild');
-    box.innerHTML = '<div style="font-family:var(--display); font-weight:600; font-style:italic; margin-bottom:6px;">'+moon.label+' · '+Math.round(moon.illumination*100)+'% illuminated</div>'
-      + '<div class="duration-line" style="margin-top:0;">Major: '+majorTimes.join(' · ')+'</div>'
-      + '<div class="duration-line" style="margin-top:8px;">Minor: '+minorTimes.join(' · ')+'</div>'
-      + '<div style="margin-top:8px; font-size:10.5px; color:var(--ink-soft);">'+strength+' activity expected near '+(moon.label==='Full Moon'||moon.label==='New Moon'?'this':'the next full/new')+' moon. Estimated periods — not a precision ephemeris.</div>';
+    box.innerHTML =
+      '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">'
+      + moon.label + ' · ' + Math.round(moon.illumination*100) + '% illuminated · ' + strength + ' activity</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+      + '<div style="background:#163040;border-radius:8px;padding:12px;">'
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 Major peaks</div>'
+      + majorTimes.map(t => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#5fc7ee;line-height:1.2;">'+t+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">90 min window</div>'
+      + '</div>'
+      + '<div style="background:#163040;border-radius:8px;padding:12px;">'
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 Minor peaks</div>'
+      + minorTimes.map(t => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#9fc8de;line-height:1.2;">'+t+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">45 min window</div>'
+      + '</div>'
+      + '</div>'
+      + '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;margin-top:8px;line-height:1.5;">Estimated periods — not a precision ephemeris.</div>';
   }
 
   function renderSportSession(){
@@ -4514,10 +4598,19 @@
 
     const catches = load(CATCHES_KEY).filter(c => c.session_id === session.session_id);
     const list = document.getElementById('sportSessionCatchList');
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet this session.</div>'
-      : catches.slice().reverse().map(c => '<div class="entry"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-        + '<div class="meta">'+(c.kept_or_released === 'kept' ? 'Kept' : 'Released')+(c.weight_kg?' · '+c.weight_kg+' kg':'')+'</div></div></div>').join('');
+      : catches.slice().reverse().map(c =>
+          '<div class="entry">'
+          + '<div class="entry-icon">' + fishSvg + '</div>'
+          + '<div class="entry-body">'
+          + '<div class="sp">' + (c.species||'Unspecified') + '</div>'
+          + '<div class="entry-chips">'
+          + (c.weight_kg ? '<span class="chip chip-blue">'+c.weight_kg+' kg</span>' : '')
+          + (c.kept_or_released === 'kept' ? '<span class="chip chip-green">Kept</span>' : '<span class="chip chip-blue">Released</span>')
+          + '</div></div></div>'
+        ).join('');
   }
 
   document.getElementById('sportStartSessionBtn').addEventListener('click', () => {
@@ -4742,13 +4835,30 @@
     const filterSpecies = document.getElementById('sportCatchLogSpeciesFilter').value;
     const all = load(CATCHES_KEY);
     const catches = filterSpecies ? all.filter(c => c.species === filterSpecies) : all;
-    document.getElementById('sportCatchLogCountLine').textContent = catches.length + ' catches logged'
-      + (filterSpecies ? ' (filtered)' : '');
+    const countEl = document.getElementById('sportCatchLogCountLine');
+    if(countEl) countEl.textContent = catches.length + (catches.length===1?' CATCH':' CATCHES') + (filterSpecies ? ' (filtered)' : '');
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     const list = document.getElementById('sportCatchLogList');
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet.</div>'
-      : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-sport-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-        + '<div class="meta">'+new Date(c.logged_at).toLocaleDateString()+(c.weight_kg?' · '+c.weight_kg+' kg':'')+' · '+(c.kept_or_released==='kept'?'Kept':'Released')+'</div></div></div>').join('');
+      : catches.slice().reverse().map(c => {
+          const when = new Date(c.logged_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+          const keptChip = c.kept_or_released === 'kept'
+            ? '<span class="chip chip-green">Kept</span>'
+            : '<span class="chip chip-blue">Released</span>';
+          return '<div class="entry entry-clickable" data-sport-catch-edit="'+c.catch_id+'">'
+            + '<div class="entry-icon">' + fishSvg + '</div>'
+            + '<div class="entry-body">'
+            + '<div class="sp">' + (c.species||'Unspecified') + '</div>'
+            + '<div class="entry-chips">'
+            + (c.weight_kg ? '<span class="chip chip-blue">'+c.weight_kg+' kg</span>' : '')
+            + (c.length_cm ? '<span class="chip chip-blue">'+c.length_cm+' cm</span>' : '')
+            + keptChip
+            + (c.lat ? '<span class="chip chip-grey">📍 GPS</span>' : '')
+            + '</div>'
+            + '<div class="meta">' + when + '</div>'
+            + '</div></div>';
+        }).join('');
     list.querySelectorAll('[data-sport-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openSportCatchEdit(el.dataset.sportCatchEdit));
     });
@@ -4798,11 +4908,22 @@
   });
   function renderSportSpots(){
     const spots = load(SPOTS_KEY);
+    const catches = load(CATCHES_KEY);
     const list = document.getElementById('sportSpotsList');
     list.innerHTML = spots.length === 0
       ? '<div class="empty">No spots saved yet.</div>'
-      : spots.slice().reverse().map(s => '<div class="entry"><div><div class="sp">'+s.name+'</div>'
-        + '<div class="meta">'+(s.note||'No notes')+(s.lat?' · '+Number(s.lat).toFixed(3)+', '+Number(s.lon).toFixed(3):'')+'</div></div></div>').join('');
+      : spots.slice().reverse().map(s => {
+          const catchCount = catches.filter(c => c.spot_id === s.spot_id).length;          const pinSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/><circle cx="12" cy="9" r="2" fill="white"/></svg>`;
+          return '<div class="entry">'
+            + '<div class="entry-icon">' + pinSvg + '</div>'
+            + '<div class="entry-body">'
+            + '<div class="sp" style="font-style:normal;">' + s.name + '</div>'
+            + (s.note ? '<div class="meta" style="margin-bottom:4px;">' + s.note + '</div>' : '')
+            + '<div class="entry-chips">'
+            + (catchCount > 0 ? '<span class="chip chip-blue">📍 ' + catchCount + ' catch' + (catchCount===1?'':'es') + ' here</span>' : '')
+            + (s.lat ? '<span class="chip chip-grey">' + Number(s.lat).toFixed(3) + ', ' + Number(s.lon).toFixed(3) + '</span>' : '')
+            + '</div></div></div>';
+        }).join('');
   }
 
   // Balloon "teardrop" pin — the casual, recreational-register marker
@@ -4817,19 +4938,48 @@
   }
 
   let sportLeafletInstance = null;
-  let sportMapVisible = false;
+  let sportStreetLayer = null;
+  let sportSatelliteLayer = null;
+
+  function setSportMapLayer(type){
+    if(!sportLeafletInstance) return;
+    document.getElementById('sportMltStreet').classList.toggle('active', type === 'street');
+    document.getElementById('sportMltSatellite').classList.toggle('active', type === 'satellite');
+    if(!sportStreetLayer) sportStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
+    if(!sportSatelliteLayer) sportSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
+    if(type === 'satellite'){
+      if(sportLeafletInstance.hasLayer(sportStreetLayer)) sportLeafletInstance.removeLayer(sportStreetLayer);
+      if(!sportLeafletInstance.hasLayer(sportSatelliteLayer)) sportSatelliteLayer.addTo(sportLeafletInstance);
+    } else {
+      if(sportLeafletInstance.hasLayer(sportSatelliteLayer)) sportLeafletInstance.removeLayer(sportSatelliteLayer);
+      if(!sportLeafletInstance.hasLayer(sportStreetLayer)) sportStreetLayer.addTo(sportLeafletInstance);
+    }
+  }
+  document.getElementById('sportMltStreet').addEventListener('click', () => setSportMapLayer('street'));
+  document.getElementById('sportMltSatellite').addEventListener('click', () => setSportMapLayer('satellite'));
+
   function renderSportSpotsMap(){
     const spots = load(SPOTS_KEY).filter(s => s.lat !== '' && s.lat != null);
     if(!sportLeafletInstance){
       sportLeafletInstance = L.map('sportLeafletMap');
-      L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 }).addTo(sportLeafletInstance);
+      sportStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
+      sportSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
+      sportStreetLayer.addTo(sportLeafletInstance);
     }
     sportLeafletInstance.eachLayer(layer => {
       if(layer instanceof L.Marker) sportLeafletInstance.removeLayer(layer);
     });
     if(spots.length === 0){
-      sportLeafletInstance.setView([10.5, 99.5], 6);
-      setTimeout(()=> sportLeafletInstance.invalidateSize(), 50);
+      // Auto-center to user's GPS location
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(
+          pos => { sportLeafletInstance.setView([pos.coords.latitude, pos.coords.longitude], 13); setTimeout(()=>sportLeafletInstance.invalidateSize(),50); },
+          () => { sportLeafletInstance.setView([13.75, 100.52], 10); setTimeout(()=>sportLeafletInstance.invalidateSize(),50); }
+        );
+      } else {
+        sportLeafletInstance.setView([13.75, 100.52], 10);
+        setTimeout(()=>sportLeafletInstance.invalidateSize(),50);
+      }
       return;
     }
     const bounds = [];
@@ -4840,15 +4990,8 @@
       marker.bindPopup('<div class="map-point-popup"><b>' + s.name + '</b><br>' + (s.note||'No notes') + '</div>');
     });
     sportLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
-    setTimeout(()=> sportLeafletInstance.invalidateSize(), 50);
+    setTimeout(()=>sportLeafletInstance.invalidateSize(),50);
   }
-  document.getElementById('sportSpotsViewMapBtn').addEventListener('click', () => {
-    sportMapVisible = !sportMapVisible;
-    const mapEl = document.getElementById('sportLeafletMap');
-    mapEl.style.display = sportMapVisible ? 'block' : 'none';
-    document.getElementById('sportSpotsViewMapBtn').textContent = sportMapVisible ? 'Hide Map' : 'View Map';
-    if(sportMapVisible) renderSportSpotsMap();
-  });
 
   // ===== Documents =====
   const SPORT_DOC_TYPE_LABELS = { license: 'Fishing License', boat_permit: 'Boat Permit', species_tag: 'Species Tag / Stamp', other: 'Other' };
@@ -4877,15 +5020,21 @@
     if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents added yet.</div>'; return; }
     const now = Date.now();
     const sorted = docs.slice().sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+    const docSvg = (color) => `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/></svg>`;
     list.innerHTML = sorted.map(d => {
       const daysLeft = Math.ceil((new Date(d.expiry_date) - now) / 86400000);
-      let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
-      if(daysLeft < 0) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Expired</span>';
-      else if(daysLeft <= 30) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
+      let chip, iconColor;
+      if(daysLeft < 0){ chip = '<span class="chip chip-red">Expired</span>'; iconColor = '#c0532f'; }
+      else if(daysLeft <= 30){ chip = '<span class="chip chip-red">'+daysLeft+' days left</span>'; iconColor = '#c0532f'; }
+      else { chip = '<span class="chip chip-green">'+daysLeft+' days left</span>'; iconColor = '#2f7a52'; }
       const clickable = d.photo ? ' entry-clickable" data-doc-photo="'+d.doc_id+'"' : '"';
-      return '<div class="entry'+clickable+'><div><div class="sp">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
-        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · tap to view':'')+'</div></div>'
-        + badge + '</div>';
+      return '<div class="entry'+clickable+'>'
+        + '<div class="entry-icon" style="background:'+(daysLeft > 30 ? '#dff0e8' : '#fdeaea')+'">' + docSvg(iconColor) + '</div>'
+        + '<div class="entry-body">'
+        + '<div class="sp" style="font-style:normal;">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
+        + '<div class="entry-chips">'+chip+'</div>'
+        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · tap to view photo':'')+'</div>'
+        + '</div></div>';
     }).join('');
     list.querySelectorAll('[data-doc-photo]').forEach(el => {
       el.addEventListener('click', () => {
