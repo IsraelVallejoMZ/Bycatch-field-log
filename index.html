@@ -1871,9 +1871,13 @@
   </div>
   <main>
     <div id="fleetDashboardSummary"></div>
-    <div class="section-h">Efficiency By Vessel</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">Efficiency by vessel</span>
+    </div>
     <div id="fleetDashboardVessels"></div>
-    <div class="section-h">Needs Attention</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">Needs attention</span>
+    </div>
     <div id="fleetDashboardAlerts"></div>
   </main>
 </section>
@@ -1907,27 +1911,32 @@
   <div class="topbar">
     <div class="topbar-row">
       <span class="brand">Fish Pulse · Captain</span>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
-      </div>
+      <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
     </div>
     <h1>Daily Fuel Log</h1>
     <div class="site-line" id="fleetFuelLogVesselLine">&nbsp;</div>
   </div>
   <main>
     <div id="fleetFuelLogNoTripNote" style="display:none;">
-      <div class="empty">Start a trip from the Trip tab to begin logging daily fuel.</div>
+      <div class="track-note">Start a trip from the Trip tab to begin logging daily fuel readings.</div>
     </div>
     <div id="fleetFuelLogBody" style="display:none;">
       <div class="card">
-        <div class="card-label" style="margin-bottom:14px;">Log Today's Reading</div>
-        <label for="fleetFuelLogReading">Fuel Remaining Today (L)</label>
+        <div class="step-card-header" style="margin-bottom:14px;">
+          <div class="sc-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="10" height="16" rx="2" stroke="white" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="white" stroke-width="1.6" stroke-linecap="round"/><path d="M11 19v2M13 19v2" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <span class="sc-title">Today's reading</span>
+        </div>
+        <label for="fleetFuelLogReading">Fuel Remaining (L)</label>
         <input type="number" id="fleetFuelLogReading" inputmode="decimal" placeholder="e.g. 140">
-        <div class="duration-line" id="fleetFuelLogConsumedLine">Consumed Since Last Reading: —</div>
-        <button class="btn btn-save" id="fleetFuelLogSaveBtn" style="width:100%; margin-top:16px;">Save Today's Reading</button>
+        <div class="duration-line" id="fleetFuelLogConsumedLine">Consumed since last reading: —</div>
+        <button class="btn btn-save" id="fleetFuelLogSaveBtn" style="width:100%; margin-top:16px;">Save Reading</button>
       </div>
 
-      <div class="section-h">Readings This Trip</div>
+      <div class="hist-meta-row" style="margin-top:6px;">
+        <span class="insight-card-label" style="margin:0;">Readings this trip</span>
+      </div>
       <div id="fleetFuelLogList"></div>
     </div>
   </main>
@@ -1965,7 +1974,12 @@
   </div>
   <main>
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Add Document</div>
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="#0a5c8c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <span class="sc-title">Add document</span>
+      </div>
       <label for="fleetDocVessel">Vessel</label>
       <select id="fleetDocVessel"><option value="">— Select Vessel —</option></select>
       <label for="fleetDocType">Document Type</label>
@@ -1975,17 +1989,21 @@
         <option value="seaman_book">Seaman's Book</option>
         <option value="other">Other</option>
       </select>
-      <label for="fleetDocLabel">Label <span class="optional-tag">e.g. captain name, if seaman's book</span></label>
+      <label for="fleetDocLabel">Label <span class="optional-tag">e.g. captain name</span></label>
       <input type="text" id="fleetDocLabel" placeholder="e.g. J. Sombrero">
       <label for="fleetDocExpiry">Expiry Date</label>
       <input type="date" id="fleetDocExpiry">
       <button class="btn btn-save" id="fleetDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
     </div>
 
-    <div class="section-h">Maintenance</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">Maintenance</span>
+    </div>
     <div id="fleetMaintenanceList"></div>
 
-    <div class="section-h">All Documents</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">All documents</span>
+    </div>
     <div id="fleetDocumentsList"></div>
   </main>
 </section>
@@ -3624,17 +3642,18 @@
 
     const totalKg = trips.reduce((s,t) => s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
     const totalFuel = trips.reduce((s,t) => s + (parseFloat(t.fuel_consumed_l)||0), 0);
+    const catchLabel = totalKg >= 1000 ? (totalKg/1000).toFixed(1)+'t' : totalKg.toFixed(0)+' kg';
 
     document.getElementById('fleetDashboardSummary').innerHTML =
-      '<div class="quick-actions" style="grid-template-columns:1fr 1fr;">'
-      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Trips Completed</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+trips.length+'</div></div>'
-      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Total Catch</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+totalKg.toFixed(0)+' kg</div></div>'
-      + '<div class="map-placeholder" style="display:block;"><div class="mp-title">Total Fuel</div><div class="duration-line" style="font-size:20px; margin-top:6px;">'+totalFuel.toFixed(0)+' L</div></div>'
+      '<div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:10px;">'
+      + '<div class="kpi-cell"><div class="kn">'+trips.length+'</div><div class="kl">Trips</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+catchLabel+'</div><div class="kl">Catch</div></div>'
+      + '<div class="kpi-cell"><div class="kn accent">'+totalFuel.toFixed(0)+'</div><div class="kl">Fuel L</div></div>'
       + '</div>';
 
     const vesselsHtml = vessels.map(v => {
       const vTrips = trips.filter(t => t.vessel_id === v.vessel_id);
-      if(vTrips.length === 0) return '<div class="entry"><div><div class="sp">'+v.name+'</div><div class="meta">No closed trips yet</div></div></div>';
+      if(vTrips.length === 0) return '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div><div class="meta" style="margin-top:4px;">No closed trips yet</div></div>';
       const vCatchesKg = vTrips.reduce((s,t)=> s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
       const vFuel = vTrips.reduce((s,t)=> s + (parseFloat(t.fuel_consumed_l)||0), 0);
       const totalHours = vTrips.reduce((s,t)=> s + (new Date(t.ended_at)-new Date(t.started_at))/3600000, 0);
@@ -3642,39 +3661,46 @@
       const kgPerHour = totalHours >= 0.1 ? (vCatchesKg / totalHours).toFixed(1) : '—';
       const margins = vTrips.map(t => computeTripMargin(t));
       const avgMargin = margins.reduce((s,m)=>s+m.minMargin,0) / margins.length;
-      let statusBadge = '';
+      let statusChip = '';
+      let marginColor = '#0e1b26';
       if(v.margin_target){
         const target = parseFloat(v.margin_target);
-        statusBadge = avgMargin >= target
-          ? '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">Efficient</span>'
-          : '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Review</span>';
+        if(avgMargin >= target){
+          statusChip = '<span class="ce-status-chip active">Efficient</span>';
+          marginColor = '#6fc99a';
+        } else {
+          statusChip = '<span class="ce-status-chip" style="color:#c0532f;background:#fdeaea;">Review</span>';
+          marginColor = '#c0532f';
+        }
       }
-      return '<div class="entry" style="display:block;">'
-        + '<div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">'
-        + '<div class="sp">'+v.name+'</div>'+statusBadge+'</div>'
-        + '<div class="grid2" style="grid-template-columns: 1fr 1fr 1fr; gap:6px;">'
-        + '<div><div class="meta">L / kg</div><div class="duration-line" style="margin:0;">'+fuelPerKg+'</div></div>'
-        + '<div><div class="meta">kg / hour</div><div class="duration-line" style="margin:0;">'+kgPerHour+'</div></div>'
-        + '<div><div class="meta">Avg. Margin</div><div class="duration-line" style="margin:0;">'+fmtMoney(avgMargin, v.default_currency)+'</div></div>'
+      const marginDisplay = isNaN(avgMargin) ? '—' : fmtMoney(avgMargin, v.default_currency);
+      return '<div class="insight-card" style="margin-bottom:8px;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+        + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div>'+statusChip+'</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'
+        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+fuelPerKg+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">L/kg</div></div>'
+        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+kgPerHour+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">kg/hr</div></div>'
+        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:'+marginColor+';">'+marginDisplay+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">Margin</div></div>'
         + '</div></div>';
     }).join('');
     document.getElementById('fleetDashboardVessels').innerHTML = vesselsHtml || '<div class="empty">No vessels yet. Add one from the Vessels tab.</div>';
 
+    const alertIconOrange = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#e0a868" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#e0a868" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+    const alertIconRed = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#c0532f" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#c0532f" stroke-width="1.8" stroke-linecap="round"/></svg>`;
     const alerts = [];
     trips.forEach(t => {
       const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
+      const vName = vessel ? vessel.name : 'Unknown';
       const tCatches = catches.filter(c => c.trip_id === t.trip_id);
-      if(tCatches.length === 0){
-        alerts.push((vessel?vessel.name:'Unknown')+' — Trip Closed Without Catch');
-      }
+      if(tCatches.length === 0) alerts.push({ icon: alertIconRed, text: vName + ' — Trip closed without catch' });
       const margin = computeTripMargin(t);
-      if(!margin.complete){
-        alerts.push((vessel?vessel.name:'Unknown')+' — Costs Pending: '+margin.missing.join(', '));
-      }
+      if(!margin.complete) alerts.push({ icon: alertIconOrange, text: vName + ' — Costs pending: ' + margin.missing.join(', ') });
     });
     document.getElementById('fleetDashboardAlerts').innerHTML = alerts.length === 0
       ? '<div class="empty">No alerts. Everything looks current.</div>'
-      : alerts.slice(0,8).map(a => '<div class="entry"><div class="sp" style="font-size:13px; font-style:normal;">'+a+'</div></div>').join('');
+      : alerts.slice(0,8).map(a =>
+          '<div class="map-no-gps-chip" style="margin-bottom:8px;">'+a.icon+'<div style="font-family:var(--display);font-size:12.5px;color:#e6eef0;">'+a.text+'</div></div>'
+        ).join('');
   }
 
   // ===== Vessels admin screen =====
@@ -3761,11 +3787,20 @@
     const list = document.getElementById('fleetFuelLogList');
     list.innerHTML = readings.length === 0
       ? '<div class="empty">No readings logged yet this trip.</div>'
-      : readings.slice().reverse().map((r,i) => {
+      : readings.slice().reverse().map((r) => {
           const when = new Date(r.logged_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-          const flag = r.is_anomaly ? '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px; margin-left:8px;">Anomaly</span>' : '';
-          return '<div class="entry"><div><div class="sp">'+r.remaining_l+' L Remaining'+flag+'</div>'
-            + '<div class="meta">'+when+(r.consumed_l != null ? ' · '+r.consumed_l.toFixed(1)+' L Consumed' : '')+'</div></div></div>';
+          const anomalyChip = r.is_anomaly ? '<span class="chip chip-red">⚠ Anomaly</span>' : '';
+          const fuelSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="10" height="16" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+          return '<div class="entry">'
+            + '<div class="entry-icon">' + fuelSvg + '</div>'
+            + '<div class="entry-body">'
+            + '<div class="sp" style="font-style:normal;">' + r.remaining_l + ' L remaining</div>'
+            + '<div class="entry-chips">'
+            + (r.consumed_l != null ? '<span class="chip chip-blue">' + r.consumed_l.toFixed(1) + ' L used</span>' : '')
+            + anomalyChip
+            + '</div>'
+            + '<div class="meta">' + when + '</div>'
+            + '</div></div>';
         }).join('');
 
     document.getElementById('fleetFuelLogReading').value = '';
@@ -3968,12 +4003,15 @@
           const hrs = hoursSinceMaintenance(v);
           const interval = parseFloat(v.maintenance_interval_hours);
           const pctUsed = interval > 0 ? (hrs / interval * 100) : 0;
-          let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+hrs.toFixed(0)+' / '+interval.toFixed(0)+' Hrs</span>';
-          if(pctUsed >= 100) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Due Now</span>';
-          else if(pctUsed >= 80) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Due Soon</span>';
-          return '<div class="entry"><div><div class="sp">'+v.name+'</div>'
-            + '<div class="meta">'+hrs.toFixed(0)+' Of '+interval.toFixed(0)+' Hours At Sea</div></div>'
-            + badge + '</div>';
+          let chip = '<span class="chip chip-blue">'+hrs.toFixed(0)+' / '+interval.toFixed(0)+' hrs</span>';
+          if(pctUsed >= 100) chip = '<span class="chip chip-red">Due now</span>';
+          else if(pctUsed >= 80) chip = '<span class="chip chip-red">Due soon</span>';
+          return '<div class="entry">'
+            + '<div class="entry-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" stroke="#0a5c8c" stroke-width="1.8"/><path d="M12 6v6l4 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg></div>'
+            + '<div class="entry-body"><div class="sp" style="font-style:normal;">'+v.name+'</div>'
+            + '<div class="entry-chips">'+chip+'</div>'
+            + '<div class="meta">'+hrs.toFixed(0)+' of '+interval.toFixed(0)+' hours at sea</div>'
+            + '</div></div>';
         }).join('');
 
     if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents tracked yet.</div>'; return; }
@@ -3983,12 +4021,16 @@
     list.innerHTML = sorted.map(d => {
       const vessel = vessels.find(v => v.vessel_id === d.vessel_id);
       const daysLeft = Math.ceil((new Date(d.expiry_date) - now) / 86400000);
-      let badge = '<span style="font-size:11px; background:var(--blue-mist); color:var(--blue-deep); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
-      if(daysLeft < 0) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">Expired</span>';
-      else if(daysLeft <= 30) badge = '<span style="font-size:11px; background:var(--coral-soft); color:var(--coral); padding:3px 9px; border-radius:14px;">'+daysLeft+' Days Left</span>';
-      return '<div class="entry"><div><div class="sp">'+(DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
-        + '<div class="meta">'+(vessel?vessel.name:'—')+' · Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>'
-        + badge + '</div>';
+      let chip = '<span class="chip chip-blue">'+daysLeft+' days left</span>';
+      if(daysLeft < 0) chip = '<span class="chip chip-red">Expired</span>';
+      else if(daysLeft <= 30) chip = '<span class="chip chip-red">'+daysLeft+' days left</span>';
+      return '<div class="entry">'
+        + '<div class="entry-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="#0a5c8c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg></div>'
+        + '<div class="entry-body">'
+        + '<div class="sp" style="font-style:normal;">'+(DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
+        + '<div class="entry-chips">'+chip+'</div>'
+        + '<div class="meta">'+(vessel?vessel.name:'—')+' · Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div>'
+        + '</div></div>';
     }).join('');
   }
 
