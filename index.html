@@ -374,27 +374,71 @@
   .btn-clear.active{ background: var(--blue-mist); color: var(--blue-deep); border-color: var(--blue-deep); }
 
   /* ===== History screen ===== */
-  .filter-row{ display:flex; gap:8px; margin-bottom: 16px; }
-  .filter-row input, .filter-row select{ font-size: 14px; padding: 10px 12px; }
-  .logh{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px; }
-  .count{ font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); }
+  .count{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); letter-spacing:0.02em; }
   .exportbtn{
     font-family: var(--data); font-size: 11.5px; font-weight: 500;
     background: var(--panel); border: 1.5px solid var(--line);
     padding: 7px 12px; border-radius: var(--radius-sm); cursor:pointer; color: var(--blue-deep);
   }
   .export-btn-row{ display:flex; gap: 6px; }
+
+  /* ===== History: topbar filters ===== */
+  .hist-search-wrap{
+    display:flex; align-items:center; gap:8px; margin-top:10px;
+    background:rgba(255,255,255,0.08); border-radius:9px; padding:9px 12px;
+  }
+  .hist-search-input{
+    background:none; border:none; outline:none; font-family:var(--display); font-size:13px;
+    color:white; flex:1; padding:0;
+  }
+  .hist-search-input::placeholder{ color:#7fa3b5; }
+  .hist-filter-row{ display:flex; gap:8px; margin-top:8px; }
+  .hist-filter-row select{
+    flex:1; background:rgba(255,255,255,0.08); color:#cfe7f4;
+    border:1px solid rgba(255,255,255,0.12); border-radius:8px;
+    padding:7px 10px; font-family:var(--data); font-size:11px;
+  }
+  .hist-meta-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+
+  /* Export buttons: dark style */
+  .exportbtn{
+    background:#0e1b26; color:#5fc7ee; border:none; border-radius:7px;
+    padding:6px 10px; font-family:var(--data); font-size:10px; font-weight:600; cursor:pointer;
+  }
+  .exportbtn:active{ opacity:0.8; }
+
+  /* ===== History entry cards ===== */
   .entry{
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
-    padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 8px;
+    display:flex; gap:12px; align-items:flex-start;
   }
   .entry.entry-clickable{ cursor:pointer; }
   .entry.entry-clickable:active{ background: var(--blue-mist); }
-  .entry .sp{ font-family: var(--display); font-weight: 600; font-size: 14px; font-style: italic; }
-  .entry .meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top:2px; }
+  .entry-icon{
+    width:44px; height:44px; border-radius:8px; background:var(--blue-mist);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .entry-icon.no-sp{ background:#f1f3f3; }
+  .entry-icon svg{ width:22px; height:22px; }
+  .entry-body{ flex:1; min-width:0; }
+  .entry .sp{
+    font-family: var(--display); font-weight: 600; font-size: 14px; font-style: italic;
+    color:var(--ink); margin-bottom:4px;
+  }
+  .entry .sp .cn{ font-style:normal; font-size:12px; color:var(--ink-soft); }
+  .entry-chips{ display:flex; gap:5px; flex-wrap:wrap; margin-bottom:5px; }
+  .chip{
+    font-family:var(--data); font-size:10px; padding:2px 7px; border-radius:5px;
+  }
+  .chip-blue{ background:var(--blue-mist); color:var(--blue-deep); }
+  .chip-red{ background:#fdeaea; color:var(--coral); }
+  .chip-green{ background:#dff0e8; color:#2f7a52; }
+  .chip-grey{ background:#f1f3f3; color:#41545f; }
+  .entry .meta{ font-family: var(--data); font-size: 10px; color: #9aa6a6; }
   .entry .del{
-    background:none; border:none; color: var(--coral); font-size: 19px; cursor:pointer;
-    padding: 2px 6px; line-height:1; flex-shrink:0;
+    background:none; border:none; color:#e0a868; font-size:18px; cursor:pointer;
+    padding: 2px 4px; line-height:1; flex-shrink:0;
   }
   .empty{
     font-size: 13px; color:#9aa6a6; font-style:italic; padding: 16px; text-align:center;
@@ -1126,21 +1170,18 @@
     </div>
     <h1>All Records</h1>
     <div class="site-line" id="siteLineHistory">&nbsp;</div>
+    <div class="hist-search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="searchInput" placeholder="Search species…" class="hist-search-input">
+    </div>
+    <div class="hist-filter-row">
+      <select id="filterSite"><option value="">All sites</option></select>
+      <select id="filterCampaign"><option value="">All campaigns</option></select>
+    </div>
   </div>
   <main>
-    <div class="filter-row">
-      <input type="text" id="searchInput" placeholder="search species…">
-      <select id="filterSite">
-        <option value="">All sites</option>
-      </select>
-    </div>
-    <div class="filter-row">
-      <select id="filterCampaign" style="width:100%;">
-        <option value="">All campaigns</option>
-      </select>
-    </div>
-    <div class="logh">
-      <span class="count" id="historyCount">0 entries</span>
+    <div class="hist-meta-row">
+      <span class="count" id="historyCount">0 records</span>
       <div class="export-btn-row">
         <button class="exportbtn" id="exportBtn">CSV</button>
         <button class="exportbtn" id="exportGeoJsonBtn">GeoJSON</button>
@@ -5142,10 +5183,32 @@
 
   function entryRowHtml(e, idx, withDelete){
     const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    const hasSp = !!(e.species && e.species.trim());
+    const iconColor = hasSp ? '#0a5c8c' : '#cdd6d6';
+    const iconClass = hasSp ? 'entry-icon' : 'entry-icon no-sp';
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="${iconColor}"/><circle cx="6.5" cy="11" r="1" fill="${hasSp?'white':'#9aa6a6'}"/></svg>`;
+
+    // chips
+    let chips = '';
+    if(e.length) chips += '<span class="chip chip-blue">'+e.length+' cm</span>';
+    if(e.weight) chips += '<span class="chip chip-grey">'+e.weight+' kg</span>';
+    if(e.condition === 'alive')    chips += '<span class="chip chip-blue">Alive</span>';
+    if(e.condition === 'dead')     chips += '<span class="chip chip-red">Dead</span>';
+    if(e.condition === 'released') chips += '<span class="chip chip-green">Released</span>';
+    if(e.is_bycatch === 'yes')     chips += '<span class="chip chip-red">Bycatch</span>';
+    if(e.lat !== '' && e.lat != null) chips += '<span class="chip chip-blue">📍 GPS</span>';
+
+    const spName = hasSp ? e.species : 'Unspecified';
+    const cnPart = e.common_name ? ' <span class="cn">('+e.common_name+')</span>' : '';
+    const metaLine = (e.site||'—')+' · '+when+(e.observer ? ' · '+e.observer : '');
+
     return '<div class="entry entry-clickable" data-edit-idx="'+idx+'">'
-      + '<div><div class="sp">'+(e.species||'unnamed')+(e.common_name ? ' <span style="font-style:normal; color:var(--ink-soft);">('+e.common_name+')</span>' : '')+'</div>'
-      + '<div class="meta">'+(e.site||'—')+' · '+(e.length? e.length+'cm':'—')+' · '+(e.condition||'—')+' · '+when+'</div>'
-      + '<div class="meta">obs: '+(e.observer||'—')+(e.record_id ? ' · '+e.record_id : '')+'</div></div>'
+      + '<div class="'+iconClass+'">'+fishSvg+'</div>'
+      + '<div class="entry-body">'
+      + '<div class="sp">'+spName+cnPart+'</div>'
+      + (chips ? '<div class="entry-chips">'+chips+'</div>' : '')
+      + '<div class="meta">'+metaLine+'</div>'
+      + '</div>'
       + (withDelete ? '<button class="del" data-idx="'+idx+'" title="delete">×</button>' : '')
       + '</div>';
   }
@@ -5216,7 +5279,7 @@
         return e.campaign_id === campaignFilter;
       });
 
-    document.getElementById('historyCount').textContent = filtered.length + (filtered.length===1 ? ' entry' : ' entries') + (list.length !== filtered.length ? ' of ' + list.length : '');
+    document.getElementById('historyCount').textContent = filtered.length + (filtered.length===1 ? ' RECORD' : ' RECORDS') + (list.length !== filtered.length ? ' OF ' + list.length : '');
 
     const logList = document.getElementById('logList');
     if(filtered.length === 0){
