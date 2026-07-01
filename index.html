@@ -475,13 +475,21 @@
   }
   .map-mode-banner{
     display:flex; align-items:center; gap:8px;
-    font-family: var(--data); font-size: 11px; color: var(--ink-soft);
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
-    padding: 9px 12px; margin-bottom: 12px;
+    font-family: var(--data); font-size: 10px; color: #9fc8de;
+    background: rgba(255,255,255,0.08); border-radius:8px;
+    padding: 8px 12px;
   }
-  .map-mode-banner .mb-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .map-mode-banner.live .mb-dot{ background: var(--blue); }
+  .map-mode-banner .mb-dot{ width:7px; height:7px; border-radius:50%; background:#4a6070; flex-shrink:0; }
+  .map-mode-banner.live .mb-dot{ background: #5fc7ee; }
   .map-mode-banner.offline .mb-dot{ background: var(--amber); }
+
+  /* Layer toggle */
+  .map-layer-toggle{ display:flex; gap:6px; margin-bottom:8px; }
+  .mlt-btn{
+    flex:1; padding:7px; border:none; border-radius:8px; background:#0e1b26;
+    font-family:var(--display); font-size:12px; font-weight:500; color:#7fa3b5; cursor:pointer;
+  }
+  .mlt-btn.active{ background:#0a5c8c; color:white; font-weight:600; }
 
   /* Schematic offline map */
   .schematic-wrap{
@@ -503,14 +511,27 @@
     font-family: var(--data); font-size: 12px; color: #9aa6a6; text-align:center; padding: 0 30px;
   }
 
-  .legend-row{ display:flex; gap: 14px; margin-top: 12px; flex-wrap:wrap; }
+  /* Map legend chips */
+  .map-legend-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .map-legend-chip{
+    display:flex; align-items:center; gap:5px;
+    font-family:var(--data); font-size:10px; color:#9fc8de;
+    background:#0e1b26; padding:4px 10px; border-radius:6px;
+  }
+
+  /* No-GPS chip */
+  .map-no-gps-chip{
+    display:flex; align-items:center; gap:8px; margin-top:10px;
+    background:#163040; border-radius:10px; padding:10px 14px;
+    font-family:var(--data); font-size:10px; color:#7fa3b5;
+  }
 
   .offline-map-card{
     background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
     padding: 16px; margin-bottom: 20px;
   }
   .offline-map-text{
-    font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); line-height:1.5; margin-bottom: 14px;
+    font-family: var(--display); font-size: 12.5px; color: var(--ink-soft); line-height:1.5; margin-bottom: 12px;
   }
   .offline-progress{
     font-family: var(--data); font-size: 12px; color: var(--blue-deep); margin-top: 12px;
@@ -521,16 +542,16 @@
   }
   .offline-progress-bar-fill{ height:100%; background: var(--blue); transition: width 0.2s ease; }
   .offline-area-entry{
-    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: #f4f6f5; border-radius: var(--radius-sm);
     padding: 10px 12px; margin-top: 10px; display:flex; justify-content:space-between; align-items:center; gap:10px;
   }
   .offline-area-entry .oa-main{ font-family: var(--display); font-weight:600; font-size: 12.5px; }
   .offline-area-entry .oa-meta{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); margin-top:2px; }
   .offline-area-entry .del{
-    background:none; border:none; color: var(--coral); font-size: 18px; cursor:pointer; padding: 2px 6px; line-height:1;
+    background:none; border:none; color:#e0a868; font-size:18px; cursor:pointer; padding: 2px 6px; line-height:1;
   }
   .legend-item{ display:flex; align-items:center; gap:6px; font-family: var(--data); font-size: 11px; color: var(--ink-soft); }
-  .legend-dot{ width:9px; height:9px; border-radius:50%; }
+  .legend-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
 
   .map-point-popup{ font-family: var(--body); font-size: 12.5px; line-height:1.4; }
   .map-point-popup b{ font-family: var(--display); font-style: italic; }
@@ -1225,32 +1246,38 @@
     </div>
     <h1>Survey Locations</h1>
     <div class="site-line" id="siteLineMap">&nbsp;</div>
+    <div class="map-mode-banner" id="mapModeBanner" style="margin-top:10px;">
+      <span class="mb-dot" id="mapModeDot"></span>
+      <span id="mapModeText">Checking connection…</span>
+    </div>
   </div>
   <main>
-    <div class="map-mode-banner" id="mapModeBanner">
-      <span class="mb-dot"></span>
-      <span id="mapModeText">Checking connection…</span>
+    <div class="map-layer-toggle" id="mapLayerToggle" style="display:none;">
+      <button class="mlt-btn active" id="mltStreet">Street</button>
+      <button class="mlt-btn" id="mltSatellite">Satellite</button>
     </div>
 
     <div id="leafletMap"></div>
     <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
 
-    <div class="legend-row">
-      <div class="legend-item"><span class="legend-dot" style="background:#0a5c8c;"></span>Alive</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#c0532f;"></span>Dead</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#2f7a52;"></span>Released</div>
+    <div class="map-legend-row">
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#0a5c8c;"></span>Alive</span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#c0532f;"></span>Dead</span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#2f7a52;"></span>Released</span>
     </div>
 
-    <div class="section-h">Offline map areas</div>
-    <div class="offline-map-card">
-      <div class="offline-map-text">Pan and zoom the map above to the area you plan to survey, then download it for offline use. Works best while you have wifi.</div>
-      <button class="track-toggle-btn" id="downloadAreaBtn" style="margin:0;">Download this area for offline use</button>
+    <div class="insight-card" style="margin-top:10px;">
+      <div class="insight-card-label">Offline map areas</div>
+      <div class="offline-map-text">Pan and zoom to your survey area, then download for offline use.</div>
+      <button class="track-toggle-btn" id="downloadAreaBtn" style="margin:0;">Download this area</button>
       <div class="offline-progress" id="offlineProgress" style="display:none;"></div>
       <div id="offlineAreasList"></div>
     </div>
 
-    <div class="section-h">Points without GPS</div>
-    <div id="noGpsNote" class="empty" style="display:none;"></div>
+    <div class="map-no-gps-chip" id="noGpsChip" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#7fa3b5" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#7fa3b5" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span id="noGpsNote"></span>
+    </div>
   </main>
 </section>
 
@@ -5882,18 +5909,48 @@
     testImg.src = TILE_TEST_URL + '?check=' + Date.now();
   }
 
+  const ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  const ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
+  let mapCurrentLayer = 'street'; // 'street' | 'satellite'
+  let mapStreetLayer = null;
+  let mapSatelliteLayer = null;
+
+  function setMapLayer(type){
+    if(!leafletInstance) return;
+    mapCurrentLayer = type;
+    document.getElementById('mltStreet').classList.toggle('active', type === 'street');
+    document.getElementById('mltSatellite').classList.toggle('active', type === 'satellite');
+    if(!mapStreetLayer){
+      mapStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
+    }
+    if(!mapSatelliteLayer){
+      mapSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
+    }
+    if(type === 'satellite'){
+      if(leafletInstance.hasLayer(mapStreetLayer)) leafletInstance.removeLayer(mapStreetLayer);
+      if(!leafletInstance.hasLayer(mapSatelliteLayer)) mapSatelliteLayer.addTo(leafletInstance);
+    } else {
+      if(leafletInstance.hasLayer(mapSatelliteLayer)) leafletInstance.removeLayer(mapSatelliteLayer);
+      if(!leafletInstance.hasLayer(mapStreetLayer)) mapStreetLayer.addTo(leafletInstance);
+    }
+  }
+
+  document.getElementById('mltStreet').addEventListener('click', () => setMapLayer('street'));
+  document.getElementById('mltSatellite').addEventListener('click', () => setMapLayer('satellite'));
+
   function renderMap(){
     renderOfflineAreasList();
     const list = loadEntries();
     const withGps = list.filter(e => e.lat !== '' && e.lon !== '' && e.lat != null && e.lon != null);
     const withoutGps = list.length - withGps.length;
 
+    const noGpsChip = document.getElementById('noGpsChip');
     const noGpsNote = document.getElementById('noGpsNote');
     if(withoutGps > 0){
-      noGpsNote.style.display = 'block';
-      noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' record has' : ' records have') + ' no GPS position and cannot be shown on the map.';
+      noGpsChip.style.display = 'flex';
+      noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' record has' : ' records have') + ' no GPS coordinates';
     } else {
-      noGpsNote.style.display = 'none';
+      noGpsChip.style.display = 'none';
     }
 
     const banner = document.getElementById('mapModeBanner');
@@ -5902,13 +5959,15 @@
     checkTilesReachable((isLive) => {
       if(isLive){
         banner.className = 'map-mode-banner live';
-        bannerText.textContent = 'Live map · tiles loaded from connection';
+        bannerText.textContent = 'Online · CartoDB tiles';
+        document.getElementById('mapLayerToggle').style.display = 'flex';
         document.getElementById('leafletMap').style.display = 'block';
         document.getElementById('schematicMap').style.display = 'none';
         renderLeaflet(withGps);
       } else {
         banner.className = 'map-mode-banner offline';
-        bannerText.textContent = 'Offline mode · schematic coordinate plot';
+        bannerText.textContent = 'Offline · schematic plot';
+        document.getElementById('mapLayerToggle').style.display = 'none';
         document.getElementById('leafletMap').style.display = 'none';
         document.getElementById('schematicMap').style.display = 'block';
         renderSchematic(withGps);
@@ -5919,15 +5978,9 @@
   function renderLeaflet(points){
     if(!leafletInstance){
       leafletInstance = L.map('leafletMap');
-      // CartoDB Voyager via the shared TILE_URL_TEMPLATE constant defined
-      // at the top of this module. The offline-download system below
-      // (TILE_CACHE_NAME) was migrated alongside this change — its cache
-      // version was bumped so any tiles a user already downloaded under
-      // the old OSM-based cache are simply superseded, not corrupted.
-      L.tileLayer(TILE_URL_TEMPLATE, {
-        attribution: TILE_ATTRIBUTION,
-        maxZoom: 20
-      }).addTo(leafletInstance);
+      mapStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
+      mapSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
+      mapStreetLayer.addTo(leafletInstance);
     }
     // clear old markers
     leafletInstance.eachLayer(layer => {
