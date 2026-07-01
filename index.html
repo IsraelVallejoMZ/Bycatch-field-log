@@ -5055,13 +5055,112 @@
   // ===== Stats (placeholder) =====
   function renderSportStats(){
     const catches = load(CATCHES_KEY);
+    const sessions = load(SESSIONS_KEY);
     const body = document.getElementById('sportStatsBody');
-    if(catches.length === 0){ body.innerHTML = '<div class="empty">Log a few catches to see your stats.</div>'; return; }
+    if(catches.length === 0){ body.innerHTML = '<div class="empty">Log a few catches to see your personal stats.</div>'; return; }
+
+    // ── compute ──
+    const released = catches.filter(c => c.kept_or_released === 'released').length;
+    const releaseRate = Math.round(released / catches.length * 100);
+    const withWeight = catches.filter(c => c.weight_kg);
+    const avgWeight = withWeight.length ? (withWeight.reduce((s,c)=>s+parseFloat(c.weight_kg),0)/withWeight.length).toFixed(2) : '—';
+
     const bySpecies = {};
-    catches.forEach(c => { bySpecies[c.species] = (bySpecies[c.species]||0) + 1; });
-    const topSpecies = Object.entries(bySpecies).sort((a,b)=>b[1]-a[1])[0];
-    body.innerHTML = '<div class="home-stat"><div class="num">'+catches.length+'</div><div class="label">total catches logged</div></div>'
-      + '<div class="card"><div class="card-label" style="margin-bottom:10px;">Most Caught Species</div><div class="duration-line">'+topSpecies[0]+' ('+topSpecies[1]+')</div></div>';
+    catches.forEach(c => { const sp = c.species||'Unspecified'; bySpecies[sp]=(bySpecies[sp]||0)+1; });
+    const sortedSp = Object.entries(bySpecies).sort((a,b)=>b[1]-a[1]);
+    const maxSp = sortedSp.length ? sortedSp[0][1] : 1;
+
+    // Personal bests by species
+    const bestBySpecies = {};
+    catches.filter(c=>c.weight_kg).forEach(c => {
+      const sp = c.species||'Unspecified';
+      const w = parseFloat(c.weight_kg);
+      if(!bestBySpecies[sp] || w > bestBySpecies[sp].weight){ bestBySpecies[sp] = { weight:w, length:c.length_cm||null, date:c.logged_at }; }
+    });
+    const bests = Object.entries(bestBySpecies).sort((a,b)=>b[1].weight-a[1].weight).slice(0,5);
+
+    // Hourly distribution (0–23)
+    const hourCounts = Array(24).fill(0);
+    catches.forEach(c => { if(c.logged_at) hourCounts[new Date(c.logged_at).getHours()]++; });
+    const maxHour = Math.max(...hourCounts, 1);
+    const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+
+    // Lure effectiveness
+    const byLure = {};
+    catches.filter(c=>c.lure_used).forEach(c => { const l=c.lure_used.trim(); byLure[l]=(byLure[l]||0)+1; });
+    const sortedLure = Object.entries(byLure).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const maxLure = sortedLure.length ? sortedLure[0][1] : 1;
+
+    // Best spot
+    const byCatch = {};
+    catches.filter(c=>c.spot_id).forEach(c=>{ byCatch[c.spot_id]=(byCatch[c.spot_id]||0)+1; });
+    const spots = load(SPOTS_KEY);
+    const sortedSpots = Object.entries(byCatch).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+    let html = '';
+
+    // KPI grid
+    html += '<div class="kpi-grid" style="margin-bottom:10px;">'
+      + '<div class="kpi-cell"><div class="kn">'+catches.length+'</div><div class="kl">Catches</div></div>'
+      + '<div class="kpi-cell"><div class="kn accent">'+releaseRate+'%</div><div class="kl">Released</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+avgWeight+'</div><div class="kl">Avg kg</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+sessions.length+'</div><div class="kl">Sessions</div></div>'
+      + '</div>';
+
+    // Species frequency
+    html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Catches by species</div>';
+    sortedSp.forEach(([sp,n]) => {
+      const pct = (n/maxSp*100).toFixed(0);
+      html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span>'+n+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+    });
+    html += '</div>';
+
+    // Hourly distribution SVG
+    const svgW = 290, svgH = 80, bW = Math.floor(svgW/24)-1;
+    let bars = '', xLabels = '';
+    hourCounts.forEach((cnt,i) => {
+      const bH = Math.round((cnt/maxHour)*55);
+      const x = i*(bW+1);
+      const isPeak = i === peakHour;
+      bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#5fc7ee':'#0a5c8c'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
+      if(i%6===0) xLabels += `<text x="${x+bW/2}" y="${svgH}" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${i===0?'0h':i+'h'}</text>`;
+    });
+    html += `<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Best fishing hours · Peak ${peakHour}:00–${peakHour+1}:00</div><svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${bars}${xLabels}</svg></div>`;
+
+    // Personal bests
+    if(bests.length > 0){
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Personal bests (by weight)</div>';
+      bests.forEach(([sp,b],i) => {
+        const medal = i===0?'🥇':i===1?'🥈':'🥉';
+        html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span style="font-family:var(--data);font-size:11px;">'+b.weight.toFixed(2)+' kg'+(b.length?' · '+b.length+' cm':'')+'</span></div>'
+          + '<div style="font-family:var(--data);font-size:10px;color:#9aa6a6;">'+medal+' · '+new Date(b.date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>';
+      });
+      html += '</div>';
+    }
+
+    // Lure effectiveness
+    if(sortedLure.length > 0){
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Lure / bait effectiveness</div>';
+      sortedLure.forEach(([l,n]) => {
+        const pct = (n/maxLure*100).toFixed(0);
+        html += '<div class="bar-row"><div class="bar-row-top"><span>'+l+'</span><span>'+n+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+      });
+      html += '</div>';
+    }
+
+    // Best spots
+    if(sortedSpots.length > 0){
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Top spots</div>';
+      sortedSpots.forEach(([spotId,n]) => {
+        const spot = spots.find(s=>s.spot_id===spotId);
+        const name = spot ? spot.name : 'Unknown spot';
+        const pct = (n/catches.length*100).toFixed(0);
+        html += '<div class="bar-row"><div class="bar-row-top"><span>'+name+'</span><span>'+n+' catches · '+pct+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+      });
+      html += '</div>';
+    }
+
+    body.innerHTML = html;
   }
 
   window.renderSportSession = renderSportSession;
