@@ -725,9 +725,12 @@
   }
 
   /* ===== Mode select screen ===== */
+  #screen-mode-select,
+  #screen-fleet-role-select{ background: #0e1b26; }
+
   .mode-select-wrap{
     height:100%; display:flex; flex-direction:column;
-    padding: calc(32px + env(safe-area-inset-top, 0px)) 20px 32px;
+    padding: calc(32px + env(safe-area-inset-top, 0px)) 20px calc(32px + env(safe-area-inset-bottom, 0px));
     max-width: 420px; margin: 0 auto; background: #0e1b26;
   }
   .mode-select-header{ text-align:center; margin-bottom: 28px; }
@@ -773,6 +776,13 @@
   .segment-card .mode-card-title{ color:white; font-size:16px; }
   .segment-card .mode-card-sub{ color:#9fc8de; }
 
+  .fleet-close-trip-btn{
+    width:100%; background:#163040; color:#e0a868;
+    border:1px solid rgba(224,168,104,0.3); border-radius:var(--radius);
+    padding:12px; font-family:var(--display); font-weight:600; font-size:13px;
+    cursor:pointer; margin-bottom:16px;
+  }
+  .fleet-close-trip-btn:active{ transform:scale(0.98); }
   .switch-mode-btn{
     background: rgba(255,255,255,0.1); border:none; color: var(--paper);
     font-family: var(--data); font-size: 10.5px; font-weight:600; letter-spacing: 0.03em;
@@ -782,11 +792,11 @@
   /* Mode visibility: research-only and fleet-only chrome stay hidden
      unless body carries the matching mode class. The mode-select screen
      itself is mode-agnostic and always eligible via its own .active flag. */
-  .research-only, .fleet-captain-only, .fleet-operations-only, .sport-only{ display:none; }
-  body.mode-research .research-only{ display:flex; }
-  body.fleet-role-captain .fleet-captain-only{ display:flex; }
-  body.fleet-role-operations .fleet-operations-only{ display:flex; }
-  body.mode-sport .sport-only{ display:flex; }
+  .research-only, .fleet-captain-only, .fleet-operations-only, .sport-only{ display:none !important; }
+  body.mode-research .research-only{ display:flex !important; }
+  body.fleet-role-captain .fleet-captain-only{ display:flex !important; }
+  body.fleet-role-operations .fleet-operations-only{ display:flex !important; }
+  body.mode-sport .sport-only{ display:flex !important; }
 </style>
 </head>
 <body>
@@ -1455,7 +1465,7 @@
   <main>
     <div id="fleetNoTripCard">
       <div class="card">
-        <div class="card-label" style="margin-bottom:14px;">Start A New Trip</div>
+        <div class="insight-card-label" style="margin-bottom:14px;">Start a new trip</div>
         <label for="fleetCaptainSelect">Captain</label>
         <select id="fleetCaptainSelect">
           <option value="">— Select Captain —</option>
@@ -1484,11 +1494,16 @@
           </select>
         </div>
 
-        <label for="fleetCrewCount">Crew Count</label>
-        <input type="number" id="fleetCrewCount" inputmode="numeric" placeholder="e.g. 4">
-
-        <label for="fleetFuelLoaded">Fuel Loaded (L)</label>
-        <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
+        <div class="grid2">
+          <div>
+            <label for="fleetCrewCount">Crew Count</label>
+            <input type="number" id="fleetCrewCount" inputmode="numeric" placeholder="e.g. 4">
+          </div>
+          <div>
+            <label for="fleetFuelLoaded">Fuel Loaded (L)</label>
+            <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
+          </div>
+        </div>
 
         <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;">Start Trip</button>
       </div>
@@ -1529,14 +1544,16 @@
         </div>
       </div>
 
-      <button class="track-toggle-btn" id="fleetCloseTripBtn" style="margin-bottom:20px;">Close Trip</button>
+      <button class="fleet-close-trip-btn" id="fleetCloseTripBtn">Close Trip</button>
 
-      <div class="section-h">Catches Logged This Trip</div>
+      <div class="hist-meta-row" style="margin-top:6px;">
+        <span class="insight-card-label" style="margin:0;">Catches this trip</span>
+      </div>
       <div id="fleetTripCatchList"></div>
 
-      <div class="section-h" style="display:flex; justify-content:space-between; align-items:center;">
-        <span>Hauls Logged This Trip</span>
-        <button class="switch-mode-btn" id="fleetViewMapBtn" style="background:var(--blue); color:var(--paper);">View Map</button>
+      <div class="hist-meta-row" style="margin-top:6px;">
+        <span class="insight-card-label" style="margin:0;">Hauls this trip</span>
+        <button class="exportbtn" id="fleetViewMapBtn">View Map</button>
       </div>
       <div id="fleetTripHaulList"></div>
     </div>
@@ -2657,12 +2674,22 @@
     const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
 
     const haulList = document.getElementById('fleetTripHaulList');
+    const haulIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12v3M11 10.5V15" stroke="#0a5c8c" stroke-width="1.4" stroke-linecap="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>`;
     haulList.innerHTML = hauls.length === 0
       ? '<div class="empty">No hauls logged yet this trip.</div>'
       : hauls.slice().reverse().map(hl => {
           const n = catches.filter(c => c.haul_id === hl.haul_id).length;
-          return '<div class="entry"><div><div class="sp">'+(hl.gear_type||'—')+'</div>'
-            + '<div class="meta">Depth: '+(hl.depth||'—')+'m · '+(hl.duration_min ? hl.duration_min+' min' : '—')+(hl.lat?' · '+hl.lat.toFixed(3)+', '+hl.lon.toFixed(3):'')+' · '+n+' species</div></div></div>';
+          return '<div class="entry">'
+            + '<div class="entry-icon">' + haulIconSvg + '</div>'
+            + '<div class="entry-body">'
+            + '<div class="sp" style="font-style:normal;">' + (hl.gear_type||'Unspecified gear') + '</div>'
+            + '<div class="entry-chips">'
+            + (hl.depth ? '<span class="chip chip-blue">'+hl.depth+'m</span>' : '')
+            + (hl.duration_min ? '<span class="chip chip-blue">'+hl.duration_min+' min</span>' : '')
+            + '<span class="chip chip-grey">'+n+' catch'+( n===1?'':'es')+'</span>'
+            + (hl.lat ? '<span class="chip chip-blue">📍 GPS</span>' : '')
+            + '</div>'
+            + '</div></div>';
         }).join('');
 
     const catchList = document.getElementById('fleetTripCatchList');
@@ -2671,11 +2698,21 @@
       const h = hauls.find(x => x.haul_id === hId);
       return h ? (h.gear_type||'Haul') + ' ' + (h.haul_start||'') : 'No haul';
     };
+    const fishIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     catchList.innerHTML = catches.length === 0
       ? '<div class="empty">No catch logged yet this trip.</div>'
-      : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-        + '<div class="meta">'+haulShortLabel(c.haul_id)+' · '+(c.ref_price ? 'Ref. '+c.ref_price+' '+c.currency+'/kg' : 'No Ref. Price')+'</div></div>'
-        + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
+      : catches.slice().reverse().map(c =>
+          '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'">'
+          + '<div class="entry-icon">' + fishIconSvg + '</div>'
+          + '<div class="entry-body">'
+          + '<div class="sp">'+(c.species||'Unspecified')+'</div>'
+          + '<div class="entry-chips">'
+          + (c.kg ? '<span class="chip chip-blue">'+c.kg+' kg</span>' : '')
+          + (c.ref_price ? '<span class="chip chip-grey">Ref. '+c.ref_price+' '+c.currency+'/kg</span>' : '')
+          + '<span class="chip chip-grey">'+haulShortLabel(c.haul_id)+'</span>'
+          + '</div>'
+          + '</div></div>'
+        ).join('');
     document.querySelectorAll('[data-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
     });
