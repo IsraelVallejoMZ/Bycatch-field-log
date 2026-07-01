@@ -180,33 +180,42 @@
   .cb-label{ font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.06em; color: #9fc8de; }
   .cb-name{ font-family: var(--display); font-weight:600; font-size: 14px; margin-top: 2px; }
 
-  .campaign-active-card{ margin-bottom: 18px; }
+  .campaign-active-card{ margin-bottom: 0; }
   .campaign-active-card:empty{ display:none; }
+
+  /* Active campaign hero */
   .campaign-active-inner{
-    background: var(--blue-deep); color: white; border-radius: var(--radius);
-    padding: 18px;
+    background: var(--blue); color: white; border-radius: var(--radius);
+    padding: 18px 16px; margin-bottom: 10px;
   }
-  .ca-label{ font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.06em; color: #9fc8de; }
-  .ca-name{ font-family: var(--display); font-weight:700; font-size: 18px; margin: 4px 0 10px; }
-  .ca-meta{ font-family: var(--data); font-size: 11px; color: #cfe7f4; }
+  .ca-label{ font-family: var(--data); font-size: 9px; text-transform:uppercase; letter-spacing:0.1em; color: #9fc8de; margin-bottom:6px; }
+  .ca-name{ font-family: var(--display); font-weight:700; font-size: 18px; margin-bottom: 10px; }
+  .ca-kpi-row{ display:flex; gap:20px; margin-bottom:14px; }
+  .ca-kpi{ }
+  .ca-kpi .ck-num{ font-family: var(--display); font-weight:700; font-size:22px; color:white; line-height:1; }
+  .ca-kpi .ck-lbl{ font-family: var(--data); font-size:9px; color:#9fc8de; text-transform:uppercase; margin-top:2px; }
   .ca-close-btn{
-    margin-top: 12px; width:100%; font-family: var(--data); font-size: 12px; font-weight:600;
-    background: rgba(255,255,255,0.15); color: white; border:none; padding: 10px; border-radius: var(--radius-sm); cursor:pointer;
+    background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:8px;
+    color:white; font-family: var(--display); font-size:12px; font-weight:600;
+    padding: 8px 14px; cursor:pointer;
   }
+
+  /* Campaign list entries */
   .campaign-entry{
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
-    padding: 12px 14px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 8px;
   }
   .campaign-entry.is-active{ border-color: var(--blue); border-width: 1.5px; }
-  .campaign-entry .ce-main{ font-family: var(--display); font-weight:600; font-size: 13.5px; }
-  .campaign-entry .ce-meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
-  .campaign-entry-actions{ display:flex; gap: 6px; flex-shrink:0; }
-  .campaign-entry-actions button{
-    font-family: var(--data); font-size: 10.5px; font-weight:600; border:none; border-radius: var(--radius-sm);
-    padding: 6px 10px; cursor:pointer;
-  }
-  .ce-reopen{ background: var(--blue-mist); color: var(--blue-deep); }
-  .ce-delete{ background: none; color: var(--coral); font-size: 17px; padding: 4px 6px; }
+  .ce-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .campaign-entry .ce-main{ font-family: var(--display); font-weight:600; font-size:14px; color:var(--ink); }
+  .ce-status-chip{ font-family:var(--data); font-size:10px; padding:3px 8px; border-radius:6px; }
+  .ce-status-chip.active{ color:#0a5c8c; background:#dfeaf0; }
+  .ce-status-chip.closed{ color:#2f7a52; background:#dff0e8; }
+  .campaign-entry .ce-meta{ font-family: var(--data); font-size: 11px; color: var(--ink-soft); margin-bottom:10px; }
+  .ce-actions{ display:flex; gap:6px; }
+  .ce-actions button{ font-family:var(--display); font-size:11px; font-weight:600; border:none; border-radius:7px; padding:7px 10px; cursor:pointer; }
+  .ce-btn-sec{ flex:1; background:#f1f3f3; color:#41545f; }
+  .ce-btn-del{ background:#fdeaea; color:var(--coral); font-size:14px; padding:7px 12px; }
 
   .quick-actions{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .qa-btn{
@@ -1256,14 +1265,12 @@
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
-    <div class="campaign-active-card" id="campaignActiveCard">
-      <!-- populated dynamically -->
-    </div>
+    <div class="campaign-active-card" id="campaignActiveCard"></div>
 
-    <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Start a new campaign</div>
+    <div class="card" style="margin-bottom:10px;">
+      <div class="insight-card-label" style="margin-bottom:10px;">Start a new campaign</div>
       <label for="newCampaignName">Campaign name</label>
-      <input type="text" id="newCampaignName" placeholder="e.g. Aleta 1, Survey trip March 2026">
+      <input type="text" id="newCampaignName" placeholder="e.g. Aleta 1, Survey March 2026">
       <button class="track-toggle-btn" id="startCampaignBtn" style="margin-top:14px;">Start campaign</button>
     </div>
 
@@ -6499,12 +6506,21 @@
   function renderCampaignsScreen(){
     const active = getActiveCampaign();
     const activeCard = document.getElementById('campaignActiveCard');
+    const allEntries = loadEntries();
+
     if(active){
-      const recordCount = loadEntries().filter(e => e.campaign_id === active.id).length;
+      const recordCount = allEntries.filter(e => e.campaign_id === active.id).length;
+      const speciesCount = new Set(allEntries.filter(e => e.campaign_id === active.id).map(e => e.species).filter(Boolean)).size;
+      const startDate = active.started_at ? new Date(active.started_at) : null;
+      const daysOpen = startDate ? Math.max(1, Math.ceil((Date.now() - startDate) / 86400000)) : '—';
       activeCard.innerHTML = '<div class="campaign-active-inner">'
         + '<div class="ca-label">Active campaign</div>'
         + '<div class="ca-name">' + active.name + '</div>'
-        + '<div class="ca-meta">' + recordCount + ' record(s) logged so far</div>'
+        + '<div class="ca-kpi-row">'
+        + '<div class="ca-kpi"><div class="ck-num">' + recordCount + '</div><div class="ck-lbl">Records</div></div>'
+        + '<div class="ca-kpi"><div class="ck-num">' + speciesCount + '</div><div class="ck-lbl">Species</div></div>'
+        + '<div class="ca-kpi"><div class="ck-num">' + daysOpen + '</div><div class="ck-lbl">Days open</div></div>'
+        + '</div>'
         + '<button class="ca-close-btn" id="closeCampaignBtn">Close this campaign</button>'
         + '</div>';
       document.getElementById('closeCampaignBtn').addEventListener('click', () => closeCampaign(active.id));
@@ -6519,16 +6535,18 @@
       return;
     }
     listEl.innerHTML = campaigns.slice().reverse().map(c => {
-      const recordCount = loadEntries().filter(e => e.campaign_id === c.id).length;
+      const recordCount = allEntries.filter(e => e.campaign_id === c.id).length;
+      const spCount = new Set(allEntries.filter(e => e.campaign_id === c.id).map(e => e.species).filter(Boolean)).size;
       const isActive = !c.closed_at && localStorage.getItem(ACTIVE_CAMPAIGN_KEY) === c.id;
-      const status = c.closed_at ? 'Closed ' + new Date(c.closed_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'}) : 'Open';
+      const statusLabel = isActive ? 'Active' : ('Closed ' + new Date(c.closed_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'}));
+      const statusClass = isActive ? 'active' : 'closed';
       return '<div class="campaign-entry' + (isActive ? ' is-active' : '') + '">'
-        + '<div><div class="ce-main">' + c.name + '</div>'
-        + '<div class="ce-meta">' + recordCount + ' records · ' + status + '</div></div>'
-        + '<div class="campaign-entry-actions">'
-        + '<button class="ce-reopen" data-export-photos="'+c.id+'">Photos</button>'
-        + (c.closed_at ? '<button class="ce-reopen" data-reopen="'+c.id+'">Reopen</button>' : '')
-        + '<button class="ce-delete" data-delete="'+c.id+'" title="delete">×</button>'
+        + '<div class="ce-header"><div class="ce-main">' + c.name + '</div><span class="ce-status-chip ' + statusClass + '">' + statusLabel + '</span></div>'
+        + '<div class="ce-meta">' + recordCount + ' records · ' + spCount + ' species</div>'
+        + '<div class="ce-actions">'
+        + '<button class="ce-btn-sec" data-export-photos="' + c.id + '">Photos</button>'
+        + (c.closed_at ? '<button class="ce-btn-sec" data-reopen="' + c.id + '">Reopen</button>' : '')
+        + '<button class="ce-btn-del" data-delete="' + c.id + '">×</button>'
         + '</div></div>';
     }).join('');
   }
