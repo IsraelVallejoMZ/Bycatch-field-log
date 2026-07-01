@@ -726,28 +726,52 @@
 
   /* ===== Mode select screen ===== */
   .mode-select-wrap{
-    height:100%; display:flex; flex-direction:column; justify-content:center;
-    padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 24px; max-width: 420px; margin: 0 auto;
+    height:100%; display:flex; flex-direction:column;
+    padding: calc(32px + env(safe-area-inset-top, 0px)) 20px 32px;
+    max-width: 420px; margin: 0 auto; background: #0e1b26;
   }
   .mode-select-header{ text-align:center; margin-bottom: 28px; }
   .mode-select-eyebrow{
-    font-family: var(--data); font-size: 11.5px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--ink-soft);
+    font-family: var(--data); font-size: 9.5px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #8fb4c9; margin-bottom: 10px;
   }
   .mode-select-title{
-    font-family: var(--display); font-size: 20px; font-weight: 600;
-    margin-top: 6px; color: var(--ink);
+    font-family: var(--display); font-size: 24px; font-weight: 700;
+    color: white; line-height: 1.2;
   }
   .mode-card{
-    display:flex; align-items:center; gap: 16px;
-    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
-    padding: 20px 18px; margin-bottom: 14px; cursor:pointer; text-align:left;
+    border-radius: 16px; padding: 22px 20px; margin-bottom: 12px;
+    cursor:pointer; text-align:left; position:relative; overflow:hidden;
+  }
+  .mode-card::before{
+    content:''; position:absolute; right:-10px; top:-10px;
+    width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.06);
   }
   .mode-card:active{ transform: scale(0.98); }
+  .captain-card{ background: var(--blue); }
+  .ops-card{ background: #163040; border: 1.5px solid rgba(255,255,255,0.1); }
+  .mode-card-icon-lg{ width:36px; height:36px; margin-bottom:14px; }
+  .mode-card-icon-lg svg{ width:100%; height:100%; }
   .mode-card-icon{ flex-shrink:0; width: 30px; height:30px; }
   .mode-card-icon svg{ width:100%; height:100%; }
-  .mode-card-title{ font-family: var(--display); font-weight:600; font-size: 16px; color: var(--ink); }
-  .mode-card-sub{ font-family: var(--data); font-size: 11.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+  .mode-card-title{ font-family: var(--display); font-weight:700; font-size: 20px; color: white; margin-bottom:6px; }
+  .mode-card-sub{ font-family: var(--data); font-size: 10.5px; color: #9fc8de; line-height: 1.5; }
+  .ops-sub{ color: #7fa3b5; }
+  .mode-card-context-chip{
+    display:inline-flex; align-items:center; margin-top:14px;
+    background: rgba(255,255,255,0.14); border-radius:8px; padding:7px 12px;
+    font-family: var(--display); font-size:12px; font-weight:600; color:white;
+  }
+  .segment-card{
+    display:flex; align-items:center; gap:16px;
+    background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
+    border:none;
+  }
+  .segment-card:nth-child(2){ background: linear-gradient(135deg, #0e6fa5 0%, #0a5c8c 100%); }
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, #0a5c8c 0%, #163040 100%); }
+  .segment-card:nth-child(4){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
+  .segment-card .mode-card-title{ color:white; font-size:16px; }
+  .segment-card .mode-card-sub{ color:#9fc8de; }
 
   .switch-mode-btn{
     background: rgba(255,255,255,0.1); border:none; color: var(--paper);
@@ -775,12 +799,12 @@
       <div class="mode-select-title">Choose a mode</div>
     </div>
 
-    <div class="mode-card" data-mode="research">
-      <div class="mode-card-icon">
+    <div class="mode-card segment-card" data-mode="research">
+      <div class="mode-card-icon-lg">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="24" cy="20" r="10" stroke="#0a5c8c" stroke-width="2.4"/>
-          <line x1="31.5" y1="27.5" x2="40" y2="36" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="24" y1="13" x2="24" y2="9" stroke="#0a5c8c" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="24" cy="20" r="10" stroke="white" stroke-width="2.4"/>
+          <line x1="31.5" y1="27.5" x2="40" y2="36" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="24" y1="13" x2="24" y2="9" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
       <div>
@@ -789,12 +813,12 @@
       </div>
     </div>
 
-    <div class="mode-card" data-mode="fleet">
-      <div class="mode-card-icon">
+    <div class="mode-card segment-card" data-mode="fleet">
+      <div class="mode-card-icon-lg">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 8v22M16 16l8-5 8 5" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="24" cy="13" r="2.3" fill="#0a5c8c"/>
+          <path d="M24 8v22M16 16l8-5 8 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="13" r="2.3" fill="white"/>
         </svg>
       </div>
       <div>
@@ -803,13 +827,13 @@
       </div>
     </div>
 
-    <div class="mode-card" data-mode="sport">
-      <div class="mode-card-icon">
+    <div class="mode-card segment-card" data-mode="sport">
+      <div class="mode-card-icon-lg">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 38c6-14 12-24 24-30" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
-          <path d="M34 8c2 3 2 7-1 11" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="16" cy="30" r="3.2" stroke="#0a5c8c" stroke-width="2.2"/>
-          <path d="M13.2 30h-4.5M16 26.8v-4.3" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M10 38c6-14 12-24 24-30" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M34 8c2 3 2 7-1 11" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="16" cy="30" r="3.2" stroke="white" stroke-width="2.2"/>
+          <path d="M13.2 30h-4.5M16 26.8v-4.3" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </div>
       <div>
@@ -1383,35 +1407,34 @@
   <div class="mode-select-wrap">
     <div class="mode-select-header">
       <div class="mode-select-eyebrow">Fishing Operations</div>
-      <div class="mode-select-title">Choose A Role</div>
+      <div class="mode-select-title">Who's using<br>this session?</div>
+      <button class="switch-mode-btn" id="switchModeFromRoleSelect" style="margin-top:14px;">← Switch Mode</button>
     </div>
 
-    <div class="mode-card" data-fleet-role="captain">
-      <div class="mode-card-icon">
+    <div class="mode-card captain-card" data-fleet-role="captain">
+      <div class="mode-card-icon-lg">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 8v22M16 16l8-5 8 5" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="#0a5c8c" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="24" cy="13" r="2.3" fill="#0a5c8c"/>
+          <path d="M24 8v22M16 16l8-5 8 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="13" r="2.3" fill="white"/>
         </svg>
       </div>
-      <div>
-        <div class="mode-card-title">Captain</div>
-        <div class="mode-card-sub">Log trips, hauls, and catch — at sea</div>
-      </div>
+      <div class="mode-card-title">Captain</div>
+      <div class="mode-card-sub">Log trips · hauls · catch<br>GPS positions · fuel</div>
+      <div class="mode-card-context-chip">At sea →</div>
     </div>
 
-    <div class="mode-card" data-fleet-role="operations">
-      <div class="mode-card-icon">
+    <div class="mode-card ops-card" data-fleet-role="operations">
+      <div class="mode-card-icon-lg">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="20" width="9" height="18" stroke="#0a5c8c" stroke-width="2.2"/>
-          <rect x="20.5" y="12" width="9" height="26" stroke="#0a5c8c" stroke-width="2.2"/>
-          <rect x="31" y="24" width="9" height="14" stroke="#0a5c8c" stroke-width="2.2"/>
+          <rect x="10" y="20" width="9" height="18" stroke="#5fc7ee" stroke-width="2.2"/>
+          <rect x="20.5" y="12" width="9" height="26" stroke="#5fc7ee" stroke-width="2.2"/>
+          <rect x="31" y="24" width="9" height="14" stroke="#5fc7ee" stroke-width="2.2"/>
         </svg>
       </div>
-      <div>
-        <div class="mode-card-title">Operations</div>
-        <div class="mode-card-sub">Fleet dashboard, reconciliation, documents — on land</div>
-      </div>
+      <div class="mode-card-title">Operations</div>
+      <div class="mode-card-sub ops-sub">Fleet dashboard · reconciliation<br>documents · settlement</div>
+      <div class="mode-card-context-chip ops-chip">On land →</div>
     </div>
   </div>
 </section>
@@ -2365,7 +2388,7 @@
   });
 
   document.addEventListener('click', (e) => {
-    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport'){
+    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport' || e.target.id === 'switchModeFromRoleSelect'){
       showModeSelect();
     }
     if(e.target.closest('[data-switch-fleet-role]')){
