@@ -6013,6 +6013,28 @@
       });
       html += '</div>';
 
+      html += '<div class="insight-card"><div class="insight-card-label">Length range (cm)</div>';
+      if(allLengths.length === 0){
+        html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+      } else {
+        const minL=Math.min(...allLengths), maxL=Math.max(...allLengths);
+        const meanL=allLengths.reduce((a,b)=>a+b,0)/allLengths.length;
+        const scale = maxL > minL ? maxL + minL*0.1 : maxL + 10;
+        const minPct = (minL/scale*100).toFixed(1);
+        const maxPct = (maxL/scale*100).toFixed(1);
+        const meanPct = (meanL/scale*100).toFixed(1);
+        html += `<div style="position:relative;height:36px;margin:8px 4px 18px;">
+          <div style="position:absolute;top:16px;left:0;right:0;height:6px;background:#f1f3f3;border-radius:3px;"></div>
+          <div style="position:absolute;top:16px;left:${minPct}%;width:${(parseFloat(maxPct)-parseFloat(minPct)).toFixed(1)}%;height:6px;background:#0a5c8c;border-radius:3px;"></div>
+          <div style="position:absolute;top:0;left:${minPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#0a5c8c;font-weight:600;">${minL.toFixed(0)}</div>
+          <div style="position:absolute;top:0;left:${maxPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#0a5c8c;font-weight:600;">${maxL.toFixed(0)}</div>
+          <div style="position:absolute;top:0;left:${meanPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#7fa3b5;">μ ${meanL.toFixed(0)}</div>
+          <div style="position:absolute;top:26px;left:${meanPct}%;transform:translateX(-50%);width:1px;height:8px;background:#9aa6a6;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:var(--data);font-size:10px;color:#cdd6d6;margin-top:2px;"><span>0</span><span>${Math.round(scale/3)}</span><span>${Math.round(scale*2/3)}</span><span>${Math.round(scale)}+</span></div>`;
+      }
+      html += '</div>';
+
       html += '<div class="insight-card"><div class="insight-card-label">Length by species (cm)</div>';
       if(speciesWithLength.length === 0){
         html += '<div class="insight-empty">No length measurements recorded yet.</div>';
