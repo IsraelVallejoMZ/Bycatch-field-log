@@ -960,8 +960,12 @@
 <section class="screen" id="screen-mode-select">
   <div class="mode-select-wrap">
     <div class="mode-select-header">
-      <div class="mode-select-eyebrow">Fish Pulse</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px;">
+        <div class="mode-select-eyebrow">Fish Pulse</div>
+        <button id="backToSplashBtn" style="background:none;border:none;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;letter-spacing:0.04em;padding:4px 0;">← Welcome</button>
+      </div>
       <div class="mode-select-title">Choose a mode</div>
+      <button id="clearSessionBtn" style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 12px;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;margin-top:10px;letter-spacing:0.04em;">Clear saved session</button>
     </div>
 
     <div class="mode-card segment-card" data-mode="research">
@@ -2657,8 +2661,11 @@
   // Get started
   document.getElementById('splashGetStartedBtn').addEventListener('click', () => {
     stopAuto();
-    document.getElementById('screen-splash').classList.remove('active');
-    document.getElementById('screen-mode-select').classList.add('active');
+    if(window.fishPulseGoToModeSelect) window.fishPulseGoToModeSelect();
+    else {
+      document.getElementById('screen-splash').classList.remove('active');
+      document.getElementById('screen-mode-select').classList.add('active');
+    }
   });
 
   // Hamburger
@@ -2689,6 +2696,17 @@
   document.getElementById('menuSignIn').addEventListener('click', () => {
     closeHamburger();
     alert('Sign-in coming soon with Fish Pulse Premium.');
+  });
+
+  // Back to welcome from mode-select
+  document.getElementById('backToSplashBtn').addEventListener('click', () => {
+    if(window.fishPulseGoToSplash) window.fishPulseGoToSplash();
+  });
+
+  // Clear saved session
+  document.getElementById('clearSessionBtn').addEventListener('click', () => {
+    ['fishpulse_active_mode','fishpulse_mode_selected_at','fishpulse_fleet_role','fishpulse_fleet_role_selected_at'].forEach(k => localStorage.removeItem(k));
+    if(window.fishPulseGoToSplash) window.fishPulseGoToSplash();
   });
 
   startAuto();
@@ -2771,6 +2789,12 @@
     }
   }
 
+  function showSplash(){
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'fleet-role-captain', 'fleet-role-operations');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-splash').classList.add('active');
+  }
+
   function showModeSelect(){
     document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'fleet-role-captain', 'fleet-role-operations');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2799,6 +2823,7 @@
   });
 
   window.fishPulseGoToModeSelect = showModeSelect;
+  window.fishPulseGoToSplash = showSplash;
   window.fishPulseGoToFleetRoleSelect = showFleetRoleSelect;
   window.fishPulseGetActiveMode = getStoredMode;
   window.fishPulseGetActiveFleetRole = getStoredFleetRole;
@@ -2812,7 +2837,7 @@
   if(existing){
     applyMode(existing);
   } else {
-    showModeSelect();
+    showSplash();
   }
 })();
 </script>
