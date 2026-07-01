@@ -1951,13 +1951,13 @@
     </div>
     <h1>Scale Vs. Logbook</h1>
     <div class="site-line">&nbsp;</div>
-  </div>
-  <main>
-    <div class="filter-row">
-      <select id="fleetReconTripSelect" style="width:100%;">
-        <option value="">— Select A Closed Trip —</option>
+    <div style="margin-top:10px;">
+      <select id="fleetReconTripSelect" style="width:100%;background:rgba(255,255,255,0.08);color:#cfe7f4;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 10px;font-family:var(--data);font-size:11px;">
+        <option value="">— Select a closed trip —</option>
       </select>
     </div>
+  </div>
+  <main>
     <div id="fleetReconBody"></div>
   </main>
 </section>
@@ -2019,20 +2019,19 @@
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
-    <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">App Currency Preference</div>
-      <label for="fleetDefaultCurrency">Default Currency <span class="optional-tag">used as the starting option everywhere — still changeable per entry</span></label>
-      <select id="fleetDefaultCurrency">
-        <option value="THB">THB — Thai Baht</option>
-        <option value="USD">USD — US Dollar</option>
-        <option value="EUR">EUR — Euro</option>
-        <option value="MXN">MXN — Mexican Peso</option>
-        <option value="VND">VND — Vietnamese Dong</option>
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <label for="fleetDefaultCurrency" style="margin:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);">Default currency</label>
+      <select id="fleetDefaultCurrency" style="width:auto;padding:7px 10px;font-size:13px;">
+        <option value="THB">THB</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="MXN">MXN</option>
+        <option value="VND">VND</option>
       </select>
     </div>
 
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Add Vessel</div>
+      <div class="insight-card-label" style="margin-bottom:12px;">Add vessel</div>
       <label for="vesselsNewName">Vessel Name</label>
       <input type="text" id="vesselsNewName" placeholder="e.g. Vessel 09">
       <label for="vesselsNewCurrency">Default Currency</label>
@@ -2045,37 +2044,65 @@
       </select>
       <label for="vesselsNewTarget">Efficiency Target — Margin Per Trip <span class="optional-tag">optional</span></label>
       <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
-      <label for="vesselsNewExpectedDailyFuel">Expected Daily Fuel Use (L/Day) <span class="optional-tag">optional — overrides the automatic average</span></label>
-      <input type="number" id="vesselsNewExpectedDailyFuel" inputmode="decimal" placeholder="e.g. 25, if you already know this vessel's normal consumption">
-      <label for="vesselsNewMaintenanceInterval">Maintenance Interval (Hours At Sea) <span class="optional-tag">optional</span></label>
+      <label for="vesselsNewExpectedDailyFuel">Expected Daily Fuel Use (L/day) <span class="optional-tag">optional — overrides auto average</span></label>
+      <input type="number" id="vesselsNewExpectedDailyFuel" inputmode="decimal" placeholder="e.g. 25">
+      <label for="vesselsNewMaintenanceInterval">Maintenance Interval (hours at sea) <span class="optional-tag">optional</span></label>
       <input type="number" id="vesselsNewMaintenanceInterval" inputmode="numeric" placeholder="e.g. 200">
-      <label for="vesselsNewLastMaintenanceHours">Hours At Sea Since Last Maintenance <span class="optional-tag">optional, today</span></label>
-      <input type="number" id="vesselsNewLastMaintenanceHours" inputmode="numeric" placeholder="e.g. 0, if just serviced">
+      <label for="vesselsNewLastMaintenanceHours">Hours at sea since last service <span class="optional-tag">optional, today</span></label>
+      <input type="number" id="vesselsNewLastMaintenanceHours" inputmode="numeric" placeholder="e.g. 0 if just serviced">
       <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;">Add Vessel</button>
     </div>
 
-    <div class="section-h">All Vessels</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">All vessels</span>
+    </div>
     <div id="vesselsList"></div>
 
-    <div class="section-h">All Captains</div>
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">All captains</span>
+    </div>
     <div id="captainsList"></div>
   </main>
 </section>
 
 <!-- ================= FLEET TAB BAR: CAPTAIN ================= -->
 <nav class="tabbar fleet-captain-only" id="tabbarFleetCaptain">
-  <button class="tab active" data-go="fleet-trip"><span class="tab-icon">⚓</span>Trip</button>
-  <button class="tab" data-go="fleet-fuel-log"><span class="tab-icon">⛽</span>Fuel Log</button>
-  <button class="tab" data-go="fleet-documents"><span class="tab-icon">📄</span>Documents</button>
+  <button class="tab active" data-go="fleet-trip">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 10l4-6 4 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 16c0 3 2 5 6 6 4-1 6-3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+    Trip
+  </button>
+  <button class="tab" data-go="fleet-fuel-log">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    Fuel
+  </button>
+  <button class="tab" data-go="fleet-documents">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    Docs
+  </button>
 </nav>
 
 <!-- ================= FLEET TAB BAR: OPERATIONS ================= -->
 <nav class="tabbar fleet-operations-only" id="tabbarFleetOperations">
-  <button class="tab active" data-go="fleet-dashboard"><span class="tab-icon">📊</span>Fleet</button>
-  <button class="tab" data-go="fleet-trip-log"><span class="tab-icon">☷</span>Trip Log</button>
-  <button class="tab" data-go="fleet-reconciliation"><span class="tab-icon">⚖</span>Reconcile</button>
-  <button class="tab" data-go="fleet-documents"><span class="tab-icon">📄</span>Documents</button>
-  <button class="tab" data-go="fleet-vessels"><span class="tab-icon">🚢</span>Vessels</button>
+  <button class="tab active" data-go="fleet-dashboard">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg></span>
+    Fleet
+  </button>
+  <button class="tab" data-go="fleet-trip-log">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
+    Trips
+  </button>
+  <button class="tab" data-go="fleet-reconciliation">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Reconcile
+  </button>
+  <button class="tab" data-go="fleet-documents">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    Docs
+  </button>
+  <button class="tab" data-go="fleet-vessels">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    Vessels
+  </button>
 </nav>
 
 <!-- ================= SPORT: SESSION ================= -->
@@ -3353,7 +3380,7 @@
 
     document.getElementById('fleetTripDetailLanding').innerHTML =
       '<div class="card">'
-      + '<div class="card-label" style="margin-bottom:14px;">Landing Report</div>'
+      + '<div class="insight-card-label" style="margin-bottom:10px;">Landing Report</div>'
       + '<div class="grid2" style="margin-bottom:10px;">'
       + '<div><label style="margin-top:0;">Vessel</label><div class="duration-line">'+(vessel?vessel.name:'—')+'</div></div>'
       + '<div><label style="margin-top:0;">Captain</label><div class="duration-line">'+(captain?captain.name:'—')+'</div></div>'
@@ -3363,7 +3390,7 @@
           + '<div class="duration-line" style="margin:0;">'+g.estKg.toFixed(1)+' kg Est.</div></div>').join('')
       + '<div class="duration-line" style="margin-top:10px;">Total: '+totalEstKg.toFixed(1)+' kg Estimated'+(hasActuals?' · '+totalActualKg.toFixed(1)+' kg Scaled':'')+'</div>'
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">This report supports a landing declaration or capture certificate application — it is not itself an official certificate.</div>'
-      + '<button class="track-toggle-btn" id="fleetExportLandingBtn" style="margin-top:14px;">Export As PDF</button>'
+      + '<button class="exportbtn" id="fleetExportLandingBtn" style="margin-top:12px;padding:10px 16px;font-size:12px;">Export as PDF</button>'
       + '</div>';
 
     document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
@@ -3413,8 +3440,9 @@
 
     document.getElementById('fleetTripDetailSettlement').innerHTML =
       '<div class="card">'
-      + '<div class="card-label" style="margin-bottom:14px;">Trip Profitability At A Glance</div>'
+      + '<div class="insight-card-label" style="margin-bottom:10px;">Trip Profitability At A Glance *</div>'
       + buildFleetProfitabilityBar(totalIncome, totalCosts, currency)
+      + '<div class="track-note" style="margin-top:12px;margin-bottom:0;font-size:9.5px;">* These figures are informative estimates based on your logged catch, reference prices, and costs. Actual results depend on final scale weights and confirmed sale prices.</div>'
       + '</div>'
       + '<div class="card">'
       + '<div class="card-label" style="margin-bottom:14px;">Trip Settlement'+(!hasActuals?' <span class="optional-tag">based on estimate, not yet scaled</span>':(!hasActualSales?' <span class="optional-tag">scaled, price still estimated</span>':''))+'</div>'
@@ -3734,17 +3762,21 @@
             const pctUsed = interval > 0 ? (hrs / interval * 100) : 0;
             const isDue = pctUsed >= 100;
             const isSoon = pctUsed >= 80 && pctUsed < 100;
-            const color = isDue ? 'color:var(--coral);' : (isSoon ? 'color:var(--amber);' : '');
-            return '<div class="meta" style="'+color+' margin-top:2px;">'+hrs.toFixed(0)+' / '+interval.toFixed(0)+' Hours Since Maintenance'+(isDue?' — Due Now':(isSoon?' — Due Soon':''))+'</div>';
+            const chipCls = (isDue || isSoon) ? 'chip chip-red' : 'chip chip-blue';
+            const chipTxt = isDue ? '⚠ '+hrs.toFixed(0)+'/'+interval.toFixed(0)+'h — Due now' : (isSoon ? '⚠ '+hrs.toFixed(0)+'/'+interval.toFixed(0)+'h — Due soon' : hrs.toFixed(0)+'/'+interval.toFixed(0)+'h');
+            return '<span class="'+chipCls+'">'+chipTxt+'</span>';
           })() : '';
-          return '<div class="entry" style="display:block;">'
-            + '<div style="display:flex; justify-content:space-between; align-items:flex-start;">'
-            + '<div><div class="sp">'+v.name+'</div>'
-            + '<div class="meta">'+v.default_currency+(v.margin_target ? ' · Target: '+fmtMoney(v.margin_target, v.default_currency) : '')
-            + (v.expected_daily_fuel_l ? ' · Expected: '+v.expected_daily_fuel_l+' L/Day' : ' · Auto Baseline After 5 Trips')+'</div>'
-            + maintHtml + '</div>'
-            + (v.maintenance_interval_hours ? '<button class="switch-mode-btn" style="background:var(--blue); color:var(--paper); flex-shrink:0;" data-log-maintenance="'+v.vessel_id+'">Log Service</button>' : '')
-            + '</div></div>';
+          const targetChip = v.margin_target ? '<span class="chip chip-blue">Target '+fmtMoney(v.margin_target, v.default_currency)+'</span>' : '';
+          const fuelChip = v.expected_daily_fuel_l ? '<span class="chip chip-grey">'+v.expected_daily_fuel_l+' L/day</span>' : '';
+          const maintBtn = v.maintenance_interval_hours ? '<button class="ce-btn-sec" style="margin-top:10px;" data-log-maintenance="'+v.vessel_id+'">Log Service</button>' : '';
+          return '<div class="insight-card" style="margin-bottom:8px;">'
+            + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);margin-bottom:6px;">'+v.name+'</div>'
+            + '<div class="entry-chips">'
+            + '<span class="chip chip-grey">'+v.default_currency+'</span>'
+            + targetChip + fuelChip + maintHtml
+            + '</div>'
+            + maintBtn
+            + '</div>';
         }).join('');
     document.querySelectorAll('[data-log-maintenance]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3759,7 +3791,7 @@
     });
     document.getElementById('captainsList').innerHTML = captains.length === 0
       ? '<div class="empty">No captains yet.</div>'
-      : captains.map(c => '<div class="entry"><div><div class="sp">'+c.name+'</div></div></div>').join('');
+      : captains.map(c => '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+c.name+'</div></div>').join('');
     applyDefaultCurrencyToSelects();
   }
 
@@ -3905,26 +3937,26 @@
     const speciesGroups = Object.values(bySpecies);
     const existingSales = load(SALES_KEY).filter(s => s.trip_id === tripId);
 
-    body.innerHTML = '<div class="section-h">Logbook Estimate Vs. Scale Weight, By Species</div>' + speciesGroups.map(g => {
+    body.innerHTML = '<div class="insight-card-label" style="margin-bottom:10px;">Logbook estimate vs. scale weight by species</div>' + speciesGroups.map(g => {
       const diff = g.actualKg != null ? g.actualKg - g.estKg : null;
       const diffPct = diff != null && g.estKg > 0 ? (diff / g.estKg * 100) : null;
       const diffColor = diff == null ? '' : (Math.abs(diffPct) > 10 ? 'color:var(--coral);' : 'color:var(--released);');
       const sale = existingSales.find(s => s.species === g.species);
-      return '<div class="entry" style="display:block;">'
-        + '<div class="sp" style="margin-bottom:2px;">'+g.species+'</div>'
-        + '<div class="meta" style="margin-bottom:8px;">'+g.haulCount+' haul'+(g.haulCount>1?'s':'')+' of this species, combined in the same hold</div>'
-        + '<div class="grid2" style="grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">'
-        + '<div><label style="margin-top:0;">Logbook Estimate, Combined (kg)</label><div class="duration-line">'+g.estKg.toFixed(1)+' kg</div></div>'
-        + '<div><label style="margin-top:0;">Scale Weight, Total (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(g.actualKg!=null?g.actualKg:'')+'" placeholder="e.g. '+g.estKg.toFixed(1)+'"></div>'
+      return '<div class="insight-card" style="margin-bottom:8px;">'
+        + '<div style="font-family:var(--display);font-weight:600;font-size:14px;font-style:italic;color:var(--ink);margin-bottom:2px;">'+g.species+'</div>'
+        + '<div style="font-family:var(--data);font-size:10px;color:var(--ink-soft);margin-bottom:10px;">'+g.haulCount+' haul'+(g.haulCount>1?'s':'')+' combined in same hold</div>'
+        + '<div class="grid2" style="gap:8px;margin-bottom:8px;">'
+        + '<div><label style="margin-top:0;">Logbook estimate (kg)</label><div class="duration-line">'+g.estKg.toFixed(1)+'</div></div>'
+        + '<div><label style="margin-top:0;">Scale weight (kg)</label><input type="number" inputmode="decimal" class="fleet-recon-input" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(g.actualKg!=null?g.actualKg:'')+'" placeholder="'+g.estKg.toFixed(1)+'"></div>'
         + '</div>'
-        + (diff != null ? '<div class="duration-line" style="'+diffColor+'">Difference: '+(diff>=0?'+':'')+diff.toFixed(1)+' kg ('+(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%)</div>' : '')
-        + '<label>Actual Sale Price <span class="optional-tag">optional, per kg</span></label>'
+        + (diff != null ? '<div class="duration-line" style="'+diffColor+'margin-bottom:8px;">Difference: '+(diff>=0?'+':'')+diff.toFixed(1)+' kg ('+(diffPct>=0?'+':'')+diffPct.toFixed(0)+'%)</div>' : '')
+        + '<label>Actual sale price <span class="optional-tag">optional, per kg</span></label>'
         + '<div class="grid2"><input type="number" inputmode="decimal" class="fleet-recon-price" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(sale?sale.unit_price:'')+'" placeholder="e.g. 90">'
         + '<select disabled style="opacity:0.6;"><option>'+currency+'</option></select></div>'
         + '</div>';
     }).join('')
-      + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin:10px 0 4px; line-height:1.5;">Enter the total scale weight for each species as landed — not per individual haul. Once different hauls of the same species are unloaded together, the scale can no longer tell them apart.</div>'
-      + '<button class="btn btn-save" id="fleetReconSaveBtn" style="width:100%; margin-top:10px;">Save Scale Weights</button>';
+      + '<div class="track-note" style="margin-bottom:10px;">Enter the total scale weight per species as landed — not per haul. Once hauls of the same species are unloaded together, the scale gives one combined number. Existing values are pre-filled; you can correct them at any time.</div>'
+      + '<button class="btn btn-save" id="fleetReconSaveBtn" style="width:100%;">Save Scale Weights</button>';
 
     document.getElementById('fleetReconSaveBtn').addEventListener('click', () => {
       const inputs = document.querySelectorAll('.fleet-recon-input');
