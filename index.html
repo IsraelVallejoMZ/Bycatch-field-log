@@ -2261,6 +2261,21 @@
   </main>
 </section>
 
+<!-- ================= FLEET: STATS ================= -->
+<section class="screen" id="screen-fleet-stats">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="fleet-dashboard">←</button>
+      <span class="brand">Fishing Operations</span>
+    </div>
+    <h1>Fleet Statistics</h1>
+  </div>
+  <main>
+    <select id="fleetStatsVesselFilter" style="margin-bottom:14px;"></select>
+    <div id="fleetStatsMain"></div>
+  </main>
+</section>
+
 <!-- ================= FLEET TAB BAR: CAPTAIN ================= -->
 <nav class="tabbar fleet-captain-only" id="tabbarFleetCaptain">
   <button class="tab active" data-go="fleet-trip">
@@ -2298,6 +2313,10 @@
   <button class="tab" data-go="fleet-vessels">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
     Vessels
+  </button>
+  <button class="tab" data-go="fleet-stats">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+    Stats
   </button>
 </nav>
 
@@ -2967,6 +2986,7 @@
     if(screen === 'documents') renderFleetDocuments();
     if(screen === 'trip-detail') renderFleetTripDetail();
     if(screen === 'haul-map') renderFleetHaulMap();
+    if(screen === 'stats') renderFleetStats();
     const active = document.querySelector('.screen.active');
     if(active) active.scrollTop = 0;
   }
@@ -4666,6 +4686,173 @@
     });
     wrap.appendChild(svg);
   }
+
+  // Full-precision per-trip result, reusing the same precedence Trip
+  // Detail's settlement uses: actual sale price over reference price,
+  // scale weight over estimated weight. Unlike computeTripMargin() (used
+  // for the quick pre-settlement glance in Trip Log), this doesn't pad
+  // for cost types that haven't been logged yet — it's meant for
+  // reporting on trips that are mostly or fully settled.
+  function computeTripFinancials(trip){
+    const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const currency = vessel ? vessel.default_currency : '';
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+    const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
+    const sales = load(SALES_KEY).filter(s => s.trip_id === trip.trip_id);
+
+    const bySpecies = {};
+    catches.forEach(c => {
+      if(!bySpecies[c.species]) bySpecies[c.species] = { estKg:0, actualKg:0, hasActual:false };
+      bySpecies[c.species].estKg += parseFloat(c.kg) || 0;
+      if(c.actual_kg != null && c.actual_kg !== ''){ bySpecies[c.species].actualKg += parseFloat(c.actual_kg); bySpecies[c.species].hasActual = true; }
+    });
+    let income = 0, kg = 0;
+    Object.entries(bySpecies).forEach(([sp,g]) => {
+      const spKg = g.hasActual ? g.actualKg : g.estKg;
+      kg += spKg;
+      const sale = sales.find(s => s.species === sp);
+      const refCatch = catches.find(c => c.species === sp && c.ref_price);
+      const price = sale ? parseFloat(sale.unit_price) : (refCatch ? parseFloat(refCatch.ref_price) : 0);
+      income += spKg * price;
+    });
+
+    const costsByType = {};
+    let totalCosts = 0;
+    costs.forEach(c => { const amt = parseFloat(c.amount)||0; totalCosts += amt; costsByType[c.cost_type] = (costsByType[c.cost_type]||0) + amt; });
+
+    const net = income - totalCosts;
+    const margin = income > 0 ? (net/income*100) : null;
+    return { income, costs: totalCosts, net, margin, kg, currency, costsByType, vesselId: trip.vessel_id, vesselName: vessel ? vessel.name : 'Unknown Vessel' };
+  }
+
+  // ===== Fleet Statistics (Advanced) =====
+  function renderFleetStats(){
+    const vessels = load(VESSELS_KEY);
+    const sel = document.getElementById('fleetStatsVesselFilter');
+    const cur = sel.value;
+    sel.innerHTML = vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+' · '+v.default_currency+'</option>').join('');
+    if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
+    const main = document.getElementById('fleetStatsMain');
+
+    if(vessels.length === 0){
+      main.innerHTML = '<div class="empty">Add a vessel to see fleet statistics.</div>';
+      return;
+    }
+
+    const allTrips = load(TRIPS_KEY);
+    const closedTrips = allTrips.filter(t => t.ended_at);
+    if(closedTrips.length === 0){
+      main.innerHTML = '<div class="empty">No closed trips yet. Statistics build up as trips are completed.</div>';
+      return;
+    }
+
+    const selectedVesselId = sel.value;
+    let html = '';
+
+    // --- Profitability trend, selected vessel only ---
+    const vesselTrips = closedTrips.filter(t => t.vessel_id === selectedVesselId).sort((a,b) => new Date(a.started_at) - new Date(b.started_at));
+    const vesselCurrency = (vessels.find(v => v.vessel_id === selectedVesselId) || {}).default_currency || '';
+    html += '<div class="insight-card"><div class="insight-card-label">Profitability trend'+(vesselTrips.length ? ' · last '+Math.min(vesselTrips.length,12)+' trips' : '')+'</div>';
+    if(vesselTrips.length < 2){
+      html += '<div class="insight-empty">Need at least 2 closed trips for this vessel to plot a trend.</div>';
+    } else {
+      const recent = vesselTrips.slice(-12);
+      const finRows = recent.map(t => computeTripFinancials(t));
+      const nets = finRows.map(f => f.net);
+      const maxAbs = Math.max(...nets.map(Math.abs), 1);
+      const padL=10, plotW=270, plotTop=10, plotBottom=68, plotMid=(plotTop+plotBottom)/2;
+      const xPix = (i) => padL + (recent.length>1 ? (i/(recent.length-1))*plotW : plotW/2);
+      const yPix = (v) => plotMid - (v/maxAbs)*((plotBottom-plotTop)/2);
+      const pathPts = nets.map((v,i) => xPix(i).toFixed(1)+','+yPix(v).toFixed(1));
+      const dots = nets.map((v,i) => '<circle cx="'+xPix(i).toFixed(1)+'" cy="'+yPix(v).toFixed(1)+'" r="3.5" fill="'+(v>=0?'#2f7a52':'#c0532f')+'"/>').join('');
+      const firstLabel = new Date(recent[0].started_at).toLocaleDateString('en-US',{month:'short'});
+      const lastLabel = new Date(recent[recent.length-1].started_at).toLocaleDateString('en-US',{month:'short'});
+      html += `<svg width="100%" height="100" viewBox="0 0 290 100"><line x1="${padL}" y1="${plotMid.toFixed(1)}" x2="280" y2="${plotMid.toFixed(1)}" stroke="#d9e0e0" stroke-dasharray="2 2"/><path d="M${pathPts.join(' L')}" fill="none" stroke="#0a5c8c" stroke-width="2"/>${dots}<text x="${padL}" y="90" font-family="monospace" font-size="8" fill="#9aa6a6">${firstLabel}</text><text x="278" y="90" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${lastLabel}</text></svg>`;
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Net result per closed trip, in '+vesselCurrency+'. Green = profitable, red = operated at a loss.</div>';
+    }
+    html += '</div>';
+
+    // --- Cost composition donut, selected vessel only ---
+    html += '<div class="insight-card"><div class="insight-card-label">Cost composition · all trips</div>';
+    if(vesselTrips.length === 0){
+      html += '<div class="insight-empty">No closed trips with costs logged for this vessel yet.</div>';
+    } else {
+      const costsByType = {};
+      vesselTrips.forEach(t => { const f = computeTripFinancials(t); Object.entries(f.costsByType).forEach(([k,v]) => { costsByType[k] = (costsByType[k]||0)+v; }); });
+      const typeEntries = Object.entries(costsByType).sort((a,b)=>b[1]-a[1]);
+      const totalCost = typeEntries.reduce((s,[,v])=>s+v,0);
+      if(totalCost === 0){
+        html += '<div class="insight-empty">No costs logged for this vessel\'s trips yet.</div>';
+      } else {
+        const palette = ['#0a5c8c','#5fc7ee','#c0532f','#cdd6d6','#2f7a52','#41545f'];
+        const donutR=28, circ=2*Math.PI*donutR;
+        let offset=0, segs='';
+        typeEntries.forEach(([,v],i) => { const frac=v/totalCost; const dash=frac*circ; segs+=`<circle cx="40" cy="40" r="28" fill="none" stroke="${palette[i%palette.length]}" stroke-width="14" stroke-dasharray="${dash.toFixed(1)} ${(circ-dash).toFixed(1)}" stroke-dashoffset="${(-(offset)+circ*0.25).toFixed(1)}"/>`; offset+=dash; });
+        html += '<div style="display:flex;align-items:center;gap:14px;">'
+          + `<svg width="76" height="76" viewBox="0 0 80 80" style="flex-shrink:0;">${segs}</svg>`
+          + '<div style="flex:1;font-size:11.5px;line-height:2;">'
+          + typeEntries.map(([k,v],i) => '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+palette[i%palette.length]+';margin-right:6px;"></span>'+(k.charAt(0).toUpperCase()+k.slice(1))+' · '+(v/totalCost*100).toFixed(0)+'%</div>').join('')
+          + '</div></div>';
+      }
+    }
+    html += '</div>';
+
+    // --- Commercial CPUE by gear, all vessels ---
+    html += '<div class="insight-card"><div class="insight-card-label">Commercial CPUE · kg / hour</div>';
+    const allHauls = load(HAULS_KEY);
+    const allCatches = load(CATCHES_KEY);
+    const cpueByGear = {};
+    allHauls.forEach(h => {
+      const dur = parseFloat(h.duration_min);
+      if(!dur || dur <= 0) return;
+      const g = h.gear_type || 'Unspecified';
+      const kg = allCatches.filter(c => c.haul_id === h.haul_id).reduce((s,c) => s+(parseFloat(c.kg)||0), 0);
+      if(!cpueByGear[g]) cpueByGear[g] = { kg:0, hours:0 };
+      cpueByGear[g].kg += kg;
+      cpueByGear[g].hours += dur/60;
+    });
+    const gearCpueRows = Object.entries(cpueByGear).filter(([,d]) => d.hours>0).map(([g,d]) => ({ g, rate: d.kg/d.hours })).sort((a,b)=>b.rate-a.rate);
+    if(gearCpueRows.length === 0){
+      html += '<div class="insight-empty">No hauls with both a duration and logged catch yet.</div>';
+    } else {
+      const maxRate = Math.max(...gearCpueRows.map(r=>r.rate)) || 1;
+      gearCpueRows.forEach(r => { const pct = (r.rate/maxRate*100).toFixed(0); html += '<div class="bar-row"><div class="bar-row-top"><span>'+r.g+'</span><span>'+r.rate.toFixed(1)+' kg/hr</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>'; });
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">All vessels, all trips — not affected by the vessel filter above, since kg/hr isn\'t a currency figure.</div>';
+    }
+    html += '</div>';
+
+    // --- Vessel comparison ---
+    html += '<div class="insight-card"><div class="insight-card-label">Vessel comparison</div>';
+    const vesselRows = vessels.map(v => {
+      const trips = closedTrips.filter(t => t.vessel_id === v.vessel_id);
+      if(trips.length === 0) return { v, trips:0, kg:0, hours:0, marginSum:0, marginN:0 };
+      let kg=0, hours=0, marginSum=0, marginN=0;
+      trips.forEach(t => {
+        const f = computeTripFinancials(t);
+        kg += f.kg;
+        if(f.margin !== null){ marginSum += f.margin; marginN++; }
+      });
+      load(HAULS_KEY).filter(h => trips.some(t=>t.trip_id===h.trip_id)).forEach(h => { const dur=parseFloat(h.duration_min); if(dur>0) hours += dur/60; });
+      return { v, trips: trips.length, kg, hours, marginSum, marginN };
+    }).filter(r => r.trips > 0);
+    if(vesselRows.length === 0){
+      html += '<div class="insight-empty">No closed trips yet.</div>';
+    } else {
+      html += '<table class="stat-table"><thead><tr><th>Vessel</th><th>Trips</th><th>kg/hr</th><th>Margin</th></tr></thead><tbody>';
+      vesselRows.forEach(r => {
+        const rate = r.hours>0 ? (r.kg/r.hours) : null;
+        const avgMargin = r.marginN>0 ? (r.marginSum/r.marginN) : null;
+        const marginChip = avgMargin===null ? '—' : '<span class="chip '+(avgMargin>=0?'chip-green':'chip-red')+'">'+(avgMargin>=0?'+':'')+avgMargin.toFixed(0)+'%</span>';
+        html += '<tr><td class="sp-name" style="font-style:normal;">'+r.v.name+'</td><td class="num">'+r.trips+'</td><td class="num">'+(rate!==null?rate.toFixed(1):'—')+'</td><td class="num">'+marginChip+'</td></tr>';
+      });
+      html += '</tbody></table>';
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.</div>';
+    }
+    html += '</div>';
+
+    main.innerHTML = html;
+  }
+  document.getElementById('fleetStatsVesselFilter').addEventListener('change', renderFleetStats);
 
   if(window.fishPulseReapplyIfActive){
     window.fishPulseReapplyIfActive('fleet', () => {
