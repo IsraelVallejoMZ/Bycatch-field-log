@@ -1561,7 +1561,7 @@
     <button class="track-toggle-btn" id="trackToggleBtn">Start tracking</button>
 
     <div class="track-note">
-      One GPS point every ~20 sec while this screen stays open. Locking the phone pauses recording — browser limitation. Stop and save before switching apps.
+      One GPS point every ~20 sec. You can move to other Fish Pulse screens while recording — it keeps running in the background of the app. The screen is kept awake automatically while tracking; locking the phone or switching to a different app still pauses recording (an OS limit no web app can override) — stop and save before doing either.
     </div>
 
     <div class="hist-meta-row">
@@ -1817,6 +1817,11 @@
       <div id="fleetWeatherBox" style="display:none; margin-top:10px;"></div>
     </div>
 
+    <div class="card">
+      <label for="fleetHaulNotes">Notes <span class="optional-tag">optional</span></label>
+      <textarea id="fleetHaulNotes" rows="2" placeholder="e.g. net snagged on reef, unusual bycatch, engine trouble"></textarea>
+    </div>
+
     <div class="track-note" style="margin-bottom:0;">
       <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin:0;">
         <input type="checkbox" id="fleetLogCatchNow" checked style="width:16px; height:16px; margin:0; flex-shrink:0;">
@@ -1888,6 +1893,16 @@
       <div class="duration-line" id="fleetPriceSuggestionLine" style="display:none; cursor:pointer;"></div>
       <div class="duration-line" id="fleetEstValueLine">Estimated Value: —</div>
     </div>
+
+    <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <span class="sc-title">Photo <span class="optional-tag">optional</span></span>
+      </div>
+      <div class="photobox" id="fleetCatchPhotoBox"></div>
+    </div>
   </main>
   <div class="savebar">
     <button class="btn btn-clear" id="fleetCatchAddAnotherBtn">+ Add Another</button>
@@ -1954,6 +1969,21 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="insight-card-label" style="margin-bottom:10px;">Crew On This Trip <span class="optional-tag">optional</span></div>
+      <div id="fleetCloseCrewChecklist" class="pillrow" style="margin-bottom:10px;"></div>
+      <div class="grid2">
+        <input type="text" id="fleetCloseNewCrewName" placeholder="e.g. J. Sombrero">
+        <button class="btn btn-save" id="fleetCloseAddCrewBtn" style="padding:0;">Add</button>
+      </div>
+      <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5;">Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.</div>
+    </div>
+
+    <div class="card">
+      <label for="fleetCloseNotes">Trip Notes <span class="optional-tag">optional</span></label>
+      <textarea id="fleetCloseNotes" rows="2" placeholder="e.g. weather cut trip short, gear repaired mid-trip"></textarea>
+    </div>
+
     <div class="track-note">
       Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.
     </div>
@@ -1996,6 +2026,13 @@
   </div>
   <main>
     <div id="fleetTripDetailLanding"></div>
+
+    <div class="card">
+      <div class="card-label collapsible" id="fleetHaulLogToggle">Haul Log <span id="fleetHaulLogChevron">▾</span></div>
+      <div class="collapsible-body" id="fleetHaulLogBody" style="display:none;">
+        <div id="fleetTripDetailHaulList"></div>
+      </div>
+    </div>
 
     <div class="card">
       <div class="card-label collapsible" id="fleetIndividualCatchesToggle">Individual Catches Logged <span id="fleetIndividualCatchesChevron">▾</span></div>
@@ -2085,6 +2122,11 @@
     <div class="map-mode-banner" id="fleetMapModeBanner">
       <span class="mb-dot"></span>
       <span id="fleetMapModeText">Checking connection…</span>
+    </div>
+
+    <div class="map-layer-toggle" id="fleetMapLayerToggle" style="display:none;">
+      <button class="mlt-btn active" id="fleetMltStreet">Street</button>
+      <button class="mlt-btn" id="fleetMltSatellite">Satellite</button>
     </div>
 
     <div id="fleetLeafletMap"></div>
@@ -2258,6 +2300,11 @@
       <span class="insight-card-label" style="margin:0;">All captains</span>
     </div>
     <div id="captainsList"></div>
+
+    <div class="hist-meta-row" style="margin-top:6px;">
+      <span class="insight-card-label" style="margin:0;">All crew</span>
+    </div>
+    <div id="crewList"></div>
   </main>
 </section>
 
@@ -2913,6 +2960,8 @@
   const TILE_URL_TEMPLATE = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   const TILE_TEST_URL = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
   const TILE_ATTRIBUTION = '© OpenStreetMap contributors © CARTO';
+  const ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  const ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
   const COSTS_KEY = 'fleet_trip_costs_v1';
   const CREW_SHARES_KEY = 'fleet_crew_shares_v1';
   const SALES_KEY = 'fleet_sales_v1';
@@ -2949,6 +2998,7 @@
   });
 
   const CAPTAINS_KEY = 'fleet_captains_v1';
+  const CREW_KEY = 'fleet_crew_v1';
   const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
 
   function uid(){
@@ -3248,6 +3298,8 @@
     currentEditingCatchTripId = null;
     setFleetCatchScreenMode();
     populateFleetCatchHaulSelect(haulId);
+    fleetCatchPhotoDataUrl = null;
+    resetFleetPhotoBox('fleetCatchPhotoBox', (d) => { fleetCatchPhotoDataUrl = d; });
     fleetGoTo('log-catch');
     applyDefaultCurrencyToSelects();
   }
@@ -3269,6 +3321,7 @@
     document.getElementById('fleetRefPrice').value = record.ref_price || '';
     if(record.currency) document.getElementById('fleetRefCurrency').value = record.currency;
     updateFleetEstValue();
+    populateFleetPhotoBox('fleetCatchPhotoBox', record.photo || null, (d) => { fleetCatchPhotoDataUrl = d; });
     fleetGoTo('log-catch');
   }
   // Toggles the Log Catch screen's labels/buttons between "logging a new
@@ -3284,6 +3337,13 @@
   document.getElementById('fleetIndividualCatchesToggle').addEventListener('click', () => {
     const body = document.getElementById('fleetIndividualCatchesBody');
     const chevron = document.getElementById('fleetIndividualCatchesChevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.textContent = isOpen ? '▾' : '▴';
+  });
+  document.getElementById('fleetHaulLogToggle').addEventListener('click', () => {
+    const body = document.getElementById('fleetHaulLogBody');
+    const chevron = document.getElementById('fleetHaulLogChevron');
     const isOpen = body.style.display !== 'none';
     body.style.display = isOpen ? 'none' : 'block';
     chevron.textContent = isOpen ? '▾' : '▴';
@@ -3407,7 +3467,8 @@
       net_width: document.getElementById('fleetNetWidth').value || '',
       hook_count: document.getElementById('fleetHookCount').value || '',
       lat: fleetHaulCoords ? fleetHaulCoords.lat : '',
-      lon: fleetHaulCoords ? fleetHaulCoords.lon : ''
+      lon: fleetHaulCoords ? fleetHaulCoords.lon : '',
+      notes: document.getElementById('fleetHaulNotes').value.trim()
     };
     const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
     showFleetToast('Haul saved');
@@ -3419,6 +3480,7 @@
     document.getElementById('fleetHaulEnd').value = '';
     document.getElementById('fleetNetWidth').value = '';
     document.getElementById('fleetHookCount').value = '';
+    document.getElementById('fleetHaulNotes').value = '';
     document.getElementById('fleetHaulDurationLine').textContent = 'Duration: —';
     resetFleetHaulGps();
 
@@ -3474,6 +3536,8 @@
     document.getElementById('fleetEstValueLine').textContent = 'Estimated Value: —';
     document.getElementById('fleetPriceSuggestionLine').style.display = 'none';
     delete document.getElementById('fleetRefCurrency').dataset.userTouched;
+    fleetCatchPhotoDataUrl = null;
+    resetFleetPhotoBox('fleetCatchPhotoBox', (d) => { fleetCatchPhotoDataUrl = d; });
   }
   function saveFleetCatch(){
     const species = document.getElementById('fleetSpecies').value.trim();
@@ -3490,7 +3554,8 @@
         species, kg,
         ref_price: price || '',
         currency,
-        estimated_value: price ? kg * parseFloat(price) : ''
+        estimated_value: price ? kg * parseFloat(price) : '',
+        photo: fleetCatchPhotoDataUrl
       });
       save(CATCHES_KEY, catches);
       return true;
@@ -3508,7 +3573,8 @@
       estimated_value: price ? kg * parseFloat(price) : '',
       actual_sale_id: null,
       actual_unit_price: null,
-      actual_value: null
+      actual_value: null,
+      photo: fleetCatchPhotoDataUrl
     };
     catches.push(record); save(CATCHES_KEY, catches);
     return true;
@@ -3536,6 +3602,37 @@
   });
 
   // ===== Close trip =====
+  // Crew checked for the trip currently being closed — only meaningful
+  // while the Close Trip screen is open, reset each time it's opened.
+  let fleetCloseSelectedCrewIds = [];
+  function renderFleetCloseCrewChecklist(){
+    const crew = load(CREW_KEY);
+    const box = document.getElementById('fleetCloseCrewChecklist');
+    box.innerHTML = crew.length === 0
+      ? '<div style="font-family:var(--data); font-size:11.5px; color:var(--ink-soft);">No crew added yet — use the field below.</div>'
+      : crew.map(c => '<div class="pill'+(fleetCloseSelectedCrewIds.includes(c.crew_id)?' active':'')+'" data-crew-id="'+c.crew_id+'">'+c.name+'</div>').join('');
+    box.querySelectorAll('[data-crew-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.crewId;
+        const i = fleetCloseSelectedCrewIds.indexOf(id);
+        if(i === -1) fleetCloseSelectedCrewIds.push(id); else fleetCloseSelectedCrewIds.splice(i,1);
+        renderFleetCloseCrewChecklist();
+      });
+    });
+  }
+  document.getElementById('fleetCloseAddCrewBtn').addEventListener('click', () => {
+    const input = document.getElementById('fleetCloseNewCrewName');
+    const name = input.value.trim();
+    if(!name){ showFleetToast('Enter a name first', true); return; }
+    const crew = load(CREW_KEY);
+    const newMember = { crew_id: uid(), name };
+    crew.push(newMember);
+    save(CREW_KEY, crew);
+    fleetCloseSelectedCrewIds.push(newMember.crew_id);
+    input.value = '';
+    renderFleetCloseCrewChecklist();
+  });
+
   document.getElementById('fleetCloseTripBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
     if(!trip) return;
@@ -3566,6 +3663,9 @@
     delete document.getElementById('fleetCostCrewCurrency').dataset.userTouched;
     delete document.getElementById('fleetCostIceCurrency').dataset.userTouched;
     delete document.getElementById('fleetCostProvisionsCurrency').dataset.userTouched;
+    document.getElementById('fleetCloseNotes').value = '';
+    fleetCloseSelectedCrewIds = [];
+    renderFleetCloseCrewChecklist();
 
     fleetGoTo('close-trip');
     applyDefaultCurrencyToSelects();
@@ -3590,6 +3690,8 @@
     const remaining = parseFloat(document.getElementById('fleetFuelRemaining').value) || 0;
     trips[idx].ended_at = new Date().toISOString();
     trips[idx].fuel_consumed_l = Math.max(0, loaded - remaining);
+    trips[idx].crew_ids = fleetCloseSelectedCrewIds.slice();
+    trips[idx].closing_notes = document.getElementById('fleetCloseNotes').value.trim();
     save(TRIPS_KEY, trips);
 
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
@@ -3774,6 +3876,7 @@
       + '<div><label style="margin-top:0;">Vessel</label><div class="duration-line">'+(vessel?vessel.name:'—')+'</div></div>'
       + '<div><label style="margin-top:0;">Captain</label><div class="duration-line">'+(captain?captain.name:'—')+'</div></div>'
       + '</div>'
+      + (trip.closing_notes ? '<div style="background:var(--panel); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:10px; font-family:var(--data); font-size:12px; color:var(--ink); line-height:1.5;"><b>Trip notes:</b> '+trip.closing_notes+'</div>' : '')
       + landingGroups.map(g => '<div class="entry"><div><div class="sp">'+g.species+'</div>'
           + '<div class="meta">'+(g.hasActual?'Scale: '+g.actualKg.toFixed(1)+' kg':'Estimated, not yet scaled')+'</div></div>'
           + '<div class="duration-line" style="margin:0;">'+g.estKg.toFixed(1)+' kg Est.</div></div>').join('')
@@ -3791,6 +3894,13 @@
     // is closed and the report above is grouped by species, without
     // reopening the trip itself or its settlement.
     const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const haulListEl = document.getElementById('fleetTripDetailHaulList');
+    haulListEl.innerHTML = tripHauls.length === 0
+      ? '<div class="empty">No hauls logged.</div>'
+      : tripHauls.slice().reverse().map(h => '<div class="entry"><div><div class="sp" style="font-style:normal;">'+(h.gear_type||'Haul')+'</div>'
+          + '<div class="meta">'+(h.haul_start||'—')+(h.depth?' · '+h.depth+'m':'')+(h.duration_min?' · '+h.duration_min+' min':'')+'</div>'
+          + (h.notes ? '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:4px; line-height:1.4;">'+h.notes+'</div>' : '')
+          + '</div></div>').join('');
     const detailHaulLabel = hId => {
       if(!hId) return 'No haul';
       const h = tripHauls.find(x => x.haul_id === hId);
@@ -3800,7 +3910,7 @@
     catchListEl.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged.</div>'
       : catches.slice().reverse().map(c => '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'"><div><div class="sp">'+(c.species||'unnamed')+'</div>'
-          + '<div class="meta">'+detailHaulLabel(c.haul_id)+(c.ref_price ? ' · Ref. '+c.ref_price+' '+c.currency+'/kg' : '')+'</div></div>'
+          + '<div class="meta">'+detailHaulLabel(c.haul_id)+(c.ref_price ? ' · Ref. '+c.ref_price+' '+c.currency+'/kg' : '')+(c.photo ? ' · 📷' : '')+'</div></div>'
           + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
     catchListEl.querySelectorAll('[data-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
@@ -3853,7 +3963,9 @@
             .filter(t => t.vessel_id === trip.vessel_id && t.ended_at && t.trip_id !== trip.trip_id && new Date(t.started_at) < new Date(trip.started_at))
             .sort((a,b) => new Date(b.started_at) - new Date(a.started_at))[0];
           const lastShares = lastTrip ? load(CREW_SHARES_KEY).filter(cs => cs.trip_id === lastTrip.trip_id) : [];
+          const tripCrewNames = (trip.crew_ids||[]).map(id => (load(CREW_KEY).find(c=>c.crew_id===id)||{}).name).filter(Boolean);
           return '<div class="empty">No crew members added yet for this trip.</div>'
+            + (tripCrewNames.length > 0 ? '<button class="track-toggle-btn" id="fleetPrefillCaptainCrewBtn" style="margin-top:10px;">Use Captain\'s Crew List ('+tripCrewNames.length+' '+(tripCrewNames.length===1?'Person':'People')+')</button>' : '')
             + (lastShares.length > 0 ? '<button class="track-toggle-btn" id="fleetCopyLastCrewBtn" style="margin-top:10px;">Copy From Last Trip ('+lastShares.length+' '+(lastShares.length===1?'Member':'Members')+')</button>' : '');
         })() : crewShares.map(cs => {
           const amount = netResult * (parseFloat(cs.percent)||0) / 100;
@@ -3898,6 +4010,17 @@
         lastShares.forEach(cs => all.push({ share_id: uid(), trip_id: trip.trip_id, name: cs.name, percent: cs.percent }));
         save(CREW_SHARES_KEY, all);
         showFleetToast('Crew copied from last trip — feel free to adjust');
+        renderFleetTripDetail();
+      });
+    }
+    const prefillCaptainBtn = document.getElementById('fleetPrefillCaptainCrewBtn');
+    if(prefillCaptainBtn){
+      prefillCaptainBtn.addEventListener('click', () => {
+        const names = (trip.crew_ids||[]).map(id => (load(CREW_KEY).find(c=>c.crew_id===id)||{}).name).filter(Boolean);
+        const all = load(CREW_SHARES_KEY);
+        names.forEach(name => all.push({ share_id: uid(), trip_id: trip.trip_id, name, percent: '' }));
+        save(CREW_SHARES_KEY, all);
+        showFleetToast('Crew added from the captain\'s list — set each share %');
         renderFleetTripDetail();
       });
     }
@@ -4181,6 +4304,10 @@
     document.getElementById('captainsList').innerHTML = captains.length === 0
       ? '<div class="empty">No captains yet.</div>'
       : captains.map(c => '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+c.name+'</div></div>').join('');
+    const crew = load(CREW_KEY);
+    document.getElementById('crewList').innerHTML = crew.length === 0
+      ? '<div class="empty">No crew yet — added from the Close Trip screen.</div>'
+      : crew.map(c => '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+c.name+'</div></div>').join('');
     applyDefaultCurrencyToSelects();
   }
 
@@ -4342,6 +4469,8 @@
         + '<label>Actual sale price <span class="optional-tag">optional, per kg</span></label>'
         + '<div class="grid2"><input type="number" inputmode="decimal" class="fleet-recon-price" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(sale?sale.unit_price:'')+'" placeholder="e.g. 90">'
         + '<select disabled style="opacity:0.6;"><option>'+currency+'</option></select></div>'
+        + '<label>Buyer <span class="optional-tag">optional</span></label>'
+        + '<input type="text" class="fleet-recon-buyer" data-species="'+g.species.replace(/"/g,'&quot;')+'" value="'+(sale&&sale.buyer?sale.buyer.replace(/"/g,'&quot;'):'')+'" placeholder="e.g. Ao Nang Fish Market">'
         + '</div>';
     }).join('')
       + '<div class="track-note" style="margin-bottom:10px;">Enter the total scale weight per species as landed — not per haul. Once hauls of the same species are unloaded together, the scale gives one combined number. Existing values are pre-filled; you can correct them at any time.</div>'
@@ -4377,12 +4506,14 @@
         if(inp.value === '') return;
         const existingIdx = allSales.findIndex(s => s.trip_id === tripId && s.species === inp.dataset.species);
         const vesselForSale = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+        const buyerInput = document.querySelector('.fleet-recon-buyer[data-species="'+inp.dataset.species.replace(/"/g,'\\"')+'"]');
         const record = {
           sale_id: existingIdx !== -1 ? allSales[existingIdx].sale_id : uid(),
           trip_id: tripId,
           vessel_id: trip.vessel_id,
           species: inp.dataset.species,
           unit_price: parseFloat(inp.value),
+          buyer: buyerInput ? buyerInput.value.trim() : '',
           currency: vesselForSale ? vesselForSale.default_currency : 'THB',
           recorded_at: new Date().toISOString()
         };
@@ -4437,6 +4568,26 @@
   resetFleetPhotoBox('fleetDocPhotoBox', (d) => { fleetDocPhotoDataUrl = d; });
   document.getElementById('fleetDocPhotoBox').addEventListener('click', () => {
     document.getElementById('fleetDocPhotoBox').querySelector('input[type=file]').click();
+  });
+
+  // Same box, but pre-filled with an existing photo — needed when opening
+  // a catch for editing that already has one, rather than only ever
+  // starting from an empty "tap to add" state.
+  function populateFleetPhotoBox(boxId, dataUrl, onPicked){
+    const box = document.getElementById(boxId);
+    if(!dataUrl){ resetFleetPhotoBox(boxId, onPicked); return; }
+    box.classList.add('filled');
+    box.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    box.appendChild(img);
+    box.appendChild(buildFleetPhotoInput(boxId, onPicked));
+  }
+
+  let fleetCatchPhotoDataUrl = null;
+  resetFleetPhotoBox('fleetCatchPhotoBox', (d) => { fleetCatchPhotoDataUrl = d; });
+  document.getElementById('fleetCatchPhotoBox').addEventListener('click', () => {
+    document.getElementById('fleetCatchPhotoBox').querySelector('input[type=file]').click();
   });
 
   function renderFleetDocuments(){
@@ -4541,6 +4692,9 @@
   let fleetMapTripId = null;
   let fleetMapReturnScreen = 'trip';
   let fleetLeafletInstance = null;
+  let fleetMapCurrentLayer = 'street'; // 'street' | 'satellite'
+  let fleetStreetLayer = null;
+  let fleetSatelliteLayer = null;
 
   document.getElementById('fleetViewMapBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
@@ -4591,12 +4745,14 @@
       if(isLive){
         banner.className = 'map-mode-banner live';
         bannerText.textContent = 'Live map · tiles loaded from connection';
+        document.getElementById('fleetMapLayerToggle').style.display = 'flex';
         document.getElementById('fleetLeafletMap').style.display = 'block';
         document.getElementById('fleetSchematicMap').style.display = 'none';
         renderFleetLeaflet(withGps);
       } else {
         banner.className = 'map-mode-banner offline';
         bannerText.textContent = 'Offline mode · schematic coordinate plot';
+        document.getElementById('fleetMapLayerToggle').style.display = 'none';
         document.getElementById('fleetLeafletMap').style.display = 'none';
         document.getElementById('fleetSchematicMap').style.display = 'block';
         renderFleetSchematic(withGps);
@@ -4622,11 +4778,12 @@
     if(!fleetLeafletInstance){
       fleetLeafletInstance = L.map('fleetLeafletMap');
       // CartoDB Voyager via the shared TILE_URL_TEMPLATE constant — see
-      // its definition above for why a fixed subdomain is used.
-      L.tileLayer(TILE_URL_TEMPLATE, {
-        attribution: TILE_ATTRIBUTION,
-        maxZoom: 20
-      }).addTo(fleetLeafletInstance);
+      // its definition above for why a fixed subdomain is used. ESRI
+      // satellite imagery as an alternate layer, same pattern already
+      // used on the Research and Sport maps.
+      fleetStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
+      fleetSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
+      fleetStreetLayer.addTo(fleetLeafletInstance);
     }
     fleetLeafletInstance.eachLayer(layer => {
       if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
@@ -4650,6 +4807,22 @@
     fleetLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
     setTimeout(()=> fleetLeafletInstance.invalidateSize(), 50);
   }
+
+  function setFleetMapLayer(type){
+    fleetMapCurrentLayer = type;
+    document.getElementById('fleetMltStreet').classList.toggle('active', type === 'street');
+    document.getElementById('fleetMltSatellite').classList.toggle('active', type === 'satellite');
+    if(!fleetLeafletInstance) return;
+    if(type === 'satellite'){
+      if(fleetLeafletInstance.hasLayer(fleetStreetLayer)) fleetLeafletInstance.removeLayer(fleetStreetLayer);
+      if(!fleetLeafletInstance.hasLayer(fleetSatelliteLayer)) fleetSatelliteLayer.addTo(fleetLeafletInstance);
+    } else {
+      if(fleetLeafletInstance.hasLayer(fleetSatelliteLayer)) fleetLeafletInstance.removeLayer(fleetSatelliteLayer);
+      if(!fleetLeafletInstance.hasLayer(fleetStreetLayer)) fleetStreetLayer.addTo(fleetLeafletInstance);
+    }
+  }
+  document.getElementById('fleetMltStreet').addEventListener('click', () => setFleetMapLayer('street'));
+  document.getElementById('fleetMltSatellite').addEventListener('click', () => setFleetMapLayer('satellite'));
 
   function renderFleetSchematic(hauls){
     const wrap = document.getElementById('fleetSchematicMap');
@@ -7663,6 +7836,43 @@
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
+  // Sample one GPS fix onto the track every 20s rather than on every raw
+  // watchPosition callback (which can fire multiple times a second and
+  // would bloat the track with redundant, jittery points).
+  const TRACK_POINT_INTERVAL_MS = 20000;
+  let trackActive = false;
+  let trackPoints = [];
+  let trackWatchId = null;
+  let trackIntervalId = null;
+  let trackUiTickId = null;
+  let trackStartTime = null;
+  let trackLastFix = null;
+  let trackWakeLock = null;
+
+  // Recording keeps running as long as Fish Pulse itself stays open — this
+  // is a single-page app, so switching to another screen inside Fish Pulse
+  // (Home, New Record, etc.) does NOT stop it, since watchPosition/setInterval
+  // belong to the page, not to whichever screen div happens to be visible.
+  // What DOES pause it is the phone's screen locking or switching to a
+  // different app entirely — that's an OS-level suspension of background
+  // tabs that no web app (as opposed to a native app) can fully override.
+  // The Wake Lock API below covers the most common real cause of that —
+  // the screen auto-locking from inactivity — by keeping it on for as
+  // long as tracking is active.
+  async function acquireTrackWakeLock(){
+    try{
+      if('wakeLock' in navigator){
+        trackWakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch(err){ /* Wake Lock unsupported or blocked — tracking still works, screen may just sleep */ }
+  }
+  function releaseTrackWakeLock(){
+    if(trackWakeLock){ trackWakeLock.release().catch(()=>{}); trackWakeLock = null; }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if(trackActive && document.visibilityState === 'visible' && !trackWakeLock) acquireTrackWakeLock();
+  });
+
   function trackTotalDistanceKm(points){
     let total = 0;
     for(let i = 1; i < points.length; i++){
@@ -7706,6 +7916,7 @@
     trackPoints = [];
     trackStartTime = Date.now();
     trackLastFix = null;
+    acquireTrackWakeLock();
 
     setTrackGpsStatus('Acquiring GPS…', false);
 
@@ -7739,6 +7950,7 @@
 
   function stopTracking(){
     trackActive = false;
+    releaseTrackWakeLock();
     if(trackWatchId !== null) navigator.geolocation.clearWatch(trackWatchId);
     if(trackIntervalId !== null) clearInterval(trackIntervalId);
     if(trackUiTickId !== null) clearInterval(trackUiTickId);
