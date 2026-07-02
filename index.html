@@ -1612,9 +1612,9 @@
 <section class="screen" id="screen-fleet-role-select">
   <div class="mode-select-wrap">
     <div class="mode-select-header">
-      <div class="mode-select-eyebrow">Fishing Operations</div>
-      <div class="mode-select-title">Who's using<br>this session?</div>
-      <button class="switch-mode-btn" id="switchModeFromRoleSelect" style="margin-top:14px;">← Switch Mode</button>
+      <div class="mode-select-eyebrow" data-i18n="mode_fleet_title">Fishing Operations</div>
+      <div class="mode-select-title" data-i18n-html="flrole_title">Who's using<br>this session?</div>
+      <button class="switch-mode-btn" id="switchModeFromRoleSelect" style="margin-top:14px;" data-i18n="flrole_switch_mode">← Switch Mode</button>
     </div>
 
     <div class="mode-card captain-card" data-fleet-role="captain">
@@ -1625,9 +1625,9 @@
           <circle cx="24" cy="13" r="2.3" fill="white"/>
         </svg>
       </div>
-      <div class="mode-card-title">Captain</div>
-      <div class="mode-card-sub">Log trips · hauls · catch<br>GPS positions · fuel</div>
-      <div class="mode-card-context-chip">At sea →</div>
+      <div class="mode-card-title" data-i18n="flrole_captain">Captain</div>
+      <div class="mode-card-sub" data-i18n-html="flrole_captain_sub">Log trips · hauls · catch<br>GPS positions · fuel</div>
+      <div class="mode-card-context-chip" data-i18n="flrole_at_sea">At sea →</div>
     </div>
 
     <div class="mode-card ops-card" data-fleet-role="operations">
@@ -1638,9 +1638,9 @@
           <rect x="31" y="24" width="9" height="14" stroke="#5fc7ee" stroke-width="2.2"/>
         </svg>
       </div>
-      <div class="mode-card-title">Operations</div>
-      <div class="mode-card-sub ops-sub">Fleet dashboard · reconciliation<br>documents · settlement</div>
-      <div class="mode-card-context-chip ops-chip">On land →</div>
+      <div class="mode-card-title" data-i18n="flrole_operations">Operations</div>
+      <div class="mode-card-sub ops-sub" data-i18n-html="flrole_operations_sub">Fleet dashboard · reconciliation<br>documents · settlement</div>
+      <div class="mode-card-context-chip ops-chip" data-i18n="flrole_on_land">On land →</div>
     </div>
   </div>
 </section>
@@ -1649,38 +1649,38 @@
 <section class="screen" id="screen-fleet-trip">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Fish Pulse · Captain</span>
+      <span class="brand" data-i18n="fltrip_brand">Fish Pulse · Captain</span>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
-        <button class="switch-mode-btn" id="switchModeBtnFleet">Switch Mode</button>
+        <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
+        <button class="switch-mode-btn" id="switchModeBtnFleet" data-i18n="fltrip_switch_mode">Switch Mode</button>
       </div>
     </div>
-    <h1>Active Trip</h1>
-    <div class="site-line" id="fleetVesselLine">No Vessel Selected</div>
+    <h1 data-i18n="fltrip_active_trip">Active Trip</h1>
+    <div class="site-line" id="fleetVesselLine" data-i18n="fltrip_no_vessel">No Vessel Selected</div>
   </div>
   <main>
     <div id="fleetNoTripCard">
       <div class="card">
-        <div class="insight-card-label" style="margin-bottom:14px;">Start a new trip</div>
-        <label for="fleetCaptainSelect">Captain</label>
+        <div class="insight-card-label" style="margin-bottom:14px;" data-i18n="fltrip_start_new">Start a new trip</div>
+        <label for="fleetCaptainSelect" data-i18n="fltrip_captain">Captain</label>
         <select id="fleetCaptainSelect">
-          <option value="">— Select Captain —</option>
-          <option value="__new__">+ New Captain</option>
+          <option value="" data-i18n="fltrip_select_captain">— Select Captain —</option>
+          <option value="__new__" data-i18n="fltrip_new_captain">+ New Captain</option>
         </select>
         <div id="fleetNewCaptainBox" style="display:none; margin-top:10px;">
-          <label for="fleetNewCaptainName">Captain Name</label>
+          <label for="fleetNewCaptainName" data-i18n="fltrip_captain_name">Captain Name</label>
           <input type="text" id="fleetNewCaptainName" placeholder="e.g. J. Sombrero">
         </div>
 
-        <label for="fleetVesselSelect">Vessel</label>
+        <label for="fleetVesselSelect" data-i18n="fltrip_vessel">Vessel</label>
         <select id="fleetVesselSelect">
-          <option value="">— Select Vessel —</option>
-          <option value="__new__">+ New Vessel</option>
+          <option value="" data-i18n="fltrip_select_vessel">— Select Vessel —</option>
+          <option value="__new__" data-i18n="fltrip_new_vessel">+ New Vessel</option>
         </select>
         <div id="fleetNewVesselBox" style="display:none; margin-top:10px;">
-          <label for="fleetNewVesselName">Vessel Name</label>
+          <label for="fleetNewVesselName" data-i18n="fltrip_vessel_name">Vessel Name</label>
           <input type="text" id="fleetNewVesselName" placeholder="e.g. Vessel 04">
-          <label for="fleetNewVesselCurrency">Default Currency</label>
+          <label for="fleetNewVesselCurrency" data-i18n="fltrip_default_currency">Default Currency</label>
           <select id="fleetNewVesselCurrency" class="currency-select">
             <option value="THB">THB</option>
             <option value="USD">USD</option>
@@ -1692,16 +1692,16 @@
 
         <div class="grid2">
           <div>
-            <label for="fleetCrewCount">Crew Count</label>
+            <label for="fleetCrewCount" data-i18n="fltrip_crew_count">Crew Count</label>
             <input type="number" id="fleetCrewCount" inputmode="numeric" placeholder="e.g. 4">
           </div>
           <div>
-            <label for="fleetFuelLoaded">Fuel Loaded (L)</label>
+            <label for="fleetFuelLoaded" data-i18n="fltrip_fuel_loaded">Fuel Loaded (L)</label>
             <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
           </div>
         </div>
 
-        <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;">Start Trip</button>
+        <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;" data-i18n="fltrip_start_trip">Start Trip</button>
       </div>
     </div>
 
@@ -1715,7 +1715,7 @@
         </div>
         <div>
           <div class="num" id="fleetTripDuration">0h 00m</div>
-          <div class="hh-meta">Trip duration · <span id="fleetTripVesselTag">Vessel</span></div>
+          <div class="hh-meta"><span data-i18n="fltrip_duration_label">Trip duration</span> · <span id="fleetTripVesselTag" data-i18n="fltrip_vessel">Vessel</span></div>
         </div>
       </div>
 
@@ -1727,7 +1727,7 @@
               <path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </div>
-          <div class="at-title">Log Haul</div>
+          <div class="at-title" data-i18n="fltrip_log_haul">Log Haul</div>
         </div>
         <div class="action-tile" id="fleetLogCatchBtn">
           <div class="at-icon-box">
@@ -1736,20 +1736,20 @@
               <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
             </svg>
           </div>
-          <div class="at-title">Log Catch</div>
+          <div class="at-title" data-i18n="fltrip_log_catch">Log Catch</div>
         </div>
       </div>
 
-      <button class="fleet-close-trip-btn" id="fleetCloseTripBtn">Close Trip</button>
+      <button class="fleet-close-trip-btn" id="fleetCloseTripBtn" data-i18n="fltrip_close_trip">Close Trip</button>
 
       <div class="hist-meta-row" style="margin-top:6px;">
-        <span class="insight-card-label" style="margin:0;">Catches this trip</span>
+        <span class="insight-card-label" style="margin:0;" data-i18n="fltrip_catches_this_trip">Catches this trip</span>
       </div>
       <div id="fleetTripCatchList"></div>
 
       <div class="hist-meta-row" style="margin-top:6px;">
-        <span class="insight-card-label" style="margin:0;">Hauls this trip</span>
-        <button class="exportbtn" id="fleetViewMapBtn">View Map</button>
+        <span class="insight-card-label" style="margin:0;" data-i18n="fltrip_hauls_this_trip">Hauls this trip</span>
+        <button class="exportbtn" id="fleetViewMapBtn" data-i18n="fltrip_view_map">View Map</button>
       </div>
       <div id="fleetTripHaulList"></div>
     </div>
@@ -1761,9 +1761,9 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip">←</button>
-      <span class="brand">Log Haul</span>
+      <span class="brand" data-i18n="flhaul_brand">Log Haul</span>
     </div>
-    <h1>Haul Details</h1>
+    <h1 data-i18n="flhaul_title">Haul Details</h1>
     <div class="site-line" id="fleetHaulVesselLine">&nbsp;</div>
   </div>
   <main>
@@ -1772,40 +1772,40 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="white"/></svg>
         </div>
-        <span class="sc-title">Gear &amp; effort</span>
+        <span class="sc-title" data-i18n="flhaul_gear_effort">Gear &amp; effort</span>
       </div>
-      <label for="fleetGearType">Gear Type</label>
+      <label for="fleetGearType" data-i18n="rec_gear_label">Gear Type</label>
       <select id="fleetGearType">
-        <option value="">— Select —</option>
-        <option value="Demersal trawl">Demersal Trawl</option>
-        <option value="Otter trawl">Otter Trawl</option>
-        <option value="Gillnet">Gillnet</option>
-        <option value="Longline">Longline</option>
-        <option value="Purse seine">Purse Seine</option>
-        <option value="Other">Other</option>
+        <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+        <option value="Demersal trawl" data-i18n="rec_gear_demersal_trawl">Demersal Trawl</option>
+        <option value="Otter trawl" data-i18n="rec_gear_otter_trawl">Otter Trawl</option>
+        <option value="Gillnet" data-i18n="rec_gear_gillnet">Gillnet</option>
+        <option value="Longline" data-i18n="rec_gear_longline">Longline</option>
+        <option value="Purse seine" data-i18n="rec_gear_purse_seine">Purse Seine</option>
+        <option value="Other" data-i18n="rec_gear_other">Other</option>
       </select>
 
-      <label for="fleetDepth">Depth (m)</label>
+      <label for="fleetDepth" data-i18n="rec_depth_label">Depth (m)</label>
       <input type="number" id="fleetDepth" inputmode="decimal" placeholder="e.g. 35">
 
       <div class="grid2">
         <div>
-          <label for="fleetHaulStart">Haul Start</label>
+          <label for="fleetHaulStart" data-i18n="flhaul_start">Haul Start</label>
           <input type="time" id="fleetHaulStart">
         </div>
         <div>
-          <label for="fleetHaulEnd">Haul End</label>
+          <label for="fleetHaulEnd" data-i18n="flhaul_end">Haul End</label>
           <input type="time" id="fleetHaulEnd">
         </div>
       </div>
       <div class="duration-line" id="fleetHaulDurationLine">Duration: —</div>
 
       <div class="gear-effort-fields" id="fleetNetEffortFields" style="display:none;">
-        <label for="fleetNetWidth">Net Width / Mouth Opening (m)</label>
+        <label for="fleetNetWidth" data-i18n="rec_net_width_label">Net Width / Mouth Opening (m)</label>
         <input type="number" id="fleetNetWidth" inputmode="decimal" placeholder="e.g. 12">
       </div>
       <div class="gear-effort-fields" id="fleetHookEffortFields" style="display:none;">
-        <label for="fleetHookCount">Number Of Hooks</label>
+        <label for="fleetHookCount" data-i18n="rec_hook_count_label">Number Of Hooks</label>
         <input type="number" id="fleetHookCount" inputmode="numeric" placeholder="e.g. 200">
       </div>
     </div>
@@ -1815,31 +1815,31 @@
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title">Position <span class="optional-tag">optional</span></span>
+        <span class="sc-title"><span data-i18n="rec_step8_title">Position</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
       <div class="gpsbox" id="fleetGpsBox">
-        <span class="coords pending" id="fleetCoordsLabel">not captured</span>
-        <button class="gps-btn" id="fleetGpsBtn" type="button">Capture</button>
+        <span class="coords pending" id="fleetCoordsLabel" data-i18n="rec_not_captured">not captured</span>
+        <button class="gps-btn" id="fleetGpsBtn" type="button" data-i18n="rec_capture_gps">Capture</button>
       </div>
       <div id="fleetWeatherBox" style="display:none; margin-top:10px;"></div>
     </div>
 
     <div class="card">
-      <label for="fleetHaulNotes">Notes <span class="optional-tag">optional</span></label>
+      <label for="fleetHaulNotes"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <textarea id="fleetHaulNotes" rows="2" placeholder="e.g. net snagged on reef, unusual bycatch, engine trouble"></textarea>
     </div>
 
     <div class="track-note" style="margin-bottom:0;">
       <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin:0;">
         <input type="checkbox" id="fleetLogCatchNow" checked style="width:16px; height:16px; margin:0; flex-shrink:0;">
-        <span style="font-family:var(--display); font-size:13px; color:#cfe7f4; font-weight:600; text-transform:none; letter-spacing:0;">Log catch for this haul now</span>
+        <span style="font-family:var(--display); font-size:13px; color:#cfe7f4; font-weight:600; text-transform:none; letter-spacing:0;" data-i18n="flhaul_log_catch_now">Log catch for this haul now</span>
       </label>
-      <div style="font-family:var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; line-height:1.5; padding-left:26px;">Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.</div>
+      <div style="font-family:var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; line-height:1.5; padding-left:26px;" data-i18n="flhaul_log_catch_hint">Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.</div>
     </div>
   </main>
   <div class="savebar">
-    <button class="btn btn-clear" id="fleetHaulCancelBtn">Cancel</button>
-    <button class="btn btn-save" id="fleetHaulSaveBtn">Save Haul</button>
+    <button class="btn btn-clear" id="fleetHaulCancelBtn" data-i18n="flhaul_cancel">Cancel</button>
+    <button class="btn btn-save" id="fleetHaulSaveBtn" data-i18n="flhaul_save">Save Haul</button>
   </div>
 </section>
 
@@ -1848,10 +1848,10 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" id="fleetCatchBackBtn" data-go="fleet-trip">←</button>
-      <span class="brand" id="fleetCatchBrand">Log Catch</span>
+      <span class="brand" id="fleetCatchBrand" data-i18n="flcatch_brand">Log Catch</span>
     </div>
-    <h1>Catch Entry</h1>
-    <div class="site-line" id="fleetCatchHaulLine">Not Linked To A Haul</div>
+    <h1 data-i18n="flcatch_title">Catch Entry</h1>
+    <div class="site-line" id="fleetCatchHaulLine" data-i18n="flcatch_not_linked">Not Linked To A Haul</div>
   </div>
   <main>
     <div class="card">
@@ -1859,7 +1859,7 @@
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title">Haul <span class="optional-tag">this catch belongs to</span></span>
+        <span class="sc-title"><span data-i18n="flcatch_haul">Haul</span> <span class="optional-tag" data-i18n="flcatch_haul_hint">this catch belongs to</span></span>
       </div>
       <select id="fleetCatchHaulSelect"></select>
       <div class="duration-line" id="fleetCatchHaulCountLine" style="display:none;"></div>
@@ -1870,13 +1870,13 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title">Species &amp; weight</span>
+        <span class="sc-title" data-i18n="flcatch_species_weight">Species &amp; weight</span>
       </div>
-      <label for="fleetSpecies">Species / Commercial Category</label>
+      <label for="fleetSpecies" data-i18n="flcatch_species_label">Species / Commercial Category</label>
       <input type="text" id="fleetSpecies" placeholder="e.g. Pomadasys kaakan, or 'mixed reef fish'" list="fleet-species-list">
       <datalist id="fleet-species-list"></datalist>
 
-      <label for="fleetCatchKg">Weight (kg)</label>
+      <label for="fleetCatchKg" data-i18n="rec_weight_label">Weight (kg)</label>
       <input type="number" id="fleetCatchKg" inputmode="decimal" placeholder="0.0">
     </div>
 
@@ -1885,7 +1885,7 @@
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="3" rx="1" fill="#0a5c8c"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="#0a5c8c"/><rect x="4" y="16" width="10" height="3" rx="1" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title">Reference price <span class="optional-tag">optional</span></span>
+        <span class="sc-title"><span data-i18n="flcatch_ref_price">Reference price</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
       <div class="grid2">
         <input type="number" id="fleetRefPrice" inputmode="decimal" placeholder="e.g. 85">
@@ -1906,14 +1906,14 @@
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Photo <span class="optional-tag">optional</span></span>
+        <span class="sc-title"><span data-i18n="rec_photo_label">Photo</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
       <div class="photobox" id="fleetCatchPhotoBox"></div>
     </div>
   </main>
   <div class="savebar">
-    <button class="btn btn-clear" id="fleetCatchAddAnotherBtn">+ Add Another</button>
-    <button class="btn btn-save" id="fleetCatchSaveBtn">Save &amp; Return To Trip</button>
+    <button class="btn btn-clear" id="fleetCatchAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
+    <button class="btn btn-save" id="fleetCatchSaveBtn" data-i18n="flcatch_save_return">Save &amp; Return To Trip</button>
   </div>
 </section>
 
@@ -1922,28 +1922,28 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip">←</button>
-      <span class="brand">Close Trip</span>
+      <span class="brand" data-i18n="flclose_brand">Close Trip</span>
     </div>
-    <h1>Trip Summary &amp; Costs</h1>
+    <h1 data-i18n="flclose_h1">Trip Summary &amp; Costs</h1>
     <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
   </div>
   <main>
     <div class="kpi-grid" style="margin-bottom:10px;">
-      <div class="kpi-cell"><div class="kn" id="fleetCloseDuration">—</div><div class="kl">Duration</div></div>
-      <div class="kpi-cell"><div class="kn" id="fleetCloseHauls">—</div><div class="kl">Hauls</div></div>
-      <div class="kpi-cell"><div class="kn" id="fleetCloseTotalKg">—</div><div class="kl">Total kg</div></div>
-      <div class="kpi-cell"><div class="kn accent" id="fleetCloseEstValue">—</div><div class="kl">Est. value</div></div>
+      <div class="kpi-cell"><div class="kn" id="fleetCloseDuration">—</div><div class="kl" data-i18n="track_duration">Duration</div></div>
+      <div class="kpi-cell"><div class="kn" id="fleetCloseHauls">—</div><div class="kl" data-i18n="flclose_hauls">Hauls</div></div>
+      <div class="kpi-cell"><div class="kn" id="fleetCloseTotalKg">—</div><div class="kl" data-i18n="flclose_total_kg">Total kg</div></div>
+      <div class="kpi-cell"><div class="kn accent" id="fleetCloseEstValue">—</div><div class="kl" data-i18n="flclose_est_value">Est. value</div></div>
     </div>
 
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;">Fuel</div>
+      <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flclose_fuel">Fuel</div>
       <div class="grid2">
         <div>
-          <label for="fleetFuelLoadedDisplay">Loaded (L)</label>
+          <label for="fleetFuelLoadedDisplay" data-i18n="flclose_loaded_l">Loaded (L)</label>
           <input type="number" id="fleetFuelLoadedDisplay" disabled>
         </div>
         <div>
-          <label for="fleetFuelRemaining">Remaining (L)</label>
+          <label for="fleetFuelRemaining" data-i18n="flclose_remaining_l">Remaining (L)</label>
           <input type="number" id="fleetFuelRemaining" inputmode="decimal" placeholder="e.g. 52">
         </div>
       </div>
@@ -1951,53 +1951,53 @@
     </div>
 
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;">Costs you can log now</div>
+      <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flclose_costs_now">Costs you can log now</div>
 
-      <label for="fleetCostCrew">Crew Payment <span class="optional-tag">per trip</span></label>
+      <label for="fleetCostCrew"><span data-i18n="flclose_crew_payment">Crew Payment</span> <span class="optional-tag" data-i18n="flclose_per_trip">per trip</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostCrew" inputmode="decimal" placeholder="e.g. 2000">
         <select id="fleetCostCrewCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
-      <label for="fleetCostIce">Ice / Preservation <span class="optional-tag">per trip</span></label>
+      <label for="fleetCostIce"><span data-i18n="flclose_ice">Ice / Preservation</span> <span class="optional-tag" data-i18n="flclose_per_trip">per trip</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostIce" inputmode="decimal" placeholder="e.g. 300">
         <select id="fleetCostIceCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
-      <label for="fleetCostProvisions">Provisions <span class="optional-tag">per day at sea</span></label>
+      <label for="fleetCostProvisions"><span data-i18n="flclose_provisions">Provisions</span> <span class="optional-tag" data-i18n="flclose_per_day">per day at sea</span></label>
       <div class="grid2">
         <input type="number" id="fleetCostProvisions" inputmode="decimal" placeholder="e.g. 250">
         <select id="fleetCostProvisionsCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
 
-      <div class="track-note" style="margin-top:14px;margin-bottom:0;">
+      <div class="track-note" style="margin-top:14px;margin-bottom:0;" data-i18n="flclose_maintenance_hint">
         Maintenance, permits, and port dues are usually added by the office afterward.
       </div>
     </div>
 
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;">Crew On This Trip <span class="optional-tag">optional</span></div>
+      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flclose_crew_on_trip">Crew On This Trip</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
       <div id="fleetCloseCrewChecklist" class="pillrow" style="margin-bottom:10px;"></div>
       <div class="grid2">
         <input type="text" id="fleetCloseNewCrewName" placeholder="e.g. J. Sombrero">
-        <button class="btn btn-save" id="fleetCloseAddCrewBtn" style="padding:0;">Add</button>
+        <button class="btn btn-save" id="fleetCloseAddCrewBtn" style="padding:0;" data-i18n="flclose_add">Add</button>
       </div>
-      <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5;">Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.</div>
+      <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5;" data-i18n="flclose_crew_hint">Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.</div>
     </div>
 
     <div class="card">
-      <label for="fleetCloseNotes">Trip Notes <span class="optional-tag">optional</span></label>
+      <label for="fleetCloseNotes"><span data-i18n="flclose_trip_notes">Trip Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <textarea id="fleetCloseNotes" rows="2" placeholder="e.g. weather cut trip short, gear repaired mid-trip"></textarea>
     </div>
 
-    <div class="track-note">
+    <div class="track-note" data-i18n="flclose_before_close">
       Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.
     </div>
   </main>
   <div class="savebar">
-    <button class="btn btn-clear" id="fleetCloseCancelBtn">Cancel</button>
-    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--coral);">Close Trip</button>
+    <button class="btn btn-clear" id="fleetCloseCancelBtn" data-i18n="flhaul_cancel">Cancel</button>
+    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--coral);" data-i18n="fltrip_close_trip">Close Trip</button>
   </div>
 </section>
 
@@ -2006,15 +2006,15 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
-      <span class="brand">Trip Log</span>
+      <span class="brand" data-i18n="fltriplog_brand">Trip Log</span>
     </div>
-    <h1>Past Trips</h1>
-    <div class="site-line" id="fleetTripLogVesselLine">All Vessels</div>
+    <h1 data-i18n="fltriplog_title">Past Trips</h1>
+    <div class="site-line" id="fleetTripLogVesselLine" data-i18n="fltriplog_all_vessels">All Vessels</div>
   </div>
   <main>
     <div class="filter-row">
       <select id="fleetTripLogVesselFilter" style="width:100%;">
-        <option value="">All Vessels</option>
+        <option value="" data-i18n="fltriplog_all_vessels">All Vessels</option>
       </select>
     </div>
     <div id="fleetTripLogList"></div>
@@ -2026,49 +2026,49 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip-log">←</button>
-      <span class="brand">Trip Detail</span>
+      <span class="brand" data-i18n="fltripdet_brand">Trip Detail</span>
     </div>
-    <h1>Landing Report &amp; Settlement</h1>
+    <h1 data-i18n="fltripdet_h1">Landing Report &amp; Settlement</h1>
     <div class="site-line" id="fleetTripDetailVesselLine">&nbsp;</div>
   </div>
   <main>
     <div id="fleetTripDetailLanding"></div>
 
     <div class="card">
-      <div class="card-label collapsible" id="fleetHaulLogToggle">Haul Log <span id="fleetHaulLogChevron">▾</span></div>
+      <div class="card-label collapsible" id="fleetHaulLogToggle"><span data-i18n="fltripdet_haul_log">Haul Log</span> <span id="fleetHaulLogChevron">▾</span></div>
       <div class="collapsible-body" id="fleetHaulLogBody" style="display:none;">
         <div id="fleetTripDetailHaulList"></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-label collapsible" id="fleetIndividualCatchesToggle">Individual Catches Logged <span id="fleetIndividualCatchesChevron">▾</span></div>
+      <div class="card-label collapsible" id="fleetIndividualCatchesToggle"><span data-i18n="fltripdet_catches_logged">Individual Catches Logged</span> <span id="fleetIndividualCatchesChevron">▾</span></div>
       <div class="collapsible-body" id="fleetIndividualCatchesBody" style="display:none;">
-        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5;">Tap a catch to fix its species, weight, or which haul it belongs to. The Landing Report above always reflects the latest values.</div>
+        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5;" data-i18n="fltripdet_tap_catch_hint">Tap a catch to fix its species, weight, or which haul it belongs to. The Landing Report above always reflects the latest values.</div>
         <div id="fleetTripDetailCatchList"></div>
       </div>
     </div>
 
-    <button class="track-toggle-btn" id="fleetDetailViewMapBtn" style="margin-bottom:18px;">View Haul Map</button>
+    <button class="track-toggle-btn" id="fleetDetailViewMapBtn" style="margin-bottom:18px;" data-i18n="fltripdet_view_haul_map">View Haul Map</button>
 
     <div class="card">
-      <div class="card-label" style="margin-bottom:14px;">Add A Cost To This Trip</div>
-      <label for="fleetDetailCostType">Cost Type</label>
+      <div class="card-label" style="margin-bottom:14px;" data-i18n="fltripdet_add_cost">Add A Cost To This Trip</div>
+      <label for="fleetDetailCostType" data-i18n="fltripdet_cost_type">Cost Type</label>
       <select id="fleetDetailCostType">
-        <option value="ice">Ice / Preservation</option>
-        <option value="provisions">Provisions</option>
-        <option value="maintenance">Maintenance</option>
-        <option value="permits_fees">Permits / Fees</option>
-        <option value="port_dues">Port Dues</option>
-        <option value="crew">Crew Payment</option>
-        <option value="other">Other</option>
+        <option value="ice" data-i18n="flclose_ice">Ice / Preservation</option>
+        <option value="provisions" data-i18n="flclose_provisions">Provisions</option>
+        <option value="maintenance" data-i18n="fltripdet_maintenance">Maintenance</option>
+        <option value="permits_fees" data-i18n="fltripdet_permits_fees">Permits / Fees</option>
+        <option value="port_dues" data-i18n="fltripdet_port_dues">Port Dues</option>
+        <option value="crew" data-i18n="flclose_crew_payment">Crew Payment</option>
+        <option value="other" data-i18n="rec_gear_other">Other</option>
       </select>
-      <label for="fleetDetailCostAmount">Amount</label>
+      <label for="fleetDetailCostAmount" data-i18n="fltripdet_amount">Amount</label>
       <div class="grid2">
         <input type="number" id="fleetDetailCostAmount" inputmode="decimal" placeholder="e.g. 300">
         <select id="fleetDetailCostCurrency" class="currency-select"><option value="THB">THB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="MXN">MXN</option><option value="VND">VND</option></select>
       </div>
-      <button class="btn btn-save" id="fleetDetailAddCostBtn" style="width:100%; margin-top:14px;">Add Cost</button>
+      <button class="btn btn-save" id="fleetDetailAddCostBtn" style="width:100%; margin-top:14px;" data-i18n="fltripdet_add_cost_btn">Add Cost</button>
     </div>
 
     <div id="fleetTripDetailSettlement"></div>
@@ -2077,13 +2077,13 @@
   <div id="fleetExportOverlay" class="fleet-export-overlay" style="display:none;">
     <div class="fleet-export-panel">
       <div class="fleet-export-header">
-        <span class="brand" id="fleetExportTitle">Export</span>
+        <span class="brand" id="fleetExportTitle" data-i18n="fltripdet_export">Export</span>
         <button class="back-btn" id="fleetExportCloseBtn">✕</button>
       </div>
       <div id="fleetExportText" class="fleet-export-text"></div>
       <div class="savebar" style="position:relative;">
-        <button class="btn btn-clear" id="fleetExportCloseBtn2">Close</button>
-        <button class="btn btn-save" id="fleetExportShareBtn">Share</button>
+        <button class="btn btn-clear" id="fleetExportCloseBtn2" data-i18n="premium_close">Close</button>
+        <button class="btn btn-save" id="fleetExportShareBtn" data-i18n="fltripdet_share">Share</button>
       </div>
     </div>
   </div>
@@ -2093,23 +2093,23 @@
 <section class="screen" id="screen-fleet-dashboard">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Fish Pulse · Operations</span>
+      <span class="brand" data-i18n="fldash_brand">Fish Pulse · Operations</span>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
-        <button class="switch-mode-btn" id="switchModeBtnOperations">Switch Mode</button>
+        <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
+        <button class="switch-mode-btn" id="switchModeBtnOperations" data-i18n="fltrip_switch_mode">Switch Mode</button>
       </div>
     </div>
-    <h1>Fleet Overview</h1>
+    <h1 data-i18n="fldash_h1">Fleet Overview</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
     <div id="fleetDashboardSummary"></div>
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">Efficiency by vessel</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="fldash_efficiency">Efficiency by vessel</span>
     </div>
     <div id="fleetDashboardVessels"></div>
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">Needs attention</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="fldash_needs_attention">Needs attention</span>
     </div>
     <div id="fleetDashboardAlerts"></div>
   </main>
@@ -2120,26 +2120,26 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" id="fleetMapBackBtn">←</button>
-      <span class="brand">Haul Map</span>
+      <span class="brand" data-i18n="flhaulmap_brand">Haul Map</span>
     </div>
-    <h1>Fishing Zones</h1>
+    <h1 data-i18n="flhaulmap_title">Fishing Zones</h1>
     <div class="site-line" id="fleetMapVesselLine">&nbsp;</div>
   </div>
   <main>
     <div class="map-mode-banner" id="fleetMapModeBanner">
       <span class="mb-dot"></span>
-      <span id="fleetMapModeText">Checking connection…</span>
+      <span id="fleetMapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
 
     <div class="map-layer-toggle" id="fleetMapLayerToggle" style="display:none;">
-      <button class="mlt-btn active" id="fleetMltStreet">Street</button>
-      <button class="mlt-btn" id="fleetMltSatellite">Satellite</button>
+      <button class="mlt-btn active" id="fleetMltStreet" data-i18n="map_street">Street</button>
+      <button class="mlt-btn" id="fleetMltSatellite" data-i18n="map_satellite">Satellite</button>
     </div>
 
     <div id="fleetLeafletMap"></div>
     <div class="schematic-wrap" id="fleetSchematicMap" style="display:none;"></div>
 
-    <div class="section-h">Hauls Without GPS</div>
+    <div class="section-h" data-i18n="flhaulmap_no_gps">Hauls Without GPS</div>
     <div id="fleetNoGpsNote" class="empty" style="display:none;"></div>
   </main>
 </section>
@@ -2148,15 +2148,15 @@
 <section class="screen" id="screen-fleet-fuel-log">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Fish Pulse · Captain</span>
-      <button class="switch-mode-btn" data-switch-fleet-role="1">Switch Role</button>
+      <span class="brand" data-i18n="fltrip_brand">Fish Pulse · Captain</span>
+      <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
     </div>
-    <h1>Daily Fuel Log</h1>
+    <h1 data-i18n="flfuel_h1">Daily Fuel Log</h1>
     <div class="site-line" id="fleetFuelLogVesselLine">&nbsp;</div>
   </div>
   <main>
     <div id="fleetFuelLogNoTripNote" style="display:none;">
-      <div class="track-note">Start a trip from the Trip tab to begin logging daily fuel readings.</div>
+      <div class="track-note" data-i18n="flfuel_no_trip">Start a trip from the Trip tab to begin logging daily fuel readings.</div>
     </div>
     <div id="fleetFuelLogBody" style="display:none;">
       <div class="card">
@@ -2164,16 +2164,16 @@
           <div class="sc-icon-box">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="10" height="16" rx="2" stroke="white" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="white" stroke-width="1.6" stroke-linecap="round"/><path d="M11 19v2M13 19v2" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
           </div>
-          <span class="sc-title">Today's reading</span>
+          <span class="sc-title" data-i18n="flfuel_todays_reading">Today's reading</span>
         </div>
-        <label for="fleetFuelLogReading">Fuel Remaining (L)</label>
+        <label for="fleetFuelLogReading" data-i18n="flfuel_remaining">Fuel Remaining (L)</label>
         <input type="number" id="fleetFuelLogReading" inputmode="decimal" placeholder="e.g. 140">
         <div class="duration-line" id="fleetFuelLogConsumedLine">Consumed since last reading: —</div>
-        <button class="btn btn-save" id="fleetFuelLogSaveBtn" style="width:100%; margin-top:16px;">Save Reading</button>
+        <button class="btn btn-save" id="fleetFuelLogSaveBtn" style="width:100%; margin-top:16px;" data-i18n="flfuel_save_reading">Save Reading</button>
       </div>
 
       <div class="hist-meta-row" style="margin-top:6px;">
-        <span class="insight-card-label" style="margin:0;">Readings this trip</span>
+        <span class="insight-card-label" style="margin:0;" data-i18n="flfuel_readings_this_trip">Readings this trip</span>
       </div>
       <div id="fleetFuelLogList"></div>
     </div>
@@ -2185,13 +2185,13 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
-      <span class="brand">Reconciliation</span>
+      <span class="brand" data-i18n="flrecon_brand">Reconciliation</span>
     </div>
-    <h1>Scale Vs. Logbook</h1>
+    <h1 data-i18n="flrecon_h1">Scale Vs. Logbook</h1>
     <div class="site-line">&nbsp;</div>
     <div style="margin-top:10px;">
       <select id="fleetReconTripSelect" style="width:100%;background:rgba(255,255,255,0.08);color:#cfe7f4;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 10px;font-family:var(--data);font-size:11px;">
-        <option value="">— Select a closed trip —</option>
+        <option value="" data-i18n="flrecon_select_trip">— Select a closed trip —</option>
       </select>
     </div>
   </div>
@@ -2205,9 +2205,9 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" id="fleetDocumentsBackBtn">←</button>
-      <span class="brand">Documents</span>
+      <span class="brand" data-i18n="fldocs_brand">Documents</span>
     </div>
-    <h1>Licenses &amp; Certificates</h1>
+    <h1 data-i18n="fldocs_h1">Licenses &amp; Certificates</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
@@ -2216,38 +2216,38 @@
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="#0a5c8c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Add document</span>
+        <span class="sc-title" data-i18n="fldocs_add">Add document</span>
       </div>
-      <label for="fleetDocVessel">Vessel</label>
-      <select id="fleetDocVessel"><option value="">— Select Vessel —</option></select>
-      <label for="fleetDocType">Document Type</label>
+      <label for="fleetDocVessel" data-i18n="fltrip_vessel">Vessel</label>
+      <select id="fleetDocVessel"><option value="" data-i18n="fltrip_select_vessel">— Select Vessel —</option></select>
+      <label for="fleetDocType" data-i18n="fldocs_type">Document Type</label>
       <select id="fleetDocType">
-        <option value="fishing_license">Fishing License</option>
-        <option value="safety_certificate">Safety Certificate</option>
-        <option value="seaman_book">Seaman's Book</option>
-        <option value="other">Other</option>
+        <option value="fishing_license" data-i18n="fldocs_fishing_license">Fishing License</option>
+        <option value="safety_certificate" data-i18n="fldocs_safety_certificate">Safety Certificate</option>
+        <option value="seaman_book" data-i18n="fldocs_seaman_book">Seaman's Book</option>
+        <option value="other" data-i18n="rec_gear_other">Other</option>
       </select>
-      <label for="fleetDocLabel">Label <span class="optional-tag">e.g. captain name</span></label>
+      <label for="fleetDocLabel"><span data-i18n="fldocs_label">Label</span> <span class="optional-tag" data-i18n="fldocs_label_hint">e.g. captain name</span></label>
       <input type="text" id="fleetDocLabel" placeholder="e.g. J. Sombrero">
-      <label for="fleetDocExpiry">Expiry Date</label>
+      <label for="fleetDocExpiry" data-i18n="fldocs_expiry">Expiry Date</label>
       <input type="date" id="fleetDocExpiry">
       <div class="step-card-header" style="margin:14px 0 10px;">
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Photo / Scan <span class="optional-tag">optional</span></span>
+        <span class="sc-title"><span data-i18n="fldocs_photo_scan">Photo / Scan</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
       <div class="photobox" id="fleetDocPhotoBox"></div>
-      <button class="btn btn-save" id="fleetDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
+      <button class="btn btn-save" id="fleetDocAddBtn" style="width:100%; margin-top:16px;" data-i18n="fldocs_add_btn">Add Document</button>
     </div>
 
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">Maintenance</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="fldocs_maintenance">Maintenance</span>
     </div>
     <div id="fleetMaintenanceList"></div>
 
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">All documents</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="fldocs_all">All documents</span>
     </div>
     <div id="fleetDocumentsList"></div>
   </main>
@@ -2258,14 +2258,14 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
-      <span class="brand">Vessels</span>
+      <span class="brand" data-i18n="flvessels_brand">Vessels</span>
     </div>
-    <h1>Vessels &amp; Captains</h1>
+    <h1 data-i18n="flvessels_h1">Vessels &amp; Captains</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-      <label for="fleetDefaultCurrency" style="margin:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);">Default currency</label>
+      <label for="fleetDefaultCurrency" style="margin:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);" data-i18n="fltrip_default_currency">Default currency</label>
       <select id="fleetDefaultCurrency" style="width:auto;padding:7px 10px;font-size:13px;">
         <option value="THB">THB</option>
         <option value="USD">USD</option>
@@ -2276,10 +2276,10 @@
     </div>
 
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;">Add vessel</div>
-      <label for="vesselsNewName">Vessel Name</label>
+      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="flvessels_add">Add vessel</div>
+      <label for="vesselsNewName" data-i18n="fltrip_vessel_name">Vessel Name</label>
       <input type="text" id="vesselsNewName" placeholder="e.g. Vessel 09">
-      <label for="vesselsNewCurrency">Default Currency</label>
+      <label for="vesselsNewCurrency" data-i18n="fltrip_default_currency">Default Currency</label>
       <select id="vesselsNewCurrency" class="currency-select">
         <option value="THB">THB</option>
         <option value="USD">USD</option>
@@ -2287,29 +2287,29 @@
         <option value="MXN">MXN</option>
         <option value="VND">VND</option>
       </select>
-      <label for="vesselsNewTarget">Efficiency Target — Margin Per Trip <span class="optional-tag">optional</span></label>
+      <label for="vesselsNewTarget"><span data-i18n="flvessels_target">Efficiency Target — Margin Per Trip</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
-      <label for="vesselsNewExpectedDailyFuel">Expected Daily Fuel Use (L/day) <span class="optional-tag">optional — overrides auto average</span></label>
+      <label for="vesselsNewExpectedDailyFuel"><span data-i18n="flvessels_expected_fuel">Expected Daily Fuel Use (L/day)</span> <span class="optional-tag" data-i18n="flvessels_expected_fuel_hint">optional — overrides auto average</span></label>
       <input type="number" id="vesselsNewExpectedDailyFuel" inputmode="decimal" placeholder="e.g. 25">
-      <label for="vesselsNewMaintenanceInterval">Maintenance Interval (hours at sea) <span class="optional-tag">optional</span></label>
+      <label for="vesselsNewMaintenanceInterval"><span data-i18n="flvessels_maintenance_interval">Maintenance Interval (hours at sea)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="number" id="vesselsNewMaintenanceInterval" inputmode="numeric" placeholder="e.g. 200">
-      <label for="vesselsNewLastMaintenanceHours">Hours at sea since last service <span class="optional-tag">optional, today</span></label>
+      <label for="vesselsNewLastMaintenanceHours"><span data-i18n="flvessels_hours_since_service">Hours at sea since last service</span> <span class="optional-tag" data-i18n="flvessels_hours_since_service_hint">optional, today</span></label>
       <input type="number" id="vesselsNewLastMaintenanceHours" inputmode="numeric" placeholder="e.g. 0 if just serviced">
-      <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;">Add Vessel</button>
+      <button class="btn btn-save" id="vesselsAddBtn" style="width:100%; margin-top:16px;" data-i18n="flvessels_add_btn">Add Vessel</button>
     </div>
 
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">All vessels</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="flvessels_all_vessels">All vessels</span>
     </div>
     <div id="vesselsList"></div>
 
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">All captains</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="flvessels_all_captains">All captains</span>
     </div>
     <div id="captainsList"></div>
 
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;">All crew</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="flvessels_all_crew">All crew</span>
     </div>
     <div id="crewList"></div>
   </main>
@@ -2320,9 +2320,9 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
-      <span class="brand">Fishing Operations</span>
+      <span class="brand" data-i18n="mode_fleet_title">Fishing Operations</span>
     </div>
-    <h1>Fleet Statistics</h1>
+    <h1 data-i18n="flstats_h1">Fleet Statistics</h1>
   </div>
   <main>
     <select id="fleetStatsVesselFilter" style="margin-bottom:14px;"></select>
@@ -2334,15 +2334,15 @@
 <nav class="tabbar fleet-captain-only" id="tabbarFleetCaptain">
   <button class="tab active" data-go="fleet-trip">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 10l4-6 4 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 16c0 3 2 5 6 6 4-1 6-3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-    Trip
+    <span data-i18n="fltab_trip">Trip</span>
   </button>
   <button class="tab" data-go="fleet-fuel-log">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    Fuel
+    <span data-i18n="fltab_fuel">Fuel</span>
   </button>
   <button class="tab" data-go="fleet-documents">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    Docs
+    <span data-i18n="fltab_docs">Docs</span>
   </button>
 </nav>
 
@@ -2350,27 +2350,27 @@
 <nav class="tabbar fleet-operations-only" id="tabbarFleetOperations">
   <button class="tab active" data-go="fleet-dashboard">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg></span>
-    Fleet
+    <span data-i18n="fltab_fleet">Fleet</span>
   </button>
   <button class="tab" data-go="fleet-trip-log">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    Trips
+    <span data-i18n="fltab_trips">Trips</span>
   </button>
   <button class="tab" data-go="fleet-reconciliation">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    Reconcile
+    <span data-i18n="fltab_reconcile">Reconcile</span>
   </button>
   <button class="tab" data-go="fleet-documents">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    Docs
+    <span data-i18n="fltab_docs">Docs</span>
   </button>
   <button class="tab" data-go="fleet-vessels">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    Vessels
+    <span data-i18n="fltab_vessels">Vessels</span>
   </button>
   <button class="tab" data-go="fleet-stats">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-    Stats
+    <span data-i18n="ins_tab_stats">Stats</span>
   </button>
 </nav>
 
@@ -2811,7 +2811,51 @@
       camp_active: 'Active campaign', camp_none: 'None — records will be unassigned', camp_end: 'End Campaign',
       camp_past: 'Past campaigns',
       ins_title: 'Survey Statistics', ins_all_taxon: 'All taxon groups', ins_all_campaigns: 'All campaigns',
-      ins_tab_stats: 'Stats', ins_tab_charts: 'Charts', ins_tab_advanced: 'Advanced'
+      ins_tab_stats: 'Stats', ins_tab_charts: 'Charts', ins_tab_advanced: 'Advanced',
+      flrole_title: "Who's using<br>this session?", flrole_switch_mode: '← Switch Mode',
+      flrole_captain: 'Captain', flrole_captain_sub: 'Log trips · hauls · catch<br>GPS positions · fuel', flrole_at_sea: 'At sea →',
+      flrole_operations: 'Operations', flrole_operations_sub: 'Fleet dashboard · reconciliation<br>documents · settlement', flrole_on_land: 'On land →',
+      fltrip_brand: 'Fish Pulse · Captain', fltrip_switch_role: 'Switch Role', fltrip_switch_mode: 'Switch Mode',
+      fltrip_active_trip: 'Active Trip', fltrip_no_vessel: 'No Vessel Selected', fltrip_start_new: 'Start a new trip',
+      fltrip_captain: 'Captain', fltrip_select_captain: '— Select Captain —', fltrip_new_captain: '+ New Captain', fltrip_captain_name: 'Captain Name',
+      fltrip_vessel: 'Vessel', fltrip_select_vessel: '— Select Vessel —', fltrip_new_vessel: '+ New Vessel', fltrip_vessel_name: 'Vessel Name',
+      fltrip_default_currency: 'Default Currency', fltrip_crew_count: 'Crew Count', fltrip_fuel_loaded: 'Fuel Loaded (L)', fltrip_start_trip: 'Start Trip',
+      fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_close_trip: 'Close Trip',
+      fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
+      flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear &amp; effort',
+      flhaul_start: 'Haul Start', flhaul_end: 'Haul End', flhaul_notes: 'Notes',
+      flhaul_log_catch_now: 'Log catch for this haul now', flhaul_log_catch_hint: 'Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.',
+      flhaul_cancel: 'Cancel', flhaul_save: 'Save Haul',
+      flcatch_brand: 'Log Catch', flcatch_title: 'Catch Entry', flcatch_not_linked: 'Not Linked To A Haul',
+      flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species &amp; weight', flcatch_species_label: 'Species / Commercial Category',
+      flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save &amp; Return To Trip',
+      flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary &amp; Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value',
+      flclose_fuel: 'Fuel', flclose_loaded_l: 'Loaded (L)', flclose_remaining_l: 'Remaining (L)', flclose_costs_now: 'Costs you can log now',
+      flclose_crew_payment: 'Crew Payment', flclose_per_trip: 'per trip', flclose_ice: 'Ice / Preservation', flclose_provisions: 'Provisions', flclose_per_day: 'per day at sea',
+      flclose_maintenance_hint: 'Maintenance, permits, and port dues are usually added by the office afterward.',
+      flclose_crew_on_trip: 'Crew On This Trip', flclose_add: 'Add', flclose_crew_hint: 'Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.',
+      flclose_trip_notes: 'Trip Notes', flclose_before_close: 'Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.',
+      fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
+      fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report &amp; Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
+      fltripdet_tap_catch_hint: 'Tap a catch to fix its species, weight, or which haul it belongs to. The Landing Report above always reflects the latest values.',
+      fltripdet_view_haul_map: 'View Haul Map', fltripdet_add_cost: 'Add A Cost To This Trip', fltripdet_cost_type: 'Cost Type',
+      fltripdet_maintenance: 'Maintenance', fltripdet_permits_fees: 'Permits / Fees', fltripdet_port_dues: 'Port Dues',
+      fltripdet_amount: 'Amount', fltripdet_add_cost_btn: 'Add Cost', fltripdet_export: 'Export', fltripdet_share: 'Share',
+      fldash_brand: 'Fish Pulse · Operations', fldash_h1: 'Fleet Overview', fldash_efficiency: 'Efficiency by vessel', fldash_needs_attention: 'Needs attention',
+      flhaulmap_brand: 'Haul Map', flhaulmap_title: 'Fishing Zones', flhaulmap_no_gps: 'Hauls Without GPS',
+      flfuel_h1: 'Daily Fuel Log', flfuel_no_trip: 'Start a trip from the Trip tab to begin logging daily fuel readings.',
+      flfuel_todays_reading: "Today's reading", flfuel_remaining: 'Fuel Remaining (L)', flfuel_save_reading: 'Save Reading', flfuel_readings_this_trip: 'Readings this trip',
+      flrecon_brand: 'Reconciliation', flrecon_h1: 'Scale Vs. Logbook', flrecon_select_trip: '— Select a closed trip —',
+      fldocs_brand: 'Documents', fldocs_h1: 'Licenses &amp; Certificates',
+      fldocs_add: 'Add document', fldocs_type: 'Document Type', fldocs_fishing_license: 'Fishing License', fldocs_safety_certificate: 'Safety Certificate', fldocs_seaman_book: "Seaman's Book",
+      fldocs_label: 'Label', fldocs_label_hint: 'e.g. captain name', fldocs_expiry: 'Expiry Date', fldocs_photo_scan: 'Photo / Scan', fldocs_add_btn: 'Add Document',
+      fldocs_maintenance: 'Maintenance', fldocs_all: 'All documents',
+      flvessels_brand: 'Vessels', flvessels_h1: 'Vessels &amp; Captains', flvessels_add: 'Add vessel',
+      flvessels_target: 'Efficiency Target — Margin Per Trip', flvessels_expected_fuel: 'Expected Daily Fuel Use (L/day)', flvessels_expected_fuel_hint: 'optional — overrides auto average',
+      flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
+      flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
+      flstats_h1: 'Fleet Statistics', fltab_trip: 'Trip', fltab_fuel: 'Fuel', fltab_docs: 'Docs',
+      fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels'
     },
     es: {
       splash_slide1_title: 'Captura datos en el mar', splash_slide1_body: 'Especies, biología, bycatch, GPS — todo sin conexión. No necesitas señal en campo.',
@@ -2889,7 +2933,51 @@
       camp_active: 'Campaña activa', camp_none: 'Ninguna — los registros quedarán sin asignar', camp_end: 'Terminar Campaña',
       camp_past: 'Campañas anteriores',
       ins_title: 'Estadísticas de Muestreo', ins_all_taxon: 'Todos los grupos taxonómicos', ins_all_campaigns: 'Todas las campañas',
-      ins_tab_stats: 'Estadísticos', ins_tab_charts: 'Gráficas', ins_tab_advanced: 'Avanzado'
+      ins_tab_stats: 'Estadísticos', ins_tab_charts: 'Gráficas', ins_tab_advanced: 'Avanzado',
+      flrole_title: '¿Quién está usando<br>esta sesión?', flrole_switch_mode: '← Cambiar Modo',
+      flrole_captain: 'Capitán', flrole_captain_sub: 'Registra viajes · lances · capturas<br>posiciones GPS · combustible', flrole_at_sea: 'En el mar →',
+      flrole_operations: 'Operaciones', flrole_operations_sub: 'Panel de flota · reconciliación<br>documentos · liquidación', flrole_on_land: 'En tierra →',
+      fltrip_brand: 'Fish Pulse · Capitán', fltrip_switch_role: 'Cambiar Rol', fltrip_switch_mode: 'Cambiar Modo',
+      fltrip_active_trip: 'Viaje Activo', fltrip_no_vessel: 'Ninguna Embarcación Seleccionada', fltrip_start_new: 'Iniciar un nuevo viaje',
+      fltrip_captain: 'Capitán', fltrip_select_captain: '— Seleccionar Capitán —', fltrip_new_captain: '+ Nuevo Capitán', fltrip_captain_name: 'Nombre del Capitán',
+      fltrip_vessel: 'Embarcación', fltrip_select_vessel: '— Seleccionar Embarcación —', fltrip_new_vessel: '+ Nueva Embarcación', fltrip_vessel_name: 'Nombre de la Embarcación',
+      fltrip_default_currency: 'Moneda Predeterminada', fltrip_crew_count: 'Número de Tripulantes', fltrip_fuel_loaded: 'Combustible Cargado (L)', fltrip_start_trip: 'Iniciar Viaje',
+      fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_close_trip: 'Cerrar Viaje',
+      fltrip_catches_this_trip: 'Capturas de este viaje', fltrip_hauls_this_trip: 'Lances de este viaje', fltrip_view_map: 'Ver Mapa',
+      flhaul_brand: 'Registrar Lance', flhaul_title: 'Detalles del Lance', flhaul_gear_effort: 'Arte y esfuerzo',
+      flhaul_start: 'Inicio del Lance', flhaul_end: 'Fin del Lance', flhaul_notes: 'Notas',
+      flhaul_log_catch_now: 'Registrar captura de este lance ahora', flhaul_log_catch_hint: 'Déjalo sin marcar para volver al viaje y registrar la captura después — o combinar toda la captura al final del viaje.',
+      flhaul_cancel: 'Cancelar', flhaul_save: 'Guardar Lance',
+      flcatch_brand: 'Registrar Captura', flcatch_title: 'Entrada de Captura', flcatch_not_linked: 'No Vinculado a un Lance',
+      flcatch_haul: 'Lance', flcatch_haul_hint: 'a la que pertenece esta captura', flcatch_species_weight: 'Especie y peso', flcatch_species_label: 'Especie / Categoría Comercial',
+      flcatch_ref_price: 'Precio de referencia', flcatch_add_another: '+ Agregar Otra', flcatch_save_return: 'Guardar y Volver al Viaje',
+      flclose_brand: 'Cerrar Viaje', flclose_h1: 'Resumen del Viaje y Costos', flclose_hauls: 'Lances', flclose_total_kg: 'Total kg', flclose_est_value: 'Valor est.',
+      flclose_fuel: 'Combustible', flclose_loaded_l: 'Cargado (L)', flclose_remaining_l: 'Restante (L)', flclose_costs_now: 'Costos que puedes registrar ahora',
+      flclose_crew_payment: 'Pago a Tripulación', flclose_per_trip: 'por viaje', flclose_ice: 'Hielo / Preservación', flclose_provisions: 'Víveres', flclose_per_day: 'por día en el mar',
+      flclose_maintenance_hint: 'Mantenimiento, permisos y derechos de puerto normalmente los agrega la oficina después.',
+      flclose_crew_on_trip: 'Tripulación en Este Viaje', flclose_add: 'Agregar', flclose_crew_hint: 'Marcar quién estuvo a bordo le ahorra a la oficina reescribir nombres en la liquidación — los porcentajes de pago se siguen definiendo ahí.',
+      flclose_trip_notes: 'Notas del Viaje', flclose_before_close: 'Antes de cerrar: cerrar bloquea nuevos lances y capturas para este viaje. La oficina todavía puede agregar costos restantes y correr la liquidación desde el panel.',
+      fltriplog_brand: 'Registro de Viajes', fltriplog_title: 'Viajes Anteriores', fltriplog_all_vessels: 'Todas las Embarcaciones',
+      fltripdet_brand: 'Detalle del Viaje', fltripdet_h1: 'Reporte de Desembarque y Liquidación', fltripdet_haul_log: 'Registro de Lances', fltripdet_catches_logged: 'Capturas Individuales Registradas',
+      fltripdet_tap_catch_hint: 'Toca una captura para corregir su especie, peso, o a qué lance pertenece. El Reporte de Desembarque de arriba siempre refleja los valores más recientes.',
+      fltripdet_view_haul_map: 'Ver Mapa de Lances', fltripdet_add_cost: 'Agregar un Costo a Este Viaje', fltripdet_cost_type: 'Tipo de Costo',
+      fltripdet_maintenance: 'Mantenimiento', fltripdet_permits_fees: 'Permisos / Cuotas', fltripdet_port_dues: 'Derechos de Puerto',
+      fltripdet_amount: 'Monto', fltripdet_add_cost_btn: 'Agregar Costo', fltripdet_export: 'Exportar', fltripdet_share: 'Compartir',
+      fldash_brand: 'Fish Pulse · Operaciones', fldash_h1: 'Vista General de la Flota', fldash_efficiency: 'Eficiencia por embarcación', fldash_needs_attention: 'Requiere atención',
+      flhaulmap_brand: 'Mapa de Lances', flhaulmap_title: 'Zonas de Pesca', flhaulmap_no_gps: 'Lances Sin GPS',
+      flfuel_h1: 'Bitácora Diaria de Combustible', flfuel_no_trip: 'Inicia un viaje desde la pestaña Viaje para comenzar a registrar lecturas diarias de combustible.',
+      flfuel_todays_reading: 'Lectura de hoy', flfuel_remaining: 'Combustible Restante (L)', flfuel_save_reading: 'Guardar Lectura', flfuel_readings_this_trip: 'Lecturas de este viaje',
+      flrecon_brand: 'Reconciliación', flrecon_h1: 'Báscula vs. Bitácora', flrecon_select_trip: '— Selecciona un viaje cerrado —',
+      fldocs_brand: 'Documentos', fldocs_h1: 'Licencias y Certificados',
+      fldocs_add: 'Agregar documento', fldocs_type: 'Tipo de Documento', fldocs_fishing_license: 'Permiso de Pesca', fldocs_safety_certificate: 'Certificado de Seguridad', fldocs_seaman_book: 'Libreta de Mar',
+      fldocs_label: 'Etiqueta', fldocs_label_hint: 'ej. nombre del capitán', fldocs_expiry: 'Fecha de Vencimiento', fldocs_photo_scan: 'Foto / Escaneo', fldocs_add_btn: 'Agregar Documento',
+      fldocs_maintenance: 'Mantenimiento', fldocs_all: 'Todos los documentos',
+      flvessels_brand: 'Embarcaciones', flvessels_h1: 'Embarcaciones y Capitanes', flvessels_add: 'Agregar embarcación',
+      flvessels_target: 'Meta de Eficiencia — Margen Por Viaje', flvessels_expected_fuel: 'Uso Diario de Combustible Esperado (L/día)', flvessels_expected_fuel_hint: 'opcional — anula el promedio automático',
+      flvessels_maintenance_interval: 'Intervalo de Mantenimiento (horas en el mar)', flvessels_hours_since_service: 'Horas en el mar desde el último servicio', flvessels_hours_since_service_hint: 'opcional, hoy',
+      flvessels_add_btn: 'Agregar Embarcación', flvessels_all_vessels: 'Todas las embarcaciones', flvessels_all_captains: 'Todos los capitanes', flvessels_all_crew: 'Toda la tripulación',
+      flstats_h1: 'Estadísticas de la Flota', fltab_trip: 'Viaje', fltab_fuel: 'Combustible', fltab_docs: 'Docs',
+      fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones'
     },
     it: {
       splash_slide1_title: 'Cattura dati in mare', splash_slide1_body: 'Specie, biologia, catture accessorie, GPS — tutto offline. Nessun segnale necessario sul campo.',
@@ -2967,7 +3055,51 @@
       camp_active: 'Campagna attiva', camp_none: 'Nessuna — le schede resteranno non assegnate', camp_end: 'Termina Campagna',
       camp_past: 'Campagne passate',
       ins_title: 'Statistiche di Rilevamento', ins_all_taxon: 'Tutti i gruppi tassonomici', ins_all_campaigns: 'Tutte le campagne',
-      ins_tab_stats: 'Statistiche', ins_tab_charts: 'Grafici', ins_tab_advanced: 'Avanzate'
+      ins_tab_stats: 'Statistiche', ins_tab_charts: 'Grafici', ins_tab_advanced: 'Avanzate',
+      flrole_title: 'Chi sta usando<br>questa sessione?', flrole_switch_mode: '← Cambia Modalità',
+      flrole_captain: 'Capitano', flrole_captain_sub: 'Registra viaggi · cale · catture<br>posizioni GPS · carburante', flrole_at_sea: 'In mare →',
+      flrole_operations: 'Operazioni', flrole_operations_sub: 'Pannello flotta · riconciliazione<br>documenti · liquidazione', flrole_on_land: 'A terra →',
+      fltrip_brand: 'Fish Pulse · Capitano', fltrip_switch_role: 'Cambia Ruolo', fltrip_switch_mode: 'Cambia Modalità',
+      fltrip_active_trip: 'Viaggio Attivo', fltrip_no_vessel: 'Nessuna Imbarcazione Selezionata', fltrip_start_new: 'Avvia un nuovo viaggio',
+      fltrip_captain: 'Capitano', fltrip_select_captain: '— Seleziona Capitano —', fltrip_new_captain: '+ Nuovo Capitano', fltrip_captain_name: 'Nome del Capitano',
+      fltrip_vessel: 'Imbarcazione', fltrip_select_vessel: '— Seleziona Imbarcazione —', fltrip_new_vessel: '+ Nuova Imbarcazione', fltrip_vessel_name: 'Nome Imbarcazione',
+      fltrip_default_currency: 'Valuta Predefinita', fltrip_crew_count: "Numero dell'Equipaggio", fltrip_fuel_loaded: 'Carburante Caricato (L)', fltrip_start_trip: 'Avvia Viaggio',
+      fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_close_trip: 'Chiudi Viaggio',
+      fltrip_catches_this_trip: 'Catture di questo viaggio', fltrip_hauls_this_trip: 'Calate di questo viaggio', fltrip_view_map: 'Vedi Mappa',
+      flhaul_brand: 'Registra Calata', flhaul_title: 'Dettagli Calata', flhaul_gear_effort: 'Attrezzo e sforzo',
+      flhaul_start: 'Inizio Calata', flhaul_end: 'Fine Calata', flhaul_notes: 'Note',
+      flhaul_log_catch_now: 'Registra ora la cattura di questa calata', flhaul_log_catch_hint: 'Lascia deselezionato per tornare al viaggio e registrare la cattura più tardi — o combinare tutta la cattura a fine viaggio.',
+      flhaul_cancel: 'Annulla', flhaul_save: 'Salva Calata',
+      flcatch_brand: 'Registra Cattura', flcatch_title: 'Inserimento Cattura', flcatch_not_linked: 'Non Collegata a una Calata',
+      flcatch_haul: 'Calata', flcatch_haul_hint: 'a cui appartiene questa cattura', flcatch_species_weight: 'Specie e peso', flcatch_species_label: 'Specie / Categoria Commerciale',
+      flcatch_ref_price: 'Prezzo di riferimento', flcatch_add_another: '+ Aggiungi Altra', flcatch_save_return: 'Salva e Torna al Viaggio',
+      flclose_brand: 'Chiudi Viaggio', flclose_h1: 'Riepilogo Viaggio e Costi', flclose_hauls: 'Calate', flclose_total_kg: 'Totale kg', flclose_est_value: 'Valore stim.',
+      flclose_fuel: 'Carburante', flclose_loaded_l: 'Caricato (L)', flclose_remaining_l: 'Rimanente (L)', flclose_costs_now: 'Costi che puoi registrare ora',
+      flclose_crew_payment: 'Pagamento Equipaggio', flclose_per_trip: 'per viaggio', flclose_ice: 'Ghiaccio / Conservazione', flclose_provisions: 'Provviste', flclose_per_day: 'al giorno in mare',
+      flclose_maintenance_hint: 'Manutenzione, permessi e tasse portuali di solito vengono aggiunti dall\'ufficio in seguito.',
+      flclose_crew_on_trip: 'Equipaggio di Questo Viaggio', flclose_add: 'Aggiungi', flclose_crew_hint: 'Segnare chi era a bordo evita all\'ufficio di riscrivere i nomi in fase di liquidazione — le quote di pagamento si impostano comunque lì.',
+      flclose_trip_notes: 'Note del Viaggio', flclose_before_close: 'Prima di chiudere: la chiusura blocca nuove calate e catture per questo viaggio. L\'ufficio può comunque aggiungere i costi rimanenti ed eseguire la liquidazione dal pannello.',
+      fltriplog_brand: 'Registro Viaggi', fltriplog_title: 'Viaggi Passati', fltriplog_all_vessels: 'Tutte le Imbarcazioni',
+      fltripdet_brand: 'Dettaglio Viaggio', fltripdet_h1: 'Rapporto di Sbarco e Liquidazione', fltripdet_haul_log: 'Registro Calate', fltripdet_catches_logged: 'Catture Individuali Registrate',
+      fltripdet_tap_catch_hint: 'Tocca una cattura per correggere specie, peso o a quale calata appartiene. Il Rapporto di Sbarco sopra riflette sempre i valori più recenti.',
+      fltripdet_view_haul_map: 'Vedi Mappa Calate', fltripdet_add_cost: 'Aggiungi un Costo a Questo Viaggio', fltripdet_cost_type: 'Tipo di Costo',
+      fltripdet_maintenance: 'Manutenzione', fltripdet_permits_fees: 'Permessi / Tasse', fltripdet_port_dues: 'Tasse Portuali',
+      fltripdet_amount: 'Importo', fltripdet_add_cost_btn: 'Aggiungi Costo', fltripdet_export: 'Esporta', fltripdet_share: 'Condividi',
+      fldash_brand: 'Fish Pulse · Operazioni', fldash_h1: 'Panoramica Flotta', fldash_efficiency: 'Efficienza per imbarcazione', fldash_needs_attention: 'Richiede attenzione',
+      flhaulmap_brand: 'Mappa Calate', flhaulmap_title: 'Zone di Pesca', flhaulmap_no_gps: 'Calate Senza GPS',
+      flfuel_h1: 'Registro Carburante Giornaliero', flfuel_no_trip: 'Avvia un viaggio dalla scheda Viaggio per iniziare a registrare le letture giornaliere di carburante.',
+      flfuel_todays_reading: 'Lettura di oggi', flfuel_remaining: 'Carburante Rimanente (L)', flfuel_save_reading: 'Salva Lettura', flfuel_readings_this_trip: 'Letture di questo viaggio',
+      flrecon_brand: 'Riconciliazione', flrecon_h1: 'Bilancia vs. Registro', flrecon_select_trip: '— Seleziona un viaggio chiuso —',
+      fldocs_brand: 'Documenti', fldocs_h1: 'Licenze e Certificati',
+      fldocs_add: 'Aggiungi documento', fldocs_type: 'Tipo di Documento', fldocs_fishing_license: 'Licenza di Pesca', fldocs_safety_certificate: 'Certificato di Sicurezza', fldocs_seaman_book: 'Libretto di Navigazione',
+      fldocs_label: 'Etichetta', fldocs_label_hint: 'es. nome del capitano', fldocs_expiry: 'Data di Scadenza', fldocs_photo_scan: 'Foto / Scansione', fldocs_add_btn: 'Aggiungi Documento',
+      fldocs_maintenance: 'Manutenzione', fldocs_all: 'Tutti i documenti',
+      flvessels_brand: 'Imbarcazioni', flvessels_h1: 'Imbarcazioni e Capitani', flvessels_add: 'Aggiungi imbarcazione',
+      flvessels_target: 'Obiettivo di Efficienza — Margine Per Viaggio', flvessels_expected_fuel: 'Uso Giornaliero Previsto di Carburante (L/giorno)', flvessels_expected_fuel_hint: 'opzionale — sovrascrive la media automatica',
+      flvessels_maintenance_interval: 'Intervallo di Manutenzione (ore in mare)', flvessels_hours_since_service: "Ore in mare dall'ultima manutenzione", flvessels_hours_since_service_hint: 'opzionale, oggi',
+      flvessels_add_btn: 'Aggiungi Imbarcazione', flvessels_all_vessels: 'Tutte le imbarcazioni', flvessels_all_captains: 'Tutti i capitani', flvessels_all_crew: 'Tutto l\'equipaggio',
+      flstats_h1: 'Statistiche della Flotta', fltab_trip: 'Viaggio', fltab_fuel: 'Carburante', fltab_docs: 'Docs',
+      fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni'
     },
     th: {
       splash_slide1_title: 'บันทึกข้อมูลกลางทะเล', splash_slide1_body: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ จีพีเอส — ใช้งานได้แบบออฟไลน์ทั้งหมด ไม่ต้องมีสัญญาณในภาคสนาม',
@@ -3045,13 +3177,66 @@
       camp_active: 'แคมเปญที่ใช้งานอยู่', camp_none: 'ไม่มี — บันทึกจะไม่ถูกกำหนดแคมเปญ', camp_end: 'สิ้นสุดแคมเปญ',
       camp_past: 'แคมเปญที่ผ่านมา',
       ins_title: 'สถิติการสำรวจ', ins_all_taxon: 'ทุกกลุ่มอนุกรมวิธาน', ins_all_campaigns: 'ทุกแคมเปญ',
-      ins_tab_stats: 'สถิติ', ins_tab_charts: 'กราฟ', ins_tab_advanced: 'ขั้นสูง'
+      ins_tab_stats: 'สถิติ', ins_tab_charts: 'กราฟ', ins_tab_advanced: 'ขั้นสูง',
+      flrole_title: 'ใครกำลังใช้<br>เซสชันนี้?', flrole_switch_mode: '← เปลี่ยนโหมด',
+      flrole_captain: 'กัปตัน', flrole_captain_sub: 'บันทึกทริป · การลากอวน · การจับปลา<br>ตำแหน่งจีพีเอส · เชื้อเพลิง', flrole_at_sea: 'กลางทะเล →',
+      flrole_operations: 'ฝ่ายปฏิบัติการ', flrole_operations_sub: 'แดชบอร์ดกองเรือ · กระทบยอด<br>เอกสาร · การคิดบัญชี', flrole_on_land: 'บนฝั่ง →',
+      fltrip_brand: 'Fish Pulse · กัปตัน', fltrip_switch_role: 'เปลี่ยนบทบาท', fltrip_switch_mode: 'เปลี่ยนโหมด',
+      fltrip_active_trip: 'ทริปที่ใช้งานอยู่', fltrip_no_vessel: 'ยังไม่ได้เลือกเรือ', fltrip_start_new: 'เริ่มทริปใหม่',
+      fltrip_captain: 'กัปตัน', fltrip_select_captain: '— เลือกกัปตัน —', fltrip_new_captain: '+ กัปตันใหม่', fltrip_captain_name: 'ชื่อกัปตัน',
+      fltrip_vessel: 'เรือ', fltrip_select_vessel: '— เลือกเรือ —', fltrip_new_vessel: '+ เรือใหม่', fltrip_vessel_name: 'ชื่อเรือ',
+      fltrip_default_currency: 'สกุลเงินเริ่มต้น', fltrip_crew_count: 'จำนวนลูกเรือ', fltrip_fuel_loaded: 'เชื้อเพลิงที่เติม (ลิตร)', fltrip_start_trip: 'เริ่มทริป',
+      fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_close_trip: 'ปิดทริป',
+      fltrip_catches_this_trip: 'การจับปลาในทริปนี้', fltrip_hauls_this_trip: 'การลากอวนในทริปนี้', fltrip_view_map: 'ดูแผนที่',
+      flhaul_brand: 'บันทึกการลากอวน', flhaul_title: 'รายละเอียดการลากอวน', flhaul_gear_effort: 'เครื่องมือประมงและความพยายาม',
+      flhaul_start: 'เริ่มลากอวน', flhaul_end: 'สิ้นสุดลากอวน', flhaul_notes: 'บันทึกย่อ',
+      flhaul_log_catch_now: 'บันทึกการจับปลาของการลากอวนนี้ตอนนี้', flhaul_log_catch_hint: 'ไม่ต้องเลือกหากต้องการกลับไปที่ทริปแล้วบันทึกการจับปลาทีหลัง — หรือรวมการจับปลาทั้งหมดตอนจบทริป',
+      flhaul_cancel: 'ยกเลิก', flhaul_save: 'บันทึกการลากอวน',
+      flcatch_brand: 'บันทึกการจับปลา', flcatch_title: 'รายการจับปลา', flcatch_not_linked: 'ยังไม่ได้เชื่อมกับการลากอวน',
+      flcatch_haul: 'การลากอวน', flcatch_haul_hint: 'ที่การจับปลานี้เป็นของ', flcatch_species_weight: 'ชนิดพันธุ์และน้ำหนัก', flcatch_species_label: 'ชนิดพันธุ์ / ประเภททางการค้า',
+      flcatch_ref_price: 'ราคาอ้างอิง', flcatch_add_another: '+ เพิ่มอีกรายการ', flcatch_save_return: 'บันทึกและกลับไปที่ทริป',
+      flclose_brand: 'ปิดทริป', flclose_h1: 'สรุปทริปและค่าใช้จ่าย', flclose_hauls: 'การลากอวน', flclose_total_kg: 'น้ำหนักรวม (กก.)', flclose_est_value: 'มูลค่าประมาณ',
+      flclose_fuel: 'เชื้อเพลิง', flclose_loaded_l: 'เติมแล้ว (ลิตร)', flclose_remaining_l: 'คงเหลือ (ลิตร)', flclose_costs_now: 'ค่าใช้จ่ายที่บันทึกได้ตอนนี้',
+      flclose_crew_payment: 'ค่าจ้างลูกเรือ', flclose_per_trip: 'ต่อทริป', flclose_ice: 'น้ำแข็ง / การถนอมอาหาร', flclose_provisions: 'เสบียง', flclose_per_day: 'ต่อวันในทะเล',
+      flclose_maintenance_hint: 'ค่าบำรุงรักษา ใบอนุญาต และค่าธรรมเนียมท่าเรือ ปกติจะถูกเพิ่มโดยสำนักงานในภายหลัง',
+      flclose_crew_on_trip: 'ลูกเรือในทริปนี้', flclose_add: 'เพิ่ม', flclose_crew_hint: 'การทำเครื่องหมายว่าใครอยู่บนเรือช่วยให้สำนักงานไม่ต้องพิมพ์ชื่อใหม่ตอนคิดบัญชี — ส่วนแบ่งค่าจ้างยังคงกำหนดที่นั่น',
+      flclose_trip_notes: 'บันทึกย่อของทริป', flclose_before_close: 'ก่อนปิด: การปิดจะล็อกการลากอวนและการจับปลาใหม่สำหรับทริปนี้ สำนักงานยังสามารถเพิ่มค่าใช้จ่ายที่เหลือและคิดบัญชีได้จากแดชบอร์ด',
+      fltriplog_brand: 'บันทึกทริป', fltriplog_title: 'ทริปที่ผ่านมา', fltriplog_all_vessels: 'เรือทั้งหมด',
+      fltripdet_brand: 'รายละเอียดทริป', fltripdet_h1: 'รายงานการขึ้นท่าและการคิดบัญชี', fltripdet_haul_log: 'บันทึกการลากอวน', fltripdet_catches_logged: 'การจับปลาแต่ละรายการที่บันทึก',
+      fltripdet_tap_catch_hint: 'แตะรายการจับปลาเพื่อแก้ไขชนิดพันธุ์ น้ำหนัก หรือว่าเป็นของการลากอวนใด รายงานการขึ้นท่าด้านบนจะแสดงค่าล่าสุดเสมอ',
+      fltripdet_view_haul_map: 'ดูแผนที่การลากอวน', fltripdet_add_cost: 'เพิ่มค่าใช้จ่ายให้ทริปนี้', fltripdet_cost_type: 'ประเภทค่าใช้จ่าย',
+      fltripdet_maintenance: 'ค่าบำรุงรักษา', fltripdet_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', fltripdet_port_dues: 'ค่าธรรมเนียมท่าเรือ',
+      fltripdet_amount: 'จำนวนเงิน', fltripdet_add_cost_btn: 'เพิ่มค่าใช้จ่าย', fltripdet_export: 'ส่งออก', fltripdet_share: 'แชร์',
+      fldash_brand: 'Fish Pulse · ฝ่ายปฏิบัติการ', fldash_h1: 'ภาพรวมกองเรือ', fldash_efficiency: 'ประสิทธิภาพตามเรือ', fldash_needs_attention: 'ต้องให้ความสนใจ',
+      flhaulmap_brand: 'แผนที่การลากอวน', flhaulmap_title: 'พื้นที่ทำการประมง', flhaulmap_no_gps: 'การลากอวนที่ไม่มีจีพีเอส',
+      flfuel_h1: 'บันทึกเชื้อเพลิงประจำวัน', flfuel_no_trip: 'เริ่มทริปจากแท็บทริปเพื่อเริ่มบันทึกค่าเชื้อเพลิงประจำวัน',
+      flfuel_todays_reading: 'ค่าที่อ่านได้วันนี้', flfuel_remaining: 'เชื้อเพลิงคงเหลือ (ลิตร)', flfuel_save_reading: 'บันทึกค่าที่อ่านได้', flfuel_readings_this_trip: 'ค่าที่อ่านได้ในทริปนี้',
+      flrecon_brand: 'การกระทบยอด', flrecon_h1: 'ตาชั่งเทียบกับสมุดบันทึก', flrecon_select_trip: '— เลือกทริปที่ปิดแล้ว —',
+      fldocs_brand: 'เอกสาร', fldocs_h1: 'ใบอนุญาตและใบรับรอง',
+      fldocs_add: 'เพิ่มเอกสาร', fldocs_type: 'ประเภทเอกสาร', fldocs_fishing_license: 'ใบอนุญาตทำการประมง', fldocs_safety_certificate: 'ใบรับรองความปลอดภัย', fldocs_seaman_book: 'สมุดประจำตัวคนประจำเรือ',
+      fldocs_label: 'ป้ายกำกับ', fldocs_label_hint: 'เช่น ชื่อกัปตัน', fldocs_expiry: 'วันหมดอายุ', fldocs_photo_scan: 'รูปภาพ / สแกน', fldocs_add_btn: 'เพิ่มเอกสาร',
+      fldocs_maintenance: 'การบำรุงรักษา', fldocs_all: 'เอกสารทั้งหมด',
+      flvessels_brand: 'เรือ', flvessels_h1: 'เรือและกัปตัน', flvessels_add: 'เพิ่มเรือ',
+      flvessels_target: 'เป้าหมายประสิทธิภาพ — กำไรต่อทริป', flvessels_expected_fuel: 'การใช้เชื้อเพลิงต่อวันที่คาดไว้ (ลิตร/วัน)', flvessels_expected_fuel_hint: 'ไม่บังคับ — แทนที่ค่าเฉลี่ยอัตโนมัติ',
+      flvessels_maintenance_interval: 'ช่วงเวลาบำรุงรักษา (ชั่วโมงในทะเล)', flvessels_hours_since_service: 'ชั่วโมงในทะเลตั้งแต่ซ่อมบำรุงครั้งล่าสุด', flvessels_hours_since_service_hint: 'ไม่บังคับ วันนี้',
+      flvessels_add_btn: 'เพิ่มเรือ', flvessels_all_vessels: 'เรือทั้งหมด', flvessels_all_captains: 'กัปตันทั้งหมด', flvessels_all_crew: 'ลูกเรือทั้งหมด',
+      flstats_h1: 'สถิติกองเรือ', fltab_trip: 'ทริป', fltab_fuel: 'เชื้อเพลิง', fltab_docs: 'เอกสาร',
+      fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ'
     }
   };
 
   const LANG_KEY = 'fishpulse_language';
   function getLang(){ return localStorage.getItem(LANG_KEY) || 'en'; }
-  function setLang(code){ localStorage.setItem(LANG_KEY, code); location.reload(); }
+  function setLang(code){
+    localStorage.setItem(LANG_KEY, code);
+    // Remember exactly which screen was showing so the reload this
+    // triggers can return here instead of silently falling back to
+    // whichever mode/screen the normal "resume session" logic would
+    // otherwise pick.
+    const activeScreen = document.querySelector('.screen.active');
+    if(activeScreen) sessionStorage.setItem('fishpulse_reload_return_screen', activeScreen.id);
+    location.reload();
+  }
 
   // Falls back to English, then to the key itself, so a missing
   // translation never renders as literally blank.
@@ -3330,6 +3515,49 @@
   } else {
     showSplash();
   }
+
+  // A language change reloads the page (see the i18n block above). Left
+  // alone, the boot logic just above would silently resume whatever mode
+  // was last active — even if the person had deliberately navigated back
+  // to Welcome or Mode Select first. This restores the exact screen they
+  // were on instead. Runs on DOMContentLoaded (not inline here) because
+  // goTo/fleetGoTo/sportGoTo aren't defined yet at this point in the file
+  // — each segment assigns its own to window later during initial parse,
+  // which is guaranteed to finish before DOMContentLoaded fires.
+  document.addEventListener('DOMContentLoaded', () => {
+    const returnId = sessionStorage.getItem('fishpulse_reload_return_screen');
+    if(!returnId) return;
+    sessionStorage.removeItem('fishpulse_reload_return_screen');
+
+    if(returnId === 'screen-splash'){ showSplash(); return; }
+    if(returnId === 'screen-mode-select'){ showModeSelect(); return; }
+
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'fleet-role-captain', 'fleet-role-operations');
+
+    if(returnId === 'screen-fleet-role-select'){
+      document.body.classList.add('mode-fleet');
+      showFleetRoleSelect();
+      return;
+    }
+    if(returnId.indexOf('screen-fleet-') === 0){
+      const short = returnId.slice('screen-fleet-'.length);
+      document.body.classList.add('mode-fleet');
+      const role = getStoredFleetRole();
+      if(role) document.body.classList.add('fleet-role-' + role);
+      if(window.fleetGoTo) window.fleetGoTo(short);
+      return;
+    }
+    if(returnId.indexOf('screen-sport-') === 0){
+      const short = returnId.slice('screen-sport-'.length);
+      document.body.classList.add('mode-sport');
+      if(window.sportGoTo) window.sportGoTo(short);
+      return;
+    }
+    // Research screens use a flat 'screen-<name>' id with no extra prefix.
+    const short = returnId.slice('screen-'.length);
+    document.body.classList.add('mode-research');
+    if(window.goTo) window.goTo(short);
+  });
 })();
 </script>
 
@@ -3558,7 +3786,7 @@
     if(!trip){
       noTripCard.style.display = 'block';
       activeCard.style.display = 'none';
-      document.getElementById('fleetVesselLine').textContent = 'No Vessel Selected';
+      document.getElementById('fleetVesselLine').textContent = t('fltrip_no_vessel');
       applyDefaultCurrencyToSelects();
       return;
     }
@@ -3667,12 +3895,12 @@
     const countLine = document.getElementById('fleetCatchHaulCountLine');
     currentHaulIdForCatch = sel.value || null;
     if(!currentHaulIdForCatch){
-      line.textContent = 'Not Linked To A Haul';
+      line.textContent = t('flcatch_not_linked');
       countLine.style.display = 'none';
       return;
     }
     const haul = load(HAULS_KEY).find(h => h.haul_id === currentHaulIdForCatch);
-    if(!haul){ line.textContent = 'Not Linked To A Haul'; countLine.style.display = 'none'; return; }
+    if(!haul){ line.textContent = t('flcatch_not_linked'); countLine.style.display = 'none'; return; }
     line.textContent = 'Haul: ' + (haul.gear_type||'—') + ' · ' + (haul.haul_start||'—') + (haul.haul_end ? '–'+haul.haul_end : '');
     const n = tripId ? load(CATCHES_KEY).filter(c => c.trip_id === tripId && c.haul_id === currentHaulIdForCatch).length : 0;
     countLine.style.display = 'block';
@@ -5071,6 +5299,7 @@
   window.renderFleetDocuments = renderFleetDocuments;
   window.renderFleetTripDetail = renderFleetTripDetail;
   window.renderFleetHaulMap = renderFleetHaulMap;
+  window.fleetGoTo = fleetGoTo;
 
   // ===== Haul map: reuses the research segment's Leaflet + offline
   // schematic fallback pattern, scoped to one trip's hauls instead of all
@@ -6272,6 +6501,7 @@
   window.renderSportSpots = renderSportSpots;
   window.renderSportDocuments = renderSportDocuments;
   window.renderSportStats = renderSportStats;
+  window.sportGoTo = sportGoTo;
   window.openPhotoViewer = openPhotoViewer;
 
   if(window.fishPulseReapplyIfActive){
@@ -6386,6 +6616,7 @@
     if(screen === 'campaigns') renderCampaignsScreen();
     document.querySelector('.screen.active').scrollTop = 0;
   }
+  window.goTo = goTo;
   document.querySelectorAll('[data-go]:not([data-go^="fleet-"])').forEach(el => {
     el.addEventListener('click', () => {
       const target = el.dataset.go;
