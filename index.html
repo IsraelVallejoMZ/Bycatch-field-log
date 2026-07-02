@@ -404,6 +404,15 @@
     padding:7px 10px; font-family:var(--data); font-size:11px;
   }
   .hist-meta-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .csv-header-toggle-row{ display:flex; align-items:center; justify-content:flex-end; gap:7px; margin: -6px 0 12px; }
+  .csv-header-toggle-label{ font-family: var(--data); font-size: 10px; color: var(--ink-soft); }
+  .csv-header-toggle{ display:flex; background: var(--panel); border: 1.5px solid var(--line); border-radius: 999px; padding: 2px; }
+  .csv-header-toggle-opt{
+    font-family: var(--data); font-size: 10px; font-weight: 600; border: none; background: transparent;
+    color: var(--ink-soft); padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .csv-header-toggle-opt.active{ background: var(--blue-deep); color: white; }
+  .csv-header-toggle-opt:active{ opacity: 0.85; }
 
   /* Export buttons: dark style */
   .exportbtn{
@@ -1456,6 +1465,13 @@
         <button class="exportbtn" id="exportBtn">CSV</button>
         <button class="exportbtn" id="exportGeoJsonBtn">GeoJSON</button>
         <button class="exportbtn" id="exportPhotosBtn" data-i18n="hist_photos">Photos</button>
+      </div>
+    </div>
+    <div class="csv-header-toggle-row">
+      <span class="csv-header-toggle-label" data-i18n="csv_header_toggle_label">CSV headers:</span>
+      <div class="csv-header-toggle" id="csvHeaderToggle">
+        <button type="button" class="csv-header-toggle-opt" data-mode="technical" data-i18n="csv_header_technical">Technical</button>
+        <button type="button" class="csv-header-toggle-opt" data-mode="translated" data-i18n="csv_header_translated">Translated</button>
       </div>
     </div>
     <div id="logList"></div>
@@ -2916,6 +2932,14 @@
       msg_zip_not_loaded: 'Zip library not loaded — check your connection', msg_no_photos: 'No photos in this set of records', msg_building_zip: 'Building zip of',
       msg_photos_lc: 'photos', msg_zip_failed: 'Could not build zip — try again', msg_no_records_export: 'No records to export', msg_csv_exported: 'CSV exported',
       msg_no_georef_export: 'No georeferenced records to export', msg_geojson_exported: 'GeoJSON exported', msg_points: 'points', msg_no_records_backup: 'No records to back up',
+      csv_header_toggle_label: 'CSV headers:', csv_header_technical: 'Technical', csv_header_translated: 'Translated',
+      csvcol_record_id: 'Record ID', csvcol_campaign_id: 'Campaign ID', csvcol_timestamp: 'Timestamp', csvcol_observer: 'Observer', csvcol_site: 'Site',
+      csvcol_vessel: 'Vessel ID', csvcol_gear_type: 'Gear Type', csvcol_depth: 'Depth (m)', csvcol_haul_start: 'Haul Start', csvcol_haul_end: 'Haul End',
+      csvcol_haul_duration_min: 'Haul Duration (min)', csvcol_net_width_m: 'Net Width (m)', csvcol_mesh_size_mm: 'Mesh Size (mm)', csvcol_hook_count: 'Number of Hooks',
+      csvcol_hook_spacing_m: 'Hook Spacing (m)', csvcol_taxon_group: 'Taxon Group', csvcol_species: 'Species', csvcol_common_name: 'Common Name', csvcol_length: 'Length (cm)',
+      csvcol_weight: 'Weight (kg)', csvcol_sex: 'Sex', csvcol_condition: 'Condition', csvcol_is_bycatch: 'Is Bycatch', csvcol_gonad_stage: 'Gonad Maturity Stage',
+      csvcol_stomach_contents: 'Stomach Contents', csvcol_sea_temp_c: 'Water Temperature (°C)', csvcol_salinity_psu: 'Salinity (psu)', csvcol_lat: 'Latitude',
+      csvcol_lon: 'Longitude', csvcol_gps_accuracy_m: 'GPS Accuracy (m)', csvcol_notes: 'Notes', csvcol_has_photo: 'Has Photo',
       msg_max_5_species: 'Max 5 species — tap one to remove it first', msg_gps_not_available: 'GPS not available in this browser', msg_track_too_short: 'Track too short to save',
       msg_track_saved: 'Track saved', msg_no_saved_tracks: 'No saved tracks to export', msg_tracks_exported: 'Tracks exported', msg_tracks_lc: 'track(s)',
       msg_open_map_first: 'Open the map first', msg_offline_storage_not_supported: 'Offline storage not supported on this browser',
@@ -3129,6 +3153,14 @@
       msg_zip_not_loaded: 'La librería de zip no cargó — revisa tu conexión', msg_no_photos: 'No hay fotos en este conjunto de registros', msg_building_zip: 'Armando zip de',
       msg_photos_lc: 'fotos', msg_zip_failed: 'No se pudo crear el zip — intenta de nuevo', msg_no_records_export: 'No hay registros para exportar', msg_csv_exported: 'CSV exportado',
       msg_no_georef_export: 'No hay registros georreferenciados para exportar', msg_geojson_exported: 'GeoJSON exportado', msg_points: 'puntos', msg_no_records_backup: 'No hay registros para respaldar',
+      csv_header_toggle_label: 'Encabezados CSV:', csv_header_technical: 'Técnico', csv_header_translated: 'Traducido',
+      csvcol_record_id: 'ID de Registro', csvcol_campaign_id: 'ID de Campaña', csvcol_timestamp: 'Fecha y Hora', csvcol_observer: 'Observador', csvcol_site: 'Sitio',
+      csvcol_vessel: 'ID de Embarcación', csvcol_gear_type: 'Tipo de Arte de Pesca', csvcol_depth: 'Profundidad (m)', csvcol_haul_start: 'Inicio del Lance', csvcol_haul_end: 'Fin del Lance',
+      csvcol_haul_duration_min: 'Duración del Lance (min)', csvcol_net_width_m: 'Ancho de Red (m)', csvcol_mesh_size_mm: 'Tamaño de Malla (mm)', csvcol_hook_count: 'Número de Anzuelos',
+      csvcol_hook_spacing_m: 'Espaciado de Anzuelos (m)', csvcol_taxon_group: 'Grupo Taxonómico', csvcol_species: 'Especie', csvcol_common_name: 'Nombre Común', csvcol_length: 'Longitud (cm)',
+      csvcol_weight: 'Peso (kg)', csvcol_sex: 'Sexo', csvcol_condition: 'Condición', csvcol_is_bycatch: 'Es Captura Incidental', csvcol_gonad_stage: 'Estadio de Madurez Gonadal',
+      csvcol_stomach_contents: 'Contenido Estomacal', csvcol_sea_temp_c: 'Temperatura del Agua (°C)', csvcol_salinity_psu: 'Salinidad (psu)', csvcol_lat: 'Latitud',
+      csvcol_lon: 'Longitud Geográfica', csvcol_gps_accuracy_m: 'Precisión GPS (m)', csvcol_notes: 'Notas', csvcol_has_photo: 'Tiene Foto',
       msg_max_5_species: 'Máximo 5 especies — toca una para quitarla primero', msg_gps_not_available: 'GPS no disponible en este navegador', msg_track_too_short: 'Ruta demasiado corta para guardar',
       msg_track_saved: 'Ruta guardada', msg_no_saved_tracks: 'No hay rutas guardadas para exportar', msg_tracks_exported: 'Rutas exportadas', msg_tracks_lc: 'ruta(s)',
       msg_open_map_first: 'Abre el mapa primero', msg_offline_storage_not_supported: 'Almacenamiento sin conexión no compatible con este navegador',
@@ -3342,6 +3374,14 @@
       msg_zip_not_loaded: 'Libreria zip non caricata — controlla la connessione', msg_no_photos: 'Nessuna foto in questo gruppo di schede', msg_building_zip: 'Creazione zip di',
       msg_photos_lc: 'foto', msg_zip_failed: 'Impossibile creare lo zip — riprova', msg_no_records_export: 'Nessuna scheda da esportare', msg_csv_exported: 'CSV esportato',
       msg_no_georef_export: 'Nessuna scheda georeferenziata da esportare', msg_geojson_exported: 'GeoJSON esportato', msg_points: 'punti', msg_no_records_backup: 'Nessuna scheda da salvare',
+      csv_header_toggle_label: 'Intestazioni CSV:', csv_header_technical: 'Tecnico', csv_header_translated: 'Tradotto',
+      csvcol_record_id: 'ID Scheda', csvcol_campaign_id: 'ID Campagna', csvcol_timestamp: 'Data e Ora', csvcol_observer: 'Osservatore', csvcol_site: 'Sito',
+      csvcol_vessel: 'ID Imbarcazione', csvcol_gear_type: 'Tipo di Attrezzo', csvcol_depth: 'Profondità (m)', csvcol_haul_start: 'Inizio Cala', csvcol_haul_end: 'Fine Cala',
+      csvcol_haul_duration_min: 'Durata Cala (min)', csvcol_net_width_m: 'Larghezza Rete (m)', csvcol_mesh_size_mm: 'Dimensione Maglia (mm)', csvcol_hook_count: 'Numero di Ami',
+      csvcol_hook_spacing_m: 'Distanza tra Ami (m)', csvcol_taxon_group: 'Gruppo Tassonomico', csvcol_species: 'Specie', csvcol_common_name: 'Nome Comune', csvcol_length: 'Lunghezza (cm)',
+      csvcol_weight: 'Peso (kg)', csvcol_sex: 'Sesso', csvcol_condition: 'Condizione', csvcol_is_bycatch: 'È Cattura Accessoria', csvcol_gonad_stage: 'Stadio di Maturità Gonadica',
+      csvcol_stomach_contents: 'Contenuto Stomacale', csvcol_sea_temp_c: "Temperatura dell'Acqua (°C)", csvcol_salinity_psu: 'Salinità (psu)', csvcol_lat: 'Latitudine',
+      csvcol_lon: 'Longitudine', csvcol_gps_accuracy_m: 'Precisione GPS (m)', csvcol_notes: 'Note', csvcol_has_photo: 'Ha Foto',
       msg_max_5_species: 'Massimo 5 specie — tocca per rimuoverne una prima', msg_gps_not_available: 'GPS non disponibile su questo browser', msg_track_too_short: 'Rotta troppo corta da salvare',
       msg_track_saved: 'Rotta salvata', msg_no_saved_tracks: 'Nessuna rotta salvata da esportare', msg_tracks_exported: 'Rotte esportate', msg_tracks_lc: 'rotta/e',
       msg_open_map_first: 'Apri prima la mappa', msg_offline_storage_not_supported: 'Archiviazione offline non supportata su questo browser',
@@ -3555,6 +3595,14 @@
       msg_zip_not_loaded: 'ไลบรารี zip ไม่โหลด — ตรวจสอบการเชื่อมต่อของคุณ', msg_no_photos: 'ไม่มีรูปภาพในชุดบันทึกนี้', msg_building_zip: 'กำลังสร้างไฟล์ zip จำนวน',
       msg_photos_lc: 'รูปภาพ', msg_zip_failed: 'ไม่สามารถสร้างไฟล์ zip ได้ — ลองอีกครั้ง', msg_no_records_export: 'ไม่มีบันทึกให้ส่งออก', msg_csv_exported: 'ส่งออก CSV แล้ว',
       msg_no_georef_export: 'ไม่มีบันทึกที่มีพิกัดให้ส่งออก', msg_geojson_exported: 'ส่งออก GeoJSON แล้ว', msg_points: 'จุด', msg_no_records_backup: 'ไม่มีบันทึกให้สำรองข้อมูล',
+      csv_header_toggle_label: 'หัวคอลัมน์ CSV:', csv_header_technical: 'เทคนิค', csv_header_translated: 'แปลแล้ว',
+      csvcol_record_id: 'รหัสบันทึก', csvcol_campaign_id: 'รหัสแคมเปญ', csvcol_timestamp: 'วันที่และเวลา', csvcol_observer: 'ผู้สังเกตการณ์', csvcol_site: 'สถานที่',
+      csvcol_vessel: 'รหัสเรือ', csvcol_gear_type: 'ประเภทเครื่องมือประมง', csvcol_depth: 'ความลึก (ม.)', csvcol_haul_start: 'เริ่มลากอวน', csvcol_haul_end: 'สิ้นสุดลากอวน',
+      csvcol_haul_duration_min: 'ระยะเวลาลากอวน (นาที)', csvcol_net_width_m: 'ความกว้างอวน (ม.)', csvcol_mesh_size_mm: 'ขนาดตาอวน (มม.)', csvcol_hook_count: 'จำนวนเบ็ด',
+      csvcol_hook_spacing_m: 'ระยะห่างเบ็ด (ม.)', csvcol_taxon_group: 'กลุ่มอนุกรมวิธาน', csvcol_species: 'ชนิดพันธุ์', csvcol_common_name: 'ชื่อสามัญ', csvcol_length: 'ความยาว (ซม.)',
+      csvcol_weight: 'น้ำหนัก (กก.)', csvcol_sex: 'เพศ', csvcol_condition: 'สภาพ', csvcol_is_bycatch: 'เป็นสัตว์น้ำพลอยได้', csvcol_gonad_stage: 'ระยะสมบูรณ์เพศ',
+      csvcol_stomach_contents: 'สิ่งที่พบในกระเพาะ', csvcol_sea_temp_c: 'อุณหภูมิน้ำ (°C)', csvcol_salinity_psu: 'ความเค็ม (psu)', csvcol_lat: 'ละติจูด',
+      csvcol_lon: 'ลองจิจูด', csvcol_gps_accuracy_m: 'ความแม่นยำจีพีเอส (ม.)', csvcol_notes: 'หมายเหตุ', csvcol_has_photo: 'มีรูปภาพ',
       msg_max_5_species: 'สูงสุด 5 ชนิดพันธุ์ — แตะเพื่อลบออกก่อน', msg_gps_not_available: 'เบราว์เซอร์นี้ไม่รองรับจีพีเอส', msg_track_too_short: 'เส้นทางสั้นเกินไปที่จะบันทึก',
       msg_track_saved: 'บันทึกเส้นทางแล้ว', msg_no_saved_tracks: 'ไม่มีเส้นทางที่บันทึกไว้ให้ส่งออก', msg_tracks_exported: 'ส่งออกเส้นทางแล้ว', msg_tracks_lc: 'เส้นทาง',
       msg_open_map_first: 'เปิดแผนที่ก่อน', msg_offline_storage_not_supported: 'เบราว์เซอร์นี้ไม่รองรับการจัดเก็บข้อมูลออฟไลน์',
@@ -7766,11 +7814,52 @@
 
   const CSV_COLS = ['record_id','campaign_id','timestamp','observer','site','vessel','gear_type','depth','haul_start','haul_end','haul_duration_min','net_width_m','mesh_size_mm','hook_count','hook_spacing_m','taxon_group','species','common_name','length','weight','sex','condition','is_bycatch','gonad_stage','stomach_contents','sea_temp_c','salinity_psu','lat','lon','gps_accuracy_m','notes','has_photo'];
 
-  function buildCsv(list){
-    const rows = [CSV_COLS.join(',')];
+  // Maps each technical CSV_COLS name to its translated-header i18n key.
+  // Used only when the person opts into "Translated" headers on export —
+  // the underlying field names (and R/QGIS script compatibility) are
+  // untouched either way, this only changes the first row of the file.
+  const CSV_COL_I18N_KEYS = {
+    record_id: 'csvcol_record_id', campaign_id: 'csvcol_campaign_id', timestamp: 'csvcol_timestamp', observer: 'csvcol_observer', site: 'csvcol_site',
+    vessel: 'csvcol_vessel', gear_type: 'csvcol_gear_type', depth: 'csvcol_depth', haul_start: 'csvcol_haul_start', haul_end: 'csvcol_haul_end',
+    haul_duration_min: 'csvcol_haul_duration_min', net_width_m: 'csvcol_net_width_m', mesh_size_mm: 'csvcol_mesh_size_mm', hook_count: 'csvcol_hook_count',
+    hook_spacing_m: 'csvcol_hook_spacing_m', taxon_group: 'csvcol_taxon_group', species: 'csvcol_species', common_name: 'csvcol_common_name', length: 'csvcol_length',
+    weight: 'csvcol_weight', sex: 'csvcol_sex', condition: 'csvcol_condition', is_bycatch: 'csvcol_is_bycatch', gonad_stage: 'csvcol_gonad_stage',
+    stomach_contents: 'csvcol_stomach_contents', sea_temp_c: 'csvcol_sea_temp_c', salinity_psu: 'csvcol_salinity_psu', lat: 'csvcol_lat',
+    lon: 'csvcol_lon', gps_accuracy_m: 'csvcol_gps_accuracy_m', notes: 'csvcol_notes', has_photo: 'csvcol_has_photo'
+  };
+
+  const CSV_HEADER_MODE_KEY = 'fishpulse_csv_header_mode';
+  function getCsvHeaderMode(){ return localStorage.getItem(CSV_HEADER_MODE_KEY) === 'translated' ? 'translated' : 'technical'; }
+  function setCsvHeaderMode(mode){ localStorage.setItem(CSV_HEADER_MODE_KEY, mode === 'translated' ? 'translated' : 'technical'); }
+
+  function csvHeaderRow(mode){
+    if(mode === 'translated'){
+      return CSV_COLS.map(c => t(CSV_COL_I18N_KEYS[c] || c));
+    }
+    return CSV_COLS;
+  }
+
+  // mode defaults to 'technical' so every other caller (backup/share)
+  // keeps producing the plain English field names scripts expect.
+  function buildCsv(list, mode){
+    const rows = [csvHeaderRow(mode || 'technical').join(',')];
     list.forEach(e=>{ rows.push(CSV_COLS.map(c => csvEscape(e[c])).join(',')); });
     return rows.join('\n');
   }
+
+  function renderCsvHeaderToggle(){
+    const mode = getCsvHeaderMode();
+    document.querySelectorAll('#csvHeaderToggle .csv-header-toggle-opt').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+  }
+  document.querySelectorAll('#csvHeaderToggle .csv-header-toggle-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setCsvHeaderMode(btn.dataset.mode);
+      renderCsvHeaderToggle();
+    });
+  });
+  renderCsvHeaderToggle();
 
   function downloadFile(content, filename, mimeType){
     const blob = new Blob([content], {type: mimeType});
@@ -7915,7 +8004,7 @@
       return;
     }
     const today = new Date().toISOString().slice(0,10);
-    downloadCsv(buildCsv(list), 'bycatch_survey_' + today + '.csv');
+    downloadCsv(buildCsv(list, getCsvHeaderMode()), 'bycatch_survey_' + today + '.csv');
     showToast(t('msg_csv_exported'));
   });
 
