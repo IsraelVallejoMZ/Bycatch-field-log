@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fish Pulse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <style>
   :root{
@@ -28,9 +28,9 @@
     --released:   #2f7a52;
     --amber:      #b8893a;
 
-    --display: 'Space Grotesk', sans-serif;
-    --body: 'Inter', -apple-system, sans-serif;
-    --data: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
+    --body: 'Inter', 'Noto Sans Thai', -apple-system, sans-serif;
+    --data: 'JetBrains Mono', 'Noto Sans Thai', ui-monospace, monospace;
 
     --radius: 10px;
     --radius-sm: 6px;
@@ -929,12 +929,12 @@
     </div>
 
     <div>
-      <button class="splash-cta" id="splashGetStartedBtn">Get started — it's free</button>
+      <button class="splash-cta" id="splashGetStartedBtn" data-i18n="splash_get_started">Get started — it's free</button>
       <div class="splash-premium" id="splashPremiumBtn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#e0a868"/></svg>
-        <span class="splash-premium-label">Fish Pulse Premium</span>
+        <span class="splash-premium-label" data-i18n="splash_premium">Fish Pulse Premium</span>
       </div>
-      <div class="splash-premium-sub">Unlock advanced stats, multi-device sync &amp; export</div>
+      <div class="splash-premium-sub" data-i18n="splash_unlock_sub">Unlock advanced stats, multi-device sync &amp; export</div>
     </div>
   </div>
 </section>
@@ -946,19 +946,26 @@
     <button class="hamburger-close" id="hamburgerClose">✕</button>
     <div class="hamburger-panel-header">
       <div style="font-family:var(--data);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8fb4c9;margin-bottom:4px;">Fish Pulse</div>
-      <div class="hamburger-panel-title">Menu</div>
+      <div class="hamburger-panel-title" data-i18n="menu_title">Menu</div>
+    </div>
+    <div class="hamburger-item" id="menuLanguage">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9fc8de" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.5 4 5.8 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.8-4-9s1.5-6.5 4-9z" stroke="#9fc8de" stroke-width="1.6"/></svg>
+      <div><div class="hamburger-item-title" data-i18n="menu_language">Language</div><div class="hamburger-item-sub" data-i18n="menu_language_sub">App display language</div></div>
+    </div>
+    <div id="languagePanel" style="display:none; padding:4px 18px 14px;">
+      <div class="pillrow" id="languagePillrow"></div>
     </div>
     <div class="hamburger-item" id="menuSignIn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#5fc7ee" stroke-width="1.8"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6" stroke="#5fc7ee" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <div><div class="hamburger-item-title">Sign in</div><div class="hamburger-item-sub">Sync across devices</div></div>
+      <div><div class="hamburger-item-title" data-i18n="menu_sign_in">Sign in</div><div class="hamburger-item-sub" data-i18n="menu_sign_in_sub">Sync across devices</div></div>
     </div>
     <div class="hamburger-item" id="menuAbout">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9fc8de" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#9fc8de" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <div><div class="hamburger-item-title">About Fish Pulse</div><div class="hamburger-item-sub">Version, docs, contact</div></div>
+      <div><div class="hamburger-item-title" data-i18n="menu_about">About Fish Pulse</div><div class="hamburger-item-sub" data-i18n="menu_about_sub">Version, docs, contact</div></div>
     </div>
     <div class="hamburger-item" id="menuPremium">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#e0a868"/></svg>
-      <div><div class="hamburger-item-title gold">Fish Pulse Premium</div><div class="hamburger-item-sub">Plans &amp; subscriptions</div></div>
+      <div><div class="hamburger-item-title gold" data-i18n="menu_premium">Fish Pulse Premium</div><div class="hamburger-item-sub" data-i18n="menu_premium_sub">Plans &amp; subscriptions</div></div>
     </div>
   </div>
 </div>
@@ -968,16 +975,16 @@
   <div class="premium-panel">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#e0a868"/></svg>
-      <h2 style="margin:0;">Fish Pulse Premium</h2>
+      <h2 style="margin:0;" data-i18n="premium_title">Fish Pulse Premium</h2>
     </div>
-    <div class="premium-sub">Everything in Free, plus:</div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text">Multi-device sync — start a record on your phone, review it on the office computer</div></div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text">Advanced statistics — species diversity indices, CPUE trends, solunar correlation</div></div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text">Bulk export — CSV, GeoJSON, PDF landing reports in one tap</div></div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text">Institutional accounts — share campaigns across your research team</div></div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text">Priority support &amp; early access to new features</div></div>
-    <button class="splash-cta" style="margin-top:18px;margin-bottom:0;" id="premiumContactBtn">Get in touch to subscribe</button>
-    <button class="premium-close" id="premiumCloseBtn">Close</button>
+    <div class="premium-sub" data-i18n="premium_everything_free">Everything in Free, plus:</div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f1">Multi-device sync — start a record on your phone, review it on the office computer</div></div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f2">Advanced statistics — species diversity indices, CPUE trends, solunar correlation</div></div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f3">Bulk export — CSV, GeoJSON, PDF landing reports in one tap</div></div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f4">Institutional accounts — share campaigns across your research team</div></div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f5">Priority support &amp; early access to new features</div></div>
+    <button class="splash-cta" style="margin-top:18px;margin-bottom:0;" id="premiumContactBtn" data-i18n="premium_contact">Get in touch to subscribe</button>
+    <button class="premium-close" id="premiumCloseBtn" data-i18n="premium_close">Close</button>
   </div>
 </div>
 
@@ -986,11 +993,11 @@
   <div class="mode-select-wrap">
     <div class="mode-select-header">
       <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px;">
-        <div class="mode-select-eyebrow">Fish Pulse</div>
-        <button id="backToSplashBtn" style="background:none;border:none;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;letter-spacing:0.04em;padding:4px 0;">← Welcome</button>
+        <div class="mode-select-eyebrow" data-i18n="mode_select_eyebrow">Fish Pulse</div>
+        <button id="backToSplashBtn" style="background:none;border:none;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;letter-spacing:0.04em;padding:4px 0;" data-i18n="mode_select_welcome">← Welcome</button>
       </div>
-      <div class="mode-select-title">Choose a mode</div>
-      <button id="clearSessionBtn" style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 12px;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;margin-top:10px;letter-spacing:0.04em;">Clear saved session</button>
+      <div class="mode-select-title" data-i18n="mode_select_title">Choose a mode</div>
+      <button id="clearSessionBtn" style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 12px;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;margin-top:10px;letter-spacing:0.04em;" data-i18n="mode_select_clear_session">Clear saved session</button>
     </div>
 
     <div class="mode-card segment-card" data-mode="research">
@@ -1002,8 +1009,8 @@
         </svg>
       </div>
       <div>
-        <div class="mode-card-title">Field Research</div>
-        <div class="mode-card-sub">Species, biology, bycatch, survey data</div>
+        <div class="mode-card-title" data-i18n="mode_research_title">Field Research</div>
+        <div class="mode-card-sub" data-i18n="mode_research_sub">Species, biology, bycatch, survey data</div>
       </div>
     </div>
 
@@ -1016,8 +1023,8 @@
         </svg>
       </div>
       <div>
-        <div class="mode-card-title">Fishing Operations</div>
-        <div class="mode-card-sub">Trips, costs, fleet efficiency, traceability</div>
+        <div class="mode-card-title" data-i18n="mode_fleet_title">Fishing Operations</div>
+        <div class="mode-card-sub" data-i18n="mode_fleet_sub">Trips, costs, fleet efficiency, traceability</div>
       </div>
     </div>
 
@@ -1031,8 +1038,8 @@
         </svg>
       </div>
       <div>
-        <div class="mode-card-title">Sport / Recreational Fishing</div>
-        <div class="mode-card-sub">Sessions, catches, personal log</div>
+        <div class="mode-card-title" data-i18n="mode_sport_title">Sport / Recreational Fishing</div>
+        <div class="mode-card-sub" data-i18n="mode_sport_sub">Sessions, catches, personal log</div>
       </div>
     </div>
   </div>
@@ -1044,15 +1051,15 @@
     <div class="topbar-row">
       <span class="brand">Fish Pulse</span>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" id="switchModeBtnResearch">Switch mode</button>
+        <button class="switch-mode-btn" id="switchModeBtnResearch" data-i18n="home_switch_mode">Switch mode</button>
         <div class="tally" id="tally">
           <span class="tally-dot off" id="netDot"></span>
           <span id="tallyCount">0 records</span>
         </div>
       </div>
     </div>
-    <h1>Today's Survey</h1>
-    <div class="site-line" id="siteLineHome">No site selected</div>
+    <h1 data-i18n="home_todays_survey">Today's Survey</h1>
+    <div class="site-line" id="siteLineHome" data-i18n="home_no_site">No site selected</div>
   </div>
   <main>
     <div class="home-hero">
@@ -1065,21 +1072,21 @@
       </div>
       <div>
         <div class="num" id="homeCount">0</div>
-        <div class="hh-meta">Specimens · <span id="homeSiteTag">No site selected</span></div>
+        <div class="hh-meta"><span data-i18n="home_specimens">Specimens</span> · <span id="homeSiteTag" data-i18n="home_no_site">No site selected</span></div>
       </div>
     </div>
 
     <div class="backup-banner" id="backupBanner">
       <div class="bb-text">
-        <div class="bb-title">Backup status</div>
-        <div class="bb-sub" id="backupSub">Not backed up yet</div>
+        <div class="bb-title" data-i18n="home_backup_status">Backup status</div>
+        <div class="bb-sub" id="backupSub" data-i18n="home_not_backed_up">Not backed up yet</div>
       </div>
-      <button class="bb-btn" id="backupBtn">Back up now</button>
+      <button class="bb-btn" id="backupBtn" data-i18n="home_backup_now">Back up now</button>
     </div>
 
     <div class="campaign-banner" id="campaignBanner" data-go="campaigns" style="cursor:pointer;">
-      <div class="cb-label">Active campaign</div>
-      <div class="cb-name" id="campaignBannerName">None — records will be unassigned</div>
+      <div class="cb-label" data-i18n="camp_active">Active campaign</div>
+      <div class="cb-name" id="campaignBannerName" data-i18n="camp_none">None — records will be unassigned</div>
     </div>
 
     <div class="quick-actions">
@@ -1089,7 +1096,7 @@
             <path d="M5 12h14M12 5v14" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="at-title">New Record</div>
+        <div class="at-title" data-i18n="home_new_record">New Record</div>
       </div>
       <div class="action-tile" data-go="history">
         <div class="at-icon-box">
@@ -1099,11 +1106,11 @@
             <rect x="4" y="16" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
           </svg>
         </div>
-        <div class="at-title">History</div>
+        <div class="at-title" data-i18n="home_history">History</div>
       </div>
     </div>
 
-    <div class="section-h">Quick links</div>
+    <div class="section-h" data-i18n="home_quick_links">Quick links</div>
     <div class="info-row-group">
       <button class="info-row" data-go="map">
         <div class="ir-left">
@@ -1113,7 +1120,7 @@
               <circle cx="12" cy="9" r="2" fill="#06384f"/>
             </svg>
           </div>
-          <div class="ir-title">Survey map</div>
+          <div class="ir-title" data-i18n="home_map">Survey map</div>
         </div>
         <div class="ir-metric" id="homeMapSub">NO GPS YET</div>
       </button>
@@ -1125,7 +1132,7 @@
               <circle cx="3" cy="17" r="1.8" fill="#2f7a52"/>
             </svg>
           </div>
-          <div class="ir-title">Vessel track</div>
+          <div class="ir-title" data-i18n="home_track">Vessel track</div>
         </div>
         <div class="ir-metric" id="homeTrackSub">0 SAVED</div>
       </button>
@@ -1138,13 +1145,13 @@
               <rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8" fill="#5fc7ee"/>
             </svg>
           </div>
-          <div class="ir-title">Survey insights</div>
+          <div class="ir-title" data-i18n="home_insights">Survey insights</div>
         </div>
         <div class="ir-metric" id="homeInsightsSub">0 SPECIES</div>
       </button>
     </div>
 
-    <div class="section-h">Most recent</div>
+    <div class="section-h" data-i18n="home_most_recent">Most recent</div>
     <div class="recent-list" id="recentList"></div>
   </main>
 </section>
@@ -1154,10 +1161,10 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand" id="recordScreenBrand">New Record</span>
+      <span class="brand" id="recordScreenBrand" data-i18n="rec_title">New Record</span>
     </div>
-    <h1>Incidental Catch Entry</h1>
-    <div class="site-line" id="siteLineRecord">No site selected</div>
+    <h1 data-i18n="rec_h1">Incidental Catch Entry</h1>
+    <div class="site-line" id="siteLineRecord" data-i18n="home_no_site">No site selected</div>
     <div class="step-progress" id="recordStepProgress">
       <div class="seg" data-seg="1"></div><div class="seg" data-seg="2"></div><div class="seg" data-seg="3"></div>
       <div class="seg" data-seg="4"></div><div class="seg" data-seg="5"></div><div class="seg" data-seg="6"></div>
@@ -1172,14 +1179,14 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3.2" stroke="white" stroke-width="1.8"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Session</span>
+        <span class="sc-title" data-i18n="rec_card_session">Session</span>
         <span class="collapse-chevron open" id="stepChevron1">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody1">
-      <label for="observer">Observer</label>
+      <label for="observer" data-i18n="rec_observer_label">Observer</label>
       <input type="text" id="observer" placeholder="e.g. Israel Vallejo" list="observer-list">
       <datalist id="observer-list"></datalist>
-      <label for="surveyDate">Survey date</label>
+      <label for="surveyDate" data-i18n="rec_survey_date_label">Survey date</label>
       <input type="date" id="surveyDate">
       </div>
     </div>
@@ -1189,24 +1196,24 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12v3M11 10.5V15" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="3" cy="8" r="1.5" fill="white"/></svg>
         </div>
-        <span class="sc-title">Site &amp; gear</span>
+        <span class="sc-title" data-i18n="rec_card_site_gear">Site &amp; gear</span>
         <span class="collapse-chevron" id="stepChevron2">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody2" style="display:none;">
-      <label for="site">Sampling site</label>
+      <label for="site" data-i18n="rec_site_label">Sampling site</label>
       <input type="text" id="site" placeholder="e.g. Gulf of Thailand, Ranong" list="site-list">
       <datalist id="site-list"></datalist>
-      <label for="vessel">Vessel ID</label>
+      <label for="vessel" data-i18n="rec_vessel_id_label">Vessel ID</label>
       <input type="text" id="vessel" placeholder="e.g. boat 04">
-      <label for="gearType">Gear type</label>
+      <label for="gearType" data-i18n="rec_gear_label">Gear type</label>
       <select id="gearType">
-        <option value="">— select —</option>
-        <option value="Demersal trawl">Demersal trawl</option>
-        <option value="Otter trawl">Otter trawl</option>
-        <option value="Gillnet">Gillnet</option>
-        <option value="Longline">Longline</option>
-        <option value="Purse seine">Purse seine</option>
-        <option value="Other">Other</option>
+        <option value="" data-i18n="rec_select_placeholder">— select —</option>
+        <option value="Demersal trawl" data-i18n="rec_gear_demersal_trawl">Demersal trawl</option>
+        <option value="Otter trawl" data-i18n="rec_gear_otter_trawl">Otter trawl</option>
+        <option value="Gillnet" data-i18n="rec_gear_gillnet">Gillnet</option>
+        <option value="Longline" data-i18n="rec_gear_longline">Longline</option>
+        <option value="Purse seine" data-i18n="rec_gear_purse_seine">Purse seine</option>
+        <option value="Other" data-i18n="rec_gear_other">Other</option>
       </select>
       </div>
     </div>
@@ -1216,35 +1223,35 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8.5" stroke="white" stroke-width="1.8"/><path d="M12 7v5l3.5 2" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Fishing effort</span>
+        <span class="sc-title" data-i18n="rec_card_effort">Fishing effort</span>
         <span class="collapse-chevron" id="stepChevron3">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody3" style="display:none;">
-      <label for="depth">Depth (m)</label>
+      <label for="depth" data-i18n="rec_depth_label">Depth (m)</label>
       <input type="number" id="depth" inputmode="decimal" placeholder="e.g. 35">
       <div class="grid2">
         <div>
-          <label for="haulStart">Haul start</label>
+          <label for="haulStart" data-i18n="rec_haul_start_label">Haul start</label>
           <input type="time" id="haulStart">
         </div>
         <div>
-          <label for="haulEnd">Haul end</label>
+          <label for="haulEnd" data-i18n="rec_haul_end_label">Haul end</label>
           <input type="time" id="haulEnd">
         </div>
       </div>
       <div class="duration-line" id="durationLine">Duration: —</div>
 
       <div class="gear-effort-fields" id="netEffortFields" style="display:none;">
-        <label for="netWidth">Net width / mouth opening (m)</label>
+        <label for="netWidth" data-i18n="rec_net_width_label">Net width / mouth opening (m)</label>
         <input type="number" id="netWidth" inputmode="decimal" placeholder="e.g. 12">
-        <label for="meshSize">Mesh size (mm)</label>
+        <label for="meshSize" data-i18n="rec_mesh_size_label">Mesh size (mm)</label>
         <input type="number" id="meshSize" inputmode="decimal" placeholder="e.g. 50">
       </div>
 
       <div class="gear-effort-fields" id="hookEffortFields" style="display:none;">
-        <label for="hookCount">Number of hooks</label>
+        <label for="hookCount" data-i18n="rec_hook_count_label">Number of hooks</label>
         <input type="number" id="hookCount" inputmode="numeric" placeholder="e.g. 200">
-        <label for="hookSpacing">Hook spacing (m)</label>
+        <label for="hookSpacing" data-i18n="rec_hook_spacing_label">Hook spacing (m)</label>
         <input type="number" id="hookSpacing" inputmode="decimal" placeholder="optional">
       </div>
       </div>
@@ -1255,56 +1262,56 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/></svg>
         </div>
-        <span class="sc-title">Specimen</span>
+        <span class="sc-title" data-i18n="rec_card_specimen">Specimen</span>
         <span class="collapse-chevron" id="stepChevron4">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody4" style="display:none;">
-      <label>Taxon group <span class="optional-tag">optional</span></label>
+      <label><span data-i18n="rec_taxon_label">Taxon group</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <div class="pillrow" id="taxonRow">
-        <div class="pill" data-val="Elasmobranchii">Elasmobranch</div>
-        <div class="pill" data-val="Teleostei">Teleost fish</div>
-        <div class="pill" data-val="Crustacea">Crustacean</div>
-        <div class="pill" data-val="Mollusca">Mollusc</div>
-        <div class="pill" data-val="Other">Other</div>
+        <div class="pill" data-val="Elasmobranchii" data-i18n="rec_taxon_elasmo">Elasmobranch</div>
+        <div class="pill" data-val="Teleostei" data-i18n="rec_taxon_teleost">Teleost fish</div>
+        <div class="pill" data-val="Crustacea" data-i18n="rec_taxon_crustacea">Crustacean</div>
+        <div class="pill" data-val="Mollusca" data-i18n="rec_taxon_mollusca">Mollusc</div>
+        <div class="pill" data-val="Other" data-i18n="rec_gear_other">Other</div>
       </div>
 
-      <label for="species">Species</label>
+      <label for="species" data-i18n="rec_species_label">Species</label>
       <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
       <datalist id="species-list"></datalist>
 
-      <label for="commonName">Common Name <span class="optional-tag">optional</span></label>
+      <label for="commonName"><span data-i18n="rec_common_name_label">Common Name</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="text" id="commonName" placeholder="e.g. Spot-tail shark" list="common-name-list">
       <datalist id="common-name-list"></datalist>
 
       <div class="grid2">
         <div>
-          <label for="length">Length (cm)</label>
+          <label for="length" data-i18n="rec_length_label">Length (cm)</label>
           <input type="number" id="length" inputmode="decimal" placeholder="0.0">
         </div>
         <div>
-          <label for="weight">Weight (kg)</label>
+          <label for="weight" data-i18n="rec_weight_label">Weight (kg)</label>
           <input type="number" id="weight" inputmode="decimal" step="0.001" placeholder="e.g. 0.085">
         </div>
       </div>
 
-      <label>Sex</label>
+      <label data-i18n="rec_sex_label">Sex</label>
       <div class="pillrow" id="sexRow">
-        <div class="pill" data-val="M">Male</div>
-        <div class="pill" data-val="F">Female</div>
-        <div class="pill" data-val="NA">Undetermined</div>
+        <div class="pill" data-val="M" data-i18n="rec_sex_male">Male</div>
+        <div class="pill" data-val="F" data-i18n="rec_sex_female">Female</div>
+        <div class="pill" data-val="NA" data-i18n="rec_sex_undetermined">Undetermined</div>
       </div>
 
-      <label>Condition</label>
+      <label data-i18n="rec_condition_short">Condition</label>
       <div class="pillrow" id="conditionRow">
-        <div class="pill" data-val="alive">Alive</div>
-        <div class="pill" data-val="dead">Dead</div>
-        <div class="pill" data-val="released">Released</div>
+        <div class="pill" data-val="alive" data-i18n="rec_cond_alive">Alive</div>
+        <div class="pill" data-val="dead" data-i18n="rec_cond_dead">Dead</div>
+        <div class="pill" data-val="released" data-i18n="rec_cond_released">Released</div>
       </div>
 
-      <label>Was this bycatch? <span class="optional-tag">i.e. not the target catch</span></label>
+      <label><span data-i18n="rec_bycatch_label">Was this bycatch?</span> <span class="optional-tag" data-i18n="rec_bycatch_hint">i.e. not the target catch</span></label>
       <div class="pillrow" id="bycatchRow">
-        <div class="pill" data-val="yes">Yes — bycatch</div>
-        <div class="pill" data-val="no">No — target catch</div>
+        <div class="pill" data-val="yes" data-i18n="rec_bycatch_yes">Yes — bycatch</div>
+        <div class="pill" data-val="no" data-i18n="rec_bycatch_no">No — target catch</div>
       </div>
       </div>
     </div>
@@ -1314,20 +1321,20 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4c2 4 5 6 5 10a5 5 0 0 1-10 0c0-4 3-6 5-10z" stroke="white" stroke-width="1.8"/></svg>
         </div>
-        <span class="sc-title">Advanced biological data</span>
+        <span class="sc-title" data-i18n="rec_card_advanced_bio">Advanced biological data</span>
         <span class="collapse-chevron" id="stepChevron5">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody5" style="display:none;">
-        <label for="gonadStage">Gonad maturity stage</label>
+        <label for="gonadStage" data-i18n="rec_gonad_label">Gonad maturity stage</label>
         <select id="gonadStage">
-          <option value="">— not recorded —</option>
-          <option value="Immature">Immature</option>
-          <option value="Maturing">Maturing</option>
-          <option value="Mature">Mature</option>
-          <option value="Gravid/Pregnant">Gravid / Pregnant</option>
-          <option value="Spent">Spent</option>
+          <option value="" data-i18n="rec_not_recorded">— not recorded —</option>
+          <option value="Immature" data-i18n="rec_gonad_immature">Immature</option>
+          <option value="Maturing" data-i18n="rec_gonad_maturing">Maturing</option>
+          <option value="Mature" data-i18n="rec_gonad_mature">Mature</option>
+          <option value="Gravid/Pregnant" data-i18n="rec_gonad_gravid">Gravid / Pregnant</option>
+          <option value="Spent" data-i18n="rec_gonad_spent">Spent</option>
         </select>
-        <label for="stomachContents">Stomach contents</label>
+        <label for="stomachContents" data-i18n="rec_stomach_label">Stomach contents</label>
         <textarea id="stomachContents" rows="2" placeholder="e.g. squid beaks, teleost remains — leave blank if not examined"></textarea>
       </div>
     </div>
@@ -1337,17 +1344,17 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M4 18c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.6"/></svg>
         </div>
-        <span class="sc-title">Environmental data</span>
+        <span class="sc-title" data-i18n="rec_card_environment">Environmental data</span>
         <span class="collapse-chevron" id="stepChevron6">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody6" style="display:none;">
         <div class="grid2">
           <div>
-            <label for="seaTemp">Water temperature (°C)</label>
+            <label for="seaTemp" data-i18n="rec_sea_temp_label">Water temperature (°C)</label>
             <input type="number" id="seaTemp" inputmode="decimal" placeholder="e.g. 28.5">
           </div>
           <div>
-            <label for="salinity">Salinity (psu)</label>
+            <label for="salinity" data-i18n="rec_salinity_label">Salinity (psu)</label>
             <input type="number" id="salinity" inputmode="decimal" placeholder="e.g. 33.2">
           </div>
         </div>
@@ -1359,31 +1366,31 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="white"/></svg>
         </div>
-        <span class="sc-title">Position</span>
+        <span class="sc-title" data-i18n="rec_step8_title">Position</span>
         <span class="collapse-chevron" id="stepChevron7">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody7" style="display:none;">
-      <label>GPS coordinates</label>
+      <label data-i18n="rec_gps_coords">GPS coordinates</label>
       <div class="gpsbox" id="gpsBox">
-        <span class="coords pending" id="coordsLabel">not captured</span>
+        <span class="coords pending" id="coordsLabel" data-i18n="rec_not_captured">not captured</span>
         <div style="display:flex; gap:6px;">
-          <button class="gps-btn" id="gpsBtn" type="button">Capture</button>
-          <button class="gps-btn" id="gpsManualToggleBtn" type="button" style="background:var(--panel); color:var(--ink); border:1px solid var(--line);">Manual</button>
+          <button class="gps-btn" id="gpsBtn" type="button" data-i18n="rec_capture_gps">Capture</button>
+          <button class="gps-btn" id="gpsManualToggleBtn" type="button" style="background:var(--panel); color:var(--ink); border:1px solid var(--line);" data-i18n="rec_manual">Manual</button>
         </div>
       </div>
       <div id="researchWeatherBox" style="display:none; margin-top:10px;"></div>
       <div id="gpsManualFields" style="display:none; margin-top:10px;">
         <div class="grid2">
           <div>
-            <label for="manualLat">Latitude</label>
+            <label for="manualLat" data-i18n="rec_latitude">Latitude</label>
             <input type="number" id="manualLat" inputmode="decimal" step="any" placeholder="e.g. 9.12340">
           </div>
           <div>
-            <label for="manualLon">Longitude</label>
+            <label for="manualLon" data-i18n="rec_longitude">Longitude</label>
             <input type="number" id="manualLon" inputmode="decimal" step="any" placeholder="e.g. 99.56780">
           </div>
         </div>
-        <button class="track-toggle-btn" id="gpsManualApplyBtn" style="margin-top:8px;">Use These Coordinates</button>
+        <button class="track-toggle-btn" id="gpsManualApplyBtn" style="margin-top:8px;" data-i18n="rec_use_coords">Use These Coordinates</button>
       </div>
       </div>
     </div>
@@ -1393,13 +1400,13 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3.2" stroke="white" stroke-width="1.8"/><path d="M9 6l1.2-2h3.6L15 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Evidence</span>
+        <span class="sc-title" data-i18n="rec_card_evidence">Evidence</span>
         <span class="collapse-chevron" id="stepChevron8">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody8" style="display:none;">
-      <label>Photo</label>
+      <label data-i18n="rec_photo_label">Photo</label>
       <div class="photobox" id="photoBox">
-        <span class="photo-hint" id="photoLabel">tap to take or attach a photo</span>
+        <span class="photo-hint" id="photoLabel" data-i18n="rec_photo_hint">tap to take or attach a photo</span>
       </div>
       </div>
     </div>
@@ -1409,18 +1416,18 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h10M7 14h6" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Notes</span>
+        <span class="sc-title" data-i18n="rec_card_notes">Notes</span>
         <span class="collapse-chevron" id="stepChevron9">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody9" style="display:none;">
-      <label for="notes">Observations</label>
+      <label for="notes" data-i18n="rec_observations">Observations</label>
       <textarea id="notes" rows="2" placeholder="gear condition, estimated depth, etc."></textarea>
       </div>
     </div>
   </main>
   <div class="savebar">
-    <button class="btn btn-clear" id="clearBtn">Clear</button>
-    <button class="btn btn-save" id="saveBtn">Save record</button>
+    <button class="btn btn-clear" id="clearBtn" data-i18n="rec_clear">Clear</button>
+    <button class="btn btn-save" id="saveBtn" data-i18n="rec_save">Save record</button>
   </div>
 </section>
 
@@ -1429,17 +1436,17 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">History</span>
+      <span class="brand" data-i18n="hist_title">History</span>
     </div>
-    <h1>All Records</h1>
+    <h1 data-i18n="hist_all_records">All Records</h1>
     <div class="site-line" id="siteLineHistory">&nbsp;</div>
     <div class="hist-search-wrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
-      <input type="text" id="searchInput" placeholder="Search species…" class="hist-search-input">
+      <input type="text" id="searchInput" placeholder="Search species…" class="hist-search-input" data-i18n-placeholder="hist_search_placeholder">
     </div>
     <div class="hist-filter-row">
-      <select id="filterSite"><option value="">All sites</option></select>
-      <select id="filterCampaign"><option value="">All campaigns</option></select>
+      <select id="filterSite"><option value="" data-i18n="hist_all_sites">All sites</option></select>
+      <select id="filterCampaign"><option value="" data-i18n="ins_all_campaigns">All campaigns</option></select>
     </div>
   </div>
   <main>
@@ -1448,7 +1455,7 @@
       <div class="export-btn-row">
         <button class="exportbtn" id="exportBtn">CSV</button>
         <button class="exportbtn" id="exportGeoJsonBtn">GeoJSON</button>
-        <button class="exportbtn" id="exportPhotosBtn">Photos</button>
+        <button class="exportbtn" id="exportPhotosBtn" data-i18n="hist_photos">Photos</button>
       </div>
     </div>
     <div id="logList"></div>
@@ -1460,34 +1467,34 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">Map</span>
+      <span class="brand" data-i18n="map_brand">Map</span>
     </div>
-    <h1>Survey Locations</h1>
+    <h1 data-i18n="map_title">Survey Locations</h1>
     <div class="site-line" id="siteLineMap">&nbsp;</div>
     <div class="map-mode-banner" id="mapModeBanner" style="margin-top:10px;">
       <span class="mb-dot" id="mapModeDot"></span>
-      <span id="mapModeText">Checking connection…</span>
+      <span id="mapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
   </div>
   <main>
     <div class="map-layer-toggle" id="mapLayerToggle" style="display:none;">
-      <button class="mlt-btn active" id="mltStreet">Street</button>
-      <button class="mlt-btn" id="mltSatellite">Satellite</button>
+      <button class="mlt-btn active" id="mltStreet" data-i18n="map_street">Street</button>
+      <button class="mlt-btn" id="mltSatellite" data-i18n="map_satellite">Satellite</button>
     </div>
 
     <div id="leafletMap"></div>
     <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
 
     <div class="map-legend-row">
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#0a5c8c;"></span>Alive</span>
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#c0532f;"></span>Dead</span>
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#2f7a52;"></span>Released</span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#0a5c8c;"></span><span data-i18n="rec_cond_alive">Alive</span></span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#c0532f;"></span><span data-i18n="rec_cond_dead">Dead</span></span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:#2f7a52;"></span><span data-i18n="rec_cond_released">Released</span></span>
     </div>
 
     <div class="insight-card" style="margin-top:10px;">
-      <div class="insight-card-label">Offline map areas</div>
-      <div class="offline-map-text">Pan and zoom to your survey area, then download for offline use.</div>
-      <button class="track-toggle-btn" id="downloadAreaBtn" style="margin:0;">Download this area</button>
+      <div class="insight-card-label" data-i18n="map_offline_areas">Offline map areas</div>
+      <div class="offline-map-text" data-i18n="map_pan_zoom">Pan and zoom to your survey area, then download for offline use.</div>
+      <button class="track-toggle-btn" id="downloadAreaBtn" style="margin:0;" data-i18n="map_download_area">Download this area</button>
       <div class="offline-progress" id="offlineProgress" style="display:none;"></div>
       <div id="offlineAreasList"></div>
     </div>
@@ -1540,33 +1547,33 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">Track</span>
+      <span class="brand" data-i18n="track_brand">Track</span>
     </div>
-    <h1>Vessel Track Recorder</h1>
+    <h1 data-i18n="track_title">Vessel Track Recorder</h1>
     <div class="site-line" id="siteLineTrack">&nbsp;</div>
   </div>
   <main>
     <div class="track-stat-card" id="trackStatCard">
       <div class="track-live-indicator">
         <div class="track-live-dot" id="trackLiveDot"></div>
-        <div class="track-live-label" id="trackGpsStatus">GPS not active</div>
+        <div class="track-live-label" id="trackGpsStatus" data-i18n="track_gps_not_active">GPS not active</div>
       </div>
       <div class="track-stat-row">
-        <div class="track-stat"><div class="ts-num" id="trackPointCount">0</div><div class="ts-label">Points</div></div>
-        <div class="track-stat"><div class="ts-num accent" id="trackDuration">00:00</div><div class="ts-label">Duration</div></div>
-        <div class="track-stat"><div class="ts-num" id="trackDistance">0.0</div><div class="ts-label">km approx</div></div>
+        <div class="track-stat"><div class="ts-num" id="trackPointCount">0</div><div class="ts-label" data-i18n="track_points">Points</div></div>
+        <div class="track-stat"><div class="ts-num accent" id="trackDuration">00:00</div><div class="ts-label" data-i18n="track_duration">Duration</div></div>
+        <div class="track-stat"><div class="ts-num" id="trackDistance">0.0</div><div class="ts-label" data-i18n="track_km">km approx</div></div>
       </div>
     </div>
 
-    <button class="track-toggle-btn" id="trackToggleBtn">Start tracking</button>
+    <button class="track-toggle-btn" id="trackToggleBtn" data-i18n="track_start">Start tracking</button>
 
-    <div class="track-note">
+    <div class="track-note" data-i18n="track_note_full">
       One GPS point every ~20 sec. You can move to other Fish Pulse screens while recording — it keeps running in the background of the app. The screen is kept awake automatically while tracking; locking the phone or switching to a different app still pauses recording (an OS limit no web app can override) — stop and save before doing either.
     </div>
 
     <div class="hist-meta-row">
-      <span class="section-h" style="margin:0;">Saved tracks</span>
-      <button class="exportbtn" id="exportTracksBtn">Export GeoJSON</button>
+      <span class="section-h" style="margin:0;" data-i18n="track_saved_tracks">Saved tracks</span>
+      <button class="exportbtn" id="exportTracksBtn" data-i18n="track_export">Export GeoJSON</button>
     </div>
     <div id="trackList"></div>
   </main>
@@ -1577,22 +1584,22 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">Campaigns</span>
+      <span class="brand" data-i18n="camp_title">Campaigns</span>
     </div>
-    <h1>Campaigns &amp; Projects</h1>
+    <h1 data-i18n="camp_h1">Campaigns &amp; Projects</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
     <div class="campaign-active-card" id="campaignActiveCard"></div>
 
     <div class="card" style="margin-bottom:10px;">
-      <div class="insight-card-label" style="margin-bottom:10px;">Start a new campaign</div>
-      <label for="newCampaignName">Campaign name</label>
-      <input type="text" id="newCampaignName" placeholder="e.g. Aleta 1, Survey March 2026">
-      <button class="track-toggle-btn" id="startCampaignBtn" style="margin-top:14px;">Start campaign</button>
+      <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="camp_start_new">Start a new campaign</div>
+      <label for="newCampaignName" data-i18n="camp_name_label">Campaign name</label>
+      <input type="text" id="newCampaignName" placeholder="e.g. Aleta 1, Survey March 2026" data-i18n-placeholder="camp_name_placeholder">
+      <button class="track-toggle-btn" id="startCampaignBtn" style="margin-top:14px;" data-i18n="camp_start">Start campaign</button>
     </div>
 
-    <div class="section-h">All campaigns</div>
+    <div class="section-h" data-i18n="camp_all">All campaigns</div>
     <div id="campaignsList"></div>
   </main>
 </section>
@@ -2654,19 +2661,19 @@
 <nav class="tabbar research-only" id="tabbarResearch">
   <button class="tab active" data-go="home">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1H15v-5h-6v5H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
-    Home
+    <span data-i18n="tab_home">Home</span>
   </button>
   <button class="tab" data-go="record">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-    New
+    <span data-i18n="tab_new">New</span>
   </button>
   <button class="tab" data-go="map">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg></span>
-    Map
+    <span data-i18n="tab_map">Map</span>
   </button>
   <button class="tab" data-go="history">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    History
+    <span data-i18n="tab_history">History</span>
   </button>
 </nav>
 
@@ -2712,27 +2719,384 @@
 </div>
 
 <script>
+// ===== i18n =====
+// Flat dictionary, one key per unique string. Keys are prefixed by area
+// (splash_, menu_, home_, rec_ for New Record, hist_, map_, track_,
+// camp_ for Campaigns, ins_ for Insights) purely to keep this file
+// searchable — the prefix has no runtime meaning.
+//
+// Scope as of this pass: full infra (this block) + Field Research
+// screens translated in full for static labels/buttons/placeholders.
+// Fishing Operations and Sport screens still English-only — same
+// mechanism, just not applied to their markup yet. Field Research's
+// Advanced Insights tab (Diversity/Sex ratio/Bycatch/L-W/Maturity/
+// Accumulation/Histogram cards) is also still English-only: that content
+// is built entirely as JS template strings rather than static HTML, so
+// wiring it up is a separate, similarly-sized pass of its own.
+(function(){
+  const I18N = {
+    en: {
+      splash_slide1_title: 'Capture data at sea', splash_slide1_body: 'Species, biology, bycatch, GPS — all offline. No signal needed in the field.',
+      splash_slide2_title: 'Run your fleet', splash_slide2_body: 'Log trips, hauls, and costs at sea. Settlement, reconciliation, and reports on land.',
+      splash_slide3_title: 'Log every catch', splash_slide3_body: 'Session tracking, solunar table, spot map with satellite view. Your personal fishing log.',
+      splash_slide4_title: 'Works without signal', splash_slide4_body: 'All data stays on your device. Export CSV, GeoJSON, and PDFs anytime — even offline.',
+      splash_get_started: 'Get started — it\'s free', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Unlock advanced stats, multi-device sync & export',
+      mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Choose a mode', mode_select_welcome: '← Welcome', mode_select_clear_session: 'Clear saved session',
+      mode_research_title: 'Field Research', mode_research_sub: 'Species, biology, bycatch, survey data',
+      mode_fleet_title: 'Fishing Operations', mode_fleet_sub: 'Trips, costs, fleet efficiency, traceability',
+      mode_sport_title: 'Sport / Recreational Fishing', mode_sport_sub: 'Sessions, catches, personal log',
+      menu_title: 'Menu', menu_sign_in: 'Sign in', menu_sign_in_sub: 'Sync across devices',
+      menu_about: 'About Fish Pulse', menu_about_sub: 'Version, docs, contact',
+      menu_premium: 'Fish Pulse Premium', menu_premium_sub: 'Plans & subscriptions',
+      menu_language: 'Language', menu_language_sub: 'App display language',
+      premium_title: 'Fish Pulse Premium', premium_everything_free: 'Everything in Free, plus:',
+      premium_f1: 'Multi-device sync — start a record on your phone, review it on the office computer',
+      premium_f2: 'Advanced statistics — species diversity indices, CPUE trends, solunar correlation',
+      premium_f3: 'Bulk export — CSV, GeoJSON, PDF landing reports in one tap',
+      premium_f4: 'Institutional accounts — share campaigns across your research team',
+      premium_f5: 'Priority support & early access to new features',
+      premium_contact: 'Get in touch to subscribe', premium_close: 'Close',
+      tab_home: 'Home', tab_new: 'New', tab_record: 'New Record', tab_map: 'Map', tab_insights: 'Insights', tab_history: 'History',
+      home_greeting: 'Field Research', home_new_record: 'New Record', home_new_record_sub: 'Log a specimen',
+      home_switch_mode: 'Switch mode', home_todays_survey: "Today's Survey", home_no_site: 'No site selected',
+      home_specimens: 'Specimens', home_backup_status: 'Backup status', home_not_backed_up: 'Not backed up yet',
+      home_backup_now: 'Back up now', home_quick_links: 'Quick links', home_most_recent: 'Most recent', home_active_site: 'Active site: ',
+      home_history: 'History', home_history_sub: 'Past records',
+      home_map: 'Survey Map', home_map_sub: 'GPS locations',
+      home_track: 'Vessel Track', home_track_sub: 'Record a route',
+      home_insights: 'Survey Insights', home_insights_sub: 'Stats & charts',
+      home_campaigns: 'Campaigns', home_campaigns_sub: 'Organize surveys',
+      home_records_logged: 'Records logged',
+      rec_title: 'New Record', rec_step1_title: 'Campaign & Observer',
+      rec_campaign_label: 'Active Campaign', rec_observer_label: 'Observer Name',
+      rec_step2_title: 'Location & Gear', rec_site_label: 'Site / Location Name',
+      rec_vessel_label: 'Vessel', rec_gear_label: 'Gear Type', rec_depth_label: 'Depth (m)',
+      rec_haul_start_label: 'Haul Start Time', rec_haul_end_label: 'Haul End Time',
+      rec_net_width_label: 'Net Width / Mouth Opening (m)', rec_mesh_size_label: 'Mesh Size (mm)',
+      rec_hook_count_label: 'Number Of Hooks', rec_hook_spacing_label: 'Hook Spacing (m)',
+      rec_step3_title: 'Species Identification', rec_taxon_label: 'Taxon Group',
+      rec_species_label: 'Scientific Name', rec_common_name_label: 'Common Name',
+      rec_step4_title: 'Biometrics', rec_length_label: 'Length (cm)', rec_weight_label: 'Weight (kg)',
+      rec_sex_label: 'Sex', rec_condition_label: 'Condition At Release',
+      rec_step5_title: 'Bycatch Status', rec_bycatch_label: 'Is This Bycatch?',
+      rec_step6_title: 'Biological Detail', rec_gonad_label: 'Gonad maturity stage', rec_stomach_label: 'Stomach contents',
+      rec_step7_title: 'Environment', rec_sea_temp_label: 'Sea Temperature (°C)', rec_salinity_label: 'Salinity (PSU)',
+      rec_step8_title: 'Position', rec_capture_gps: 'Capture',
+      rec_step9_title: 'Photo & Notes', rec_notes_label: 'Notes', rec_optional: 'optional',
+      rec_h1: 'Incidental Catch Entry', rec_survey_date_label: 'Survey date',
+      rec_card_session: 'Session', rec_card_site_gear: 'Site &amp; gear', rec_vessel_id_label: 'Vessel ID',
+      rec_select_placeholder: '— select —', rec_gear_demersal_trawl: 'Demersal trawl', rec_gear_otter_trawl: 'Otter trawl',
+      rec_gear_gillnet: 'Gillnet', rec_gear_longline: 'Longline', rec_gear_purse_seine: 'Purse seine', rec_gear_other: 'Other',
+      rec_card_effort: 'Fishing effort', rec_card_specimen: 'Specimen',
+      rec_taxon_elasmo: 'Elasmobranch', rec_taxon_teleost: 'Teleost fish', rec_taxon_crustacea: 'Crustacean', rec_taxon_mollusca: 'Mollusc',
+      rec_sex_male: 'Male', rec_sex_female: 'Female', rec_sex_undetermined: 'Undetermined',
+      rec_condition_short: 'Condition', rec_bycatch_hint: 'i.e. not the target catch', rec_bycatch_yes: 'Yes — bycatch', rec_bycatch_no: 'No — target catch',
+      rec_card_advanced_bio: 'Advanced biological data', rec_not_recorded: '— not recorded —',
+      rec_gonad_immature: 'Immature', rec_gonad_maturing: 'Maturing', rec_gonad_mature: 'Mature', rec_gonad_gravid: 'Gravid / Pregnant', rec_gonad_spent: 'Spent',
+      rec_card_environment: 'Environmental data', rec_gps_coords: 'GPS coordinates', rec_not_captured: 'not captured',
+      rec_manual: 'Manual', rec_latitude: 'Latitude', rec_longitude: 'Longitude', rec_use_coords: 'Use These Coordinates',
+      rec_card_evidence: 'Evidence', rec_photo_label: 'Photo', rec_photo_hint: 'tap to take or attach a photo',
+      rec_card_notes: 'Notes', rec_observations: 'Observations',
+      rec_save: 'Save record', rec_clear: 'Clear form',
+      hist_title: 'History', hist_all_records: 'All Records', hist_search_placeholder: 'Search species…', hist_empty: 'No records yet.', hist_all_sites: 'All sites', hist_photos: 'Photos',
+      map_title: 'Survey Locations', map_brand: 'Map', map_checking: 'Checking connection…', map_street: 'Street', map_satellite: 'Satellite',
+      map_offline_areas: 'Offline map areas', map_pan_zoom: 'Pan and zoom to your survey area, then download for offline use.', map_download_area: 'Download this area',
+      rec_cond_alive: 'Alive', rec_cond_dead: 'Dead', rec_cond_released: 'Released',
+      track_title: 'Vessel Track Recorder', track_brand: 'Track', track_gps_not_active: 'GPS not active', track_start: 'Start tracking', track_stop: 'Stop & save track',
+      track_note_full: 'One GPS point every ~20 sec. You can move to other Fish Pulse screens while recording — it keeps running in the background of the app. The screen is kept awake automatically while tracking; locking the phone or switching to a different app still pauses recording (an OS limit no web app can override) — stop and save before doing either.',
+      track_points: 'Points', track_duration: 'Duration', track_km: 'km approx',
+      track_saved_tracks: 'Saved tracks', track_export: 'Export GeoJSON',
+      camp_title: 'Campaigns', camp_h1: 'Campaigns &amp; Projects', camp_start_new: 'Start a new campaign', camp_name_label: 'Campaign name',
+      camp_name_placeholder: 'e.g. Aleta 1, Survey March 2026', camp_all: 'All campaigns', camp_new_name: 'New campaign name', camp_start: 'Start Campaign',
+      camp_active: 'Active campaign', camp_none: 'None — records will be unassigned', camp_end: 'End Campaign',
+      camp_past: 'Past campaigns',
+      ins_title: 'Survey Statistics', ins_all_taxon: 'All taxon groups', ins_all_campaigns: 'All campaigns',
+      ins_tab_stats: 'Stats', ins_tab_charts: 'Charts', ins_tab_advanced: 'Advanced'
+    },
+    es: {
+      splash_slide1_title: 'Captura datos en el mar', splash_slide1_body: 'Especies, biología, bycatch, GPS — todo sin conexión. No necesitas señal en campo.',
+      splash_slide2_title: 'Administra tu flota', splash_slide2_body: 'Registra viajes, lances y costos en el mar. Liquidación, reconciliación y reportes en tierra.',
+      splash_slide3_title: 'Registra cada captura', splash_slide3_body: 'Seguimiento de sesión, tabla solunar, mapa de spots con vista satelital. Tu bitácora de pesca personal.',
+      splash_slide4_title: 'Funciona sin señal', splash_slide4_body: 'Todos los datos se quedan en tu dispositivo. Exporta CSV, GeoJSON y PDFs en cualquier momento — incluso sin conexión.',
+      splash_get_started: 'Comenzar — es gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Desbloquea estadísticos avanzados, sincronización y exportación',
+      mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Elige un modo', mode_select_welcome: '← Bienvenida', mode_select_clear_session: 'Borrar sesión guardada',
+      mode_research_title: 'Investigación de Campo', mode_research_sub: 'Especies, biología, bycatch, datos de muestreo',
+      mode_fleet_title: 'Operaciones Pesqueras', mode_fleet_sub: 'Viajes, costos, eficiencia de flota, trazabilidad',
+      mode_sport_title: 'Pesca Deportiva / Recreativa', mode_sport_sub: 'Sesiones, capturas, bitácora personal',
+      menu_title: 'Menú', menu_sign_in: 'Iniciar sesión', menu_sign_in_sub: 'Sincroniza entre dispositivos',
+      menu_about: 'Acerca de Fish Pulse', menu_about_sub: 'Versión, documentación, contacto',
+      menu_premium: 'Fish Pulse Premium', menu_premium_sub: 'Planes y suscripciones',
+      menu_language: 'Idioma', menu_language_sub: 'Idioma de la aplicación',
+      premium_title: 'Fish Pulse Premium', premium_everything_free: 'Todo lo del plan gratuito, más:',
+      premium_f1: 'Sincronización multi-dispositivo — empieza un registro en tu teléfono, revísalo en la computadora de oficina',
+      premium_f2: 'Estadísticos avanzados — índices de diversidad de especies, tendencias de CPUE, correlación solunar',
+      premium_f3: 'Exportación masiva — CSV, GeoJSON, reportes de desembarque en PDF con un toque',
+      premium_f4: 'Cuentas institucionales — comparte campañas con tu equipo de investigación',
+      premium_f5: 'Soporte prioritario y acceso anticipado a nuevas funciones',
+      premium_contact: 'Contáctanos para suscribirte', premium_close: 'Cerrar',
+      tab_home: 'Inicio', tab_new: 'Nuevo', tab_record: 'Nuevo Registro', tab_map: 'Mapa', tab_insights: 'Estadísticas', tab_history: 'Historial',
+      home_greeting: 'Investigación de Campo', home_new_record: 'Nuevo Registro', home_new_record_sub: 'Registrar un espécimen',
+      home_switch_mode: 'Cambiar modo', home_todays_survey: 'Muestreo de Hoy', home_no_site: 'Ningún sitio seleccionado',
+      home_specimens: 'Especímenes', home_backup_status: 'Estado de respaldo', home_not_backed_up: 'Aún no respaldado',
+      home_backup_now: 'Respaldar ahora', home_quick_links: 'Accesos rápidos', home_most_recent: 'Más reciente', home_active_site: 'Sitio activo: ',
+      home_history: 'Historial', home_history_sub: 'Registros anteriores',
+      home_map: 'Mapa de Muestreo', home_map_sub: 'Ubicaciones GPS',
+      home_track: 'Ruta del Barco', home_track_sub: 'Grabar una ruta',
+      home_insights: 'Estadísticas de Muestreo', home_insights_sub: 'Estadísticos y gráficas',
+      home_campaigns: 'Campañas', home_campaigns_sub: 'Organiza tus muestreos',
+      home_records_logged: 'Registros capturados',
+      rec_title: 'Nuevo Registro', rec_step1_title: 'Campaña y Observador',
+      rec_campaign_label: 'Campaña Activa', rec_observer_label: 'Nombre del Observador',
+      rec_step2_title: 'Ubicación y Arte de Pesca', rec_site_label: 'Sitio / Nombre del Lugar',
+      rec_vessel_label: 'Embarcación', rec_gear_label: 'Tipo de Arte', rec_depth_label: 'Profundidad (m)',
+      rec_haul_start_label: 'Hora de Inicio del Lance', rec_haul_end_label: 'Hora de Fin del Lance',
+      rec_net_width_label: 'Ancho de Red / Apertura de Boca (m)', rec_mesh_size_label: 'Tamaño de Malla (mm)',
+      rec_hook_count_label: 'Número de Anzuelos', rec_hook_spacing_label: 'Espaciado entre Anzuelos (m)',
+      rec_step3_title: 'Identificación de Especie', rec_taxon_label: 'Grupo Taxonómico',
+      rec_species_label: 'Nombre Científico', rec_common_name_label: 'Nombre Común',
+      rec_step4_title: 'Biometría', rec_length_label: 'Longitud (cm)', rec_weight_label: 'Peso (kg)',
+      rec_sex_label: 'Sexo', rec_condition_label: 'Condición al Liberar',
+      rec_step5_title: 'Estatus de Bycatch', rec_bycatch_label: '¿Es Esto Bycatch?',
+      rec_step6_title: 'Detalle Biológico', rec_gonad_label: 'Estadio de madurez gonadal', rec_stomach_label: 'Contenido estomacal',
+      rec_step7_title: 'Ambiente', rec_sea_temp_label: 'Temperatura del Mar (°C)', rec_salinity_label: 'Salinidad (PSU)',
+      rec_step8_title: 'Posición', rec_capture_gps: 'Capturar',
+      rec_step9_title: 'Foto y Notas', rec_notes_label: 'Notas', rec_optional: 'opcional',
+      rec_h1: 'Registro de Captura Incidental', rec_survey_date_label: 'Fecha de muestreo',
+      rec_card_session: 'Sesión', rec_card_site_gear: 'Sitio y arte de pesca', rec_vessel_id_label: 'ID de Embarcación',
+      rec_select_placeholder: '— seleccionar —', rec_gear_demersal_trawl: 'Arrastre demersal', rec_gear_otter_trawl: 'Arrastre de otter',
+      rec_gear_gillnet: 'Red agallera', rec_gear_longline: 'Palangre', rec_gear_purse_seine: 'Red de cerco', rec_gear_other: 'Otro',
+      rec_card_effort: 'Esfuerzo de pesca', rec_card_specimen: 'Espécimen',
+      rec_taxon_elasmo: 'Elasmobranquio', rec_taxon_teleost: 'Pez teleósteo', rec_taxon_crustacea: 'Crustáceo', rec_taxon_mollusca: 'Molusco',
+      rec_sex_male: 'Macho', rec_sex_female: 'Hembra', rec_sex_undetermined: 'Indeterminado',
+      rec_condition_short: 'Condición', rec_bycatch_hint: 'es decir, no la captura objetivo', rec_bycatch_yes: 'Sí — bycatch', rec_bycatch_no: 'No — captura objetivo',
+      rec_card_advanced_bio: 'Datos biológicos avanzados', rec_not_recorded: '— no registrado —',
+      rec_gonad_immature: 'Inmaduro', rec_gonad_maturing: 'Madurando', rec_gonad_mature: 'Maduro', rec_gonad_gravid: 'Grávida / Preñada', rec_gonad_spent: 'Desovado',
+      rec_card_environment: 'Datos ambientales', rec_gps_coords: 'Coordenadas GPS', rec_not_captured: 'no capturadas',
+      rec_manual: 'Manual', rec_latitude: 'Latitud', rec_longitude: 'Longitud', rec_use_coords: 'Usar Estas Coordenadas',
+      rec_card_evidence: 'Evidencia', rec_photo_label: 'Foto', rec_photo_hint: 'toca para tomar o adjuntar una foto',
+      rec_card_notes: 'Notas', rec_observations: 'Observaciones',
+      rec_save: 'Guardar registro', rec_clear: 'Limpiar formulario',
+      hist_title: 'Historial', hist_all_records: 'Todos los Registros', hist_search_placeholder: 'Buscar especie…', hist_empty: 'Aún no hay registros.', hist_all_sites: 'Todos los sitios', hist_photos: 'Fotos',
+      map_title: 'Ubicaciones de Muestreo', map_brand: 'Mapa', map_checking: 'Verificando conexión…', map_street: 'Calle', map_satellite: 'Satélite',
+      map_offline_areas: 'Áreas de mapa sin conexión', map_pan_zoom: 'Desplaza y haz zoom a tu área de muestreo, luego descarga para uso sin conexión.', map_download_area: 'Descargar esta área',
+      rec_cond_alive: 'Vivo', rec_cond_dead: 'Muerto', rec_cond_released: 'Liberado',
+      track_title: 'Grabador de Ruta del Barco', track_brand: 'Ruta', track_gps_not_active: 'GPS no activo', track_start: 'Iniciar grabación', track_stop: 'Detener y guardar ruta',
+      track_note_full: 'Un punto GPS cada ~20 seg. Puedes moverte a otras pantallas de Fish Pulse mientras grabas — sigue funcionando en segundo plano de la app. La pantalla se mantiene encendida automáticamente mientras grabas; bloquear el teléfono o cambiar a otra app sigue pausando la grabación (un límite del sistema que ninguna app web puede evitar) — detén y guarda antes de hacer cualquiera de las dos cosas.',
+      track_points: 'Puntos', track_duration: 'Duración', track_km: 'km aprox.',
+      track_saved_tracks: 'Rutas guardadas', track_export: 'Exportar GeoJSON',
+      camp_title: 'Campañas', camp_h1: 'Campañas y Proyectos', camp_start_new: 'Iniciar una nueva campaña', camp_name_label: 'Nombre de la campaña',
+      camp_name_placeholder: 'ej. Aleta 1, Muestreo Marzo 2026', camp_all: 'Todas las campañas', camp_new_name: 'Nombre de la nueva campaña', camp_start: 'Iniciar Campaña',
+      camp_active: 'Campaña activa', camp_none: 'Ninguna — los registros quedarán sin asignar', camp_end: 'Terminar Campaña',
+      camp_past: 'Campañas anteriores',
+      ins_title: 'Estadísticas de Muestreo', ins_all_taxon: 'Todos los grupos taxonómicos', ins_all_campaigns: 'Todas las campañas',
+      ins_tab_stats: 'Estadísticos', ins_tab_charts: 'Gráficas', ins_tab_advanced: 'Avanzado'
+    },
+    it: {
+      splash_slide1_title: 'Cattura dati in mare', splash_slide1_body: 'Specie, biologia, catture accessorie, GPS — tutto offline. Nessun segnale necessario sul campo.',
+      splash_slide2_title: 'Gestisci la tua flotta', splash_slide2_body: 'Registra viaggi, cale e costi in mare. Liquidazione, riconciliazione e rapporti a terra.',
+      splash_slide3_title: 'Registra ogni cattura', splash_slide3_body: 'Monitoraggio sessione, tabella lunare, mappa spot con vista satellitare. Il tuo diario di pesca personale.',
+      splash_slide4_title: 'Funziona senza segnale', splash_slide4_body: 'Tutti i dati restano sul tuo dispositivo. Esporta CSV, GeoJSON e PDF in qualsiasi momento — anche offline.',
+      splash_get_started: 'Inizia — è gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Sblocca statistiche avanzate, sincronizzazione ed esportazione',
+      mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Scegli una modalità', mode_select_welcome: '← Benvenuto', mode_select_clear_session: 'Cancella sessione salvata',
+      mode_research_title: 'Ricerca sul Campo', mode_research_sub: 'Specie, biologia, catture accessorie, dati di rilevamento',
+      mode_fleet_title: 'Operazioni di Pesca', mode_fleet_sub: 'Viaggi, costi, efficienza della flotta, tracciabilità',
+      mode_sport_title: 'Pesca Sportiva / Ricreativa', mode_sport_sub: 'Sessioni, catture, diario personale',
+      menu_title: 'Menu', menu_sign_in: 'Accedi', menu_sign_in_sub: 'Sincronizza tra dispositivi',
+      menu_about: 'Informazioni su Fish Pulse', menu_about_sub: 'Versione, documentazione, contatti',
+      menu_premium: 'Fish Pulse Premium', menu_premium_sub: 'Piani e abbonamenti',
+      menu_language: 'Lingua', menu_language_sub: 'Lingua dell\'app',
+      premium_title: 'Fish Pulse Premium', premium_everything_free: 'Tutto quello del piano Free, più:',
+      premium_f1: 'Sincronizzazione multi-dispositivo — inizia una registrazione sul telefono, rivedila sul computer dell\'ufficio',
+      premium_f2: 'Statistiche avanzate — indici di diversità delle specie, tendenze CPUE, correlazione lunare',
+      premium_f3: 'Esportazione massiva — CSV, GeoJSON, rapporti di sbarco in PDF con un tocco',
+      premium_f4: 'Account istituzionali — condividi le campagne con il tuo team di ricerca',
+      premium_f5: 'Supporto prioritario e accesso anticipato alle nuove funzionalità',
+      premium_contact: 'Contattaci per abbonarti', premium_close: 'Chiudi',
+      tab_home: 'Home', tab_new: 'Nuova', tab_record: 'Nuova Scheda', tab_map: 'Mappa', tab_insights: 'Statistiche', tab_history: 'Cronologia',
+      home_greeting: 'Ricerca sul Campo', home_new_record: 'Nuova Scheda', home_new_record_sub: 'Registra un esemplare',
+      home_switch_mode: 'Cambia modalità', home_todays_survey: 'Rilevamento di Oggi', home_no_site: 'Nessun sito selezionato',
+      home_specimens: 'Esemplari', home_backup_status: 'Stato del backup', home_not_backed_up: 'Non ancora salvato',
+      home_backup_now: 'Salva backup ora', home_quick_links: 'Collegamenti rapidi', home_most_recent: 'Più recenti', home_active_site: 'Sito attivo: ',
+      home_history: 'Cronologia', home_history_sub: 'Schede precedenti',
+      home_map: 'Mappa di Rilevamento', home_map_sub: 'Posizioni GPS',
+      home_track: 'Rotta dell\'Imbarcazione', home_track_sub: 'Registra un percorso',
+      home_insights: 'Statistiche di Rilevamento', home_insights_sub: 'Statistiche e grafici',
+      home_campaigns: 'Campagne', home_campaigns_sub: 'Organizza i tuoi rilevamenti',
+      home_records_logged: 'Schede registrate',
+      rec_title: 'Nuova Scheda', rec_step1_title: 'Campagna e Osservatore',
+      rec_campaign_label: 'Campagna Attiva', rec_observer_label: 'Nome dell\'Osservatore',
+      rec_step2_title: 'Posizione e Attrezzo', rec_site_label: 'Sito / Nome del Luogo',
+      rec_vessel_label: 'Imbarcazione', rec_gear_label: 'Tipo di Attrezzo', rec_depth_label: 'Profondità (m)',
+      rec_haul_start_label: 'Ora di Inizio Calata', rec_haul_end_label: 'Ora di Fine Calata',
+      rec_net_width_label: 'Larghezza Rete / Apertura Bocca (m)', rec_mesh_size_label: 'Dimensione Maglia (mm)',
+      rec_hook_count_label: 'Numero di Ami', rec_hook_spacing_label: 'Spaziatura tra gli Ami (m)',
+      rec_step3_title: 'Identificazione della Specie', rec_taxon_label: 'Gruppo Tassonomico',
+      rec_species_label: 'Nome Scientifico', rec_common_name_label: 'Nome Comune',
+      rec_step4_title: 'Biometria', rec_length_label: 'Lunghezza (cm)', rec_weight_label: 'Peso (kg)',
+      rec_sex_label: 'Sesso', rec_condition_label: 'Condizione al Rilascio',
+      rec_step5_title: 'Stato di Cattura Accessoria', rec_bycatch_label: 'È una Cattura Accessoria?',
+      rec_step6_title: 'Dettaglio Biologico', rec_gonad_label: 'Stadio di maturità gonadica', rec_stomach_label: 'Contenuto stomacale',
+      rec_step7_title: 'Ambiente', rec_sea_temp_label: 'Temperatura del Mare (°C)', rec_salinity_label: 'Salinità (PSU)',
+      rec_step8_title: 'Posizione', rec_capture_gps: 'Cattura',
+      rec_step9_title: 'Foto e Note', rec_notes_label: 'Note', rec_optional: 'opzionale',
+      rec_h1: 'Registrazione Cattura Accessoria', rec_survey_date_label: 'Data di rilevamento',
+      rec_card_session: 'Sessione', rec_card_site_gear: 'Sito e attrezzo', rec_vessel_id_label: 'ID Imbarcazione',
+      rec_select_placeholder: '— seleziona —', rec_gear_demersal_trawl: 'Strascico demersale', rec_gear_otter_trawl: 'Strascico a divergenti',
+      rec_gear_gillnet: 'Rete da posta', rec_gear_longline: 'Palangaro', rec_gear_purse_seine: 'Circuizione', rec_gear_other: 'Altro',
+      rec_card_effort: 'Sforzo di pesca', rec_card_specimen: 'Esemplare',
+      rec_taxon_elasmo: 'Elasmobranco', rec_taxon_teleost: 'Pesce osseo', rec_taxon_crustacea: 'Crostaceo', rec_taxon_mollusca: 'Mollusco',
+      rec_sex_male: 'Maschio', rec_sex_female: 'Femmina', rec_sex_undetermined: 'Indeterminato',
+      rec_condition_short: 'Condizione', rec_bycatch_hint: 'cioè non la cattura target', rec_bycatch_yes: 'Sì — cattura accessoria', rec_bycatch_no: 'No — cattura target',
+      rec_card_advanced_bio: 'Dati biologici avanzati', rec_not_recorded: '— non registrato —',
+      rec_gonad_immature: 'Immaturo', rec_gonad_maturing: 'In maturazione', rec_gonad_mature: 'Maturo', rec_gonad_gravid: 'Gravido', rec_gonad_spent: 'Deposto',
+      rec_card_environment: 'Dati ambientali', rec_gps_coords: 'Coordinate GPS', rec_not_captured: 'non acquisite',
+      rec_manual: 'Manuale', rec_latitude: 'Latitudine', rec_longitude: 'Longitudine', rec_use_coords: 'Usa Queste Coordinate',
+      rec_card_evidence: 'Prove', rec_photo_label: 'Foto', rec_photo_hint: 'tocca per scattare o allegare una foto',
+      rec_card_notes: 'Note', rec_observations: 'Osservazioni',
+      rec_save: 'Salva scheda', rec_clear: 'Svuota modulo',
+      hist_title: 'Cronologia', hist_all_records: 'Tutte le Schede', hist_search_placeholder: 'Cerca specie…', hist_empty: 'Nessuna scheda ancora.', hist_all_sites: 'Tutti i siti', hist_photos: 'Foto',
+      map_title: 'Posizioni di Rilevamento', map_brand: 'Mappa', map_checking: 'Verifica connessione…', map_street: 'Strada', map_satellite: 'Satellite',
+      map_offline_areas: 'Aree mappa offline', map_pan_zoom: 'Sposta e ingrandisci sulla tua area di rilevamento, poi scarica per l\'uso offline.', map_download_area: 'Scarica quest\'area',
+      rec_cond_alive: 'Vivo', rec_cond_dead: 'Morto', rec_cond_released: 'Rilasciato',
+      track_title: 'Registratore Rotta Imbarcazione', track_brand: 'Rotta', track_gps_not_active: 'GPS non attivo', track_start: 'Avvia registrazione', track_stop: 'Ferma e salva rotta',
+      track_note_full: 'Un punto GPS ogni ~20 sec. Puoi spostarti su altre schermate di Fish Pulse durante la registrazione — continua a funzionare in background nell\'app. Lo schermo resta acceso automaticamente durante la registrazione; bloccare il telefono o passare a un\'altra app mette comunque in pausa la registrazione (un limite del sistema operativo che nessuna app web può superare) — ferma e salva prima di fare entrambe le cose.',
+      track_points: 'Punti', track_duration: 'Durata', track_km: 'km circa',
+      track_saved_tracks: 'Rotte salvate', track_export: 'Esporta GeoJSON',
+      camp_title: 'Campagne', camp_h1: 'Campagne e Progetti', camp_start_new: 'Avvia una nuova campagna', camp_name_label: 'Nome campagna',
+      camp_name_placeholder: 'es. Aleta 1, Rilevamento Marzo 2026', camp_all: 'Tutte le campagne', camp_new_name: 'Nome nuova campagna', camp_start: 'Avvia Campagna',
+      camp_active: 'Campagna attiva', camp_none: 'Nessuna — le schede resteranno non assegnate', camp_end: 'Termina Campagna',
+      camp_past: 'Campagne passate',
+      ins_title: 'Statistiche di Rilevamento', ins_all_taxon: 'Tutti i gruppi tassonomici', ins_all_campaigns: 'Tutte le campagne',
+      ins_tab_stats: 'Statistiche', ins_tab_charts: 'Grafici', ins_tab_advanced: 'Avanzate'
+    },
+    th: {
+      splash_slide1_title: 'บันทึกข้อมูลกลางทะเล', splash_slide1_body: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ จีพีเอส — ใช้งานได้แบบออฟไลน์ทั้งหมด ไม่ต้องมีสัญญาณในภาคสนาม',
+      splash_slide2_title: 'บริหารกองเรือของคุณ', splash_slide2_body: 'บันทึกทริป การลากอวน และค่าใช้จ่ายกลางทะเล คิดบัญชี กระทบยอด และรายงานบนฝั่ง',
+      splash_slide3_title: 'บันทึกทุกการจับปลา', splash_slide3_body: 'ติดตามเซสชัน ตารางสุริยะจันทรคติ แผนที่จุดตกปลาพร้อมมุมมองดาวเทียม สมุดบันทึกการตกปลาส่วนตัวของคุณ',
+      splash_slide4_title: 'ใช้งานได้แม้ไม่มีสัญญาณ', splash_slide4_body: 'ข้อมูลทั้งหมดอยู่ในอุปกรณ์ของคุณ ส่งออก CSV, GeoJSON และ PDF ได้ทุกเมื่อ — แม้ออฟไลน์',
+      splash_get_started: 'เริ่มต้นใช้งาน — ฟรี', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'ปลดล็อกสถิติขั้นสูง การซิงค์หลายอุปกรณ์ และการส่งออก',
+      mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'เลือกโหมด', mode_select_welcome: '← หน้าต้อนรับ', mode_select_clear_session: 'ล้างเซสชันที่บันทึกไว้',
+      mode_research_title: 'งานวิจัยภาคสนาม', mode_research_sub: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ ข้อมูลสำรวจ',
+      mode_fleet_title: 'ปฏิบัติการประมง', mode_fleet_sub: 'ทริป ค่าใช้จ่าย ประสิทธิภาพกองเรือ การตรวจสอบย้อนกลับ',
+      mode_sport_title: 'ตกปลากีฬา / นันทนาการ', mode_sport_sub: 'เซสชัน การจับปลา บันทึกส่วนตัว',
+      menu_title: 'เมนู', menu_sign_in: 'เข้าสู่ระบบ', menu_sign_in_sub: 'ซิงค์ข้อมูลข้ามอุปกรณ์',
+      menu_about: 'เกี่ยวกับ Fish Pulse', menu_about_sub: 'เวอร์ชัน เอกสาร ติดต่อเรา',
+      menu_premium: 'Fish Pulse Premium', menu_premium_sub: 'แพ็กเกจและการสมัครสมาชิก',
+      menu_language: 'ภาษา', menu_language_sub: 'ภาษาที่แสดงในแอป',
+      premium_title: 'Fish Pulse Premium', premium_everything_free: 'ทุกอย่างในแพ็กเกจฟรี บวกกับ:',
+      premium_f1: 'ซิงค์หลายอุปกรณ์ — เริ่มบันทึกบนโทรศัพท์ ตรวจสอบบนคอมพิวเตอร์ที่สำนักงาน',
+      premium_f2: 'สถิติขั้นสูง — ดัชนีความหลากหลายของชนิดพันธุ์ แนวโน้ม CPUE ความสัมพันธ์กับปฏิทินจันทรคติ',
+      premium_f3: 'ส่งออกจำนวนมาก — CSV, GeoJSON, รายงานการขึ้นท่าเป็น PDF ในแตะเดียว',
+      premium_f4: 'บัญชีองค์กร — แชร์แคมเปญกับทีมวิจัยของคุณ',
+      premium_f5: 'การสนับสนุนแบบเร่งด่วนและสิทธิ์เข้าถึงฟีเจอร์ใหม่ก่อนใคร',
+      premium_contact: 'ติดต่อเราเพื่อสมัคร', premium_close: 'ปิด',
+      tab_home: 'หน้าแรก', tab_new: 'ใหม่', tab_record: 'บันทึกใหม่', tab_map: 'แผนที่', tab_insights: 'สถิติ', tab_history: 'ประวัติ',
+      home_greeting: 'งานวิจัยภาคสนาม', home_new_record: 'บันทึกใหม่', home_new_record_sub: 'บันทึกตัวอย่างสิ่งมีชีวิต',
+      home_switch_mode: 'เปลี่ยนโหมด', home_todays_survey: 'การสำรวจวันนี้', home_no_site: 'ยังไม่ได้เลือกสถานที่',
+      home_specimens: 'ตัวอย่างสิ่งมีชีวิต', home_backup_status: 'สถานะการสำรองข้อมูล', home_not_backed_up: 'ยังไม่ได้สำรองข้อมูล',
+      home_backup_now: 'สำรองข้อมูลตอนนี้', home_quick_links: 'ลิงก์ด่วน', home_most_recent: 'ล่าสุด', home_active_site: 'สถานที่ที่ใช้งานอยู่: ',
+      home_history: 'ประวัติ', home_history_sub: 'บันทึกก่อนหน้า',
+      home_map: 'แผนที่การสำรวจ', home_map_sub: 'ตำแหน่งจีพีเอส',
+      home_track: 'เส้นทางเรือ', home_track_sub: 'บันทึกเส้นทาง',
+      home_insights: 'สถิติการสำรวจ', home_insights_sub: 'สถิติและกราฟ',
+      home_campaigns: 'แคมเปญ', home_campaigns_sub: 'จัดระเบียบการสำรวจของคุณ',
+      home_records_logged: 'บันทึกที่บันทึกแล้ว',
+      rec_title: 'บันทึกใหม่', rec_step1_title: 'แคมเปญและผู้สังเกตการณ์',
+      rec_campaign_label: 'แคมเปญที่ใช้งานอยู่', rec_observer_label: 'ชื่อผู้สังเกตการณ์',
+      rec_step2_title: 'ตำแหน่งและเครื่องมือประมง', rec_site_label: 'ชื่อสถานที่ / จุดสำรวจ',
+      rec_vessel_label: 'เรือ', rec_gear_label: 'ประเภทเครื่องมือประมง', rec_depth_label: 'ความลึก (ม.)',
+      rec_haul_start_label: 'เวลาเริ่มลากอวน', rec_haul_end_label: 'เวลาสิ้นสุดลากอวน',
+      rec_net_width_label: 'ความกว้างอวน / ปากอวน (ม.)', rec_mesh_size_label: 'ขนาดตาอวน (มม.)',
+      rec_hook_count_label: 'จำนวนเบ็ด', rec_hook_spacing_label: 'ระยะห่างระหว่างเบ็ด (ม.)',
+      rec_step3_title: 'การระบุชนิดพันธุ์', rec_taxon_label: 'กลุ่มอนุกรมวิธาน',
+      rec_species_label: 'ชื่อวิทยาศาสตร์', rec_common_name_label: 'ชื่อสามัญ',
+      rec_step4_title: 'ข้อมูลชีวมิติ', rec_length_label: 'ความยาว (ซม.)', rec_weight_label: 'น้ำหนัก (กก.)',
+      rec_sex_label: 'เพศ', rec_condition_label: 'สภาพขณะปล่อยคืน',
+      rec_step5_title: 'สถานะสัตว์น้ำพลอยได้', rec_bycatch_label: 'นี่คือสัตว์น้ำพลอยได้หรือไม่?',
+      rec_step6_title: 'รายละเอียดทางชีววิทยา', rec_gonad_label: 'ระยะความสมบูรณ์เพศ', rec_stomach_label: 'สิ่งที่พบในกระเพาะอาหาร',
+      rec_step7_title: 'สภาพแวดล้อม', rec_sea_temp_label: 'อุณหภูมิน้ำทะเล (°C)', rec_salinity_label: 'ความเค็ม (PSU)',
+      rec_step8_title: 'ตำแหน่ง', rec_capture_gps: 'บันทึกตำแหน่ง',
+      rec_step9_title: 'รูปภาพและบันทึกย่อ', rec_notes_label: 'บันทึกย่อ', rec_optional: 'ไม่บังคับ',
+      rec_h1: 'บันทึกการจับสัตว์น้ำพลอยได้', rec_survey_date_label: 'วันที่สำรวจ',
+      rec_card_session: 'เซสชัน', rec_card_site_gear: 'สถานที่และเครื่องมือประมง', rec_vessel_id_label: 'รหัสเรือ',
+      rec_select_placeholder: '— เลือก —', rec_gear_demersal_trawl: 'อวนลากพื้นทะเล', rec_gear_otter_trawl: 'อวนลากแผ่นตะเฆ่',
+      rec_gear_gillnet: 'อวนติดตา', rec_gear_longline: 'เบ็ดราว', rec_gear_purse_seine: 'อวนล้อมจับ', rec_gear_other: 'อื่นๆ',
+      rec_card_effort: 'ความพยายามในการจับสัตว์น้ำ', rec_card_specimen: 'ตัวอย่างสิ่งมีชีวิต',
+      rec_taxon_elasmo: 'ปลากระดูกอ่อน', rec_taxon_teleost: 'ปลากระดูกแข็ง', rec_taxon_crustacea: 'สัตว์จำพวกกุ้งปู', rec_taxon_mollusca: 'สัตว์จำพวกหอย',
+      rec_sex_male: 'เพศผู้', rec_sex_female: 'เพศเมีย', rec_sex_undetermined: 'ไม่สามารถระบุได้',
+      rec_condition_short: 'สภาพ', rec_bycatch_hint: 'คือไม่ใช่สัตว์น้ำเป้าหมาย', rec_bycatch_yes: 'ใช่ — สัตว์น้ำพลอยได้', rec_bycatch_no: 'ไม่ใช่ — สัตว์น้ำเป้าหมาย',
+      rec_card_advanced_bio: 'ข้อมูลทางชีววิทยาขั้นสูง', rec_not_recorded: '— ไม่ได้บันทึก —',
+      rec_gonad_immature: 'ยังไม่สมบูรณ์เพศ', rec_gonad_maturing: 'กำลังพัฒนา', rec_gonad_mature: 'สมบูรณ์เพศ', rec_gonad_gravid: 'ตั้งท้อง / มีไข่', rec_gonad_spent: 'วางไข่แล้ว',
+      rec_card_environment: 'ข้อมูลสภาพแวดล้อม', rec_gps_coords: 'พิกัดจีพีเอส', rec_not_captured: 'ยังไม่ได้บันทึก',
+      rec_manual: 'กรอกเอง', rec_latitude: 'ละติจูด', rec_longitude: 'ลองจิจูด', rec_use_coords: 'ใช้พิกัดนี้',
+      rec_card_evidence: 'หลักฐาน', rec_photo_label: 'รูปภาพ', rec_photo_hint: 'แตะเพื่อถ่ายหรือแนบรูปภาพ',
+      rec_card_notes: 'บันทึกย่อ', rec_observations: 'ข้อสังเกต',
+      rec_save: 'บันทึกข้อมูล', rec_clear: 'ล้างแบบฟอร์ม',
+      hist_title: 'ประวัติ', hist_all_records: 'บันทึกทั้งหมด', hist_search_placeholder: 'ค้นหาชนิดพันธุ์…', hist_empty: 'ยังไม่มีบันทึก', hist_all_sites: 'ทุกสถานที่', hist_photos: 'รูปภาพ',
+      map_title: 'ตำแหน่งการสำรวจ', map_brand: 'แผนที่', map_checking: 'กำลังตรวจสอบการเชื่อมต่อ…', map_street: 'ถนน', map_satellite: 'ดาวเทียม',
+      map_offline_areas: 'พื้นที่แผนที่ออฟไลน์', map_pan_zoom: 'เลื่อนและซูมไปยังพื้นที่สำรวจของคุณ แล้วดาวน์โหลดเพื่อใช้งานแบบออฟไลน์', map_download_area: 'ดาวน์โหลดพื้นที่นี้',
+      rec_cond_alive: 'มีชีวิต', rec_cond_dead: 'ตาย', rec_cond_released: 'ปล่อยคืน',
+      track_title: 'เครื่องบันทึกเส้นทางเรือ', track_brand: 'เส้นทาง', track_gps_not_active: 'จีพีเอสไม่ทำงาน', track_start: 'เริ่มบันทึกเส้นทาง', track_stop: 'หยุดและบันทึกเส้นทาง',
+      track_note_full: 'บันทึกจุดจีพีเอสทุก ~20 วินาที คุณสามารถไปยังหน้าจออื่นของ Fish Pulse ได้ระหว่างบันทึก — ระบบจะทำงานต่อในพื้นหลังของแอป หน้าจอจะไม่ดับโดยอัตโนมัติระหว่างบันทึก การล็อกโทรศัพท์หรือสลับไปแอปอื่นจะยังคงหยุดการบันทึกชั่วคราว (ข้อจำกัดของระบบปฏิบัติการที่เว็บแอปใดๆ ก็ไม่สามารถแก้ไขได้) — หยุดและบันทึกก่อนทำอย่างใดอย่างหนึ่ง',
+      track_points: 'จุด', track_duration: 'ระยะเวลา', track_km: 'กม. โดยประมาณ',
+      track_saved_tracks: 'เส้นทางที่บันทึกไว้', track_export: 'ส่งออก GeoJSON',
+      camp_title: 'แคมเปญ', camp_h1: 'แคมเปญและโครงการ', camp_start_new: 'เริ่มแคมเปญใหม่', camp_name_label: 'ชื่อแคมเปญ',
+      camp_name_placeholder: 'เช่น Aleta 1, การสำรวจ มีนาคม 2026', camp_all: 'แคมเปญทั้งหมด', camp_new_name: 'ชื่อแคมเปญใหม่', camp_start: 'เริ่มแคมเปญ',
+      camp_active: 'แคมเปญที่ใช้งานอยู่', camp_none: 'ไม่มี — บันทึกจะไม่ถูกกำหนดแคมเปญ', camp_end: 'สิ้นสุดแคมเปญ',
+      camp_past: 'แคมเปญที่ผ่านมา',
+      ins_title: 'สถิติการสำรวจ', ins_all_taxon: 'ทุกกลุ่มอนุกรมวิธาน', ins_all_campaigns: 'ทุกแคมเปญ',
+      ins_tab_stats: 'สถิติ', ins_tab_charts: 'กราฟ', ins_tab_advanced: 'ขั้นสูง'
+    }
+  };
+
+  const LANG_KEY = 'fishpulse_language';
+  function getLang(){ return localStorage.getItem(LANG_KEY) || 'en'; }
+  function setLang(code){ localStorage.setItem(LANG_KEY, code); location.reload(); }
+
+  // Falls back to English, then to the key itself, so a missing
+  // translation never renders as literally blank.
+  function t(key){
+    const lang = getLang();
+    return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+  }
+
+  function applyI18n(){
+    const lang = getLang();
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  }
+
+  window.t = t;
+  window.getFishPulseLang = getLang;
+  window.setFishPulseLang = setLang;
+  window.applyI18n = applyI18n;
+  document.addEventListener('DOMContentLoaded', applyI18n);
+  if(document.readyState !== 'loading') applyI18n();
+})();
+
 // ===== Splash screen =====
 (function(){
   const slides = [
     {
-      title: 'Capture data at sea',
-      body: 'Species, biology, bycatch, GPS — all offline. No signal needed in the field.',
+      title: t('splash_slide1_title'),
+      body: t('splash_slide1_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>'
     },
     {
-      title: 'Run your fleet',
-      body: 'Log trips, hauls, and costs at sea. Settlement, reconciliation, and reports on land.',
+      title: t('splash_slide2_title'),
+      body: t('splash_slide2_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4v12M8 10l4-6 4 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 16c0 3 2 5 6 6 4-1 6-3 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>'
     },
     {
-      title: 'Log every catch',
-      body: 'Session tracking, solunar table, spot map with satellite view. Your personal fishing log.',
+      title: t('splash_slide3_title'),
+      body: t('splash_slide3_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4c0 5-1 6-1 10a4 4 0 1 0 5 0c-2-2-4-5-4-10z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     },
     {
-      title: 'Works without signal',
-      body: 'All data stays on your device. Export CSV, GeoJSON, and PDFs anytime — even offline.',
+      title: t('splash_slide4_title'),
+      body: t('splash_slide4_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 16v5M9 19h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M5 12.5A9.5 9.5 0 0 1 12 10a9.5 9.5 0 0 1 7 2.5M8 15.5A5.5 5.5 0 0 1 12 14a5.5 5.5 0 0 1 4 1.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>'
     }
   ];
@@ -2777,6 +3141,30 @@
   document.getElementById('hamburgerBtn').addEventListener('click', openHamburger);
   document.getElementById('hamburgerClose').addEventListener('click', closeHamburger);
   document.getElementById('hamburgerOverlay').addEventListener('click', closeHamburger);
+
+  // Language picker — same interaction in two places: the splash screen
+  // (so a new person sets it before anything else) and the hamburger menu
+  // (so it stays reachable later). Built from one list to keep both in sync.
+  const LANG_OPTIONS = [
+    { code: 'en', label: 'English' },
+    { code: 'es', label: 'Español' },
+    { code: 'it', label: 'Italiano' },
+    { code: 'th', label: 'ไทย' }
+  ];
+  function buildLangPillrow(containerId){
+    const box = document.getElementById(containerId);
+    if(!box) return;
+    const current = window.getFishPulseLang ? window.getFishPulseLang() : 'en';
+    box.innerHTML = LANG_OPTIONS.map(o => '<div class="pill'+(o.code===current?' active':'')+'" data-lang="'+o.code+'" style="font-size:11.5px;padding:7px 12px;">'+o.label+'</div>').join('');
+    box.querySelectorAll('[data-lang]').forEach(el => {
+      el.addEventListener('click', () => { if(window.setFishPulseLang) window.setFishPulseLang(el.dataset.lang); });
+    });
+  }
+  buildLangPillrow('languagePillrow');
+  document.getElementById('menuLanguage').addEventListener('click', () => {
+    const panel = document.getElementById('languagePanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  });
 
   // Premium modal
   function openPremium(){ closeHamburger(); document.getElementById('premiumModal').classList.add('open'); }
@@ -6039,12 +6427,12 @@
 
   // ===== Site selection (syncs across screens) =====
   function setSiteDisplay(value){
-    const homeLabel = value ? 'Active site: ' + value : 'No site selected';
+    const homeLabel = value ? t('home_active_site') + value : t('home_no_site');
     document.getElementById('siteLineHome').textContent = homeLabel;
     document.getElementById('siteLineHome').classList.toggle('active', !!value);
     document.getElementById('siteLineRecord').textContent = homeLabel;
     document.getElementById('siteLineRecord').classList.toggle('active', !!value);
-    document.getElementById('homeSiteTag').textContent = value ? value : 'No site selected';
+    document.getElementById('homeSiteTag').textContent = value ? value : t('home_no_site');
   }
   document.getElementById('site').addEventListener('input', (e)=> setSiteDisplay(e.target.value.trim()));
 
@@ -7944,7 +8332,7 @@
     trackUiTickId = setInterval(updateTrackUi, 1000);
 
     const btn = document.getElementById('trackToggleBtn');
-    btn.textContent = 'Stop & save track';
+    btn.textContent = t('track_stop');
     btn.classList.add('recording');
   }
 
@@ -7956,7 +8344,7 @@
     if(trackUiTickId !== null) clearInterval(trackUiTickId);
     trackWatchId = null; trackIntervalId = null; trackUiTickId = null;
 
-    document.getElementById('trackToggleBtn').textContent = 'Start tracking';
+    document.getElementById('trackToggleBtn').textContent = t('track_start');
     document.getElementById('trackToggleBtn').classList.remove('recording');
     setTrackGpsStatus('GPS not active', false);
 
@@ -8046,7 +8434,7 @@
     updateTrackUi();
     renderTrackList();
     const btn = document.getElementById('trackToggleBtn');
-    btn.textContent = trackActive ? 'Stop & save track' : 'Start tracking';
+    btn.textContent = trackActive ? t('track_stop') : t('track_start');
     btn.classList.toggle('recording', trackActive);
   }
 
@@ -8203,7 +8591,7 @@
   function updateCampaignBanner(){
     const active = getActiveCampaign();
     const nameEl = document.getElementById('campaignBannerName');
-    nameEl.textContent = active ? active.name : 'None — records will be unassigned';
+    nameEl.textContent = active ? active.name : t('camp_none');
   }
 
   document.getElementById('startCampaignBtn').addEventListener('click', () => {
