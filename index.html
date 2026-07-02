@@ -4821,14 +4821,14 @@
       list.innerHTML = '<div class="empty">No closed trips yet.</div>';
       return;
     }
-    list.innerHTML = trips.slice().reverse().map(t => {
-      const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
-      const margin = computeTripMargin(t);
-      const when = new Date(t.started_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
+    list.innerHTML = trips.slice().reverse().map(tr => {
+      const vessel = vessels.find(v => v.vessel_id === tr.vessel_id);
+      const margin = computeTripMargin(tr);
+      const when = new Date(tr.started_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
       const marginText = margin.complete
         ? fmtMoney(margin.minMargin, margin.currency)
         : fmtMoney(margin.minMargin, margin.currency) + ' – ' + fmtMoney(margin.maxMargin, margin.currency);
-      return '<div class="entry entry-clickable" data-trip-detail="'+t.trip_id+'"><div><div class="sp">'+(vessel?vessel.name:t('flg_unknown_vessel'))+'</div>'
+      return '<div class="entry entry-clickable" data-trip-detail="'+tr.trip_id+'"><div><div class="sp">'+(vessel?vessel.name:t('flg_unknown_vessel'))+'</div>'
         + '<div class="meta">'+when+' · '+(margin.complete?t('msg_final_margin'):t('msg_preliminary_margin'))+'</div></div>'
         + '<div class="duration-line" style="margin:0;">'+marginText+'</div></div>';
     }).join('');
@@ -5282,12 +5282,12 @@
     const alertIconOrange = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#e0a868" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#e0a868" stroke-width="1.8" stroke-linecap="round"/></svg>`;
     const alertIconRed = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#c0532f" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#c0532f" stroke-width="1.8" stroke-linecap="round"/></svg>`;
     const alerts = [];
-    trips.forEach(t => {
-      const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
+    trips.forEach(tr => {
+      const vessel = vessels.find(v => v.vessel_id === tr.vessel_id);
       const vName = vessel ? vessel.name : t('fldash_unknown');
-      const tCatches = catches.filter(c => c.trip_id === t.trip_id);
+      const tCatches = catches.filter(c => c.trip_id === tr.trip_id);
       if(tCatches.length === 0) alerts.push({ icon: alertIconRed, text: vName + ' — ' + t('fldash_closed_no_catch') });
-      const margin = computeTripMargin(t);
+      const margin = computeTripMargin(tr);
       if(!margin.complete) alerts.push({ icon: alertIconOrange, text: vName + ' — ' + t('fldash_costs_pending') + ': ' + margin.missing.map(k=>t('flstats_cost_'+k)).join(', ') });
     });
     document.getElementById('fleetDashboardAlerts').innerHTML = alerts.length === 0
