@@ -1519,12 +1519,12 @@
   <main>
     <div class="grid2">
       <select id="insightsTaxonFilter" style="font-size:13px;">
-        <option value="">All taxon groups</option>
-        <option value="Elasmobranchii">Elasmobranch</option>
-        <option value="Teleostei">Teleost fish</option>
-        <option value="Crustacea">Crustacean</option>
-        <option value="Mollusca">Mollusc</option>
-        <option value="Other">Other</option>
+        <option value="" data-i18n="ins_all_taxon">All taxon groups</option>
+        <option value="Elasmobranchii" data-i18n="rec_taxon_elasmo">Elasmobranch</option>
+        <option value="Teleostei" data-i18n="rec_taxon_teleost">Teleost fish</option>
+        <option value="Crustacea" data-i18n="rec_taxon_crustacea">Crustacean</option>
+        <option value="Mollusca" data-i18n="rec_taxon_mollusca">Mollusc</option>
+        <option value="Other" data-i18n="rec_gear_other">Other</option>
       </select>
       <select id="insightsCampaignFilter" style="font-size:13px;">
         <option value="">All campaigns</option>
@@ -2812,6 +2812,20 @@
       camp_past: 'Past campaigns',
       ins_title: 'Survey Statistics', ins_all_taxon: 'All taxon groups', ins_all_campaigns: 'All campaigns',
       ins_tab_stats: 'Stats', ins_tab_charts: 'Charts', ins_tab_advanced: 'Advanced',
+      adv_diversity_indices: 'Diversity indices', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Evenness J'",
+      adv_dominant: 'Dominant', adv_rarest: 'Rarest', adv_by_site: 'By site within this scope', adv_site: 'Site',
+      adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Shown as 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proportion of species i, S = species richness (Pielou 1966).",
+      adv_unspecified: 'Unspecified', adv_sex_ratio: 'Sex ratio · exact test vs 1:1', adv_sex_ratio_empty: 'Not enough sexed individuals yet — need 5+ per species with M/F recorded.',
+      adv_species: 'Species', adv_sex_ratio_footnote: "Two-tailed exact binomial test against a 1:1 null — equivalent to Fisher's exact test for one proportion. Tap a pill to add or remove it from the table, up to 5 at a time.",
+      adv_bycatch_rate: 'Bycatch rate', adv_bycatch_empty: 'No records with bycatch yes/no recorded yet.', adv_by_gear: 'By gear',
+      adv_lw_regression: 'Length-weight regression · W = aL^b', adv_lw_empty: 'Not enough paired length + weight records yet — need 3+ per species.',
+      adv_lw_footnote: "a, b fit by OLS on ln(W) vs ln(L). K = Fulton's condition factor, mean of 100000·W(kg)/L(cm)³ per species (Le Cren 1951).",
+      adv_maturity_ogive: 'Maturity ogive by size', adv_maturity_empty: 'Not enough records with both length and gonad stage yet — need 15+ for one species.',
+      adv_maturity_footnote: 'Dots = % mature per length bin. Immature vs mature+ from gonad stage. Curve fit by logistic regression (IRLS). L50 = length at 50% predicted maturity.',
+      adv_species_accumulation: 'Species accumulation', adv_accumulation_empty: 'Need at least 2 timestamped records to plot this.',
+      adv_records: 'records', adv_species_lc: 'species',
+      adv_accumulation_footnote: 'Cumulative distinct species vs. records added, ordered by timestamp. Observed order only, not a randomized rarefaction curve — a flattening curve suggests sampling effort is nearing saturation for this scope.',
+      adv_size_histogram: 'Size histogram by species', adv_histogram_empty: 'No length measurements recorded yet.', adv_histogram_single: 'Only 1 measurement for this species — need 2+ to show a distribution.',
       flrole_title: "Who's using<br>this session?", flrole_switch_mode: '← Switch Mode',
       flrole_captain: 'Captain', flrole_captain_sub: 'Log trips · hauls · catch<br>GPS positions · fuel', flrole_at_sea: 'At sea →',
       flrole_operations: 'Operations', flrole_operations_sub: 'Fleet dashboard · reconciliation<br>documents · settlement', flrole_on_land: 'On land →',
@@ -2828,7 +2842,8 @@
       flhaul_cancel: 'Cancel', flhaul_save: 'Save Haul',
       flcatch_brand: 'Log Catch', flcatch_title: 'Catch Entry', flcatch_not_linked: 'Not Linked To A Haul',
       flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species &amp; weight', flcatch_species_label: 'Species / Commercial Category',
-      flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save &amp; Return To Trip',
+      flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save &amp; Return To Trip', flcatch_no_haul: 'No haul (loose catch)',
+      hist_unassigned_records: 'Unassigned records', ins_no_campaign_unassigned: 'No campaign (unassigned)',
       flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary &amp; Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value',
       flclose_fuel: 'Fuel', flclose_loaded_l: 'Loaded (L)', flclose_remaining_l: 'Remaining (L)', flclose_costs_now: 'Costs you can log now',
       flclose_crew_payment: 'Crew Payment', flclose_per_trip: 'per trip', flclose_ice: 'Ice / Preservation', flclose_provisions: 'Provisions', flclose_per_day: 'per day at sea',
@@ -2842,6 +2857,9 @@
       fltripdet_maintenance: 'Maintenance', fltripdet_permits_fees: 'Permits / Fees', fltripdet_port_dues: 'Port Dues',
       fltripdet_amount: 'Amount', fltripdet_add_cost_btn: 'Add Cost', fltripdet_export: 'Export', fltripdet_share: 'Share',
       fldash_brand: 'Fish Pulse · Operations', fldash_h1: 'Fleet Overview', fldash_efficiency: 'Efficiency by vessel', fldash_needs_attention: 'Needs attention',
+      fldash_catch: 'Catch', fldash_fuel_l: 'Fuel L', fldash_no_closed_trips: 'No closed trips yet', fldash_efficient: 'Efficient', fldash_review: 'Review',
+      fldash_no_vessels: 'No vessels yet. Add one from the Vessels tab.', fldash_unknown: 'Unknown', fldash_closed_no_catch: 'Trip closed without catch',
+      fldash_costs_pending: 'Costs pending', fldash_no_alerts: 'No alerts. Everything looks current.',
       flhaulmap_brand: 'Haul Map', flhaulmap_title: 'Fishing Zones', flhaulmap_no_gps: 'Hauls Without GPS',
       flfuel_h1: 'Daily Fuel Log', flfuel_no_trip: 'Start a trip from the Trip tab to begin logging daily fuel readings.',
       flfuel_todays_reading: "Today's reading", flfuel_remaining: 'Fuel Remaining (L)', flfuel_save_reading: 'Save Reading', flfuel_readings_this_trip: 'Readings this trip',
@@ -2855,6 +2873,14 @@
       flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
       flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
       flstats_h1: 'Fleet Statistics', fltab_trip: 'Trip', fltab_fuel: 'Fuel', fltab_docs: 'Docs',
+      flstats_add_vessel: 'Add a vessel to see fleet statistics.', flstats_no_closed_trips: 'No closed trips yet. Statistics build up as trips are completed.',
+      flstats_profitability_trend: 'Profitability trend', flstats_last: 'last', flstats_trips_lc: 'trips', flstats_trend_empty: 'Need at least 2 closed trips for this vessel to plot a trend.',
+      flstats_trend_footnote_1: 'Net result per closed trip, in', flstats_trend_footnote_2: 'Green = profitable, red = operated at a loss.',
+      flstats_cost_composition: 'Cost composition · all trips', flstats_cost_empty: 'No closed trips with costs logged for this vessel yet.', flstats_cost_empty2: "No costs logged for this vessel's trips yet.",
+      flstats_cost_fuel: 'Fuel', flstats_cost_crew: 'Crew', flstats_cost_ice: 'Ice', flstats_cost_provisions: 'Provisions', flstats_cost_maintenance: 'Maintenance', flstats_cost_permits_fees: 'Permits / Fees', flstats_cost_port_dues: 'Port Dues', flstats_cost_other: 'Other',
+      flstats_cpue: 'Commercial CPUE · kg / hour', flstats_cpue_empty: 'No hauls with both a duration and logged catch yet.', flstats_cpue_footnote: "All vessels, all trips — not affected by the vessel filter above, since kg/hr isn't a currency figure.",
+      flstats_vessel_comparison: 'Vessel comparison', flstats_no_closed_trips_short: 'No closed trips yet.', flstats_trips_header: 'Trips', flstats_margin: 'Margin',
+      flstats_margin_footnote: 'Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.',
       fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
       sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
       sp_start_new_session: 'Start a new session', sp_spot: 'Spot', sp_no_spot_open_water: '— No Spot / Open Water —', sp_new_spot: '+ New Spot', sp_spot_name: 'Spot Name',
@@ -2870,7 +2896,57 @@
       sp_licenses_permits: 'Licenses &amp; Permits', sp_keep_license: 'Keep your license handy for inspection', sp_add_document: 'Add a document',
       sp_boat_permit: 'Boat Permit', sp_species_tag: 'Species Tag / Stamp', sp_folio_hint: 'optional — e.g. folio number', sp_your_documents: 'Your documents',
       sp_personal_stats: 'Personal Stats', sp_from_logged_catches: 'From your logged catches',
-      sp_linked_current_session: 'Linked To Current Session', sp_linked_session_started: 'Linked To Session Started '
+      sp_moon_new: 'New Moon', sp_moon_waxing_crescent: 'Waxing Crescent', sp_moon_first_quarter: 'First Quarter', sp_moon_waxing_gibbous: 'Waxing Gibbous',
+      sp_moon_full: 'Full Moon', sp_moon_waning_gibbous: 'Waning Gibbous', sp_moon_last_quarter: 'Last Quarter', sp_moon_waning_crescent: 'Waning Crescent',
+      sp_strength_strong: 'Strong', sp_strength_moderate: 'Moderate', sp_strength_mild: 'Mild', sp_illuminated: '% illuminated', sp_activity: ' activity',
+      sp_major_peaks: 'Major peaks', sp_90min_window: '90 min window', sp_minor_peaks: 'Minor peaks', sp_45min_window: '45 min window',
+      sp_estimated_periods: 'Estimated periods — not a precision ephemeris.',
+      sp_linked_current_session: 'Linked To Current Session', sp_linked_session_started: 'Linked To Session Started ',
+      msg_vessel_name_required: 'Vessel name is required', msg_captain_name_required: 'Captain name is required', msg_select_captain_vessel: 'Select or add a captain and vessel',
+      msg_trip_started: 'Trip started', msg_currency_updated: 'Default currency updated', msg_vessel_added: 'Vessel added', msg_no_active_trip: 'No active trip',
+      msg_haul_saved: 'Haul saved', msg_species_category_required: 'Species or category is required', msg_catch_saved: 'Catch saved', msg_enter_name_first: 'Enter a name first',
+      msg_trip_closed: 'Trip closed', msg_enter_amount: 'Enter an amount', msg_cost_added: 'Cost added', msg_name_percentage_required: 'Name and percentage are required',
+      msg_crew_copied: 'Crew copied from last trip — feel free to adjust', msg_crew_added_captain: "Crew added from the captain's list — set each share %",
+      msg_cost_updated: 'Cost updated', msg_cost_removed: 'Cost removed', msg_pdf_not_loaded: 'PDF library not loaded — check your connection',
+      msg_nothing_to_share: 'Nothing to share yet', msg_sharing_not_supported: 'Sharing files is not supported on this browser — use Download instead',
+      msg_maintenance_logged: 'Maintenance logged — hour counter reset', msg_enter_fuel_reading: 'Enter a fuel reading', msg_scale_weights_saved: 'Scale weights saved',
+      msg_vessel_expiry_required: 'Vessel and expiry date are required', msg_document_added: 'Document added', msg_enter_lat_lon: 'Enter both latitude and longitude',
+      msg_lat_lon_range: 'Latitude must be -90 to 90, longitude -180 to 180', msg_coords_applied: 'Manual coordinates applied', msg_observer_required: 'Observer name is required',
+      msg_species_name_required: 'Species name is required', msg_record_updated: 'Record updated', msg_record_saved: 'Record saved', msg_edit_cancelled: 'Edit cancelled',
+      msg_zip_not_loaded: 'Zip library not loaded — check your connection', msg_no_photos: 'No photos in this set of records', msg_building_zip: 'Building zip of',
+      msg_photos_lc: 'photos', msg_zip_failed: 'Could not build zip — try again', msg_no_records_export: 'No records to export', msg_csv_exported: 'CSV exported',
+      msg_no_georef_export: 'No georeferenced records to export', msg_geojson_exported: 'GeoJSON exported', msg_points: 'points', msg_no_records_backup: 'No records to back up',
+      msg_max_5_species: 'Max 5 species — tap one to remove it first', msg_gps_not_available: 'GPS not available in this browser', msg_track_too_short: 'Track too short to save',
+      msg_track_saved: 'Track saved', msg_no_saved_tracks: 'No saved tracks to export', msg_tracks_exported: 'Tracks exported', msg_tracks_lc: 'track(s)',
+      msg_open_map_first: 'Open the map first', msg_offline_storage_not_supported: 'Offline storage not supported on this browser',
+      msg_offline_area_removed: 'Offline area removed from list (cached tiles remain until cache is cleared)', msg_campaign_name_required: 'Campaign name is required',
+      msg_geo_not_supported: 'Geolocation not supported on this device', msg_enter_spot_name: 'Enter a name for the new spot', msg_session_started: 'Session started',
+      msg_session_ended: 'Session ended', msg_species_required: 'Species is required', msg_spot_name_required: 'Spot name is required', msg_spot_saved: 'Spot saved',
+      msg_expiry_required: 'Expiry date is required', msg_total: 'Total', msg_campaign: 'Campaign', msg_started: 'started', msg_no_records_yet: 'No records yet',
+      msg_all_backed_up: 'All records backed up', msg_last: 'last', msg_records_not_backed_up: 'record(s) not backed up yet', msg_fishpulse_backup: 'Fish Pulse backup',
+      msg_records_lc: 'records', msg_backup_shared: 'Backup shared', msg_backup_downloaded: 'Backup downloaded',
+      flg_unknown_vessel: 'Unknown Vessel', flg_recently: 'recently', flg_expires: 'Expires', flg_tap_view_photo: 'tap to view photo',
+      msg_unspecified_gear: 'Unspecified gear', flcatch_no_haul_short: 'No haul', msg_no_species_logged_haul: 'No species logged yet for this haul',
+      msg_species_logged_so_far: 'species logged so far for this haul', msg_edit_catch: 'Edit Catch', msg_save_changes: 'Save Changes', msg_save_return_session: 'Save & Return To Session',
+      msg_profitable_trip: 'Profitable trip', msg_trip_at_loss: 'Trip operated at a loss', msg_final_margin: 'Final Margin', msg_preliminary_margin: 'Preliminary Margin',
+      msg_landing_report: 'Landing report', msg_trip_started_lc: 'Trip started', msg_trip_ended: 'Trip ended', msg_catch_by_species: 'Catch by species',
+      msg_estimated: 'Estimated', msg_scale_weight: 'Scale weight', msg_not_yet_scaled: 'not yet scaled', msg_estimated_lc: 'estimated', msg_scaled_lc: 'scaled',
+      msg_landing_disclaimer: 'This report supports a landing declaration or capture certificate application. It is not itself an official certificate.',
+      msg_landing_report_title: 'Landing Report', camp_active_short: 'Active', camp_closed_short: 'Closed',
+      msg_catch_updated: 'Catch updated', msg_fishpulse_report: 'Fish Pulse Report', msg_reading_saved: 'Reading saved',
+      msg_saved_anomaly: 'Saved — consumption looks unusual, worth a check', msg_no_notes: 'No notes', msg_unknown_spot: 'Unknown spot',
+      msg_step: 'Step', msg_of: 'of', msg_no_gps_yet: 'NO GPS YET', msg_saved_uc: 'SAVED', msg_species_uc: 'SPECIES',
+      msg_no_records_start: 'No records yet. Start with "New Record" to log your first specimen.', msg_pts: 'PTS', msg_record_lc: 'record',
+      msg_sites_selected: 'sites selected', msg_update_record: 'Update record', msg_edit_record: 'Edit Record',
+      msg_unspecified_site: 'Unspecified site', msg_area_saved: 'Area saved for offline use', msg_area_saved_partial: 'Area saved',
+      msg_tiles_failed: 'tiles failed — retry if needed', msg_catches_lc: 'catches',
+      msg_duration: 'Duration', msg_fetching_conditions: 'Fetching conditions…', msg_fetch_conditions_failed: 'Could not fetch conditions — check your connection.',
+      msg_locating: 'locating…', msg_no_gps_signal: 'no GPS signal — try again', msg_suggested: 'Suggested', msg_avg_of: 'avg. of', msg_past_sales: 'past sales', msg_use_this: 'Use This',
+      msg_estimated_value: 'Estimated Value', msg_fuel_consumed: 'Fuel Consumed', msg_consumed_since_last: 'Consumed Since Last Reading',
+      msg_live_map: 'Live map · tiles loaded from connection', msg_offline_mode: 'Offline mode · schematic coordinate plot',
+      msg_getting_location: 'Getting your location…', msg_could_not_get_location: 'Could not get your location.', msg_capturing: 'capturing…', msg_capture_failed: 'capture failed — tap to retry',
+      msg_hhmm_format: 'use HH:MM format (e.g. 14:30)', msg_editing_record: 'Editing record · all steps open', msg_online_cartodb: 'Online · CartoDB tiles', msg_offline_schematic: 'Offline · schematic plot',
+      msg_downloading: 'Downloading', msg_tiles: 'tiles'
     },
     es: {
       splash_slide1_title: 'Captura datos en el mar', splash_slide1_body: 'Especies, biología, bycatch, GPS — todo sin conexión. No necesitas señal en campo.',
@@ -2949,6 +3025,20 @@
       camp_past: 'Campañas anteriores',
       ins_title: 'Estadísticas de Muestreo', ins_all_taxon: 'Todos los grupos taxonómicos', ins_all_campaigns: 'Todas las campañas',
       ins_tab_stats: 'Estadísticos', ins_tab_charts: 'Gráficas', ins_tab_advanced: 'Avanzado',
+      adv_diversity_indices: 'Índices de diversidad', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Equitatividad J'",
+      adv_dominant: 'Dominante', adv_rarest: 'Más rara', adv_by_site: 'Por sitio dentro de este alcance', adv_site: 'Sitio',
+      adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Se muestra como 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proporción de la especie i, S = riqueza de especies (Pielou 1966).",
+      adv_unspecified: 'Sin especificar', adv_sex_ratio: 'Proporción de sexos · test exacto vs 1:1', adv_sex_ratio_empty: 'Aún no hay suficientes individuos sexados — se necesitan 5+ por especie con M/H registrado.',
+      adv_species: 'Especie', adv_sex_ratio_footnote: 'Test binomial exacto de dos colas contra la nulidad 1:1 — equivalente al test exacto de Fisher para una proporción. Toca una pill para agregarla o quitarla de la tabla, hasta 5 a la vez.',
+      adv_bycatch_rate: 'Tasa de bycatch', adv_bycatch_empty: 'Aún no hay registros con bycatch sí/no capturado.', adv_by_gear: 'Por arte de pesca',
+      adv_lw_regression: 'Regresión longitud-peso · W = aL^b', adv_lw_empty: 'Aún no hay suficientes registros de longitud + peso emparejados — se necesitan 3+ por especie.',
+      adv_lw_footnote: "a, b ajustados por MCO en ln(W) vs ln(L). K = factor de condición de Fulton, media de 100000·W(kg)/L(cm)³ por especie (Le Cren 1951).",
+      adv_maturity_ogive: 'Ojiva de madurez por talla', adv_maturity_empty: 'Aún no hay suficientes registros con longitud y estadio gonadal juntos — se necesitan 15+ de una especie.',
+      adv_maturity_footnote: 'Puntos = % maduro por clase de talla. Inmaduro vs maduro+ según estadio gonadal. Curva ajustada por regresión logística (IRLS). L50 = talla al 50% de madurez predicha.',
+      adv_species_accumulation: 'Acumulación de especies', adv_accumulation_empty: 'Se necesitan al menos 2 registros con fecha/hora para graficar esto.',
+      adv_records: 'registros', adv_species_lc: 'especies',
+      adv_accumulation_footnote: 'Especies distintas acumuladas vs. registros agregados, ordenados por fecha/hora. Solo el orden observado, no es una curva de rarefacción aleatorizada — una curva que se aplana sugiere que el esfuerzo de muestreo se acerca a la saturación en este alcance.',
+      adv_size_histogram: 'Histograma de tallas por especie', adv_histogram_empty: 'Aún no hay mediciones de longitud registradas.', adv_histogram_single: 'Solo hay 1 medición para esta especie — se necesitan 2+ para mostrar una distribución.',
       flrole_title: '¿Quién está usando<br>esta sesión?', flrole_switch_mode: '← Cambiar Modo',
       flrole_captain: 'Capitán', flrole_captain_sub: 'Registra viajes · lances · capturas<br>posiciones GPS · combustible', flrole_at_sea: 'En el mar →',
       flrole_operations: 'Operaciones', flrole_operations_sub: 'Panel de flota · reconciliación<br>documentos · liquidación', flrole_on_land: 'En tierra →',
@@ -2965,7 +3055,8 @@
       flhaul_cancel: 'Cancelar', flhaul_save: 'Guardar Lance',
       flcatch_brand: 'Registrar Captura', flcatch_title: 'Entrada de Captura', flcatch_not_linked: 'No Vinculado a un Lance',
       flcatch_haul: 'Lance', flcatch_haul_hint: 'a la que pertenece esta captura', flcatch_species_weight: 'Especie y peso', flcatch_species_label: 'Especie / Categoría Comercial',
-      flcatch_ref_price: 'Precio de referencia', flcatch_add_another: '+ Agregar Otra', flcatch_save_return: 'Guardar y Volver al Viaje',
+      flcatch_ref_price: 'Precio de referencia', flcatch_add_another: '+ Agregar Otra', flcatch_save_return: 'Guardar y Volver al Viaje', flcatch_no_haul: 'Sin lance (captura suelta)',
+      hist_unassigned_records: 'Registros sin asignar', ins_no_campaign_unassigned: 'Sin campaña (sin asignar)',
       flclose_brand: 'Cerrar Viaje', flclose_h1: 'Resumen del Viaje y Costos', flclose_hauls: 'Lances', flclose_total_kg: 'Total kg', flclose_est_value: 'Valor est.',
       flclose_fuel: 'Combustible', flclose_loaded_l: 'Cargado (L)', flclose_remaining_l: 'Restante (L)', flclose_costs_now: 'Costos que puedes registrar ahora',
       flclose_crew_payment: 'Pago a Tripulación', flclose_per_trip: 'por viaje', flclose_ice: 'Hielo / Preservación', flclose_provisions: 'Víveres', flclose_per_day: 'por día en el mar',
@@ -2979,6 +3070,9 @@
       fltripdet_maintenance: 'Mantenimiento', fltripdet_permits_fees: 'Permisos / Cuotas', fltripdet_port_dues: 'Derechos de Puerto',
       fltripdet_amount: 'Monto', fltripdet_add_cost_btn: 'Agregar Costo', fltripdet_export: 'Exportar', fltripdet_share: 'Compartir',
       fldash_brand: 'Fish Pulse · Operaciones', fldash_h1: 'Vista General de la Flota', fldash_efficiency: 'Eficiencia por embarcación', fldash_needs_attention: 'Requiere atención',
+      fldash_catch: 'Captura', fldash_fuel_l: 'Combustible L', fldash_no_closed_trips: 'Aún no hay viajes cerrados', fldash_efficient: 'Eficiente', fldash_review: 'Revisar',
+      fldash_no_vessels: 'Aún no hay embarcaciones. Agrega una desde la pestaña Embarcaciones.', fldash_unknown: 'Desconocida', fldash_closed_no_catch: 'Viaje cerrado sin captura',
+      fldash_costs_pending: 'Costos pendientes', fldash_no_alerts: 'Sin alertas. Todo está al día.',
       flhaulmap_brand: 'Mapa de Lances', flhaulmap_title: 'Zonas de Pesca', flhaulmap_no_gps: 'Lances Sin GPS',
       flfuel_h1: 'Bitácora Diaria de Combustible', flfuel_no_trip: 'Inicia un viaje desde la pestaña Viaje para comenzar a registrar lecturas diarias de combustible.',
       flfuel_todays_reading: 'Lectura de hoy', flfuel_remaining: 'Combustible Restante (L)', flfuel_save_reading: 'Guardar Lectura', flfuel_readings_this_trip: 'Lecturas de este viaje',
@@ -2992,6 +3086,14 @@
       flvessels_maintenance_interval: 'Intervalo de Mantenimiento (horas en el mar)', flvessels_hours_since_service: 'Horas en el mar desde el último servicio', flvessels_hours_since_service_hint: 'opcional, hoy',
       flvessels_add_btn: 'Agregar Embarcación', flvessels_all_vessels: 'Todas las embarcaciones', flvessels_all_captains: 'Todos los capitanes', flvessels_all_crew: 'Toda la tripulación',
       flstats_h1: 'Estadísticas de la Flota', fltab_trip: 'Viaje', fltab_fuel: 'Combustible', fltab_docs: 'Docs',
+      flstats_add_vessel: 'Agrega una embarcación para ver estadísticas de flota.', flstats_no_closed_trips: 'Aún no hay viajes cerrados. Las estadísticas se acumulan conforme se completan viajes.',
+      flstats_profitability_trend: 'Tendencia de rentabilidad', flstats_last: 'últimos', flstats_trips_lc: 'viajes', flstats_trend_empty: 'Se necesitan al menos 2 viajes cerrados de esta embarcación para graficar una tendencia.',
+      flstats_trend_footnote_1: 'Resultado neto por viaje cerrado, en', flstats_trend_footnote_2: 'Verde = rentable, rojo = operó con pérdida.',
+      flstats_cost_composition: 'Composición de costos · todos los viajes', flstats_cost_empty: 'Aún no hay viajes cerrados con costos registrados para esta embarcación.', flstats_cost_empty2: 'Aún no hay costos registrados para los viajes de esta embarcación.',
+      flstats_cost_fuel: 'Combustible', flstats_cost_crew: 'Tripulación', flstats_cost_ice: 'Hielo', flstats_cost_provisions: 'Víveres', flstats_cost_maintenance: 'Mantenimiento', flstats_cost_permits_fees: 'Permisos / Cuotas', flstats_cost_port_dues: 'Derechos de Puerto', flstats_cost_other: 'Otro',
+      flstats_cpue: 'CPUE Comercial · kg / hora', flstats_cpue_empty: 'Aún no hay lances con duración y captura registradas.', flstats_cpue_footnote: 'Todas las embarcaciones, todos los viajes — no afectado por el filtro de embarcación de arriba, ya que kg/hr no es una cifra monetaria.',
+      flstats_vessel_comparison: 'Comparativa entre embarcaciones', flstats_no_closed_trips_short: 'Aún no hay viajes cerrados.', flstats_trips_header: 'Viajes', flstats_margin: 'Margen',
+      flstats_margin_footnote: 'Margen mostrado como % del ingreso (neto ÷ ingreso), no en moneda absoluta — seguro de comparar aunque las embarcaciones usen monedas predeterminadas distintas.',
       fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
       sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
       sp_start_new_session: 'Iniciar una nueva sesión', sp_spot: 'Spot', sp_no_spot_open_water: '— Sin Spot / Agua Abierta —', sp_new_spot: '+ Nuevo Spot', sp_spot_name: 'Nombre del Spot',
@@ -3007,7 +3109,57 @@
       sp_licenses_permits: 'Licencias y Permisos', sp_keep_license: 'Ten tu licencia a la mano para inspección', sp_add_document: 'Agregar un documento',
       sp_boat_permit: 'Permiso de Embarcación', sp_species_tag: 'Etiqueta / Sello de Especie', sp_folio_hint: 'opcional — ej. número de folio', sp_your_documents: 'Tus documentos',
       sp_personal_stats: 'Estadísticas Personales', sp_from_logged_catches: 'De tus capturas registradas',
-      sp_linked_current_session: 'Vinculado a la Sesión Actual', sp_linked_session_started: 'Vinculado a Sesión Iniciada el '
+      sp_moon_new: 'Luna Nueva', sp_moon_waxing_crescent: 'Creciente Iluminante', sp_moon_first_quarter: 'Cuarto Creciente', sp_moon_waxing_gibbous: 'Gibosa Creciente',
+      sp_moon_full: 'Luna Llena', sp_moon_waning_gibbous: 'Gibosa Menguante', sp_moon_last_quarter: 'Cuarto Menguante', sp_moon_waning_crescent: 'Creciente Menguante',
+      sp_strength_strong: 'Fuerte', sp_strength_moderate: 'Moderada', sp_strength_mild: 'Leve', sp_illuminated: '% iluminada', sp_activity: ' de actividad',
+      sp_major_peaks: 'Picos mayores', sp_90min_window: 'Ventana de 90 min', sp_minor_peaks: 'Picos menores', sp_45min_window: 'Ventana de 45 min',
+      sp_estimated_periods: 'Periodos estimados — no es una efeméride de precisión.',
+      sp_linked_current_session: 'Vinculado a la Sesión Actual', sp_linked_session_started: 'Vinculado a Sesión Iniciada el ',
+      msg_vessel_name_required: 'El nombre de la embarcación es obligatorio', msg_captain_name_required: 'El nombre del capitán es obligatorio', msg_select_captain_vessel: 'Selecciona o agrega un capitán y una embarcación',
+      msg_trip_started: 'Viaje iniciado', msg_currency_updated: 'Moneda predeterminada actualizada', msg_vessel_added: 'Embarcación agregada', msg_no_active_trip: 'Sin viaje activo',
+      msg_haul_saved: 'Lance guardado', msg_species_category_required: 'La especie o categoría es obligatoria', msg_catch_saved: 'Captura guardada', msg_enter_name_first: 'Ingresa un nombre primero',
+      msg_trip_closed: 'Viaje cerrado', msg_enter_amount: 'Ingresa un monto', msg_cost_added: 'Costo agregado', msg_name_percentage_required: 'El nombre y el porcentaje son obligatorios',
+      msg_crew_copied: 'Tripulación copiada del último viaje — siéntete libre de ajustar', msg_crew_added_captain: 'Tripulación agregada desde la lista del capitán — define cada porcentaje',
+      msg_cost_updated: 'Costo actualizado', msg_cost_removed: 'Costo eliminado', msg_pdf_not_loaded: 'La librería de PDF no cargó — revisa tu conexión',
+      msg_nothing_to_share: 'Aún no hay nada que compartir', msg_sharing_not_supported: 'Compartir archivos no es compatible con este navegador — usa Descargar en su lugar',
+      msg_maintenance_logged: 'Mantenimiento registrado — contador de horas reiniciado', msg_enter_fuel_reading: 'Ingresa una lectura de combustible', msg_scale_weights_saved: 'Pesos de báscula guardados',
+      msg_vessel_expiry_required: 'La embarcación y la fecha de vencimiento son obligatorias', msg_document_added: 'Documento agregado', msg_enter_lat_lon: 'Ingresa latitud y longitud',
+      msg_lat_lon_range: 'La latitud debe ser de -90 a 90, la longitud de -180 a 180', msg_coords_applied: 'Coordenadas manuales aplicadas', msg_observer_required: 'El nombre del observador es obligatorio',
+      msg_species_name_required: 'El nombre de la especie es obligatorio', msg_record_updated: 'Registro actualizado', msg_record_saved: 'Registro guardado', msg_edit_cancelled: 'Edición cancelada',
+      msg_zip_not_loaded: 'La librería de zip no cargó — revisa tu conexión', msg_no_photos: 'No hay fotos en este conjunto de registros', msg_building_zip: 'Armando zip de',
+      msg_photos_lc: 'fotos', msg_zip_failed: 'No se pudo crear el zip — intenta de nuevo', msg_no_records_export: 'No hay registros para exportar', msg_csv_exported: 'CSV exportado',
+      msg_no_georef_export: 'No hay registros georreferenciados para exportar', msg_geojson_exported: 'GeoJSON exportado', msg_points: 'puntos', msg_no_records_backup: 'No hay registros para respaldar',
+      msg_max_5_species: 'Máximo 5 especies — toca una para quitarla primero', msg_gps_not_available: 'GPS no disponible en este navegador', msg_track_too_short: 'Ruta demasiado corta para guardar',
+      msg_track_saved: 'Ruta guardada', msg_no_saved_tracks: 'No hay rutas guardadas para exportar', msg_tracks_exported: 'Rutas exportadas', msg_tracks_lc: 'ruta(s)',
+      msg_open_map_first: 'Abre el mapa primero', msg_offline_storage_not_supported: 'Almacenamiento sin conexión no compatible con este navegador',
+      msg_offline_area_removed: 'Área sin conexión eliminada de la lista (los tiles en caché permanecen hasta que se borre la caché)', msg_campaign_name_required: 'El nombre de la campaña es obligatorio',
+      msg_geo_not_supported: 'Geolocalización no compatible en este dispositivo', msg_enter_spot_name: 'Ingresa un nombre para el nuevo spot', msg_session_started: 'Sesión iniciada',
+      msg_session_ended: 'Sesión terminada', msg_species_required: 'La especie es obligatoria', msg_spot_name_required: 'El nombre del spot es obligatorio', msg_spot_saved: 'Spot guardado',
+      msg_expiry_required: 'La fecha de vencimiento es obligatoria', msg_total: 'Total', msg_campaign: 'Campaña', msg_started: 'iniciada', msg_no_records_yet: 'Aún no hay registros',
+      msg_all_backed_up: 'Todos los registros respaldados', msg_last: 'último', msg_records_not_backed_up: 'registro(s) sin respaldar', msg_fishpulse_backup: 'Respaldo de Fish Pulse',
+      msg_records_lc: 'registros', msg_backup_shared: 'Respaldo compartido', msg_backup_downloaded: 'Respaldo descargado',
+      flg_unknown_vessel: 'Embarcación Desconocida', flg_recently: 'recientemente', flg_expires: 'Vence', flg_tap_view_photo: 'toca para ver la foto',
+      msg_unspecified_gear: 'Arte no especificado', flcatch_no_haul_short: 'Sin lance', msg_no_species_logged_haul: 'Aún no hay especies registradas para este lance',
+      msg_species_logged_so_far: 'especies registradas hasta ahora para este lance', msg_edit_catch: 'Editar Captura', msg_save_changes: 'Guardar Cambios', msg_save_return_session: 'Guardar y Volver a la Sesión',
+      msg_profitable_trip: 'Viaje rentable', msg_trip_at_loss: 'Viaje operó con pérdida', msg_final_margin: 'Margen Final', msg_preliminary_margin: 'Margen Preliminar',
+      msg_landing_report: 'Reporte de desembarque', msg_trip_started_lc: 'Viaje iniciado', msg_trip_ended: 'Viaje terminado', msg_catch_by_species: 'Captura por especie',
+      msg_estimated: 'Estimado', msg_scale_weight: 'Peso de báscula', msg_not_yet_scaled: 'aún sin pesar', msg_estimated_lc: 'estimado', msg_scaled_lc: 'pesado',
+      msg_landing_disclaimer: 'Este reporte apoya una declaración de desembarque o solicitud de certificado de captura. No es en sí mismo un certificado oficial.',
+      msg_landing_report_title: 'Reporte de Desembarque', camp_active_short: 'Activa', camp_closed_short: 'Cerrada',
+      msg_catch_updated: 'Captura actualizada', msg_fishpulse_report: 'Reporte de Fish Pulse', msg_reading_saved: 'Lectura guardada',
+      msg_saved_anomaly: 'Guardado — el consumo se ve inusual, vale la pena revisar', msg_no_notes: 'Sin notas', msg_unknown_spot: 'Spot desconocido',
+      msg_step: 'Paso', msg_of: 'de', msg_no_gps_yet: 'SIN GPS AÚN', msg_saved_uc: 'GUARDADAS', msg_species_uc: 'ESPECIES',
+      msg_no_records_start: 'Aún no hay registros. Comienza con "Nuevo Registro" para capturar tu primer espécimen.', msg_pts: 'PTS', msg_record_lc: 'registro',
+      msg_sites_selected: 'sitios seleccionados', msg_update_record: 'Actualizar registro', msg_edit_record: 'Editar Registro',
+      msg_unspecified_site: 'Sitio no especificado', msg_area_saved: 'Área guardada para uso sin conexión', msg_area_saved_partial: 'Área guardada',
+      msg_tiles_failed: 'tiles fallaron — reintenta si hace falta', msg_catches_lc: 'capturas',
+      msg_duration: 'Duración', msg_fetching_conditions: 'Obteniendo condiciones…', msg_fetch_conditions_failed: 'No se pudieron obtener las condiciones — revisa tu conexión.',
+      msg_locating: 'localizando…', msg_no_gps_signal: 'sin señal GPS — intenta de nuevo', msg_suggested: 'Sugerido', msg_avg_of: 'promedio de', msg_past_sales: 'ventas anteriores', msg_use_this: 'Usar Este',
+      msg_estimated_value: 'Valor Estimado', msg_fuel_consumed: 'Combustible Consumido', msg_consumed_since_last: 'Consumido Desde la Última Lectura',
+      msg_live_map: 'Mapa en vivo · tiles cargados de la conexión', msg_offline_mode: 'Modo sin conexión · gráfico esquemático de coordenadas',
+      msg_getting_location: 'Obteniendo tu ubicación…', msg_could_not_get_location: 'No se pudo obtener tu ubicación.', msg_capturing: 'capturando…', msg_capture_failed: 'falló la captura — toca para reintentar',
+      msg_hhmm_format: 'usa el formato HH:MM (ej. 14:30)', msg_editing_record: 'Editando registro · todos los pasos abiertos', msg_online_cartodb: 'En línea · tiles de CartoDB', msg_offline_schematic: 'Sin conexión · gráfico esquemático',
+      msg_downloading: 'Descargando', msg_tiles: 'tiles'
     },
     it: {
       splash_slide1_title: 'Cattura dati in mare', splash_slide1_body: 'Specie, biologia, catture accessorie, GPS — tutto offline. Nessun segnale necessario sul campo.',
@@ -3086,6 +3238,20 @@
       camp_past: 'Campagne passate',
       ins_title: 'Statistiche di Rilevamento', ins_all_taxon: 'Tutti i gruppi tassonomici', ins_all_campaigns: 'Tutte le campagne',
       ins_tab_stats: 'Statistiche', ins_tab_charts: 'Grafici', ins_tab_advanced: 'Avanzate',
+      adv_diversity_indices: 'Indici di diversità', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Equiripartizione J'",
+      adv_dominant: 'Dominante', adv_rarest: 'Più rara', adv_by_site: 'Per sito in questo ambito', adv_site: 'Sito',
+      adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Mostrato come 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proporzione della specie i, S = ricchezza di specie (Pielou 1966).",
+      adv_unspecified: 'Non specificato', adv_sex_ratio: 'Rapporto tra i sessi · test esatto vs 1:1', adv_sex_ratio_empty: 'Non ci sono ancora abbastanza individui sessati — servono 5+ per specie con M/F registrato.',
+      adv_species: 'Specie', adv_sex_ratio_footnote: 'Test binomiale esatto a due code contro la nullità 1:1 — equivalente al test esatto di Fisher per una proporzione. Tocca un pill per aggiungerlo o rimuoverlo dalla tabella, fino a 5 alla volta.',
+      adv_bycatch_rate: 'Tasso di cattura accessoria', adv_bycatch_empty: 'Non ci sono ancora record con cattura accessoria sì/no registrata.', adv_by_gear: 'Per attrezzo',
+      adv_lw_regression: 'Regressione lunghezza-peso · W = aL^b', adv_lw_empty: 'Non ci sono ancora abbastanza record di lunghezza + peso abbinati — servono 3+ per specie.',
+      adv_lw_footnote: "a, b stimati con OLS su ln(W) vs ln(L). K = fattore di condizione di Fulton, media di 100000·W(kg)/L(cm)³ per specie (Le Cren 1951).",
+      adv_maturity_ogive: 'Ogiva di maturità per taglia', adv_maturity_empty: 'Non ci sono ancora abbastanza record con lunghezza e stadio gonadico insieme — servono 15+ per una specie.',
+      adv_maturity_footnote: 'Punti = % matura per classe di lunghezza. Immatura vs matura+ dallo stadio gonadico. Curva stimata con regressione logistica (IRLS). L50 = lunghezza al 50% di maturità prevista.',
+      adv_species_accumulation: 'Curva di accumulo delle specie', adv_accumulation_empty: 'Servono almeno 2 record con data/ora per tracciare questo grafico.',
+      adv_records: 'record', adv_species_lc: 'specie',
+      adv_accumulation_footnote: 'Specie distinte cumulative vs. record aggiunti, ordinati per data/ora. Solo ordine osservato, non una curva di rarefazione randomizzata — una curva che si appiattisce suggerisce che lo sforzo di campionamento si sta avvicinando alla saturazione in questo ambito.',
+      adv_size_histogram: 'Istogramma delle taglie per specie', adv_histogram_empty: 'Nessuna misurazione di lunghezza ancora registrata.', adv_histogram_single: 'Solo 1 misurazione per questa specie — servono 2+ per mostrare una distribuzione.',
       flrole_title: 'Chi sta usando<br>questa sessione?', flrole_switch_mode: '← Cambia Modalità',
       flrole_captain: 'Capitano', flrole_captain_sub: 'Registra viaggi · cale · catture<br>posizioni GPS · carburante', flrole_at_sea: 'In mare →',
       flrole_operations: 'Operazioni', flrole_operations_sub: 'Pannello flotta · riconciliazione<br>documenti · liquidazione', flrole_on_land: 'A terra →',
@@ -3102,7 +3268,8 @@
       flhaul_cancel: 'Annulla', flhaul_save: 'Salva Calata',
       flcatch_brand: 'Registra Cattura', flcatch_title: 'Inserimento Cattura', flcatch_not_linked: 'Non Collegata a una Calata',
       flcatch_haul: 'Calata', flcatch_haul_hint: 'a cui appartiene questa cattura', flcatch_species_weight: 'Specie e peso', flcatch_species_label: 'Specie / Categoria Commerciale',
-      flcatch_ref_price: 'Prezzo di riferimento', flcatch_add_another: '+ Aggiungi Altra', flcatch_save_return: 'Salva e Torna al Viaggio',
+      flcatch_ref_price: 'Prezzo di riferimento', flcatch_add_another: '+ Aggiungi Altra', flcatch_save_return: 'Salva e Torna al Viaggio', flcatch_no_haul: 'Nessuna calata (cattura singola)',
+      hist_unassigned_records: 'Schede non assegnate', ins_no_campaign_unassigned: 'Nessuna campagna (non assegnata)',
       flclose_brand: 'Chiudi Viaggio', flclose_h1: 'Riepilogo Viaggio e Costi', flclose_hauls: 'Calate', flclose_total_kg: 'Totale kg', flclose_est_value: 'Valore stim.',
       flclose_fuel: 'Carburante', flclose_loaded_l: 'Caricato (L)', flclose_remaining_l: 'Rimanente (L)', flclose_costs_now: 'Costi che puoi registrare ora',
       flclose_crew_payment: 'Pagamento Equipaggio', flclose_per_trip: 'per viaggio', flclose_ice: 'Ghiaccio / Conservazione', flclose_provisions: 'Provviste', flclose_per_day: 'al giorno in mare',
@@ -3116,6 +3283,9 @@
       fltripdet_maintenance: 'Manutenzione', fltripdet_permits_fees: 'Permessi / Tasse', fltripdet_port_dues: 'Tasse Portuali',
       fltripdet_amount: 'Importo', fltripdet_add_cost_btn: 'Aggiungi Costo', fltripdet_export: 'Esporta', fltripdet_share: 'Condividi',
       fldash_brand: 'Fish Pulse · Operazioni', fldash_h1: 'Panoramica Flotta', fldash_efficiency: 'Efficienza per imbarcazione', fldash_needs_attention: 'Richiede attenzione',
+      fldash_catch: 'Cattura', fldash_fuel_l: 'Carburante L', fldash_no_closed_trips: 'Nessun viaggio chiuso ancora', fldash_efficient: 'Efficiente', fldash_review: 'Verifica',
+      fldash_no_vessels: "Nessuna imbarcazione ancora. Aggiungine una dalla scheda Imbarcazioni.", fldash_unknown: 'Sconosciuta', fldash_closed_no_catch: 'Viaggio chiuso senza cattura',
+      fldash_costs_pending: 'Costi in sospeso', fldash_no_alerts: 'Nessun avviso. Tutto è aggiornato.',
       flhaulmap_brand: 'Mappa Calate', flhaulmap_title: 'Zone di Pesca', flhaulmap_no_gps: 'Calate Senza GPS',
       flfuel_h1: 'Registro Carburante Giornaliero', flfuel_no_trip: 'Avvia un viaggio dalla scheda Viaggio per iniziare a registrare le letture giornaliere di carburante.',
       flfuel_todays_reading: 'Lettura di oggi', flfuel_remaining: 'Carburante Rimanente (L)', flfuel_save_reading: 'Salva Lettura', flfuel_readings_this_trip: 'Letture di questo viaggio',
@@ -3129,6 +3299,14 @@
       flvessels_maintenance_interval: 'Intervallo di Manutenzione (ore in mare)', flvessels_hours_since_service: "Ore in mare dall'ultima manutenzione", flvessels_hours_since_service_hint: 'opzionale, oggi',
       flvessels_add_btn: 'Aggiungi Imbarcazione', flvessels_all_vessels: 'Tutte le imbarcazioni', flvessels_all_captains: 'Tutti i capitani', flvessels_all_crew: 'Tutto l\'equipaggio',
       flstats_h1: 'Statistiche della Flotta', fltab_trip: 'Viaggio', fltab_fuel: 'Carburante', fltab_docs: 'Docs',
+      flstats_add_vessel: 'Aggiungi un\'imbarcazione per vedere le statistiche della flotta.', flstats_no_closed_trips: 'Nessun viaggio chiuso ancora. Le statistiche si accumulano man mano che i viaggi vengono completati.',
+      flstats_profitability_trend: 'Tendenza di redditività', flstats_last: 'ultimi', flstats_trips_lc: 'viaggi', flstats_trend_empty: 'Servono almeno 2 viaggi chiusi per questa imbarcazione per tracciare una tendenza.',
+      flstats_trend_footnote_1: 'Risultato netto per viaggio chiuso, in', flstats_trend_footnote_2: 'Verde = redditizio, rosso = in perdita.',
+      flstats_cost_composition: 'Composizione dei costi · tutti i viaggi', flstats_cost_empty: 'Nessun viaggio chiuso con costi registrati per questa imbarcazione ancora.', flstats_cost_empty2: 'Nessun costo registrato ancora per i viaggi di questa imbarcazione.',
+      flstats_cost_fuel: 'Carburante', flstats_cost_crew: 'Equipaggio', flstats_cost_ice: 'Ghiaccio', flstats_cost_provisions: 'Provviste', flstats_cost_maintenance: 'Manutenzione', flstats_cost_permits_fees: 'Permessi / Tasse', flstats_cost_port_dues: 'Tasse Portuali', flstats_cost_other: 'Altro',
+      flstats_cpue: 'CPUE Commerciale · kg / ora', flstats_cpue_empty: 'Nessuna calata con sia durata che cattura registrate ancora.', flstats_cpue_footnote: "Tutte le imbarcazioni, tutti i viaggi — non influenzato dal filtro imbarcazione sopra, poiché kg/hr non è una cifra monetaria.",
+      flstats_vessel_comparison: 'Confronto tra imbarcazioni', flstats_no_closed_trips_short: 'Nessun viaggio chiuso ancora.', flstats_trips_header: 'Viaggi', flstats_margin: 'Margine',
+      flstats_margin_footnote: 'Margine mostrato come % del reddito (netto ÷ reddito), non valuta assoluta — sicuro da confrontare anche quando le imbarcazioni usano valute predefinite diverse.',
       fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
       sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
       sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
@@ -3144,7 +3322,57 @@
       sp_licenses_permits: 'Licenze e Permessi', sp_keep_license: 'Tieni la licenza a portata di mano per eventuali controlli', sp_add_document: 'Aggiungi un documento',
       sp_boat_permit: 'Permesso Imbarcazione', sp_species_tag: 'Tag / Bollino Specie', sp_folio_hint: 'opzionale — es. numero folio', sp_your_documents: 'I tuoi documenti',
       sp_personal_stats: 'Statistiche Personali', sp_from_logged_catches: 'Dalle tue catture registrate',
-      sp_linked_current_session: 'Collegata alla Sessione Corrente', sp_linked_session_started: 'Collegata a Sessione Iniziata il '
+      sp_moon_new: 'Luna Nuova', sp_moon_waxing_crescent: 'Crescente Illuminante', sp_moon_first_quarter: 'Primo Quarto', sp_moon_waxing_gibbous: 'Gibbosa Crescente',
+      sp_moon_full: 'Luna Piena', sp_moon_waning_gibbous: 'Gibbosa Calante', sp_moon_last_quarter: 'Ultimo Quarto', sp_moon_waning_crescent: 'Calante Illuminante',
+      sp_strength_strong: 'Forte', sp_strength_moderate: 'Moderata', sp_strength_mild: 'Lieve', sp_illuminated: '% illuminata', sp_activity: ' di attività',
+      sp_major_peaks: 'Picchi maggiori', sp_90min_window: 'Finestra di 90 min', sp_minor_peaks: 'Picchi minori', sp_45min_window: 'Finestra di 45 min',
+      sp_estimated_periods: 'Periodi stimati — non è un\'effemeride di precisione.',
+      sp_linked_current_session: 'Collegata alla Sessione Corrente', sp_linked_session_started: 'Collegata a Sessione Iniziata il ',
+      msg_vessel_name_required: "Il nome dell'imbarcazione è obbligatorio", msg_captain_name_required: 'Il nome del capitano è obbligatorio', msg_select_captain_vessel: "Seleziona o aggiungi un capitano e un'imbarcazione",
+      msg_trip_started: 'Viaggio iniziato', msg_currency_updated: 'Valuta predefinita aggiornata', msg_vessel_added: 'Imbarcazione aggiunta', msg_no_active_trip: 'Nessun viaggio attivo',
+      msg_haul_saved: 'Calata salvata', msg_species_category_required: 'La specie o categoria è obbligatoria', msg_catch_saved: 'Cattura salvata', msg_enter_name_first: 'Inserisci prima un nome',
+      msg_trip_closed: 'Viaggio chiuso', msg_enter_amount: 'Inserisci un importo', msg_cost_added: 'Costo aggiunto', msg_name_percentage_required: 'Nome e percentuale sono obbligatori',
+      msg_crew_copied: "Equipaggio copiato dall'ultimo viaggio — sentiti libero di modificare", msg_crew_added_captain: "Equipaggio aggiunto dalla lista del capitano — imposta ogni quota",
+      msg_cost_updated: 'Costo aggiornato', msg_cost_removed: 'Costo rimosso', msg_pdf_not_loaded: 'Libreria PDF non caricata — controlla la connessione',
+      msg_nothing_to_share: 'Ancora niente da condividere', msg_sharing_not_supported: 'La condivisione di file non è supportata su questo browser — usa Scarica invece',
+      msg_maintenance_logged: 'Manutenzione registrata — contatore ore azzerato', msg_enter_fuel_reading: 'Inserisci una lettura di carburante', msg_scale_weights_saved: 'Pesi bilancia salvati',
+      msg_vessel_expiry_required: "L'imbarcazione e la data di scadenza sono obbligatorie", msg_document_added: 'Documento aggiunto', msg_enter_lat_lon: 'Inserisci latitudine e longitudine',
+      msg_lat_lon_range: 'La latitudine deve essere da -90 a 90, la longitudine da -180 a 180', msg_coords_applied: 'Coordinate manuali applicate', msg_observer_required: "Il nome dell'osservatore è obbligatorio",
+      msg_species_name_required: 'Il nome della specie è obbligatorio', msg_record_updated: 'Scheda aggiornata', msg_record_saved: 'Scheda salvata', msg_edit_cancelled: 'Modifica annullata',
+      msg_zip_not_loaded: 'Libreria zip non caricata — controlla la connessione', msg_no_photos: 'Nessuna foto in questo gruppo di schede', msg_building_zip: 'Creazione zip di',
+      msg_photos_lc: 'foto', msg_zip_failed: 'Impossibile creare lo zip — riprova', msg_no_records_export: 'Nessuna scheda da esportare', msg_csv_exported: 'CSV esportato',
+      msg_no_georef_export: 'Nessuna scheda georeferenziata da esportare', msg_geojson_exported: 'GeoJSON esportato', msg_points: 'punti', msg_no_records_backup: 'Nessuna scheda da salvare',
+      msg_max_5_species: 'Massimo 5 specie — tocca per rimuoverne una prima', msg_gps_not_available: 'GPS non disponibile su questo browser', msg_track_too_short: 'Rotta troppo corta da salvare',
+      msg_track_saved: 'Rotta salvata', msg_no_saved_tracks: 'Nessuna rotta salvata da esportare', msg_tracks_exported: 'Rotte esportate', msg_tracks_lc: 'rotta/e',
+      msg_open_map_first: 'Apri prima la mappa', msg_offline_storage_not_supported: 'Archiviazione offline non supportata su questo browser',
+      msg_offline_area_removed: "Area offline rimossa dalla lista (le tile in cache restano finché non viene svuotata la cache)", msg_campaign_name_required: 'Il nome della campagna è obbligatorio',
+      msg_geo_not_supported: 'Geolocalizzazione non supportata su questo dispositivo', msg_enter_spot_name: 'Inserisci un nome per il nuovo spot', msg_session_started: 'Sessione iniziata',
+      msg_session_ended: 'Sessione terminata', msg_species_required: 'La specie è obbligatoria', msg_spot_name_required: 'Il nome dello spot è obbligatorio', msg_spot_saved: 'Spot salvato',
+      msg_expiry_required: 'La data di scadenza è obbligatoria', msg_total: 'Totale', msg_campaign: 'Campagna', msg_started: 'iniziata', msg_no_records_yet: 'Nessuna scheda ancora',
+      msg_all_backed_up: 'Tutte le schede salvate', msg_last: 'ultimo', msg_records_not_backed_up: 'scheda/e non salvate', msg_fishpulse_backup: 'Backup Fish Pulse',
+      msg_records_lc: 'schede', msg_backup_shared: 'Backup condiviso', msg_backup_downloaded: 'Backup scaricato',
+      flg_unknown_vessel: 'Imbarcazione Sconosciuta', flg_recently: 'di recente', flg_expires: 'Scade', flg_tap_view_photo: 'tocca per vedere la foto',
+      msg_unspecified_gear: 'Attrezzo non specificato', flcatch_no_haul_short: 'Nessuna calata', msg_no_species_logged_haul: 'Nessuna specie registrata ancora per questa calata',
+      msg_species_logged_so_far: 'specie registrate finora per questa calata', msg_edit_catch: 'Modifica Cattura', msg_save_changes: 'Salva Modifiche', msg_save_return_session: 'Salva e Torna alla Sessione',
+      msg_profitable_trip: 'Viaggio redditizio', msg_trip_at_loss: 'Viaggio in perdita', msg_final_margin: 'Margine Finale', msg_preliminary_margin: 'Margine Preliminare',
+      msg_landing_report: 'Rapporto di sbarco', msg_trip_started_lc: 'Viaggio iniziato', msg_trip_ended: 'Viaggio terminato', msg_catch_by_species: 'Cattura per specie',
+      msg_estimated: 'Stimato', msg_scale_weight: 'Peso bilancia', msg_not_yet_scaled: 'non ancora pesato', msg_estimated_lc: 'stimato', msg_scaled_lc: 'pesato',
+      msg_landing_disclaimer: 'Questo rapporto supporta una dichiarazione di sbarco o una richiesta di certificato di cattura. Non è di per sé un certificato ufficiale.',
+      msg_landing_report_title: 'Rapporto di Sbarco', camp_active_short: 'Attiva', camp_closed_short: 'Chiusa',
+      msg_catch_updated: 'Cattura aggiornata', msg_fishpulse_report: 'Rapporto Fish Pulse', msg_reading_saved: 'Lettura salvata',
+      msg_saved_anomaly: 'Salvato — il consumo sembra insolito, vale la pena controllare', msg_no_notes: 'Nessuna nota', msg_unknown_spot: 'Spot sconosciuto',
+      msg_step: 'Passo', msg_of: 'di', msg_no_gps_yet: 'NESSUN GPS ANCORA', msg_saved_uc: 'SALVATE', msg_species_uc: 'SPECIE',
+      msg_no_records_start: 'Nessuna scheda ancora. Inizia con "Nuova Scheda" per registrare il tuo primo esemplare.', msg_pts: 'PTS', msg_record_lc: 'scheda',
+      msg_sites_selected: 'siti selezionati', msg_update_record: 'Aggiorna scheda', msg_edit_record: 'Modifica Scheda',
+      msg_unspecified_site: 'Sito non specificato', msg_area_saved: 'Area salvata per uso offline', msg_area_saved_partial: 'Area salvata',
+      msg_tiles_failed: 'tile non riuscite — riprova se necessario', msg_catches_lc: 'catture',
+      msg_duration: 'Durata', msg_fetching_conditions: 'Recupero condizioni…', msg_fetch_conditions_failed: 'Impossibile recuperare le condizioni — controlla la connessione.',
+      msg_locating: 'localizzazione…', msg_no_gps_signal: 'nessun segnale GPS — riprova', msg_suggested: 'Suggerito', msg_avg_of: 'media di', msg_past_sales: 'vendite passate', msg_use_this: 'Usa Questo',
+      msg_estimated_value: 'Valore Stimato', msg_fuel_consumed: 'Carburante Consumato', msg_consumed_since_last: "Consumato Dall'Ultima Lettura",
+      msg_live_map: 'Mappa live · tile caricate dalla connessione', msg_offline_mode: 'Modalità offline · grafico schematico delle coordinate',
+      msg_getting_location: 'Ricerca della tua posizione…', msg_could_not_get_location: 'Impossibile ottenere la tua posizione.', msg_capturing: 'acquisizione…', msg_capture_failed: 'acquisizione fallita — tocca per riprovare',
+      msg_hhmm_format: 'usa il formato HH:MM (es. 14:30)', msg_editing_record: 'Modifica scheda · tutti i passaggi aperti', msg_online_cartodb: 'Online · tile CartoDB', msg_offline_schematic: 'Offline · grafico schematico',
+      msg_downloading: 'Download in corso', msg_tiles: 'tile'
     },
     th: {
       splash_slide1_title: 'บันทึกข้อมูลกลางทะเล', splash_slide1_body: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ จีพีเอส — ใช้งานได้แบบออฟไลน์ทั้งหมด ไม่ต้องมีสัญญาณในภาคสนาม',
@@ -3223,6 +3451,20 @@
       camp_past: 'แคมเปญที่ผ่านมา',
       ins_title: 'สถิติการสำรวจ', ins_all_taxon: 'ทุกกลุ่มอนุกรมวิธาน', ins_all_campaigns: 'ทุกแคมเปญ',
       ins_tab_stats: 'สถิติ', ins_tab_charts: 'กราฟ', ins_tab_advanced: 'ขั้นสูง',
+      adv_diversity_indices: 'ดัชนีความหลากหลาย', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Evenness J'",
+      adv_dominant: 'เด่น', adv_rarest: 'หายาก', adv_by_site: 'แยกตามสถานที่ในขอบเขตนี้', adv_site: 'สถานที่',
+      adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948) แสดงเป็น 1−D, D=Σpᵢ² (Simpson 1949) J' = H'/ln(S), pᵢ = สัดส่วนของชนิดพันธุ์ i, S = ความหลากชนิด (Pielou 1966)",
+      adv_unspecified: 'ไม่ระบุ', adv_sex_ratio: 'อัตราส่วนเพศ · การทดสอบแบบแม่นตรงเทียบกับ 1:1', adv_sex_ratio_empty: 'ยังมีตัวอย่างที่ระบุเพศไม่พอ — ต้องการอย่างน้อย 5 ตัวต่อชนิดพันธุ์ที่บันทึกเพศผู้/เพศเมีย',
+      adv_species: 'ชนิดพันธุ์', adv_sex_ratio_footnote: 'การทดสอบทวินามแบบแม่นตรงสองด้านเทียบกับสมมติฐาน 1:1 — เทียบเท่าการทดสอบแม่นตรงของฟิชเชอร์สำหรับสัดส่วนเดียว แตะที่ป้ายเพื่อเพิ่มหรือลบออกจากตาราง ได้สูงสุด 5 รายการ',
+      adv_bycatch_rate: 'อัตราสัตว์น้ำพลอยได้', adv_bycatch_empty: 'ยังไม่มีบันทึกที่ระบุสัตว์น้ำพลอยได้ใช่/ไม่ใช่', adv_by_gear: 'แยกตามเครื่องมือประมง',
+      adv_lw_regression: 'สมการถดถอยความยาว-น้ำหนัก · W = aL^b', adv_lw_empty: 'ยังมีข้อมูลความยาว + น้ำหนักคู่กันไม่พอ — ต้องการอย่างน้อย 3 รายการต่อชนิดพันธุ์',
+      adv_lw_footnote: "a, b ปรับด้วยวิธี OLS บน ln(W) เทียบ ln(L) K = ค่าดัชนีสภาพฟุลตัน ค่าเฉลี่ยของ 100000·W(กก.)/L(ซม.)³ ต่อชนิดพันธุ์ (Le Cren 1951)",
+      adv_maturity_ogive: 'เส้นโค้งความสมบูรณ์เพศตามขนาด', adv_maturity_empty: 'ยังมีข้อมูลความยาวคู่กับระยะความสมบูรณ์เพศไม่พอ — ต้องการอย่างน้อย 15 รายการต่อชนิดพันธุ์',
+      adv_maturity_footnote: 'จุด = % ที่สมบูรณ์เพศต่อช่วงความยาว ไม่สมบูรณ์เพศ เทียบกับ สมบูรณ์เพศขึ้นไป จากระยะความสมบูรณ์เพศ เส้นโค้งปรับด้วยการถดถอยโลจิสติก (IRLS) L50 = ความยาวที่ความสมบูรณ์เพศ 50%',
+      adv_species_accumulation: 'เส้นโค้งการสะสมชนิดพันธุ์', adv_accumulation_empty: 'ต้องการอย่างน้อย 2 บันทึกที่มีวันที่/เวลาเพื่อสร้างกราฟนี้',
+      adv_records: 'บันทึก', adv_species_lc: 'ชนิดพันธุ์',
+      adv_accumulation_footnote: 'จำนวนชนิดพันธุ์ที่แตกต่างกันสะสม เทียบกับบันทึกที่เพิ่มเข้ามา เรียงตามวันที่/เวลา เป็นลำดับที่สังเกตได้เท่านั้น ไม่ใช่เส้นโค้งการสุ่มตัวอย่างแบบสุ่ม — เส้นโค้งที่แบนราบแสดงว่าความพยายามในการสุ่มตัวอย่างใกล้ถึงจุดอิ่มตัวในขอบเขตนี้',
+      adv_size_histogram: 'ฮิสโตแกรมขนาดตามชนิดพันธุ์', adv_histogram_empty: 'ยังไม่มีการวัดความยาวที่บันทึกไว้', adv_histogram_single: 'มีการวัดเพียง 1 รายการสำหรับชนิดพันธุ์นี้ — ต้องการอย่างน้อย 2 รายการเพื่อแสดงการกระจาย',
       flrole_title: 'ใครกำลังใช้<br>เซสชันนี้?', flrole_switch_mode: '← เปลี่ยนโหมด',
       flrole_captain: 'กัปตัน', flrole_captain_sub: 'บันทึกทริป · การลากอวน · การจับปลา<br>ตำแหน่งจีพีเอส · เชื้อเพลิง', flrole_at_sea: 'กลางทะเล →',
       flrole_operations: 'ฝ่ายปฏิบัติการ', flrole_operations_sub: 'แดชบอร์ดกองเรือ · กระทบยอด<br>เอกสาร · การคิดบัญชี', flrole_on_land: 'บนฝั่ง →',
@@ -3239,7 +3481,8 @@
       flhaul_cancel: 'ยกเลิก', flhaul_save: 'บันทึกการลากอวน',
       flcatch_brand: 'บันทึกการจับปลา', flcatch_title: 'รายการจับปลา', flcatch_not_linked: 'ยังไม่ได้เชื่อมกับการลากอวน',
       flcatch_haul: 'การลากอวน', flcatch_haul_hint: 'ที่การจับปลานี้เป็นของ', flcatch_species_weight: 'ชนิดพันธุ์และน้ำหนัก', flcatch_species_label: 'ชนิดพันธุ์ / ประเภททางการค้า',
-      flcatch_ref_price: 'ราคาอ้างอิง', flcatch_add_another: '+ เพิ่มอีกรายการ', flcatch_save_return: 'บันทึกและกลับไปที่ทริป',
+      flcatch_ref_price: 'ราคาอ้างอิง', flcatch_add_another: '+ เพิ่มอีกรายการ', flcatch_save_return: 'บันทึกและกลับไปที่ทริป', flcatch_no_haul: 'ไม่มีการลากอวน (จับแยก)',
+      hist_unassigned_records: 'บันทึกที่ไม่ได้กำหนดแคมเปญ', ins_no_campaign_unassigned: 'ไม่มีแคมเปญ (ไม่ได้กำหนด)',
       flclose_brand: 'ปิดทริป', flclose_h1: 'สรุปทริปและค่าใช้จ่าย', flclose_hauls: 'การลากอวน', flclose_total_kg: 'น้ำหนักรวม (กก.)', flclose_est_value: 'มูลค่าประมาณ',
       flclose_fuel: 'เชื้อเพลิง', flclose_loaded_l: 'เติมแล้ว (ลิตร)', flclose_remaining_l: 'คงเหลือ (ลิตร)', flclose_costs_now: 'ค่าใช้จ่ายที่บันทึกได้ตอนนี้',
       flclose_crew_payment: 'ค่าจ้างลูกเรือ', flclose_per_trip: 'ต่อทริป', flclose_ice: 'น้ำแข็ง / การถนอมอาหาร', flclose_provisions: 'เสบียง', flclose_per_day: 'ต่อวันในทะเล',
@@ -3253,6 +3496,9 @@
       fltripdet_maintenance: 'ค่าบำรุงรักษา', fltripdet_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', fltripdet_port_dues: 'ค่าธรรมเนียมท่าเรือ',
       fltripdet_amount: 'จำนวนเงิน', fltripdet_add_cost_btn: 'เพิ่มค่าใช้จ่าย', fltripdet_export: 'ส่งออก', fltripdet_share: 'แชร์',
       fldash_brand: 'Fish Pulse · ฝ่ายปฏิบัติการ', fldash_h1: 'ภาพรวมกองเรือ', fldash_efficiency: 'ประสิทธิภาพตามเรือ', fldash_needs_attention: 'ต้องให้ความสนใจ',
+      fldash_catch: 'การจับปลา', fldash_fuel_l: 'เชื้อเพลิง ลิตร', fldash_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว', fldash_efficient: 'มีประสิทธิภาพ', fldash_review: 'ต้องตรวจสอบ',
+      fldash_no_vessels: 'ยังไม่มีเรือ เพิ่มเรือได้จากแท็บเรือ', fldash_unknown: 'ไม่ทราบ', fldash_closed_no_catch: 'ปิดทริปโดยไม่มีการจับปลา',
+      fldash_costs_pending: 'ค่าใช้จ่ายที่ค้างอยู่', fldash_no_alerts: 'ไม่มีการแจ้งเตือน ทุกอย่างเป็นปัจจุบัน',
       flhaulmap_brand: 'แผนที่การลากอวน', flhaulmap_title: 'พื้นที่ทำการประมง', flhaulmap_no_gps: 'การลากอวนที่ไม่มีจีพีเอส',
       flfuel_h1: 'บันทึกเชื้อเพลิงประจำวัน', flfuel_no_trip: 'เริ่มทริปจากแท็บทริปเพื่อเริ่มบันทึกค่าเชื้อเพลิงประจำวัน',
       flfuel_todays_reading: 'ค่าที่อ่านได้วันนี้', flfuel_remaining: 'เชื้อเพลิงคงเหลือ (ลิตร)', flfuel_save_reading: 'บันทึกค่าที่อ่านได้', flfuel_readings_this_trip: 'ค่าที่อ่านได้ในทริปนี้',
@@ -3266,6 +3512,14 @@
       flvessels_maintenance_interval: 'ช่วงเวลาบำรุงรักษา (ชั่วโมงในทะเล)', flvessels_hours_since_service: 'ชั่วโมงในทะเลตั้งแต่ซ่อมบำรุงครั้งล่าสุด', flvessels_hours_since_service_hint: 'ไม่บังคับ วันนี้',
       flvessels_add_btn: 'เพิ่มเรือ', flvessels_all_vessels: 'เรือทั้งหมด', flvessels_all_captains: 'กัปตันทั้งหมด', flvessels_all_crew: 'ลูกเรือทั้งหมด',
       flstats_h1: 'สถิติกองเรือ', fltab_trip: 'ทริป', fltab_fuel: 'เชื้อเพลิง', fltab_docs: 'เอกสาร',
+      flstats_add_vessel: 'เพิ่มเรือเพื่อดูสถิติกองเรือ', flstats_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว สถิติจะสะสมเมื่อทริปเสร็จสมบูรณ์',
+      flstats_profitability_trend: 'แนวโน้มความสามารถในการทำกำไร', flstats_last: 'ล่าสุด', flstats_trips_lc: 'ทริป', flstats_trend_empty: 'ต้องการทริปที่ปิดแล้วอย่างน้อย 2 ทริปสำหรับเรือนี้เพื่อสร้างแนวโน้ม',
+      flstats_trend_footnote_1: 'ผลกำไรสุทธิต่อทริปที่ปิดแล้ว เป็น', flstats_trend_footnote_2: 'สีเขียว = มีกำไร สีแดง = ขาดทุน',
+      flstats_cost_composition: 'องค์ประกอบค่าใช้จ่าย · ทุกทริป', flstats_cost_empty: 'ยังไม่มีทริปที่ปิดแล้วพร้อมค่าใช้จ่ายที่บันทึกสำหรับเรือนี้', flstats_cost_empty2: 'ยังไม่มีค่าใช้จ่ายที่บันทึกสำหรับทริปของเรือนี้',
+      flstats_cost_fuel: 'เชื้อเพลิง', flstats_cost_crew: 'ลูกเรือ', flstats_cost_ice: 'น้ำแข็ง', flstats_cost_provisions: 'เสบียง', flstats_cost_maintenance: 'ค่าบำรุงรักษา', flstats_cost_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', flstats_cost_port_dues: 'ค่าธรรมเนียมท่าเรือ', flstats_cost_other: 'อื่นๆ',
+      flstats_cpue: 'CPUE เชิงพาณิชย์ · กก. / ชั่วโมง', flstats_cpue_empty: 'ยังไม่มีการลากอวนที่มีทั้งระยะเวลาและการจับปลาที่บันทึกไว้', flstats_cpue_footnote: 'เรือทั้งหมด ทริปทั้งหมด — ไม่ได้รับผลกระทบจากตัวกรองเรือด้านบน เนื่องจาก กก./ชม. ไม่ใช่ตัวเลขทางการเงิน',
+      flstats_vessel_comparison: 'การเปรียบเทียบเรือ', flstats_no_closed_trips_short: 'ยังไม่มีทริปที่ปิดแล้ว', flstats_trips_header: 'ทริป', flstats_margin: 'กำไรขั้นต้น',
+      flstats_margin_footnote: 'กำไรขั้นต้นแสดงเป็น % ของรายได้ (สุทธิ ÷ รายได้) ไม่ใช่สกุลเงินสัมบูรณ์ — สามารถเปรียบเทียบได้อย่างปลอดภัยแม้เรือจะใช้สกุลเงินเริ่มต้นต่างกัน',
       fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
       sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
       sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
@@ -3281,7 +3535,57 @@
       sp_licenses_permits: 'ใบอนุญาตและใบอนุญาตประกอบการ', sp_keep_license: 'เตรียมใบอนุญาตของคุณไว้สำหรับการตรวจสอบ', sp_add_document: 'เพิ่มเอกสาร',
       sp_boat_permit: 'ใบอนุญาตเรือ', sp_species_tag: 'ป้าย / ตราประทับชนิดพันธุ์', sp_folio_hint: 'ไม่บังคับ — เช่น หมายเลขเอกสาร', sp_your_documents: 'เอกสารของคุณ',
       sp_personal_stats: 'สถิติส่วนตัว', sp_from_logged_catches: 'จากการจับปลาที่บันทึกไว้',
-      sp_linked_current_session: 'เชื่อมกับเซสชันปัจจุบัน', sp_linked_session_started: 'เชื่อมกับเซสชันที่เริ่มเมื่อ '
+      sp_moon_new: 'จันทร์ดับ', sp_moon_waxing_crescent: 'จันทร์เสี้ยวข้างขึ้น', sp_moon_first_quarter: 'จันทร์ครึ่งดวงข้างขึ้น', sp_moon_waxing_gibbous: 'จันทร์เกือบเต็มข้างขึ้น',
+      sp_moon_full: 'จันทร์เต็มดวง', sp_moon_waning_gibbous: 'จันทร์เกือบเต็มข้างแรม', sp_moon_last_quarter: 'จันทร์ครึ่งดวงข้างแรม', sp_moon_waning_crescent: 'จันทร์เสี้ยวข้างแรม',
+      sp_strength_strong: 'แรง', sp_strength_moderate: 'ปานกลาง', sp_strength_mild: 'อ่อน', sp_illuminated: '% สว่าง', sp_activity: ' กิจกรรม',
+      sp_major_peaks: 'ช่วงพีคหลัก', sp_90min_window: 'ช่วงเวลา 90 นาที', sp_minor_peaks: 'ช่วงพีครอง', sp_45min_window: 'ช่วงเวลา 45 นาที',
+      sp_estimated_periods: 'ช่วงเวลาโดยประมาณ — ไม่ใช่ปฏิทินดาราศาสตร์ที่แม่นยำ',
+      sp_linked_current_session: 'เชื่อมกับเซสชันปัจจุบัน', sp_linked_session_started: 'เชื่อมกับเซสชันที่เริ่มเมื่อ ',
+      msg_vessel_name_required: 'ต้องระบุชื่อเรือ', msg_captain_name_required: 'ต้องระบุชื่อกัปตัน', msg_select_captain_vessel: 'เลือกหรือเพิ่มกัปตันและเรือ',
+      msg_trip_started: 'เริ่มทริปแล้ว', msg_currency_updated: 'อัปเดตสกุลเงินเริ่มต้นแล้ว', msg_vessel_added: 'เพิ่มเรือแล้ว', msg_no_active_trip: 'ไม่มีทริปที่ใช้งานอยู่',
+      msg_haul_saved: 'บันทึกการลากอวนแล้ว', msg_species_category_required: 'ต้องระบุชนิดพันธุ์หรือประเภท', msg_catch_saved: 'บันทึกการจับปลาแล้ว', msg_enter_name_first: 'กรุณากรอกชื่อก่อน',
+      msg_trip_closed: 'ปิดทริปแล้ว', msg_enter_amount: 'กรุณากรอกจำนวนเงิน', msg_cost_added: 'เพิ่มค่าใช้จ่ายแล้ว', msg_name_percentage_required: 'ต้องระบุชื่อและเปอร์เซ็นต์',
+      msg_crew_copied: 'คัดลอกลูกเรือจากทริปที่แล้ว — ปรับได้ตามต้องการ', msg_crew_added_captain: 'เพิ่มลูกเรือจากรายชื่อของกัปตัน — กำหนดส่วนแบ่งแต่ละคน',
+      msg_cost_updated: 'อัปเดตค่าใช้จ่ายแล้ว', msg_cost_removed: 'ลบค่าใช้จ่ายแล้ว', msg_pdf_not_loaded: 'ไลบรารี PDF ไม่โหลด — ตรวจสอบการเชื่อมต่อของคุณ',
+      msg_nothing_to_share: 'ยังไม่มีอะไรให้แชร์', msg_sharing_not_supported: 'เบราว์เซอร์นี้ไม่รองรับการแชร์ไฟล์ — ใช้ดาวน์โหลดแทน',
+      msg_maintenance_logged: 'บันทึกการบำรุงรักษาแล้ว — รีเซ็ตตัวนับชั่วโมง', msg_enter_fuel_reading: 'กรุณากรอกค่าเชื้อเพลิง', msg_scale_weights_saved: 'บันทึกน้ำหนักจากตาชั่งแล้ว',
+      msg_vessel_expiry_required: 'ต้องระบุเรือและวันหมดอายุ', msg_document_added: 'เพิ่มเอกสารแล้ว', msg_enter_lat_lon: 'กรุณากรอกละติจูดและลองจิจูด',
+      msg_lat_lon_range: 'ละติจูดต้องอยู่ระหว่าง -90 ถึง 90 ลองจิจูดต้องอยู่ระหว่าง -180 ถึง 180', msg_coords_applied: 'ใช้พิกัดที่กรอกเองแล้ว', msg_observer_required: 'ต้องระบุชื่อผู้สังเกตการณ์',
+      msg_species_name_required: 'ต้องระบุชื่อชนิดพันธุ์', msg_record_updated: 'อัปเดตบันทึกแล้ว', msg_record_saved: 'บันทึกข้อมูลแล้ว', msg_edit_cancelled: 'ยกเลิกการแก้ไขแล้ว',
+      msg_zip_not_loaded: 'ไลบรารี zip ไม่โหลด — ตรวจสอบการเชื่อมต่อของคุณ', msg_no_photos: 'ไม่มีรูปภาพในชุดบันทึกนี้', msg_building_zip: 'กำลังสร้างไฟล์ zip จำนวน',
+      msg_photos_lc: 'รูปภาพ', msg_zip_failed: 'ไม่สามารถสร้างไฟล์ zip ได้ — ลองอีกครั้ง', msg_no_records_export: 'ไม่มีบันทึกให้ส่งออก', msg_csv_exported: 'ส่งออก CSV แล้ว',
+      msg_no_georef_export: 'ไม่มีบันทึกที่มีพิกัดให้ส่งออก', msg_geojson_exported: 'ส่งออก GeoJSON แล้ว', msg_points: 'จุด', msg_no_records_backup: 'ไม่มีบันทึกให้สำรองข้อมูล',
+      msg_max_5_species: 'สูงสุด 5 ชนิดพันธุ์ — แตะเพื่อลบออกก่อน', msg_gps_not_available: 'เบราว์เซอร์นี้ไม่รองรับจีพีเอส', msg_track_too_short: 'เส้นทางสั้นเกินไปที่จะบันทึก',
+      msg_track_saved: 'บันทึกเส้นทางแล้ว', msg_no_saved_tracks: 'ไม่มีเส้นทางที่บันทึกไว้ให้ส่งออก', msg_tracks_exported: 'ส่งออกเส้นทางแล้ว', msg_tracks_lc: 'เส้นทาง',
+      msg_open_map_first: 'เปิดแผนที่ก่อน', msg_offline_storage_not_supported: 'เบราว์เซอร์นี้ไม่รองรับการจัดเก็บข้อมูลออฟไลน์',
+      msg_offline_area_removed: 'ลบพื้นที่ออฟไลน์ออกจากรายการแล้ว (ไทล์ที่แคชไว้จะยังอยู่จนกว่าจะล้างแคช)', msg_campaign_name_required: 'ต้องระบุชื่อแคมเปญ',
+      msg_geo_not_supported: 'อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง', msg_enter_spot_name: 'กรุณากรอกชื่อจุดตกปลาใหม่', msg_session_started: 'เริ่มเซสชันแล้ว',
+      msg_session_ended: 'จบเซสชันแล้ว', msg_species_required: 'ต้องระบุชนิดพันธุ์', msg_spot_name_required: 'ต้องระบุชื่อจุดตกปลา', msg_spot_saved: 'บันทึกจุดตกปลาแล้ว',
+      msg_expiry_required: 'ต้องระบุวันหมดอายุ', msg_total: 'รวม', msg_campaign: 'แคมเปญ', msg_started: 'เริ่มแล้ว', msg_no_records_yet: 'ยังไม่มีบันทึก',
+      msg_all_backed_up: 'สำรองข้อมูลบันทึกทั้งหมดแล้ว', msg_last: 'ล่าสุด', msg_records_not_backed_up: 'บันทึกที่ยังไม่ได้สำรอง', msg_fishpulse_backup: 'การสำรองข้อมูล Fish Pulse',
+      msg_records_lc: 'บันทึก', msg_backup_shared: 'แชร์การสำรองข้อมูลแล้ว', msg_backup_downloaded: 'ดาวน์โหลดการสำรองข้อมูลแล้ว',
+      flg_unknown_vessel: 'เรือไม่ทราบชื่อ', flg_recently: 'เมื่อเร็วๆ นี้', flg_expires: 'หมดอายุ', flg_tap_view_photo: 'แตะเพื่อดูรูปภาพ',
+      msg_unspecified_gear: 'เครื่องมือประมงที่ไม่ระบุ', flcatch_no_haul_short: 'ไม่มีการลากอวน', msg_no_species_logged_haul: 'ยังไม่มีชนิดพันธุ์ที่บันทึกสำหรับการลากอวนนี้',
+      msg_species_logged_so_far: 'ชนิดพันธุ์ที่บันทึกไว้แล้วสำหรับการลากอวนนี้', msg_edit_catch: 'แก้ไขการจับปลา', msg_save_changes: 'บันทึกการเปลี่ยนแปลง', msg_save_return_session: 'บันทึกและกลับไปที่เซสชัน',
+      msg_profitable_trip: 'ทริปที่มีกำไร', msg_trip_at_loss: 'ทริปที่ขาดทุน', msg_final_margin: 'กำไรขั้นต้นสุดท้าย', msg_preliminary_margin: 'กำไรขั้นต้นเบื้องต้น',
+      msg_landing_report: 'Landing report', msg_trip_started_lc: 'Trip started', msg_trip_ended: 'Trip ended', msg_catch_by_species: 'Catch by species',
+      msg_estimated: 'Estimated', msg_scale_weight: 'Scale weight', msg_not_yet_scaled: 'not yet scaled', msg_estimated_lc: 'estimated', msg_scaled_lc: 'scaled',
+      msg_landing_disclaimer: 'This report supports a landing declaration or capture certificate application. It is not itself an official certificate.',
+      msg_landing_report_title: 'รายงานการขึ้นท่า', camp_active_short: 'ใช้งานอยู่', camp_closed_short: 'ปิดแล้ว',
+      msg_catch_updated: 'อัปเดตการจับปลาแล้ว', msg_fishpulse_report: 'รายงาน Fish Pulse', msg_reading_saved: 'บันทึกค่าที่อ่านได้แล้ว',
+      msg_saved_anomaly: 'บันทึกแล้ว — การใช้เชื้อเพลิงดูผิดปกติ ควรตรวจสอบ', msg_no_notes: 'ไม่มีบันทึกย่อ', msg_unknown_spot: 'จุดตกปลาที่ไม่ทราบ',
+      msg_step: 'ขั้นตอน', msg_of: 'จาก', msg_no_gps_yet: 'ยังไม่มีจีพีเอส', msg_saved_uc: 'บันทึกแล้ว', msg_species_uc: 'ชนิดพันธุ์',
+      msg_no_records_start: 'ยังไม่มีบันทึก เริ่มด้วย "บันทึกใหม่" เพื่อบันทึกตัวอย่างแรกของคุณ', msg_pts: 'จุด', msg_record_lc: 'บันทึก',
+      msg_sites_selected: 'สถานที่ที่เลือก', msg_update_record: 'อัปเดตบันทึก', msg_edit_record: 'แก้ไขบันทึก',
+      msg_unspecified_site: 'สถานที่ไม่ระบุ', msg_area_saved: 'บันทึกพื้นที่เพื่อใช้งานออฟไลน์แล้ว', msg_area_saved_partial: 'บันทึกพื้นที่แล้ว',
+      msg_tiles_failed: 'ไทล์ล้มเหลว — ลองใหม่หากจำเป็น', msg_catches_lc: 'การจับปลา',
+      msg_duration: 'ระยะเวลา', msg_fetching_conditions: 'กำลังดึงสภาพอากาศ…', msg_fetch_conditions_failed: 'ไม่สามารถดึงสภาพอากาศได้ — ตรวจสอบการเชื่อมต่อของคุณ',
+      msg_locating: 'กำลังระบุตำแหน่ง…', msg_no_gps_signal: 'ไม่มีสัญญาณจีพีเอส — ลองอีกครั้ง', msg_suggested: 'แนะนำ', msg_avg_of: 'เฉลี่ยจาก', msg_past_sales: 'การขายที่ผ่านมา', msg_use_this: 'ใช้ค่านี้',
+      msg_estimated_value: 'มูลค่าประมาณ', msg_fuel_consumed: 'เชื้อเพลิงที่ใช้ไป', msg_consumed_since_last: 'ใช้ไปตั้งแต่การอ่านครั้งล่าสุด',
+      msg_live_map: 'แผนที่สด · โหลดไทล์จากการเชื่อมต่อ', msg_offline_mode: 'โหมดออฟไลน์ · แผนภาพพิกัดแบบแผนผัง',
+      msg_getting_location: 'กำลังค้นหาตำแหน่งของคุณ…', msg_could_not_get_location: 'ไม่สามารถค้นหาตำแหน่งของคุณได้', msg_capturing: 'กำลังบันทึก…', msg_capture_failed: 'บันทึกไม่สำเร็จ — แตะเพื่อลองอีกครั้ง',
+      msg_hhmm_format: 'ใช้รูปแบบ ชม.:นาที (เช่น 14:30)', msg_editing_record: 'กำลังแก้ไขบันทึก · เปิดทุกขั้นตอน', msg_online_cartodb: 'ออนไลน์ · ไทล์จาก CartoDB', msg_offline_schematic: 'ออฟไลน์ · แผนภาพแบบแผนผัง',
+      msg_downloading: 'กำลังดาวน์โหลด', msg_tiles: 'ไทล์'
     }
   };
 
@@ -3313,10 +3617,18 @@
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
   }
 
+  window.tEnglish = function(key){ return I18N.en[key] || key; };
   window.t = t;
   window.getFishPulseLang = getLang;
   window.setFishPulseLang = setLang;
   window.applyI18n = applyI18n;
+  // For Date#toLocaleDateString/toLocaleString calls elsewhere in the app,
+  // so month/weekday names follow the chosen language instead of always
+  // rendering in English.
+  window.fishPulseLocale = function(){
+    const map = { en: 'en-US', es: 'es-MX', it: 'it-IT', th: 'th-TH' };
+    return map[getLang()] || 'en-US';
+  };
   document.addEventListener('DOMContentLoaded', applyI18n);
   if(document.readyState !== 'loading') applyI18n();
 })();
@@ -3725,15 +4037,15 @@
     const vessels = load(VESSELS_KEY);
     const sel = document.getElementById('fleetVesselSelect');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— Select Vessel —</option>'
+    sel.innerHTML = '<option value="">'+t('fltrip_select_vessel')+'</option>'
       + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('')
-      + '<option value="__new__">+ New Vessel</option>';
+      + '<option value="__new__">'+t('fltrip_new_vessel')+'</option>';
     if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
 
     const filterSel = document.getElementById('fleetTripLogVesselFilter');
     if(filterSel){
       const curF = filterSel.value;
-      filterSel.innerHTML = '<option value="">All Vessels</option>'
+      filterSel.innerHTML = '<option value="">'+t('fltriplog_all_vessels')+'</option>'
         + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('');
       if(vessels.some(v=>v.vessel_id===curF)) filterSel.value = curF;
     }
@@ -3742,9 +4054,9 @@
     const captains = load(CAPTAINS_KEY);
     const sel = document.getElementById('fleetCaptainSelect');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— Select Captain —</option>'
+    sel.innerHTML = '<option value="">'+t('fltrip_select_captain')+'</option>'
       + captains.map(c => '<option value="'+c.captain_id+'">'+c.name+'</option>').join('')
-      + '<option value="__new__">+ New Captain</option>';
+      + '<option value="__new__">'+t('fltrip_new_captain')+'</option>';
     if(captains.some(c=>c.captain_id===cur)) sel.value = cur;
   }
 
@@ -3761,19 +4073,19 @@
 
     if(vesselId === '__new__'){
       const name = document.getElementById('fleetNewVesselName').value.trim();
-      if(!name){ showFleetToast('Vessel name is required', true); return; }
+      if(!name){ showFleetToast(t('msg_vessel_name_required'), true); return; }
       const vessel = { vessel_id: uid(), name, default_currency: document.getElementById('fleetNewVesselCurrency').value };
       const vessels = load(VESSELS_KEY); vessels.push(vessel); save(VESSELS_KEY, vessels);
       vesselId = vessel.vessel_id;
     }
     if(captainId === '__new__'){
       const name = document.getElementById('fleetNewCaptainName').value.trim();
-      if(!name){ showFleetToast('Captain name is required', true); return; }
+      if(!name){ showFleetToast(t('msg_captain_name_required'), true); return; }
       const captain = { captain_id: uid(), name };
       const captains = load(CAPTAINS_KEY); captains.push(captain); save(CAPTAINS_KEY, captains);
       captainId = captain.captain_id;
     }
-    if(!vesselId || !captainId){ showFleetToast('Select or add a captain and vessel', true); return; }
+    if(!vesselId || !captainId){ showFleetToast(t('msg_select_captain_vessel'), true); return; }
 
     const trip = {
       trip_id: uid(),
@@ -3788,7 +4100,7 @@
     const trips = load(TRIPS_KEY); trips.push(trip); save(TRIPS_KEY, trips);
     localStorage.setItem(ACTIVE_TRIP_KEY, trip.trip_id);
     delete document.getElementById('fleetNewVesselCurrency').dataset.userTouched;
-    showFleetToast('Trip started');
+    showFleetToast(t('msg_trip_started'));
     renderFleetTrip();
   });
 
@@ -3797,11 +4109,11 @@
     // Existing fields the person already touched keep their explicit
     // choice; only untouched selects adopt the new preference immediately.
     applyDefaultCurrencyToSelects();
-    showFleetToast('Default currency updated');
+    showFleetToast(t('msg_currency_updated'));
   });
   document.getElementById('vesselsAddBtn').addEventListener('click', () => {
     const name = document.getElementById('vesselsNewName').value.trim();
-    if(!name){ showFleetToast('Vessel name is required', true); return; }
+    if(!name){ showFleetToast(t('msg_vessel_name_required'), true); return; }
     const lastMaintHours = parseFloat(document.getElementById('vesselsNewLastMaintenanceHours').value);
     // Hours-since-last-maintenance is tracked as a reference timestamp,
     // not a running counter, so it never drifts out of sync with trip
@@ -3824,7 +4136,7 @@
     document.getElementById('vesselsNewMaintenanceInterval').value = '';
     document.getElementById('vesselsNewLastMaintenanceHours').value = '';
     delete document.getElementById('vesselsNewCurrency').dataset.userTouched;
-    showFleetToast('Vessel added');
+    showFleetToast(t('msg_vessel_added'));
     renderFleetVessels();
   });
 
@@ -3853,7 +4165,7 @@
     noTripCard.style.display = 'none';
     activeCard.style.display = 'block';
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
-    const vesselName = vessel ? vessel.name : 'Unknown Vessel';
+    const vesselName = vessel ? vessel.name : t('flg_unknown_vessel');
     document.getElementById('fleetVesselLine').textContent = vesselName;
     document.getElementById('fleetTripVesselTag').textContent = vesselName;
 
@@ -3875,7 +4187,7 @@
           return '<div class="entry">'
             + '<div class="entry-icon">' + haulIconSvg + '</div>'
             + '<div class="entry-body">'
-            + '<div class="sp" style="font-style:normal;">' + (hl.gear_type||'Unspecified gear') + '</div>'
+            + '<div class="sp" style="font-style:normal;">' + (hl.gear_type||t('msg_unspecified_gear')) + '</div>'
             + '<div class="entry-chips">'
             + (hl.depth ? '<span class="chip chip-blue">'+hl.depth+'m</span>' : '')
             + (hl.duration_min ? '<span class="chip chip-blue">'+hl.duration_min+' min</span>' : '')
@@ -3887,9 +4199,9 @@
 
     const catchList = document.getElementById('fleetTripCatchList');
     const haulShortLabel = hId => {
-      if(!hId) return 'No haul';
+      if(!hId) return t('flcatch_no_haul_short');
       const h = hauls.find(x => x.haul_id === hId);
-      return h ? (h.gear_type||'Haul') + ' ' + (h.haul_start||'') : 'No haul';
+      return h ? (h.gear_type||t('flcatch_haul')) + ' ' + (h.haul_start||'') : t('flcatch_no_haul_short');
     };
     const fishIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     catchList.innerHTML = catches.length === 0
@@ -3940,8 +4252,8 @@
     const tripId = fleetCatchContextTripId();
     const sel = document.getElementById('fleetCatchHaulSelect');
     const hauls = tripId ? load(HAULS_KEY).filter(h => h.trip_id === tripId) : [];
-    const haulLabel = h => (h.gear_type||'Haul') + ' · ' + (h.haul_start||'—') + (h.haul_end ? '–'+h.haul_end : '') + (h.depth ? ' · '+h.depth+'m' : '');
-    sel.innerHTML = '<option value="">No haul (loose catch)</option>'
+    const haulLabel = h => (h.gear_type||t('flcatch_haul')) + ' · ' + (h.haul_start||'—') + (h.haul_end ? '–'+h.haul_end : '') + (h.depth ? ' · '+h.depth+'m' : '');
+    sel.innerHTML = '<option value="">'+t('flcatch_no_haul')+'</option>'
       + hauls.slice().reverse().map(h => '<option value="'+h.haul_id+'">'+haulLabel(h)+'</option>').join('');
     sel.value = haulId || '';
     updateFleetCatchHaulStatus();
@@ -3961,10 +4273,10 @@
     }
     const haul = load(HAULS_KEY).find(h => h.haul_id === currentHaulIdForCatch);
     if(!haul){ line.textContent = t('flcatch_not_linked'); countLine.style.display = 'none'; return; }
-    line.textContent = 'Haul: ' + (haul.gear_type||'—') + ' · ' + (haul.haul_start||'—') + (haul.haul_end ? '–'+haul.haul_end : '');
+    line.textContent = t('flcatch_haul') + ': ' + (haul.gear_type||'—') + ' · ' + (haul.haul_start||'—') + (haul.haul_end ? '–'+haul.haul_end : '');
     const n = tripId ? load(CATCHES_KEY).filter(c => c.trip_id === tripId && c.haul_id === currentHaulIdForCatch).length : 0;
     countLine.style.display = 'block';
-    countLine.textContent = n === 0 ? 'No species logged yet for this haul' : n + ' species logged so far for this haul';
+    countLine.textContent = n === 0 ? t('msg_no_species_logged_haul') : n + ' ' + t('msg_species_logged_so_far');
   }
   document.getElementById('fleetCatchHaulSelect').addEventListener('change', updateFleetCatchHaulStatus);
   // Single entry point into Log Catch, used whether arriving fresh from
@@ -4005,9 +4317,9 @@
   function setFleetCatchScreenMode(){
     const editing = !!currentEditingCatchId;
     const editingClosedTrip = editing && currentEditingCatchTripId && !load(TRIPS_KEY).some(t => t.trip_id === currentEditingCatchTripId && !t.ended_at);
-    document.getElementById('fleetCatchBrand').textContent = editing ? 'Edit Catch' : 'Log Catch';
+    document.getElementById('fleetCatchBrand').textContent = editing ? t('msg_edit_catch') : t('flcatch_brand');
     document.getElementById('fleetCatchAddAnotherBtn').style.display = editing ? 'none' : '';
-    document.getElementById('fleetCatchSaveBtn').textContent = editing ? 'Save Changes' : 'Save & Return To Trip';
+    document.getElementById('fleetCatchSaveBtn').textContent = editing ? t('msg_save_changes') : t('flcatch_save_return');
     document.getElementById('fleetCatchBackBtn').dataset.go = editingClosedTrip ? 'fleet-trip-detail' : 'fleet-trip';
   }
   document.getElementById('fleetIndividualCatchesToggle').addEventListener('click', () => {
@@ -4036,12 +4348,12 @@
     const s = document.getElementById('fleetHaulStart').value;
     const e = document.getElementById('fleetHaulEnd').value;
     const line = document.getElementById('fleetHaulDurationLine');
-    if(!s || !e){ line.textContent = 'Duration: —'; return; }
+    if(!s || !e){ line.textContent = t('msg_duration') + ': —'; return; }
     const [sh,sm] = s.split(':').map(Number);
     const [eh,em] = e.split(':').map(Number);
     let mins = (eh*60+em) - (sh*60+sm);
     if(mins < 0) mins += 24*60;
-    line.textContent = 'Duration: ' + Math.floor(mins/60) + 'h ' + (mins%60) + 'm';
+    line.textContent = t('msg_duration') + ': ' + Math.floor(mins/60) + 'h ' + (mins%60) + 'm';
   }
   document.getElementById('fleetHaulStart').addEventListener('change', updateFleetHaulDuration);
   document.getElementById('fleetHaulEnd').addEventListener('change', updateFleetHaulDuration);
@@ -4062,7 +4374,7 @@
     const box = document.getElementById('fleetWeatherBox');
     box.style.display = 'block';
     box.className = 'duration-line';
-    box.textContent = 'Fetching conditions…';
+    box.textContent = t('msg_fetching_conditions');
     try{
       const [wxRes, marineRes] = await Promise.all([
         fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
@@ -4083,17 +4395,17 @@
       html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Tide/wave data is an estimate (model resolution ~8km) — reference only.</div>';
       box.innerHTML = html;
     } catch(err){
-      box.textContent = 'Could not fetch conditions — check your connection.';
+      box.textContent = t('msg_fetch_conditions_failed');
     }
   }
   document.getElementById('fleetGpsBtn').addEventListener('click', () => {
     const label = document.getElementById('fleetCoordsLabel');
     const box = document.getElementById('fleetGpsBox');
     if(!navigator.geolocation){
-      label.textContent = 'GPS not available in this browser';
+      label.textContent = t('msg_gps_not_available');
       return;
     }
-    label.textContent = 'locating…';
+    label.textContent = t('msg_locating');
     navigator.geolocation.getCurrentPosition(
       pos => {
         fleetHaulCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
@@ -4103,7 +4415,7 @@
         fetchFleetWeather(fleetHaulCoords.lat, fleetHaulCoords.lon);
       },
       err => {
-        label.textContent = 'no GPS signal — try again';
+        label.textContent = t('msg_no_gps_signal');
         box.classList.remove('locked');
       },
       { enableHighAccuracy: true, timeout: 8000 }
@@ -4112,7 +4424,7 @@
   function resetFleetHaulGps(){
     fleetHaulCoords = null;
     const label = document.getElementById('fleetCoordsLabel');
-    label.textContent = 'not captured';
+    label.textContent = t('rec_not_captured');
     label.classList.add('pending');
     document.getElementById('fleetGpsBox').classList.remove('locked');
     document.getElementById('fleetWeatherBox').style.display = 'none';
@@ -4121,7 +4433,7 @@
   document.getElementById('fleetHaulCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
   document.getElementById('fleetHaulSaveBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
-    if(!trip){ showFleetToast('No active trip', true); return; }
+    if(!trip){ showFleetToast(t('msg_no_active_trip'), true); return; }
     const s = document.getElementById('fleetHaulStart').value;
     const e = document.getElementById('fleetHaulEnd').value;
     let durationMin = '';
@@ -4147,7 +4459,7 @@
       notes: document.getElementById('fleetHaulNotes').value.trim()
     };
     const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
-    showFleetToast('Haul saved');
+    showFleetToast(t('msg_haul_saved'));
 
     const logCatchNow = document.getElementById('fleetLogCatchNow').checked;
     document.getElementById('fleetGearType').value = '';
@@ -4157,7 +4469,7 @@
     document.getElementById('fleetNetWidth').value = '';
     document.getElementById('fleetHookCount').value = '';
     document.getElementById('fleetHaulNotes').value = '';
-    document.getElementById('fleetHaulDurationLine').textContent = 'Duration: —';
+    document.getElementById('fleetHaulDurationLine').textContent = t('msg_duration') + ': —';
     resetFleetHaulGps();
 
     if(logCatchNow){
@@ -4195,7 +4507,7 @@
     const avgPrice = sales.reduce((s,r)=>s+(parseFloat(r.unit_price)||0),0) / sales.length;
     const currency = sales[sales.length-1].currency;
     line.style.display = 'block';
-    line.innerHTML = 'Suggested: ' + avgPrice.toFixed(0) + ' ' + currency + ' (avg. of ' + sales.length + ' past sale' + (sales.length>1?'s':'') + ') <span style="text-decoration:underline;">Use This</span>';
+    line.innerHTML = t('msg_suggested') + ': ' + avgPrice.toFixed(0) + ' ' + currency + ' (' + t('msg_avg_of') + ' ' + sales.length + ' ' + t('msg_past_sales') + ') <span style="text-decoration:underline;">' + t('msg_use_this') + '</span>';
     line.onclick = () => {
       document.getElementById('fleetRefPrice').value = avgPrice.toFixed(0);
       document.getElementById('fleetRefCurrency').value = currency;
@@ -4209,7 +4521,7 @@
     document.getElementById('fleetSpecies').value = '';
     document.getElementById('fleetCatchKg').value = '';
     document.getElementById('fleetRefPrice').value = '';
-    document.getElementById('fleetEstValueLine').textContent = 'Estimated Value: —';
+    document.getElementById('fleetEstValueLine').textContent = t('msg_estimated_value') + ': —';
     document.getElementById('fleetPriceSuggestionLine').style.display = 'none';
     delete document.getElementById('fleetRefCurrency').dataset.userTouched;
     fleetCatchPhotoDataUrl = null;
@@ -4217,7 +4529,7 @@
   }
   function saveFleetCatch(){
     const species = document.getElementById('fleetSpecies').value.trim();
-    if(!species){ showFleetToast('Species or category is required', true); return false; }
+    if(!species){ showFleetToast(t('msg_species_category_required'), true); return false; }
     const kg = parseFloat(document.getElementById('fleetCatchKg').value) || 0;
     const price = document.getElementById('fleetRefPrice').value;
     const currency = document.getElementById('fleetRefCurrency').value;
@@ -4237,7 +4549,7 @@
       return true;
     }
     const trip = getActiveTrip();
-    if(!trip){ showFleetToast('No active trip', true); return false; }
+    if(!trip){ showFleetToast(t('msg_no_active_trip'), true); return false; }
     const record = {
       catch_id: uid(),
       trip_id: trip.trip_id,
@@ -4257,7 +4569,7 @@
   }
   document.getElementById('fleetCatchAddAnotherBtn').addEventListener('click', () => {
     if(currentEditingCatchId) return;
-    if(saveFleetCatch()){ clearFleetCatchForm(); applyDefaultCurrencyToSelects(); updateFleetCatchHaulStatus(); showFleetToast('Catch saved'); }
+    if(saveFleetCatch()){ clearFleetCatchForm(); applyDefaultCurrencyToSelects(); updateFleetCatchHaulStatus(); showFleetToast(t('msg_catch_saved')); }
   });
   document.getElementById('fleetCatchSaveBtn').addEventListener('click', () => {
     const wasEditing = !!currentEditingCatchId;
@@ -4265,7 +4577,7 @@
     if(saveFleetCatch()){
       clearFleetCatchForm();
       currentEditingCatchId = null;
-      showFleetToast(wasEditing ? 'Catch updated' : 'Catch saved');
+      showFleetToast(wasEditing ? t('msg_catch_updated') : t('msg_catch_saved'));
       if(wasEditingClosedTrip){
         currentTripDetailId = currentEditingCatchTripId;
         currentEditingCatchTripId = null;
@@ -4299,7 +4611,7 @@
   document.getElementById('fleetCloseAddCrewBtn').addEventListener('click', () => {
     const input = document.getElementById('fleetCloseNewCrewName');
     const name = input.value.trim();
-    if(!name){ showFleetToast('Enter a name first', true); return; }
+    if(!name){ showFleetToast(t('msg_enter_name_first'), true); return; }
     const crew = load(CREW_KEY);
     const newMember = { crew_id: uid(), name };
     crew.push(newMember);
@@ -4332,7 +4644,7 @@
 
     document.getElementById('fleetFuelLoadedDisplay').value = trip.fuel_loaded_l || '';
     document.getElementById('fleetFuelRemaining').value = '';
-    document.getElementById('fleetFuelConsumedLine').textContent = 'Fuel Consumed: —';
+    document.getElementById('fleetFuelConsumedLine').textContent = t('msg_fuel_consumed') + ': —';
     document.getElementById('fleetCostCrew').value = '';
     document.getElementById('fleetCostIce').value = '';
     document.getElementById('fleetCostProvisions').value = '';
@@ -4388,7 +4700,7 @@
 
     save(COSTS_KEY, costs);
     localStorage.removeItem(ACTIVE_TRIP_KEY);
-    showFleetToast('Trip closed');
+    showFleetToast(t('msg_trip_closed'));
     fleetGoTo('trip');
   });
 
@@ -4448,7 +4760,7 @@
       + '<div style="font-family:var(--data); font-size:11px; min-width:70px; text-align:right;">'+fmtMoney(costs, currency)+'</div>'
       + '</div>'
       + '<div style="margin-top:10px; padding:8px 10px; background:'+netBg+'; border-radius:var(--radius-sm); font-family:var(--data); font-size:11px; color:'+netColor+';">'
-      + (net >= 0 ? 'Profitable trip' : 'Trip operated at a loss') + '</div>';
+      + (net >= 0 ? t('msg_profitable_trip') : t('msg_trip_at_loss')) + '</div>';
   }
 
   function renderFleetTripLog(){
@@ -4464,12 +4776,12 @@
     list.innerHTML = trips.slice().reverse().map(t => {
       const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
       const margin = computeTripMargin(t);
-      const when = new Date(t.started_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+      const when = new Date(t.started_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
       const marginText = margin.complete
         ? fmtMoney(margin.minMargin, margin.currency)
         : fmtMoney(margin.minMargin, margin.currency) + ' – ' + fmtMoney(margin.maxMargin, margin.currency);
-      return '<div class="entry entry-clickable" data-trip-detail="'+t.trip_id+'"><div><div class="sp">'+(vessel?vessel.name:'Unknown Vessel')+'</div>'
-        + '<div class="meta">'+when+' · '+(margin.complete?'Final Margin':'Preliminary Margin')+'</div></div>'
+      return '<div class="entry entry-clickable" data-trip-detail="'+t.trip_id+'"><div><div class="sp">'+(vessel?vessel.name:t('flg_unknown_vessel'))+'</div>'
+        + '<div class="meta">'+when+' · '+(margin.complete?t('msg_final_margin'):t('msg_preliminary_margin'))+'</div></div>'
         + '<div class="duration-line" style="margin:0;">'+marginText+'</div></div>';
     }).join('');
     document.querySelectorAll('[data-trip-detail]').forEach(el => {
@@ -4494,7 +4806,7 @@
     const trip = load(TRIPS_KEY).find(t => t.trip_id === currentTripDetailId);
     if(!trip) return;
     const amount = document.getElementById('fleetDetailCostAmount').value;
-    if(!amount){ showFleetToast('Enter an amount', true); return; }
+    if(!amount){ showFleetToast(t('msg_enter_amount'), true); return; }
     const costs = load(COSTS_KEY);
     costs.push({
       cost_id: uid(), trip_id: trip.trip_id,
@@ -4508,7 +4820,7 @@
     save(COSTS_KEY, costs);
     document.getElementById('fleetDetailCostAmount').value = '';
     delete document.getElementById('fleetDetailCostCurrency').dataset.userTouched;
-    showFleetToast('Cost added');
+    showFleetToast(t('msg_cost_added'));
     renderFleetTripDetail();
   });
 
@@ -4518,7 +4830,7 @@
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
     const captain = load(CAPTAINS_KEY).find(c => c.captain_id === trip.captain_id);
     const currency = vessel ? vessel.default_currency : 'THB';
-    document.getElementById('fleetTripDetailVesselLine').textContent = (vessel?vessel.name:'Unknown Vessel') + ' · ' + new Date(trip.started_at).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'});
+    document.getElementById('fleetTripDetailVesselLine').textContent = (vessel?vessel.name:t('flg_unknown_vessel')) + ' · ' + new Date(trip.started_at).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'});
 
     const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
     const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
@@ -4573,14 +4885,14 @@
     const haulListEl = document.getElementById('fleetTripDetailHaulList');
     haulListEl.innerHTML = tripHauls.length === 0
       ? '<div class="empty">No hauls logged.</div>'
-      : tripHauls.slice().reverse().map(h => '<div class="entry"><div><div class="sp" style="font-style:normal;">'+(h.gear_type||'Haul')+'</div>'
+      : tripHauls.slice().reverse().map(h => '<div class="entry"><div><div class="sp" style="font-style:normal;">'+(h.gear_type||t('flcatch_haul'))+'</div>'
           + '<div class="meta">'+(h.haul_start||'—')+(h.depth?' · '+h.depth+'m':'')+(h.duration_min?' · '+h.duration_min+' min':'')+'</div>'
           + (h.notes ? '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:4px; line-height:1.4;">'+h.notes+'</div>' : '')
           + '</div></div>').join('');
     const detailHaulLabel = hId => {
-      if(!hId) return 'No haul';
+      if(!hId) return t('flcatch_no_haul_short');
       const h = tripHauls.find(x => x.haul_id === hId);
-      return h ? (h.gear_type||'Haul') + ' ' + (h.haul_start||'') : 'No haul';
+      return h ? (h.gear_type||t('flcatch_haul')) + ' ' + (h.haul_start||'') : t('flcatch_no_haul_short');
     };
     const catchListEl = document.getElementById('fleetTripDetailCatchList');
     catchListEl.innerHTML = catches.length === 0
@@ -4661,7 +4973,7 @@
     document.getElementById('fleetCrewShareAddBtn').addEventListener('click', () => {
       const name = document.getElementById('fleetCrewShareName').value.trim();
       const percent = parseFloat(document.getElementById('fleetCrewSharePercent').value);
-      if(!name || isNaN(percent)){ showFleetToast('Name and percentage are required', true); return; }
+      if(!name || isNaN(percent)){ showFleetToast(t('msg_name_percentage_required'), true); return; }
       const all = load(CREW_SHARES_KEY);
       all.push({ share_id: uid(), trip_id: trip.trip_id, name, percent });
       save(CREW_SHARES_KEY, all);
@@ -4685,7 +4997,7 @@
         const all = load(CREW_SHARES_KEY);
         lastShares.forEach(cs => all.push({ share_id: uid(), trip_id: trip.trip_id, name: cs.name, percent: cs.percent }));
         save(CREW_SHARES_KEY, all);
-        showFleetToast('Crew copied from last trip — feel free to adjust');
+        showFleetToast(t('msg_crew_copied'));
         renderFleetTripDetail();
       });
     }
@@ -4696,7 +5008,7 @@
         const all = load(CREW_SHARES_KEY);
         names.forEach(name => all.push({ share_id: uid(), trip_id: trip.trip_id, name, percent: '' }));
         save(CREW_SHARES_KEY, all);
-        showFleetToast('Crew added from the captain\'s list — set each share %');
+        showFleetToast(t('msg_crew_added_captain'));
         renderFleetTripDetail();
       });
     }
@@ -4714,7 +5026,7 @@
         if(all[idx].amount === val) return;
         all[idx].amount = val;
         save(COSTS_KEY, all);
-        showFleetToast('Cost updated');
+        showFleetToast(t('msg_cost_updated'));
         renderFleetTripDetail();
       });
       inp.addEventListener('keydown', (e) => { if(e.key === 'Enter') inp.blur(); });
@@ -4723,7 +5035,7 @@
       btn.addEventListener('click', () => {
         const all = load(COSTS_KEY).filter(c => c.cost_id !== btn.dataset.removeCost);
         save(COSTS_KEY, all);
-        showFleetToast('Cost removed');
+        showFleetToast(t('msg_cost_removed'));
         renderFleetTripDetail();
       });
     });
@@ -4734,8 +5046,13 @@
   // real document when shared via WhatsApp/email, and can be saved or
   // printed. jsPDF runs entirely client-side — no server round trip,
   // consistent with the rest of the app's offline-first design.
+  // jsPDF's built-in "helvetica" font has no Thai glyphs, so a Thai UI
+  // would render this PDF as empty boxes. Rather than ship a broken
+  // export, PDF text stays in English specifically when the app language
+  // is Thai — everywhere else in the app follows the normal language.
+  function pdfT(key){ return (window.getFishPulseLang && window.getFishPulseLang() === 'th') ? window.tEnglish(key) : t(key); }
   function generateFleetLandingReportPdf(data){
-    if(typeof jspdf === 'undefined'){ showFleetToast('PDF library not loaded — check your connection', true); return; }
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
     const { vessel, captain, trip, landingGroups, totalEstKg, totalActualKg, hasActuals } = data;
     const { jsPDF } = jspdf;
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -4745,12 +5062,12 @@
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.text('Landing report', margin, y);
+    doc.text(pdfT('msg_landing_report'), margin, y);
     y += 22;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(110, 110, 110);
-    doc.text('Fish Pulse — Fishing Operations', margin, y);
+    doc.text('Fish Pulse — ' + pdfT('mode_fleet_title'), margin, y);
     y += 28;
 
     doc.setDrawColor(220, 220, 220);
@@ -4760,10 +5077,10 @@
     doc.setTextColor(20, 20, 20);
     doc.setFontSize(11);
     const infoRows = [
-      ['Vessel', vessel ? vessel.name : '—'],
-      ['Captain', captain ? captain.name : '—'],
-      ['Trip started', new Date(trip.started_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })],
-      ['Trip ended', trip.ended_at ? new Date(trip.ended_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—']
+      [pdfT('fltrip_vessel'), vessel ? vessel.name : '—'],
+      [pdfT('fltrip_captain'), captain ? captain.name : '—'],
+      [pdfT('msg_trip_started_lc'), new Date(trip.started_at).toLocaleString(window.fishPulseLocale(), { dateStyle: 'medium', timeStyle: 'short' })],
+      [pdfT('msg_trip_ended'), trip.ended_at ? new Date(trip.ended_at).toLocaleString(window.fishPulseLocale(), { dateStyle: 'medium', timeStyle: 'short' }) : '—']
     ];
     infoRows.forEach(([label, value]) => {
       doc.setFont('helvetica', 'bold');
@@ -4776,15 +5093,15 @@
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text('Catch by species', margin, y);
+    doc.text(pdfT('msg_catch_by_species'), margin, y);
     y += 20;
 
     const colSpeciesX = margin, colEstX = margin + 230, colScaleX = margin + 340;
     doc.setFontSize(10);
     doc.setTextColor(110, 110, 110);
-    doc.text('Species', colSpeciesX, y);
-    doc.text('Estimated', colEstX, y);
-    doc.text('Scale weight', colScaleX, y);
+    doc.text(pdfT('adv_species'), colSpeciesX, y);
+    doc.text(pdfT('msg_estimated'), colEstX, y);
+    doc.text(pdfT('msg_scale_weight'), colScaleX, y);
     y += 8;
     doc.setDrawColor(220, 220, 220);
     doc.line(margin, y, pageWidth - margin, y);
@@ -4795,7 +5112,7 @@
       doc.setFont('helvetica', 'normal');
       doc.text(g.species, colSpeciesX, y, { maxWidth: 220 });
       doc.text(g.estKg.toFixed(1) + ' kg', colEstX, y);
-      doc.text(g.hasActual ? g.actualKg.toFixed(1) + ' kg' : 'not yet scaled', colScaleX, y);
+      doc.text(g.hasActual ? g.actualKg.toFixed(1) + ' kg' : pdfT('msg_not_yet_scaled'), colScaleX, y);
       y += 20;
     });
     y += 6;
@@ -4804,18 +5121,18 @@
     y += 20;
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Total: ' + totalEstKg.toFixed(1) + ' kg estimated' + (hasActuals ? ' · ' + totalActualKg.toFixed(1) + ' kg scaled' : ''), margin, y);
+    doc.text(pdfT('msg_total') + ': ' + totalEstKg.toFixed(1) + ' kg ' + pdfT('msg_estimated_lc') + (hasActuals ? ' · ' + totalActualKg.toFixed(1) + ' kg ' + pdfT('msg_scaled_lc') : ''), margin, y);
     y += 36;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(140, 140, 140);
-    const disclaimer = 'This report supports a landing declaration or capture certificate application. It is not itself an official certificate.';
+    const disclaimer = pdfT('msg_landing_disclaimer');
     doc.text(disclaimer, margin, y, { maxWidth: pageWidth - margin*2 });
 
     const filename = 'landing-report-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
     const blob = doc.output('blob');
-    showFleetPdfExport(blob, filename, 'Landing Report');
+    showFleetPdfExport(blob, filename, t('msg_landing_report_title'));
   }
 
   function showFleetPdfExport(blob, filename, title){
@@ -4839,13 +5156,13 @@
   document.getElementById('fleetExportCloseBtn').addEventListener('click', hideFleetTextExport);
   document.getElementById('fleetExportCloseBtn2').addEventListener('click', hideFleetTextExport);
   document.getElementById('fleetExportShareBtn').addEventListener('click', async () => {
-    if(!fleetExportBlob){ showFleetToast('Nothing to share yet', true); return; }
+    if(!fleetExportBlob){ showFleetToast(t('msg_nothing_to_share'), true); return; }
     const file = new File([fleetExportBlob], fleetExportFilename, { type: 'application/pdf' });
     if(navigator.canShare && navigator.canShare({ files: [file] })){
-      try{ await navigator.share({ files: [file], title: document.getElementById('fleetExportOverlay').dataset.title || 'Fish Pulse Report' }); }
+      try{ await navigator.share({ files: [file], title: document.getElementById('fleetExportOverlay').dataset.title || t('msg_fishpulse_report') }); }
       catch(e){ /* user cancelled the share sheet — not an error */ }
     } else {
-      showFleetToast('Sharing files is not supported on this browser — use Download instead', true);
+      showFleetToast(t('msg_sharing_not_supported'), true);
     }
   });
 
@@ -4862,14 +5179,14 @@
 
     document.getElementById('fleetDashboardSummary').innerHTML =
       '<div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:10px;">'
-      + '<div class="kpi-cell"><div class="kn">'+trips.length+'</div><div class="kl">Trips</div></div>'
-      + '<div class="kpi-cell"><div class="kn">'+catchLabel+'</div><div class="kl">Catch</div></div>'
-      + '<div class="kpi-cell"><div class="kn accent">'+totalFuel.toFixed(0)+'</div><div class="kl">Fuel L</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+trips.length+'</div><div class="kl">'+t('flstats_trips_header')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+catchLabel+'</div><div class="kl">'+t('fldash_catch')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn accent">'+totalFuel.toFixed(0)+'</div><div class="kl">'+t('fldash_fuel_l')+'</div></div>'
       + '</div>';
 
     const vesselsHtml = vessels.map(v => {
       const vTrips = trips.filter(t => t.vessel_id === v.vessel_id);
-      if(vTrips.length === 0) return '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div><div class="meta" style="margin-top:4px;">No closed trips yet</div></div>';
+      if(vTrips.length === 0) return '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div><div class="meta" style="margin-top:4px;">'+t('fldash_no_closed_trips')+'</div></div>';
       const vCatchesKg = vTrips.reduce((s,t)=> s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
       const vFuel = vTrips.reduce((s,t)=> s + (parseFloat(t.fuel_consumed_l)||0), 0);
       const totalHours = vTrips.reduce((s,t)=> s + (new Date(t.ended_at)-new Date(t.started_at))/3600000, 0);
@@ -4882,10 +5199,10 @@
       if(v.margin_target){
         const target = parseFloat(v.margin_target);
         if(avgMargin >= target){
-          statusChip = '<span class="ce-status-chip active">Efficient</span>';
+          statusChip = '<span class="ce-status-chip active">'+t('fldash_efficient')+'</span>';
           marginColor = '#6fc99a';
         } else {
-          statusChip = '<span class="ce-status-chip" style="color:#c0532f;background:#fdeaea;">Review</span>';
+          statusChip = '<span class="ce-status-chip" style="color:#c0532f;background:#fdeaea;">'+t('fldash_review')+'</span>';
           marginColor = '#c0532f';
         }
       }
@@ -4896,24 +5213,24 @@
         + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'
         + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+fuelPerKg+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">L/kg</div></div>'
         + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+kgPerHour+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">kg/hr</div></div>'
-        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:'+marginColor+';">'+marginDisplay+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">Margin</div></div>'
+        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:'+marginColor+';">'+marginDisplay+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">'+t('flstats_margin')+'</div></div>'
         + '</div></div>';
     }).join('');
-    document.getElementById('fleetDashboardVessels').innerHTML = vesselsHtml || '<div class="empty">No vessels yet. Add one from the Vessels tab.</div>';
+    document.getElementById('fleetDashboardVessels').innerHTML = vesselsHtml || '<div class="empty">'+t('fldash_no_vessels')+'</div>';
 
     const alertIconOrange = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#e0a868" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#e0a868" stroke-width="1.8" stroke-linecap="round"/></svg>`;
     const alertIconRed = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#c0532f" stroke-width="1.8"/><path d="M12 8v4M12 16v.5" stroke="#c0532f" stroke-width="1.8" stroke-linecap="round"/></svg>`;
     const alerts = [];
     trips.forEach(t => {
       const vessel = vessels.find(v => v.vessel_id === t.vessel_id);
-      const vName = vessel ? vessel.name : 'Unknown';
+      const vName = vessel ? vessel.name : t('fldash_unknown');
       const tCatches = catches.filter(c => c.trip_id === t.trip_id);
-      if(tCatches.length === 0) alerts.push({ icon: alertIconRed, text: vName + ' — Trip closed without catch' });
+      if(tCatches.length === 0) alerts.push({ icon: alertIconRed, text: vName + ' — ' + t('fldash_closed_no_catch') });
       const margin = computeTripMargin(t);
-      if(!margin.complete) alerts.push({ icon: alertIconOrange, text: vName + ' — Costs pending: ' + margin.missing.join(', ') });
+      if(!margin.complete) alerts.push({ icon: alertIconOrange, text: vName + ' — ' + t('fldash_costs_pending') + ': ' + margin.missing.map(k=>t('flstats_cost_'+k)).join(', ') });
     });
     document.getElementById('fleetDashboardAlerts').innerHTML = alerts.length === 0
-      ? '<div class="empty">No alerts. Everything looks current.</div>'
+      ? '<div class="empty">'+t('fldash_no_alerts')+'</div>'
       : alerts.slice(0,8).map(a =>
           '<div class="map-no-gps-chip" style="margin-bottom:8px;">'+a.icon+'<div style="font-family:var(--display);font-size:12.5px;color:#e6eef0;">'+a.text+'</div></div>'
         ).join('');
@@ -4973,7 +5290,7 @@
         if(idx === -1) return;
         all[idx].maintenance_done_at = new Date().toISOString();
         save(VESSELS_KEY, all);
-        showFleetToast('Maintenance logged — hour counter reset');
+        showFleetToast(t('msg_maintenance_logged'));
         renderFleetVessels();
       });
     });
@@ -5012,7 +5329,7 @@
     list.innerHTML = readings.length === 0
       ? '<div class="empty">No readings logged yet this trip.</div>'
       : readings.slice().reverse().map((r) => {
-          const when = new Date(r.logged_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+          const when = new Date(r.logged_at).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
           const anomalyChip = r.is_anomaly ? '<span class="chip chip-red">⚠ Anomaly</span>' : '';
           const fuelSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="10" height="16" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>`;
           return '<div class="entry">'
@@ -5028,7 +5345,7 @@
         }).join('');
 
     document.getElementById('fleetFuelLogReading').value = '';
-    document.getElementById('fleetFuelLogConsumedLine').textContent = 'Consumed Since Last Reading: —';
+    document.getElementById('fleetFuelLogConsumedLine').textContent = t('msg_consumed_since_last') + ': —';
   }
 
   document.getElementById('fleetFuelLogReading').addEventListener('input', () => {
@@ -5043,9 +5360,9 @@
 
   document.getElementById('fleetFuelLogSaveBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
-    if(!trip){ showFleetToast('No active trip', true); return; }
+    if(!trip){ showFleetToast(t('msg_no_active_trip'), true); return; }
     const current = parseFloat(document.getElementById('fleetFuelLogReading').value);
-    if(isNaN(current)){ showFleetToast('Enter a fuel reading', true); return; }
+    if(isNaN(current)){ showFleetToast(t('msg_enter_fuel_reading'), true); return; }
 
     const readings = load(FUEL_LOG_KEY).filter(r => r.trip_id === trip.trip_id).sort((a,b) => new Date(a.logged_at) - new Date(b.logged_at));
     const lastReading = readings.length > 0 ? readings[readings.length-1].remaining_l : parseFloat(trip.fuel_loaded_l) || 0;
@@ -5079,7 +5396,7 @@
     all.push({ reading_id: uid(), trip_id: trip.trip_id, remaining_l: current, consumed_l: consumed, logged_at: new Date().toISOString(), is_anomaly: isAnomaly });
     save(FUEL_LOG_KEY, all);
 
-    showFleetToast(isAnomaly ? 'Saved — consumption looks unusual, worth a check' : 'Reading saved');
+    showFleetToast(isAnomaly ? t('msg_saved_anomaly') : t('msg_reading_saved'));
     renderFleetFuelLog();
   });
 
@@ -5089,10 +5406,10 @@
     const vessels = load(VESSELS_KEY);
     const sel = document.getElementById('fleetReconTripSelect');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— Select A Closed Trip —</option>'
+    sel.innerHTML = '<option value="">'+t('flrecon_select_trip')+'</option>'
       + trips.map(t => {
           const v = vessels.find(vv => vv.vessel_id === t.vessel_id);
-          const when = new Date(t.started_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+          const when = new Date(t.started_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
           return '<option value="'+t.trip_id+'">'+(v?v.name:'Unknown')+' · '+when+'</option>';
         }).join('');
     if(trips.some(t=>t.trip_id===cur)) sel.value = cur;
@@ -5197,14 +5514,14 @@
       });
       save(SALES_KEY, allSales);
 
-      showFleetToast('Scale weights saved');
+      showFleetToast(t('msg_scale_weights_saved'));
       renderFleetReconciliationBody(tripId);
     });
   }
 
   // ===== Documents: license / certificate expiry tracking =====
   const DOCS_KEY = 'fleet_documents_v1';
-  const DOC_TYPE_LABELS = { fishing_license: 'Fishing License', safety_certificate: 'Safety Certificate', seaman_book: "Seaman's Book", other: 'Other' };
+  const DOC_TYPE_LABELS = { fishing_license: t('fldocs_fishing_license'), safety_certificate: t('fldocs_safety_certificate'), seaman_book: t('fldocs_seaman_book'), other: t('rec_gear_other') };
 
   // ===== Photo capture (Documents) =====
   // Same pattern as the sport segment's #sportDocPhotoBox: hidden file
@@ -5270,7 +5587,7 @@
     const vessels = load(VESSELS_KEY);
     const sel = document.getElementById('fleetDocVessel');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— Select Vessel —</option>' + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('');
+    sel.innerHTML = '<option value="">'+t('fltrip_select_vessel')+'</option>' + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('');
     if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
 
     // Back button goes to whichever role's home is currently active.
@@ -5318,7 +5635,7 @@
         + '<div class="entry-body">'
         + '<div class="sp" style="font-style:normal;">'+(DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
         + '<div class="entry-chips">'+chip+'</div>'
-        + '<div class="meta">'+(vessel?vessel.name:'—')+' · Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · tap to view photo':'')+'</div>'
+        + '<div class="meta">'+(vessel?vessel.name:'—')+' · '+t('flg_expires')+' '+new Date(d.expiry_date).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · '+t('flg_tap_view_photo'):'')+'</div>'
         + '</div></div>';
     }).join('');
     list.querySelectorAll('[data-doc-photo]').forEach(el => {
@@ -5332,7 +5649,7 @@
   document.getElementById('fleetDocAddBtn').addEventListener('click', () => {
     const vesselId = document.getElementById('fleetDocVessel').value;
     const expiry = document.getElementById('fleetDocExpiry').value;
-    if(!vesselId || !expiry){ showFleetToast('Vessel and expiry date are required', true); return; }
+    if(!vesselId || !expiry){ showFleetToast(t('msg_vessel_expiry_required'), true); return; }
     const docs = load(DOCS_KEY);
     docs.push({
       doc_id: uid(), vessel_id: vesselId,
@@ -5346,7 +5663,7 @@
     document.getElementById('fleetDocExpiry').value = '';
     fleetDocPhotoDataUrl = null;
     resetFleetPhotoBox('fleetDocPhotoBox', (d) => { fleetDocPhotoDataUrl = d; });
-    showFleetToast('Document added');
+    showFleetToast(t('msg_document_added'));
     renderFleetDocuments();
   });
 
@@ -5375,7 +5692,7 @@
 
   document.getElementById('fleetViewMapBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
-    if(!trip){ showFleetToast('No active trip', true); return; }
+    if(!trip){ showFleetToast(t('msg_no_active_trip'), true); return; }
     fleetMapTripId = trip.trip_id;
     fleetMapReturnScreen = 'trip';
     fleetGoTo('haul-map');
@@ -5401,7 +5718,7 @@
     const trip = load(TRIPS_KEY).find(t => t.trip_id === fleetMapTripId);
     if(!trip){ fleetGoTo(fleetMapReturnScreen); return; }
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
-    document.getElementById('fleetMapVesselLine').textContent = (vessel?vessel.name:'—') + ' · ' + new Date(trip.started_at).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'});
+    document.getElementById('fleetMapVesselLine').textContent = (vessel?vessel.name:'—') + ' · ' + new Date(trip.started_at).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'});
 
     const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
     const withGps = hauls.filter(hl => hl.lat !== '' && hl.lon !== '' && hl.lat != null && hl.lon != null);
@@ -5421,14 +5738,14 @@
     fleetCheckTilesReachable((isLive) => {
       if(isLive){
         banner.className = 'map-mode-banner live';
-        bannerText.textContent = 'Live map · tiles loaded from connection';
+        bannerText.textContent = t('msg_live_map');
         document.getElementById('fleetMapLayerToggle').style.display = 'flex';
         document.getElementById('fleetLeafletMap').style.display = 'block';
         document.getElementById('fleetSchematicMap').style.display = 'none';
         renderFleetLeaflet(withGps);
       } else {
         banner.className = 'map-mode-banner offline';
-        bannerText.textContent = 'Offline mode · schematic coordinate plot';
+        bannerText.textContent = t('msg_offline_mode');
         document.getElementById('fleetMapLayerToggle').style.display = 'none';
         document.getElementById('fleetLeafletMap').style.display = 'none';
         document.getElementById('fleetSchematicMap').style.display = 'block';
@@ -5572,7 +5889,7 @@
 
     const net = income - totalCosts;
     const margin = income > 0 ? (net/income*100) : null;
-    return { income, costs: totalCosts, net, margin, kg, currency, costsByType, vesselId: trip.vessel_id, vesselName: vessel ? vessel.name : 'Unknown Vessel' };
+    return { income, costs: totalCosts, net, margin, kg, currency, costsByType, vesselId: trip.vessel_id, vesselName: vessel ? vessel.name : t('flg_unknown_vessel') };
   }
 
   // ===== Fleet Statistics (Advanced) =====
@@ -5585,14 +5902,14 @@
     const main = document.getElementById('fleetStatsMain');
 
     if(vessels.length === 0){
-      main.innerHTML = '<div class="empty">Add a vessel to see fleet statistics.</div>';
+      main.innerHTML = '<div class="empty">'+t('flstats_add_vessel')+'</div>';
       return;
     }
 
     const allTrips = load(TRIPS_KEY);
     const closedTrips = allTrips.filter(t => t.ended_at);
     if(closedTrips.length === 0){
-      main.innerHTML = '<div class="empty">No closed trips yet. Statistics build up as trips are completed.</div>';
+      main.innerHTML = '<div class="empty">'+t('flstats_no_closed_trips')+'</div>';
       return;
     }
 
@@ -5602,9 +5919,9 @@
     // --- Profitability trend, selected vessel only ---
     const vesselTrips = closedTrips.filter(t => t.vessel_id === selectedVesselId).sort((a,b) => new Date(a.started_at) - new Date(b.started_at));
     const vesselCurrency = (vessels.find(v => v.vessel_id === selectedVesselId) || {}).default_currency || '';
-    html += '<div class="insight-card"><div class="insight-card-label">Profitability trend'+(vesselTrips.length ? ' · last '+Math.min(vesselTrips.length,12)+' trips' : '')+'</div>';
+    html += '<div class="insight-card"><div class="insight-card-label">'+t('flstats_profitability_trend')+(vesselTrips.length ? ' · '+t('flstats_last')+' '+Math.min(vesselTrips.length,12)+' '+t('flstats_trips_lc') : '')+'</div>';
     if(vesselTrips.length < 2){
-      html += '<div class="insight-empty">Need at least 2 closed trips for this vessel to plot a trend.</div>';
+      html += '<div class="insight-empty">'+t('flstats_trend_empty')+'</div>';
     } else {
       const recent = vesselTrips.slice(-12);
       const finRows = recent.map(t => computeTripFinancials(t));
@@ -5615,24 +5932,24 @@
       const yPix = (v) => plotMid - (v/maxAbs)*((plotBottom-plotTop)/2);
       const pathPts = nets.map((v,i) => xPix(i).toFixed(1)+','+yPix(v).toFixed(1));
       const dots = nets.map((v,i) => '<circle cx="'+xPix(i).toFixed(1)+'" cy="'+yPix(v).toFixed(1)+'" r="3.5" fill="'+(v>=0?'#2f7a52':'#c0532f')+'"/>').join('');
-      const firstLabel = new Date(recent[0].started_at).toLocaleDateString('en-US',{month:'short'});
-      const lastLabel = new Date(recent[recent.length-1].started_at).toLocaleDateString('en-US',{month:'short'});
+      const firstLabel = new Date(recent[0].started_at).toLocaleDateString(window.fishPulseLocale(),{month:'short'});
+      const lastLabel = new Date(recent[recent.length-1].started_at).toLocaleDateString(window.fishPulseLocale(),{month:'short'});
       html += `<svg width="100%" height="100" viewBox="0 0 290 100"><line x1="${padL}" y1="${plotMid.toFixed(1)}" x2="280" y2="${plotMid.toFixed(1)}" stroke="#d9e0e0" stroke-dasharray="2 2"/><path d="M${pathPts.join(' L')}" fill="none" stroke="#0a5c8c" stroke-width="2"/>${dots}<text x="${padL}" y="90" font-family="monospace" font-size="8" fill="#9aa6a6">${firstLabel}</text><text x="278" y="90" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${lastLabel}</text></svg>`;
-      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Net result per closed trip, in '+vesselCurrency+'. Green = profitable, red = operated at a loss.</div>';
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('flstats_trend_footnote_1')+' '+vesselCurrency+'. '+t('flstats_trend_footnote_2')+'</div>';
     }
     html += '</div>';
 
     // --- Cost composition donut, selected vessel only ---
-    html += '<div class="insight-card"><div class="insight-card-label">Cost composition · all trips</div>';
+    html += '<div class="insight-card"><div class="insight-card-label">'+t('flstats_cost_composition')+'</div>';
     if(vesselTrips.length === 0){
-      html += '<div class="insight-empty">No closed trips with costs logged for this vessel yet.</div>';
+      html += '<div class="insight-empty">'+t('flstats_cost_empty')+'</div>';
     } else {
       const costsByType = {};
       vesselTrips.forEach(t => { const f = computeTripFinancials(t); Object.entries(f.costsByType).forEach(([k,v]) => { costsByType[k] = (costsByType[k]||0)+v; }); });
       const typeEntries = Object.entries(costsByType).sort((a,b)=>b[1]-a[1]);
       const totalCost = typeEntries.reduce((s,[,v])=>s+v,0);
       if(totalCost === 0){
-        html += '<div class="insight-empty">No costs logged for this vessel\'s trips yet.</div>';
+        html += '<div class="insight-empty">'+t('flstats_cost_empty2')+'</div>';
       } else {
         const palette = ['#0a5c8c','#5fc7ee','#c0532f','#cdd6d6','#2f7a52','#41545f'];
         const donutR=28, circ=2*Math.PI*donutR;
@@ -5641,21 +5958,21 @@
         html += '<div style="display:flex;align-items:center;gap:14px;">'
           + `<svg width="76" height="76" viewBox="0 0 80 80" style="flex-shrink:0;">${segs}</svg>`
           + '<div style="flex:1;font-size:11.5px;line-height:2;">'
-          + typeEntries.map(([k,v],i) => '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+palette[i%palette.length]+';margin-right:6px;"></span>'+(k.charAt(0).toUpperCase()+k.slice(1))+' · '+(v/totalCost*100).toFixed(0)+'%</div>').join('')
+          + typeEntries.map(([k,v],i) => '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+palette[i%palette.length]+';margin-right:6px;"></span>'+t('flstats_cost_'+k)+' · '+(v/totalCost*100).toFixed(0)+'%</div>').join('')
           + '</div></div>';
       }
     }
     html += '</div>';
 
     // --- Commercial CPUE by gear, all vessels ---
-    html += '<div class="insight-card"><div class="insight-card-label">Commercial CPUE · kg / hour</div>';
+    html += '<div class="insight-card"><div class="insight-card-label">'+t('flstats_cpue')+'</div>';
     const allHauls = load(HAULS_KEY);
     const allCatches = load(CATCHES_KEY);
     const cpueByGear = {};
     allHauls.forEach(h => {
       const dur = parseFloat(h.duration_min);
       if(!dur || dur <= 0) return;
-      const g = h.gear_type || 'Unspecified';
+      const g = h.gear_type || t('adv_unspecified');
       const kg = allCatches.filter(c => c.haul_id === h.haul_id).reduce((s,c) => s+(parseFloat(c.kg)||0), 0);
       if(!cpueByGear[g]) cpueByGear[g] = { kg:0, hours:0 };
       cpueByGear[g].kg += kg;
@@ -5663,16 +5980,16 @@
     });
     const gearCpueRows = Object.entries(cpueByGear).filter(([,d]) => d.hours>0).map(([g,d]) => ({ g, rate: d.kg/d.hours })).sort((a,b)=>b.rate-a.rate);
     if(gearCpueRows.length === 0){
-      html += '<div class="insight-empty">No hauls with both a duration and logged catch yet.</div>';
+      html += '<div class="insight-empty">'+t('flstats_cpue_empty')+'</div>';
     } else {
       const maxRate = Math.max(...gearCpueRows.map(r=>r.rate)) || 1;
       gearCpueRows.forEach(r => { const pct = (r.rate/maxRate*100).toFixed(0); html += '<div class="bar-row"><div class="bar-row-top"><span>'+r.g+'</span><span>'+r.rate.toFixed(1)+' kg/hr</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>'; });
-      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">All vessels, all trips — not affected by the vessel filter above, since kg/hr isn\'t a currency figure.</div>';
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('flstats_cpue_footnote')+'</div>';
     }
     html += '</div>';
 
     // --- Vessel comparison ---
-    html += '<div class="insight-card"><div class="insight-card-label">Vessel comparison</div>';
+    html += '<div class="insight-card"><div class="insight-card-label">'+t('flstats_vessel_comparison')+'</div>';
     const vesselRows = vessels.map(v => {
       const trips = closedTrips.filter(t => t.vessel_id === v.vessel_id);
       if(trips.length === 0) return { v, trips:0, kg:0, hours:0, marginSum:0, marginN:0 };
@@ -5686,9 +6003,9 @@
       return { v, trips: trips.length, kg, hours, marginSum, marginN };
     }).filter(r => r.trips > 0);
     if(vesselRows.length === 0){
-      html += '<div class="insight-empty">No closed trips yet.</div>';
+      html += '<div class="insight-empty">'+t('flstats_no_closed_trips_short')+'</div>';
     } else {
-      html += '<table class="stat-table"><thead><tr><th>Vessel</th><th>Trips</th><th>kg/hr</th><th>Margin</th></tr></thead><tbody>';
+      html += '<table class="stat-table"><thead><tr><th>'+t('flvessels_brand')+'</th><th>'+t('flstats_trips_header')+'</th><th>kg/hr</th><th>'+t('flstats_margin')+'</th></tr></thead><tbody>';
       vesselRows.forEach(r => {
         const rate = r.hours>0 ? (r.kg/r.hours) : null;
         const avgMargin = r.marginN>0 ? (r.marginSum/r.marginN) : null;
@@ -5696,7 +6013,7 @@
         html += '<tr><td class="sp-name" style="font-style:normal;">'+r.v.name+'</td><td class="num">'+r.trips+'</td><td class="num">'+(rate!==null?rate.toFixed(1):'—')+'</td><td class="num">'+marginChip+'</td></tr>';
       });
       html += '</tbody></table>';
-      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.</div>';
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('flstats_margin_footnote')+'</div>';
     }
     html += '</div>';
 
@@ -5838,9 +6155,9 @@
     const spots = load(SPOTS_KEY);
     const sel = document.getElementById('sportSpotSelect');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— No Spot / Open Water —</option>'
+    sel.innerHTML = '<option value="">'+t('sp_no_spot_open_water')+'</option>'
       + spots.map(s => '<option value="'+s.spot_id+'">'+s.name+'</option>').join('')
-      + '<option value="__new__">+ New Spot</option>';
+      + '<option value="__new__">'+t('sp_new_spot')+'</option>';
     if(spots.some(s=>s.spot_id===cur) || cur === '') sel.value = cur;
   }
   document.getElementById('sportSpotSelect').addEventListener('change', (e) => {
@@ -5857,7 +6174,7 @@
     const box = document.getElementById('sportWeatherBox');
     box.style.display = 'block';
     box.className = 'duration-line';
-    box.textContent = 'Fetching conditions…';
+    box.textContent = t('msg_fetching_conditions');
     try{
       const [wxRes, marineRes] = await Promise.all([
         fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
@@ -5878,18 +6195,18 @@
       html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Tide/wave data is an estimate (model resolution ~8km) — treat as trip-planning reference, not for navigation.</div>';
       box.innerHTML = html;
     } catch(err){
-      box.textContent = 'Could not fetch conditions — check your connection.';
+      box.textContent = t('msg_fetch_conditions_failed');
     }
   }
   document.getElementById('sportFetchWeatherBtn').addEventListener('click', () => {
-    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    if(!navigator.geolocation){ showSportToast(t('msg_geo_not_supported'), true); return; }
     document.getElementById('sportWeatherBox').style.display = 'block';
     document.getElementById('sportWeatherBox').className = 'duration-line';
-    document.getElementById('sportWeatherBox').textContent = 'Getting your location…';
+    document.getElementById('sportWeatherBox').textContent = t('msg_getting_location');
     navigator.geolocation.getCurrentPosition(
       (pos) => fetchSportWeather(pos.coords.latitude, pos.coords.longitude),
       () => {
-        document.getElementById('sportWeatherBox').textContent = 'Could not get your location.';
+        document.getElementById('sportWeatherBox').textContent = t('msg_could_not_get_location');
         document.getElementById('sportWeatherBox').className = 'duration-line warn';
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -5917,15 +6234,15 @@
     const age = ((daysSince % synodicMonth) + synodicMonth) % synodicMonth;
     const illumination = (1 - Math.cos((age / synodicMonth) * 2 * Math.PI)) / 2;
     let label;
-    if(age < 1.84) label = 'New Moon';
-    else if(age < 5.53) label = 'Waxing Crescent';
-    else if(age < 9.22) label = 'First Quarter';
-    else if(age < 12.91) label = 'Waxing Gibbous';
-    else if(age < 16.61) label = 'Full Moon';
-    else if(age < 20.30) label = 'Waning Gibbous';
-    else if(age < 23.99) label = 'Last Quarter';
-    else if(age < 27.68) label = 'Waning Crescent';
-    else label = 'New Moon';
+    if(age < 1.84) label = t('sp_moon_new');
+    else if(age < 5.53) label = t('sp_moon_waxing_crescent');
+    else if(age < 9.22) label = t('sp_moon_first_quarter');
+    else if(age < 12.91) label = t('sp_moon_waxing_gibbous');
+    else if(age < 16.61) label = t('sp_moon_full');
+    else if(age < 20.30) label = t('sp_moon_waning_gibbous');
+    else if(age < 23.99) label = t('sp_moon_last_quarter');
+    else if(age < 27.68) label = t('sp_moon_waning_crescent');
+    else label = t('sp_moon_new');
     return { age, illumination, label };
   }
   function formatHM(totalMinutes){
@@ -5945,23 +6262,23 @@
     const minorOffsets = [(cycleOffset + lunarDayMin/4) % lunarDayMin, (cycleOffset + 3*lunarDayMin/4) % lunarDayMin];
     const majorTimes = majorOffsets.map(o => formatHM(o)).sort();
     const minorTimes = minorOffsets.map(o => formatHM(o)).sort();
-    const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? 'Strong' : (moon.illumination > 0.6 || moon.illumination < 0.4 ? 'Moderate' : 'Mild');
+    const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? t('sp_strength_strong') : (moon.illumination > 0.6 || moon.illumination < 0.4 ? t('sp_strength_moderate') : t('sp_strength_mild'));
     box.innerHTML =
       '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">'
-      + moon.label + ' · ' + Math.round(moon.illumination*100) + '% illuminated · ' + strength + ' activity</div>'
+      + moon.label + ' · ' + Math.round(moon.illumination*100) + t('sp_illuminated') + ' · ' + strength + t('sp_activity') + '</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
       + '<div style="background:#163040;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 Major peaks</div>'
-      + majorTimes.map(t => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#5fc7ee;line-height:1.2;">'+t+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">90 min window</div>'
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 '+t('sp_major_peaks')+'</div>'
+      + majorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#5fc7ee;line-height:1.2;">'+t2+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">'+t('sp_90min_window')+'</div>'
       + '</div>'
       + '<div style="background:#163040;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 Minor peaks</div>'
-      + minorTimes.map(t => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#9fc8de;line-height:1.2;">'+t+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">45 min window</div>'
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 '+t('sp_minor_peaks')+'</div>'
+      + minorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#9fc8de;line-height:1.2;">'+t2+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">'+t('sp_45min_window')+'</div>'
       + '</div>'
       + '</div>'
-      + '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;margin-top:8px;line-height:1.5;">Estimated periods — not a precision ephemeris.</div>';
+      + '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;margin-top:8px;line-height:1.5;">'+t('sp_estimated_periods')+'</div>';
   }
 
   function renderSportSession(){
@@ -5979,7 +6296,7 @@
     noCard.style.display = 'none';
     activeCard.style.display = 'block';
     const spot = session.spot_id ? load(SPOTS_KEY).find(s => s.spot_id === session.spot_id) : null;
-    const spotName = spot ? spot.name : 'Open Water';
+    const spotName = spot ? spot.name : t('sp_open_water');
     document.getElementById('sportSpotLine').textContent = spotName;
     document.getElementById('sportSessionSpotTag').textContent = spotName;
 
@@ -6010,7 +6327,7 @@
     let spotId = document.getElementById('sportSpotSelect').value;
     if(spotId === '__new__'){
       const name = document.getElementById('sportNewSpotName').value.trim();
-      if(!name){ showSportToast('Enter a name for the new spot', true); return; }
+      if(!name){ showSportToast(t('msg_enter_spot_name'), true); return; }
       const spots = load(SPOTS_KEY);
       const spot = { spot_id: uid(), name, note: '', lat: '', lon: '' };
       spots.push(spot); save(SPOTS_KEY, spots);
@@ -6028,7 +6345,7 @@
     localStorage.setItem(ACTIVE_SESSION_KEY, session.session_id);
     document.getElementById('sportNewSpotName').value = '';
     document.getElementById('sportConditionsNote').value = '';
-    showSportToast('Session started');
+    showSportToast(t('msg_session_started'));
     renderSportSession();
   });
 
@@ -6039,7 +6356,7 @@
     const idx = sessions.findIndex(s => s.session_id === session.session_id);
     if(idx !== -1){ sessions[idx].ended_at = new Date().toISOString(); save(SESSIONS_KEY, sessions); }
     localStorage.removeItem(ACTIVE_SESSION_KEY);
-    showSportToast('Session ended');
+    showSportToast(t('msg_session_ended'));
     renderSportSession();
   });
 
@@ -6053,15 +6370,15 @@
 
   function setSportCatchScreenMode(){
     const editing = !!currentSportEditingCatchId;
-    document.getElementById('sportCatchBrand').textContent = editing ? 'Edit Catch' : 'Log Catch';
+    document.getElementById('sportCatchBrand').textContent = editing ? t('msg_edit_catch') : t('flcatch_brand');
     document.getElementById('sportCatchAddAnotherBtn').style.display = editing ? 'none' : '';
-    document.getElementById('sportCatchSaveBtn').textContent = editing ? 'Save Changes' : 'Save & Return To Session';
+    document.getElementById('sportCatchSaveBtn').textContent = editing ? t('msg_save_changes') : t('msg_save_return_session');
     document.getElementById('sportCatchBackBtn').dataset.go = editing ? 'sport-catch-log' : 'sport-session';
   }
   function resetSportCatchGps(){
     sportCatchCoords = null;
     const label = document.getElementById('sportCoordsLabel');
-    label.textContent = 'not captured';
+    label.textContent = t('rec_not_captured');
     label.classList.add('pending');
     document.getElementById('sportGpsBox').classList.remove('locked');
   }
@@ -6090,10 +6407,10 @@
     document.getElementById('sportKeptBtn').classList.remove('active');
   });
   document.getElementById('sportCaptureGpsBtn').addEventListener('click', () => {
-    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    if(!navigator.geolocation){ showSportToast(t('msg_geo_not_supported'), true); return; }
     const box = document.getElementById('sportGpsBox');
     const label = document.getElementById('sportCoordsLabel');
-    label.textContent = 'capturing…';
+    label.textContent = t('msg_capturing');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         sportCatchCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
@@ -6102,7 +6419,7 @@
         box.classList.add('locked');
       },
       () => {
-        label.textContent = 'capture failed — tap to retry';
+        label.textContent = t('msg_capture_failed');
         box.classList.remove('locked');
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -6167,7 +6484,7 @@
 
   function saveSportCatch(){
     const species = document.getElementById('sportSpecies').value.trim();
-    if(!species){ showSportToast('Species is required', true); return false; }
+    if(!species){ showSportToast(t('msg_species_required'), true); return false; }
     const catches = load(CATCHES_KEY);
     const fields = {
       species,
@@ -6199,14 +6516,14 @@
     return true;
   }
   document.getElementById('sportCatchAddAnotherBtn').addEventListener('click', () => {
-    if(saveSportCatch()){ clearSportCatchForm(); showSportToast('Catch saved'); renderSportSession(); }
+    if(saveSportCatch()){ clearSportCatchForm(); showSportToast(t('msg_catch_saved')); renderSportSession(); }
   });
   document.getElementById('sportCatchSaveBtn').addEventListener('click', () => {
     const wasEditing = !!currentSportEditingCatchId;
     if(saveSportCatch()){
       clearSportCatchForm();
       currentSportEditingCatchId = null;
-      showSportToast(wasEditing ? 'Catch updated' : 'Catch saved');
+      showSportToast(wasEditing ? t('msg_catch_updated') : t('msg_catch_saved'));
       sportGoTo(wasEditing ? 'catch-log' : 'session');
     }
   });
@@ -6217,7 +6534,7 @@
     const species = Array.from(new Set(catches.map(c => c.species).filter(Boolean))).sort();
     const sel = document.getElementById('sportCatchLogSpeciesFilter');
     const cur = sel.value;
-    sel.innerHTML = '<option value="">— All Species —</option>'
+    sel.innerHTML = '<option value="">'+t('sp_all_species')+'</option>'
       + species.map(s => '<option value="'+s+'">'+s+'</option>').join('');
     if(species.includes(cur)) sel.value = cur;
   }
@@ -6235,7 +6552,7 @@
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet.</div>'
       : catches.slice().reverse().map(c => {
-          const when = new Date(c.logged_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+          const when = new Date(c.logged_at).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
           const keptChip = c.kept_or_released === 'kept'
             ? '<span class="chip chip-green">Kept</span>'
             : '<span class="chip chip-blue">Released</span>';
@@ -6265,10 +6582,10 @@
   // ===== Spots =====
   let sportSpotCoords = null;
   document.getElementById('sportSpotCaptureGpsBtn').addEventListener('click', () => {
-    if(!navigator.geolocation){ showSportToast('Geolocation not supported on this device', true); return; }
+    if(!navigator.geolocation){ showSportToast(t('msg_geo_not_supported'), true); return; }
     const box = document.getElementById('sportSpotGpsBox');
     const label = document.getElementById('sportSpotCoordsLabel');
-    label.textContent = 'capturing…';
+    label.textContent = t('msg_capturing');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         sportSpotCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -6276,13 +6593,13 @@
         label.classList.remove('pending');
         box.classList.add('locked');
       },
-      () => { label.textContent = 'capture failed — tap to retry'; },
+      () => { label.textContent = t('msg_capture_failed'); },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   });
   document.getElementById('sportAddSpotBtn').addEventListener('click', () => {
     const name = document.getElementById('sportSpotName').value.trim();
-    if(!name){ showSportToast('Spot name is required', true); return; }
+    if(!name){ showSportToast(t('msg_spot_name_required'), true); return; }
     const spots = load(SPOTS_KEY);
     spots.push({
       spot_id: uid(), name,
@@ -6294,9 +6611,9 @@
     document.getElementById('sportSpotName').value = '';
     document.getElementById('sportSpotNote').value = '';
     sportSpotCoords = null;
-    document.getElementById('sportSpotCoordsLabel').textContent = 'not captured';
+    document.getElementById('sportSpotCoordsLabel').textContent = t('rec_not_captured');
     document.getElementById('sportSpotGpsBox').classList.remove('locked');
-    showSportToast('Spot saved');
+    showSportToast(t('msg_spot_saved'));
     renderSportSpots();
   });
   function renderSportSpots(){
@@ -6380,17 +6697,17 @@
       const lat = parseFloat(s.lat), lon = parseFloat(s.lon);
       bounds.push([lat, lon]);
       const marker = L.marker([lat, lon], { icon: sportSpotPinIcon() }).addTo(sportLeafletInstance);
-      marker.bindPopup('<div class="map-point-popup"><b>' + s.name + '</b><br>' + (s.note||'No notes') + '</div>');
+      marker.bindPopup('<div class="map-point-popup"><b>' + s.name + '</b><br>' + (s.note||t('msg_no_notes')) + '</div>');
     });
     sportLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
     setTimeout(()=>sportLeafletInstance.invalidateSize(),50);
   }
 
   // ===== Documents =====
-  const SPORT_DOC_TYPE_LABELS = { license: 'Fishing License', boat_permit: 'Boat Permit', species_tag: 'Species Tag / Stamp', other: 'Other' };
+  const SPORT_DOC_TYPE_LABELS = { license: t('fldocs_fishing_license'), boat_permit: t('sp_boat_permit'), species_tag: t('sp_species_tag'), other: t('rec_gear_other') };
   document.getElementById('sportDocAddBtn').addEventListener('click', () => {
     const expiry = document.getElementById('sportDocExpiry').value;
-    if(!expiry){ showSportToast('Expiry date is required', true); return; }
+    if(!expiry){ showSportToast(t('msg_expiry_required'), true); return; }
     const docs = load(DOCS_KEY);
     docs.push({
       doc_id: uid(),
@@ -6404,7 +6721,7 @@
     document.getElementById('sportDocExpiry').value = '';
     sportDocPhotoDataUrl = null;
     resetSportPhotoBox('sportDocPhotoBox', (d) => { sportDocPhotoDataUrl = d; });
-    showSportToast('Document added');
+    showSportToast(t('msg_document_added'));
     renderSportDocuments();
   });
   function renderSportDocuments(){
@@ -6426,7 +6743,7 @@
         + '<div class="entry-body">'
         + '<div class="sp" style="font-style:normal;">'+(SPORT_DOC_TYPE_LABELS[d.doc_type]||d.doc_type)+(d.label?' · '+d.label:'')+'</div>'
         + '<div class="entry-chips">'+chip+'</div>'
-        + '<div class="meta">Expires '+new Date(d.expiry_date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · tap to view photo':'')+'</div>'
+        + '<div class="meta">'+t('flg_expires')+' '+new Date(d.expiry_date).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'})+(d.photo?' · '+t('flg_tap_view_photo'):'')+'</div>'
         + '</div></div>';
     }).join('');
     list.querySelectorAll('[data-doc-photo]').forEach(el => {
@@ -6526,7 +6843,7 @@
       bests.forEach(([sp,b],i) => {
         const medal = i===0?'🥇':i===1?'🥈':'🥉';
         html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span style="font-family:var(--data);font-size:11px;">'+b.weight.toFixed(2)+' kg'+(b.length?' · '+b.length+' cm':'')+'</span></div>'
-          + '<div style="font-family:var(--data);font-size:10px;color:#9aa6a6;">'+medal+' · '+new Date(b.date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'})+'</div></div>';
+          + '<div style="font-family:var(--data);font-size:10px;color:#9aa6a6;">'+medal+' · '+new Date(b.date).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'})+'</div></div>';
       });
       html += '</div>';
     }
@@ -6546,9 +6863,9 @@
       html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Top spots</div>';
       sortedSpots.forEach(([spotId,n]) => {
         const spot = spots.find(s=>s.spot_id===spotId);
-        const name = spot ? spot.name : 'Unknown spot';
+        const name = spot ? spot.name : t('msg_unknown_spot');
         const pct = (n/catches.length*100).toFixed(0);
-        html += '<div class="bar-row"><div class="bar-row-top"><span>'+name+'</span><span>'+n+' catches · '+pct+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+        html += '<div class="bar-row"><div class="bar-row-top"><span>'+name+'</span><span>'+n+' '+t('msg_catches_lc')+' · '+pct+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
       });
       html += '</div>';
     }
@@ -6684,8 +7001,8 @@
         // A normal "New Record" tap (not the programmatic edit-open path)
         // should always start a fresh record, never resume a stale edit.
         editingRecordIdx = null;
-        document.getElementById('saveBtn').textContent = 'Save record';
-        document.getElementById('recordScreenBrand').textContent = 'New Record';
+        document.getElementById('saveBtn').textContent = t('rec_save');
+        document.getElementById('recordScreenBrand').textContent = t('rec_title');
         clearForm();
       }
       goTo(target);
@@ -6805,7 +7122,7 @@
     });
   }
   // ===== New Record: step cards (collapsible, freely re-openable, progress bar) =====
-  const stepTitles = {1:'Session', 2:'Site & gear', 3:'Fishing effort', 4:'Specimen', 5:'Advanced bio data', 6:'Environmental data', 7:'Position', 8:'Evidence', 9:'Notes'};
+  const stepTitles = {1:t('rec_card_session'), 2:t('rec_card_site_gear'), 3:t('rec_card_effort'), 4:t('rec_card_specimen'), 5:t('rec_card_advanced_bio'), 6:t('rec_card_environment'), 7:t('rec_step8_title'), 8:t('rec_card_evidence'), 9:t('rec_card_notes')};
   let recordMaxStepReached = 1;
 
   function setStepOpen(n, open){
@@ -6821,7 +7138,7 @@
     document.querySelectorAll('#recordStepProgress .seg').forEach(seg => {
       seg.classList.toggle('done', parseInt(seg.dataset.seg, 10) <= recordMaxStepReached);
     });
-    document.getElementById('recordStepLabel').textContent = 'Step ' + activeStep + ' of 9 · ' + stepTitles[activeStep];
+    document.getElementById('recordStepLabel').textContent = t('msg_step') + ' ' + activeStep + ' ' + t('msg_of') + ' 9 · ' + stepTitles[activeStep];
     for(let i = 1; i <= 9; i++){
       const card = document.getElementById('stepCard' + i);
       const isOpen = document.getElementById('stepBody' + i).style.display !== 'none';
@@ -6872,20 +7189,20 @@
     const endStr = document.getElementById('haulEnd').value;
     const line = document.getElementById('durationLine');
     if(!startStr || !endStr){
-      line.textContent = 'Duration: —';
+      line.textContent = t('msg_duration') + ': —';
       line.classList.remove('warn');
       return;
     }
     const start = parseHHMM(startStr);
     const end = parseHHMM(endStr);
     if(start === null || end === null){
-      line.textContent = 'Duration: use HH:MM format (e.g. 14:30)';
+      line.textContent = t('msg_duration') + ': ' + t('msg_hhmm_format');
       line.classList.add('warn');
       return;
     }
     let diff = end - start;
     if(diff < 0) diff += 24*60; // haul crossed midnight
-    line.textContent = 'Duration: ' + Math.floor(diff/60) + 'h ' + (diff%60) + 'min';
+    line.textContent = t('msg_duration') + ': ' + Math.floor(diff/60) + 'h ' + (diff%60) + 'min';
     line.classList.remove('warn');
   }
   document.getElementById('haulStart').addEventListener('input', updateDuration);
@@ -6909,7 +7226,7 @@
     const box = document.getElementById('researchWeatherBox');
     box.style.display = 'block';
     box.className = 'duration-line';
-    box.textContent = 'Fetching conditions…';
+    box.textContent = t('msg_fetching_conditions');
     try{
       const [wxRes, marineRes] = await Promise.all([
         fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
@@ -6940,17 +7257,17 @@
         });
       }
     } catch(err){
-      box.textContent = 'Could not fetch conditions — check your connection.';
+      box.textContent = t('msg_fetch_conditions_failed');
     }
   }
   document.getElementById('gpsBtn').addEventListener('click', ()=>{
     const label = document.getElementById('coordsLabel');
     const box = document.getElementById('gpsBox');
     if(!navigator.geolocation){
-      label.textContent = 'GPS not available in this browser';
+      label.textContent = t('msg_gps_not_available');
       return;
     }
-    label.textContent = 'locating…';
+    label.textContent = t('msg_locating');
     navigator.geolocation.getCurrentPosition(
       pos => {
         coords = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy };
@@ -6960,7 +7277,7 @@
         fetchResearchWeather(coords.lat, coords.lon);
       },
       err => {
-        label.textContent = 'no GPS signal — try again';
+        label.textContent = t('msg_no_gps_signal');
         box.classList.remove('locked');
       },
       { enableHighAccuracy: true, timeout: 8000 }
@@ -6987,11 +7304,11 @@
     const label = document.getElementById('coordsLabel');
     const box = document.getElementById('gpsBox');
     if(isNaN(lat) || isNaN(lon)){
-      showToast('Enter both latitude and longitude', true);
+      showToast(t('msg_enter_lat_lon'), true);
       return;
     }
     if(lat < -90 || lat > 90 || lon < -180 || lon > 180){
-      showToast('Latitude must be -90 to 90, longitude -180 to 180', true);
+      showToast(t('msg_lat_lon_range'), true);
       return;
     }
     coords = { lat, lon, acc: 0 };
@@ -6999,7 +7316,7 @@
     label.textContent = lat.toFixed(5) + ', ' + lon.toFixed(5) + ' (manual)';
     box.classList.add('locked');
     document.getElementById('gpsManualFields').style.display = 'none';
-    showToast('Manual coordinates applied');
+    showToast(t('msg_coords_applied'));
   });
 
   // ===== Photo =====
@@ -7059,7 +7376,7 @@
   }
 
   function entryRowHtml(e, idx, withDelete){
-    const when = new Date(e.timestamp).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    const when = new Date(e.timestamp).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
     const hasSp = !!(e.species && e.species.trim());
     const iconColor = hasSp ? '#0a5c8c' : '#cdd6d6';
     const iconClass = hasSp ? 'entry-icon' : 'entry-icon no-sp';
@@ -7093,25 +7410,25 @@
   // ===== Home rendering =====
   function renderHome(){
     const list = loadEntries();
-    document.getElementById('tallyCount').textContent = list.length + (list.length===1 ? ' record' : ' records');
+    document.getElementById('tallyCount').textContent = list.length + ' ' + (list.length===1 ? t('msg_record_lc') : t('msg_records_lc'));
     document.getElementById('homeCount').textContent = list.length;
     renderBackupStatus();
     updateCampaignBanner();
 
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
     document.getElementById('homeMapSub').textContent = withGps > 0
-      ? withGps + ' PT' + (withGps===1?'':'S')
-      : 'NO GPS YET';
+      ? withGps + ' ' + t('msg_pts')
+      : t('msg_no_gps_yet');
 
     const trackCount = (function(){ try{ return JSON.parse(localStorage.getItem('bycatch_tracks_v1'))||[]; }catch(e){ return []; } })().length;
-    document.getElementById('homeTrackSub').textContent = trackCount + ' SAVED';
+    document.getElementById('homeTrackSub').textContent = trackCount + ' ' + t('msg_saved_uc');
 
     const speciesSeen = new Set(list.map(e => (e.species || '').trim()).filter(Boolean)).size;
-    document.getElementById('homeInsightsSub').textContent = speciesSeen + ' SPECIES';
+    document.getElementById('homeInsightsSub').textContent = speciesSeen + ' ' + t('msg_species_uc');
 
     const recent = document.getElementById('recentList');
     if(list.length === 0){
-      recent.innerHTML = '<div class="empty">No records yet. Start with "New Record" to log your first specimen.</div>';
+      recent.innerHTML = '<div class="empty">'+t('msg_no_records_start')+'</div>';
       return;
     }
     const lastThree = list.slice(-3).reverse();
@@ -7124,7 +7441,7 @@
     const current = select.value;
     const list = loadEntries();
     const sites = Array.from(new Set(list.map(e => e.site).filter(Boolean))).sort();
-    select.innerHTML = '<option value="">All sites</option>' + sites.map(s => '<option value="'+s.replace(/"/g,'&quot;')+'">'+s+'</option>').join('');
+    select.innerHTML = '<option value="">'+t('hist_all_sites')+'</option>' + sites.map(s => '<option value="'+s.replace(/"/g,'&quot;')+'">'+s+'</option>').join('');
     if(sites.includes(current)) select.value = current;
   }
 
@@ -7132,8 +7449,8 @@
     const select = document.getElementById('filterCampaign');
     const current = select.value;
     const campaigns = loadCampaigns();
-    select.innerHTML = '<option value="">All campaigns</option>'
-      + '<option value="__unassigned__">Unassigned records</option>'
+    select.innerHTML = '<option value="">'+t('ins_all_campaigns')+'</option>'
+      + '<option value="__unassigned__">'+t('hist_unassigned_records')+'</option>'
       + campaigns.map(c => '<option value="'+c.id+'">'+c.name.replace(/</g,'&lt;')+'</option>').join('');
     if(campaigns.some(c => c.id === current) || current === '__unassigned__') select.value = current;
   }
@@ -7175,7 +7492,7 @@
     for(let i = 1; i <= 9; i++) setStepOpen(i, true);
     recordMaxStepReached = 9;
     document.querySelectorAll('#recordStepProgress .seg').forEach(seg => seg.classList.add('done'));
-    document.getElementById('recordStepLabel').textContent = 'Editing record · all steps open';
+    document.getElementById('recordStepLabel').textContent = t('msg_editing_record');
     for(let i = 1; i <= 9; i++){
       const card = document.getElementById('stepCard' + i);
       card.classList.remove('is-done','is-pending');
@@ -7251,7 +7568,7 @@
       coordsLabel.classList.remove('pending');
       gpsBox.classList.add('locked');
     } else {
-      coordsLabel.textContent = 'not captured';
+      coordsLabel.textContent = t('rec_not_captured');
       coordsLabel.classList.add('pending');
       gpsBox.classList.remove('locked');
     }
@@ -7273,8 +7590,8 @@
 
     document.getElementById('notes').value = e.notes || '';
 
-    document.getElementById('saveBtn').textContent = 'Update record';
-    document.getElementById('recordScreenBrand').textContent = 'Edit Record';
+    document.getElementById('saveBtn').textContent = t('msg_update_record');
+    document.getElementById('recordScreenBrand').textContent = t('msg_edit_record');
     goTo('record');
   }
 
@@ -7325,7 +7642,7 @@
     photoDataUrl = null;
     sexVal = null; conditionVal = null; taxonVal = null; bycatchVal = null;
     document.querySelectorAll('#sexRow .pill, #conditionRow .pill, #taxonRow .pill, #bycatchRow .pill').forEach(p=>p.classList.remove('active'));
-    document.getElementById('coordsLabel').textContent = 'not captured';
+    document.getElementById('coordsLabel').textContent = t('rec_not_captured');
     document.getElementById('coordsLabel').classList.add('pending');
     document.getElementById('gpsBox').classList.remove('locked');
     document.getElementById('manualLat').value = '';
@@ -7342,12 +7659,12 @@
     const species = document.getElementById('species').value.trim();
     const observer = document.getElementById('observer').value.trim();
     if(!observer){
-      showToast('Observer name is required', true);
+      showToast(t('msg_observer_required'), true);
       document.getElementById('observer').focus();
       return;
     }
     if(!species){
-      showToast('Species name is required', true);
+      showToast(t('msg_species_name_required'), true);
       document.getElementById('species').focus();
       return;
     }
@@ -7412,17 +7729,17 @@
     if(editingRecordIdx !== null){
       list[editingRecordIdx] = entry;
       saveEntries(list);
-      showToast('Record updated');
+      showToast(t('msg_record_updated'));
       editingRecordIdx = null;
-      document.getElementById('saveBtn').textContent = 'Save record';
-      document.getElementById('recordScreenBrand').textContent = 'New Record';
+      document.getElementById('saveBtn').textContent = t('rec_save');
+      document.getElementById('recordScreenBrand').textContent = t('rec_title');
       clearForm();
       goTo('history');
     } else {
       list.push(entry);
       saveEntries(list);
       bumpTally();
-      showToast('Record saved — ' + list.length + ' total');
+      showToast(t('msg_record_saved') + ' — ' + list.length + ' ' + t('msg_total'));
       clearForm();
       goTo('home');
     }
@@ -7431,9 +7748,9 @@
   document.getElementById('clearBtn').addEventListener('click', () => {
     if(editingRecordIdx !== null){
       editingRecordIdx = null;
-      document.getElementById('saveBtn').textContent = 'Save record';
-      document.getElementById('recordScreenBrand').textContent = 'New Record';
-      showToast('Edit cancelled');
+      document.getElementById('saveBtn').textContent = t('rec_save');
+      document.getElementById('recordScreenBrand').textContent = t('rec_title');
+      showToast(t('msg_edit_cancelled'));
     }
     clearForm();
   });
@@ -7502,11 +7819,11 @@
   }
 
   async function exportPhotosAsZip(entries, labelForFilename){
-    if(typeof JSZip === 'undefined'){ showToast('Zip library not loaded — check your connection', true); return; }
+    if(typeof JSZip === 'undefined'){ showToast(t('msg_zip_not_loaded'), true); return; }
     const withPhotos = entries.filter(e => e.photo);
-    if(withPhotos.length === 0){ showToast('No photos in this set of records', true); return; }
+    if(withPhotos.length === 0){ showToast(t('msg_no_photos'), true); return; }
 
-    showToast('Building zip of ' + withPhotos.length + ' photo' + (withPhotos.length>1?'s':'') + '…');
+    showToast(t('msg_building_zip') + ' ' + withPhotos.length + ' ' + t('msg_photos_lc') + '…');
     const zip = new JSZip();
     withPhotos.forEach(e => {
       const parts = dataUrlToBlobParts(e.photo);
@@ -7529,7 +7846,7 @@
       showToast(withPhotos.length + ' photo' + (withPhotos.length>1?'s':'') + ' exported as ' + filename);
       showPhotoExportConfirm(withPhotos.map(e => e.record_id));
     } catch(err){
-      showToast('Could not build zip — try again', true);
+      showToast(t('msg_zip_failed'), true);
     }
   }
 
@@ -7594,24 +7911,24 @@
   document.getElementById('exportBtn').addEventListener('click', ()=>{
     const list = loadEntries();
     if(list.length === 0){
-      showToast('No records to export', true);
+      showToast(t('msg_no_records_export'), true);
       return;
     }
     const today = new Date().toISOString().slice(0,10);
     downloadCsv(buildCsv(list), 'bycatch_survey_' + today + '.csv');
-    showToast('CSV exported');
+    showToast(t('msg_csv_exported'));
   });
 
   document.getElementById('exportGeoJsonBtn').addEventListener('click', ()=>{
     const list = loadEntries();
     const withGps = list.filter(e => e.lat !== '' && e.lat != null);
     if(withGps.length === 0){
-      showToast('No georeferenced records to export', true);
+      showToast(t('msg_no_georef_export'), true);
       return;
     }
     const today = new Date().toISOString().slice(0,10);
     downloadFile(buildGeoJsonPoints(list), 'bycatch_survey_' + today + '.geojson', 'application/geo+json');
-    showToast('GeoJSON exported · ' + withGps.length + ' points');
+    showToast(t('msg_geojson_exported') + ' · ' + withGps.length + ' ' + t('msg_points'));
   });
 
   // ===== Backup / share =====
@@ -7630,15 +7947,15 @@
     banner.classList.remove('stale', 'urgent');
 
     if(list.length === 0){
-      sub.textContent = 'No records yet';
+      sub.textContent = t('msg_no_records_yet');
       return;
     }
     if(unbacked <= 0){
-      const when = lastTime ? new Date(lastTime).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : 'recently';
-      sub.textContent = 'All records backed up · last: ' + when;
+      const when = lastTime ? new Date(lastTime).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : t('flg_recently');
+      sub.textContent = t('msg_all_backed_up') + ' · ' + t('msg_last') + ': ' + when;
       return;
     }
-    sub.textContent = unbacked + ' record' + (unbacked===1?'':'s') + ' not backed up yet';
+    sub.textContent = unbacked + ' ' + t('msg_records_not_backed_up');
     if(unbacked >= 15){
       banner.classList.add('urgent');
     } else if(unbacked >= 5){
@@ -7649,7 +7966,7 @@
   async function performBackup(){
     const list = loadEntries();
     if(list.length === 0){
-      showToast('No records to back up', true);
+      showToast(t('msg_no_records_backup'), true);
       return;
     }
     const today = new Date().toISOString().slice(0,10);
@@ -7663,8 +7980,8 @@
         if(navigator.canShare({ files: [file] })){
           await navigator.share({
             files: [file],
-            title: 'Fish Pulse backup',
-            text: list.length + ' records — ' + today
+            title: t('msg_fishpulse_backup'),
+            text: list.length + ' ' + t('msg_records_lc') + ' — ' + today
           });
           shared = true;
         }
@@ -7683,7 +8000,7 @@
     localStorage.setItem(LAST_BACKUP_COUNT_KEY, String(list.length));
     localStorage.setItem(LAST_BACKUP_TIME_KEY, new Date().toISOString());
     renderBackupStatus();
-    showToast(shared ? 'Backup shared' : 'Backup downloaded');
+    showToast(shared ? t('msg_backup_shared') : t('msg_backup_downloaded'));
   }
 
   document.getElementById('backupBtn').addEventListener('click', performBackup);
@@ -7771,14 +8088,14 @@
     checkTilesReachable((isLive) => {
       if(isLive){
         banner.className = 'map-mode-banner live';
-        bannerText.textContent = 'Online · CartoDB tiles';
+        bannerText.textContent = t('msg_online_cartodb');
         document.getElementById('mapLayerToggle').style.display = 'flex';
         document.getElementById('leafletMap').style.display = 'block';
         document.getElementById('schematicMap').style.display = 'none';
         renderLeaflet(withGps);
       } else {
         banner.className = 'map-mode-banner offline';
-        bannerText.textContent = 'Offline · schematic plot';
+        bannerText.textContent = t('msg_offline_schematic');
         document.getElementById('mapLayerToggle').style.display = 'none';
         document.getElementById('leafletMap').style.display = 'none';
         document.getElementById('schematicMap').style.display = 'block';
@@ -7988,8 +8305,8 @@
     const campSel = document.getElementById('insightsCampaignFilter');
     const campaigns = loadCampaigns();
     const curCamp = campSel.value || insightsCampaignId;
-    campSel.innerHTML = '<option value="">All campaigns</option>'
-      + '<option value="__unassigned__">No campaign (unassigned)</option>'
+    campSel.innerHTML = '<option value="">'+t('ins_all_campaigns')+'</option>'
+      + '<option value="__unassigned__">'+t('ins_no_campaign_unassigned')+'</option>'
       + campaigns.map(c => '<option value="'+c.id+'">'+c.name+'</option>').join('');
     if(curCamp && (curCamp === '__unassigned__' || campaigns.some(c=>c.id===curCamp))) campSel.value = curCamp;
     insightsCampaignId = campSel.value;
@@ -8009,9 +8326,9 @@
       insightsSiteDropdownOpen = false;
       siteWrap.innerHTML = '';
     } else {
-      const summary = insightsSiteFilter.length === 0 ? 'All sites'
+      const summary = insightsSiteFilter.length === 0 ? t('hist_all_sites')
         : insightsSiteFilter.length === 1 ? insightsSiteFilter[0]
-        : insightsSiteFilter.length + ' sites selected';
+        : insightsSiteFilter.length + ' ' + t('msg_sites_selected');
       let sw = '<div class="fake-select'+(insightsSiteDropdownOpen?' open':'')+'" id="insightsSiteFilterBtn"><span>'+summary+'</span>'
         + '<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
       if(insightsSiteDropdownOpen){
@@ -8066,7 +8383,7 @@
     const taxonCount = {};
     list.forEach(e => { if(!e.taxon_group) return; taxonCount[e.taxon_group]=(taxonCount[e.taxon_group]||0)+1; });
     const taxonEntries = Object.entries(taxonCount).sort((a,b)=>b[1]-a[1]);
-    const taxonLabels = {'Elasmobranchii':'Elasmobranch','Teleostei':'Teleost fish','Crustacea':'Crustacean','Mollusca':'Mollusc','Other':'Other'};
+    const taxonLabels = {'Elasmobranchii':t('rec_taxon_elasmo'),'Teleostei':t('rec_taxon_teleost'),'Crustacea':t('rec_taxon_crustacea'),'Mollusca':t('rec_taxon_mollusca'),'Other':t('rec_gear_other')};
     const taxonRecorded = taxonEntries.reduce((s,[,c])=>s+c, 0);
 
     const lengthStats = {};
@@ -8235,21 +8552,21 @@
       const sortedCounts = Object.entries(div.counts).sort((a,b)=>b[1]-a[1]);
       const dominant = sortedCounts.slice(0,3);
       const rarest = sortedCounts.slice(3).reverse().slice(0,3);
-      html += '<div class="insight-card"><div class="insight-card-label">Diversity indices'+taxonNote+'</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_diversity_indices')+taxonNote+'</div>';
       html += '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:'+((dominant.length||rarest.length)?'14px':'4px')+';">'
-        + '<div class="kpi-cell"><div class="kn">'+div.H.toFixed(2)+'</div><div class="kl">Shannon H&#39;</div></div>'
-        + '<div class="kpi-cell"><div class="kn">'+div.simpsonD.toFixed(2)+'</div><div class="kl">Simpson 1-D</div></div>'
-        + '<div class="kpi-cell"><div class="kn">'+(div.J!==null?div.J.toFixed(2):'—')+'</div><div class="kl">Evenness J&#39;</div></div>'
+        + '<div class="kpi-cell"><div class="kn">'+div.H.toFixed(2)+'</div><div class="kl">'+t('adv_shannon')+'</div></div>'
+        + '<div class="kpi-cell"><div class="kn">'+div.simpsonD.toFixed(2)+'</div><div class="kl">'+t('adv_simpson')+'</div></div>'
+        + '<div class="kpi-cell"><div class="kn">'+(div.J!==null?div.J.toFixed(2):'—')+'</div><div class="kl">'+t('adv_evenness')+'</div></div>'
         + '</div>';
       if(dominant.length || rarest.length){
         html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
         if(dominant.length){
-          html += '<div><div class="chart-card-label" style="color:#2f7a52;">Dominant</div>'
+          html += '<div><div class="chart-card-label" style="color:#2f7a52;">'+t('adv_dominant')+'</div>'
             + dominant.map(([sp,c]) => '<div style="font-size:11.5px;color:var(--ink);line-height:1.9;">'+sp+' <span style="color:#9aa6a6;">· '+(c/div.total*100).toFixed(0)+'%</span></div>').join('')
             + '</div>';
         }
         if(rarest.length){
-          html += '<div><div class="chart-card-label" style="color:#c0532f;">Rarest</div>'
+          html += '<div><div class="chart-card-label" style="color:#c0532f;">'+t('adv_rarest')+'</div>'
             + rarest.map(([sp,c]) => '<div style="font-size:11.5px;color:var(--ink);line-height:1.9;">'+sp+' <span style="color:#9aa6a6;">· '+(c/div.total*100).toFixed(0)+'%</span></div>').join('')
             + '</div>';
         }
@@ -8267,19 +8584,19 @@
           return { site:s, n:recs.length, H:d.H, simpsonD:d.simpsonD, J:d.J, dom: top?top[0]:'—' };
         });
         html += '<div style="border-top:1px solid var(--line);padding-top:10px;margin-top:14px;">'
-          + '<div class="chart-card-label" style="margin-bottom:6px;">By site within this scope</div>'
-          + '<table class="stat-table"><thead><tr><th>Site</th><th>n</th><th>H&#39;</th><th>1-D</th><th>J&#39;</th></tr></thead><tbody>'
+          + '<div class="chart-card-label" style="margin-bottom:6px;">'+t('adv_by_site')+'</div>'
+          + '<table class="stat-table"><thead><tr><th>'+t('adv_site')+'</th><th>n</th><th>H&#39;</th><th>1-D</th><th>J&#39;</th></tr></thead><tbody>'
           + siteRows.map(r => '<tr><td class="sp-name" style="font-style:normal;">'+r.site+'<div style="font-family:var(--data);font-size:10px;color:#9aa6a6;font-style:italic;margin-top:2px;">'+r.dom+'</div></td><td class="num">'+r.n+'</td><td class="num">'+r.H.toFixed(2)+'</td><td class="num">'+r.simpsonD.toFixed(2)+'</td><td class="num">'+(r.J!==null?r.J.toFixed(2):'—')+'</td></tr>').join('')
           + '</tbody></table></div>';
       }
-      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">H&#39; = −Σpᵢ·ln(pᵢ) (Shannon 1948). Shown as 1−D, D=Σpᵢ² (Simpson 1949). J&#39; = H&#39;/ln(S), pᵢ = proportion of species i, S = species richness (Pielou 1966).</div>';
+      html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_diversity_footnote')+'</div>';
       html += '</div>';
 
       // --- Sex ratio ---
       const sexCounts = {};
       list.forEach(e => {
         if(e.sex !== 'M' && e.sex !== 'F') return;
-        const sp = e.species || 'Unspecified';
+        const sp = e.species || t('adv_unspecified');
         if(!sexCounts[sp]) sexCounts[sp] = {M:0,F:0};
         sexCounts[sp][e.sex]++;
       });
@@ -8288,21 +8605,21 @@
       if(insightsSexSpecies.length === 0 && sexEligible.length > 0){
         insightsSexSpecies = sexEligible.slice().sort((a,b)=>(sexCounts[b].M+sexCounts[b].F)-(sexCounts[a].M+sexCounts[a].F)).slice(0,5);
       }
-      html += '<div class="insight-card"><div class="insight-card-label">Sex ratio · exact test vs 1:1</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_sex_ratio')+'</div>';
       if(sexEligible.length === 0){
-        html += '<div class="insight-empty">Not enough sexed individuals yet — need 5+ per species with M/F recorded.</div>';
+        html += '<div class="insight-empty">'+t('adv_sex_ratio_empty')+'</div>';
       } else {
         html += '<div class="pillrow" id="sexSpeciesPicker" style="margin-bottom:12px;">'
           + sexEligible.map(sp => '<div class="pill'+(insightsSexSpecies.includes(sp)?' active':'')+'" data-sexsp="'+sp.replace(/"/g,'&quot;')+'" style="font-size:11px;">'+sp+'</div>').join('')
           + '</div>';
-        html += '<table class="stat-table"><thead><tr><th>Species</th><th>M:F</th><th>p</th></tr></thead><tbody>';
+        html += '<table class="stat-table"><thead><tr><th>'+t('adv_species')+'</th><th>M:F</th><th>p</th></tr></thead><tbody>';
         insightsSexSpecies.forEach(sp => {
           const c = sexCounts[sp]; const n = c.M+c.F; const p = binomTestTwoSided(c.M, n, 0.5);
           const sig = p !== null && p < 0.05;
           html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+c.M+':'+c.F+'</td><td class="num"><span class="chip '+(sig?'chip-red':'chip-green')+'">'+(p!==null?p.toFixed(3):'—')+'</span></td></tr>';
         });
         html += '</tbody></table>';
-        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Two-tailed exact binomial test against a 1:1 null — equivalent to Fisher&#39;s exact test for one proportion. Tap a pill to add or remove it from the table, up to 5 at a time.</div>';
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_sex_ratio_footnote')+'</div>';
       }
       html += '</div>';
 
@@ -8310,22 +8627,22 @@
       const bcByGear = {}, bcBySite = {};
       list.forEach(e => {
         if(e.is_bycatch !== 'yes' && e.is_bycatch !== 'no') return;
-        const g = e.gear_type || 'Unspecified';
+        const g = e.gear_type || t('adv_unspecified');
         if(!bcByGear[g]) bcByGear[g] = {yes:0,no:0};
         bcByGear[g][e.is_bycatch]++;
-        const s = e.site || 'Unspecified';
+        const s = e.site || t('adv_unspecified');
         if(!bcBySite[s]) bcBySite[s] = {yes:0,no:0};
         bcBySite[s][e.is_bycatch]++;
       });
       const bcRows = (obj) => Object.entries(obj).map(([k,v]) => { const tot=v.yes+v.no; return { k, pct: tot>0?(v.yes/tot*100):0, tot }; }).sort((a,b)=>b.pct-a.pct);
       const gearRows = bcRows(bcByGear), siteRowsBc = bcRows(bcBySite);
-      html += '<div class="insight-card"><div class="insight-card-label">Bycatch rate'+taxonNote+'</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_bycatch_rate')+taxonNote+'</div>';
       if(gearRows.length === 0){
-        html += '<div class="insight-empty">No records with bycatch yes/no recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('adv_bycatch_empty')+'</div>';
       } else {
-        html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:0 0 6px;">By gear</p>';
+        html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:0 0 6px;">'+t('adv_by_gear')+'</p>';
         gearRows.forEach(r => { html += '<div class="bar-row"><div class="bar-row-top"><span>'+r.k+'</span><span>'+r.pct.toFixed(0)+'% ('+r.tot+')</span></div><div class="bar-track"><div class="bar-fill" style="width:'+r.pct.toFixed(0)+'%;"></div></div></div>'; });
-        html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:14px 0 6px;">By site</p>';
+        html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:14px 0 6px;">'+t('adv_by_site')+'</p>';
         siteRowsBc.forEach(r => { html += '<div class="bar-row"><div class="bar-row-top"><span>'+r.k+'</span><span>'+r.pct.toFixed(0)+'% ('+r.tot+')</span></div><div class="bar-track"><div class="bar-fill" style="width:'+r.pct.toFixed(0)+'%;"></div></div></div>'; });
       }
       html += '</div>';
@@ -8335,7 +8652,7 @@
       list.forEach(e => {
         const L = num(e.length), W = num(e.weight);
         if(L===null || W===null || L<=0 || W<=0) return;
-        const sp = e.species || 'Unspecified';
+        const sp = e.species || t('adv_unspecified');
         if(!lwData[sp]) lwData[sp] = {L:[],W:[]};
         lwData[sp].L.push(L); lwData[sp].W.push(W);
       });
@@ -8344,14 +8661,14 @@
       if(insightsLwSpecies.length === 0 && lwEligible.length > 0){
         insightsLwSpecies = lwEligible.slice().sort((a,b)=>lwData[b].L.length-lwData[a].L.length).slice(0,5);
       }
-      html += '<div class="insight-card"><div class="insight-card-label">Length-weight regression · W = aL^b</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_lw_regression')+'</div>';
       if(lwEligible.length === 0){
-        html += '<div class="insight-empty">Not enough paired length + weight records yet — need 3+ per species.</div>';
+        html += '<div class="insight-empty">'+t('adv_lw_empty')+'</div>';
       } else {
         html += '<div class="pillrow" id="lwSpeciesPicker" style="margin-bottom:12px;">'
           + lwEligible.map(sp => '<div class="pill'+(insightsLwSpecies.includes(sp)?' active':'')+'" data-lwsp="'+sp.replace(/"/g,'&quot;')+'" style="font-size:11px;">'+sp+'</div>').join('')
           + '</div>';
-        html += '<table class="stat-table"><thead><tr><th>Species</th><th>a</th><th>b</th><th>R²</th><th>K</th></tr></thead><tbody>';
+        html += '<table class="stat-table"><thead><tr><th>'+t('adv_species')+'</th><th>a</th><th>b</th><th>R²</th><th>K</th></tr></thead><tbody>';
         insightsLwSpecies.forEach(sp => {
           const d = lwData[sp];
           const xs = d.L.map(Math.log), ys = d.W.map(Math.log);
@@ -8362,7 +8679,7 @@
           html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+a.toFixed(4)+'</td><td class="num">'+b.toFixed(2)+'</td><td class="num">'+r2.toFixed(2)+'</td><td class="num">'+meanK.toFixed(2)+'</td></tr>';
         });
         html += '</tbody></table>';
-        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">a, b fit by OLS on ln(W) vs ln(L). K = Fulton&#39;s condition factor, mean of 100000·W(kg)/L(cm)³ per species (Le Cren 1951).</div>';
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_lw_footnote')+'</div>';
       }
       html += '</div>';
 
@@ -8371,7 +8688,7 @@
       list.forEach(e => {
         const L = num(e.length);
         if(L === null || !e.gonad_stage) return;
-        const sp = e.species || 'Unspecified';
+        const sp = e.species || t('adv_unspecified');
         const mature = e.gonad_stage === 'Immature' ? 0 : 1;
         if(!maturityData[sp]) maturityData[sp] = [];
         maturityData[sp].push({ L, mature });
@@ -8380,9 +8697,9 @@
       if(!maturityEligible.includes(insightsMaturitySpecies)){
         insightsMaturitySpecies = maturityEligible.length ? maturityEligible.slice().sort((a,b)=>maturityData[b].length-maturityData[a].length)[0] : '';
       }
-      html += '<div class="insight-card"><div class="insight-card-label">Maturity ogive by size</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_maturity_ogive')+'</div>';
       if(maturityEligible.length === 0){
-        html += '<div class="insight-empty">Not enough records with both length and gonad stage yet — need 15+ for one species.</div>';
+        html += '<div class="insight-empty">'+t('adv_maturity_empty')+'</div>';
       } else {
         html += '<select id="maturitySpeciesSelect" style="margin-bottom:12px;">'
           + maturityEligible.map(sp => '<option value="'+sp.replace(/"/g,'&quot;')+'"'+(sp===insightsMaturitySpecies?' selected':'')+'>'+sp+'</option>').join('')
@@ -8410,18 +8727,18 @@
           ? `<line x1="${xPix(L50).toFixed(1)}" y1="4" x2="${xPix(L50).toFixed(1)}" y2="${plotBottom}" stroke="#c0532f" stroke-width="1.2" stroke-dasharray="3 2"/><text x="${(xPix(L50)+3).toFixed(1)}" y="16" font-family="monospace" font-size="8" fill="#c0532f">L50 ≈ ${L50.toFixed(0)}cm</text>`
           : '';
         html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="#d9e0e0"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="#d9e0e0"/>${dots}${curvePath}${l50Marker}<text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">${minL.toFixed(0)}cm</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${maxL.toFixed(0)}cm</text></svg>`;
-        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Dots = % mature per length bin. Immature vs mature+ from gonad stage. Curve fit by logistic regression (IRLS). L50 = length at 50% predicted maturity.</div>';
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_maturity_footnote')+'</div>';
       }
       html += '</div>';
 
       // --- Species accumulation curve ---
-      html += '<div class="insight-card"><div class="insight-card-label">Species accumulation</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_species_accumulation')+'</div>';
       const chronological = list.filter(e => e.timestamp).slice().sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
       if(chronological.length < 2){
-        html += '<div class="insight-empty">Need at least 2 timestamped records to plot this.</div>';
+        html += '<div class="insight-empty">'+t('adv_accumulation_empty')+'</div>';
       } else {
         const seen = new Set(); const cumCounts = [];
-        chronological.forEach(e => { seen.add(e.species || 'Unspecified'); cumCounts.push(seen.size); });
+        chronological.forEach(e => { seen.add(e.species || t('adv_unspecified')); cumCounts.push(seen.size); });
         const n = cumCounts.length, maxS = cumCounts[n-1] || 1;
         const maxPts = 60, step = Math.max(1, Math.ceil(n/maxPts));
         const sampled = [];
@@ -8431,15 +8748,15 @@
         const xPix = (i) => padL + (i/((n-1)||1))*plotW;
         const yPix = (v) => plotBottom - (v/maxS)*(plotBottom-plotTop);
         const pathPts = sampled.map(p => xPix(p.idx).toFixed(1)+','+yPix(p.val).toFixed(1));
-        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="#d9e0e0"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="#d9e0e0"/><path d="M${pathPts.join(' L')}" fill="none" stroke="#0a5c8c" stroke-width="2"/><text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">1</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${n} records</text><text x="${padL+4}" y="16" font-family="monospace" font-size="9" fill="#06384f">${maxS} species</text></svg>`;
-        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Cumulative distinct species vs. records added, ordered by timestamp. Observed order only, not a randomized rarefaction curve — a flattening curve suggests sampling effort is nearing saturation for this scope.</div>';
+        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="#d9e0e0"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="#d9e0e0"/><path d="M${pathPts.join(' L')}" fill="none" stroke="#0a5c8c" stroke-width="2"/><text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">1</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${n} `+t('adv_records')+`</text><text x="${padL+4}" y="16" font-family="monospace" font-size="9" fill="#06384f">${maxS} `+t('adv_species_lc')+`</text></svg>`;
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_accumulation_footnote')+'</div>';
       }
       html += '</div>';
 
       // --- Size histogram by species ---
-      html += '<div class="insight-card"><div class="insight-card-label">Size histogram by species</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('adv_size_histogram')+'</div>';
       if(speciesWithLength.length === 0){
-        html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('adv_histogram_empty')+'</div>';
       } else {
         if(!speciesWithLength.includes(insightsHistoSpecies)){
           insightsHistoSpecies = speciesWithLength.slice().sort((a,b)=>lengthStats[b].length-lengthStats[a].length)[0];
@@ -8449,7 +8766,7 @@
           + '</select>';
         const vals = lengthStats[insightsHistoSpecies];
         if(vals.length < 2){
-          html += '<div class="insight-empty">Only 1 measurement for this species — need 2+ to show a distribution.</div>';
+          html += '<div class="insight-empty">'+t('adv_histogram_single')+'</div>';
         } else {
           const minL=Math.min(...vals), maxL=Math.max(...vals), meanL=vals.reduce((a,b)=>a+b,0)/vals.length;
           const nBins=8, bSize=(maxL-minL)/nBins||1, bins=Array(nBins).fill(0);
@@ -8471,7 +8788,7 @@
           const sp = el.dataset.sexsp;
           const i = insightsSexSpecies.indexOf(sp);
           if(i !== -1){ insightsSexSpecies.splice(i,1); renderInsights(); return; }
-          if(insightsSexSpecies.length >= 5){ showToast('Max 5 species — tap one to remove it first', true); return; }
+          if(insightsSexSpecies.length >= 5){ showToast(t('msg_max_5_species'), true); return; }
           insightsSexSpecies.push(sp);
           renderInsights();
         });
@@ -8481,7 +8798,7 @@
           const sp = el.dataset.lwsp;
           const i = insightsLwSpecies.indexOf(sp);
           if(i !== -1){ insightsLwSpecies.splice(i,1); renderInsights(); return; }
-          if(insightsLwSpecies.length >= 5){ showToast('Max 5 species — tap one to remove it first', true); return; }
+          if(insightsLwSpecies.length >= 5){ showToast(t('msg_max_5_species'), true); return; }
           insightsLwSpecies.push(sp);
           renderInsights();
         });
@@ -8588,7 +8905,7 @@
 
   function startTracking(){
     if(!navigator.geolocation){
-      showToast('GPS not available in this browser', true);
+      showToast(t('msg_gps_not_available'), true);
       return;
     }
     trackActive = true;
@@ -8637,10 +8954,10 @@
 
     document.getElementById('trackToggleBtn').textContent = t('track_start');
     document.getElementById('trackToggleBtn').classList.remove('recording');
-    setTrackGpsStatus('GPS not active', false);
+    setTrackGpsStatus(t('track_gps_not_active'), false);
 
     if(trackPoints.length < 2){
-      showToast('Track too short to save', true);
+      showToast(t('msg_track_too_short'), true);
       trackPoints = [];
       trackStartTime = null;
       updateTrackUi();
@@ -8661,7 +8978,7 @@
     const tracks = loadTracks();
     tracks.push(track);
     saveTracks(tracks);
-    showToast('Track saved — ' + trackPoints.length + ' points');
+    showToast(t('msg_track_saved') + ' — ' + trackPoints.length + ' ' + t('msg_points'));
 
     trackPoints = [];
     trackStartTime = null;
@@ -8683,12 +9000,12 @@
     const trackSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 17c2.5-5 4.5 2 7-3s4 3 6.5-4" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><circle cx="3" cy="17" r="2" fill="#2f7a52"/><circle cx="16.5" cy="10" r="2" fill="#c0532f"/></svg>`;
     listEl.innerHTML = tracks.slice().reverse().map((t, revIdx) => {
       const idx = tracks.length - 1 - revIdx;
-      const when = new Date(t.started_at).toLocaleString('en-US', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+      const when = new Date(t.started_at).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
       const dur = formatTrackDuration(t.duration_sec * 1000);
       return '<div class="track-entry">'
         + '<div class="track-entry-icon">' + trackSvg + '</div>'
         + '<div style="flex:1;min-width:0;">'
-        + '<div class="te-main">' + (t.site || 'Unspecified site') + '</div>'
+        + '<div class="te-main">' + (t.site || window.t('msg_unspecified_site')) + '</div>'
         + '<div class="track-entry-chips">'
         + '<span class="chip chip-blue">' + t.points.length + ' pts</span>'
         + '<span class="chip chip-blue">' + t.distance_km.toFixed(2) + ' km</span>'
@@ -8713,12 +9030,12 @@
   document.getElementById('exportTracksBtn').addEventListener('click', () => {
     const tracks = loadTracks();
     if(tracks.length === 0){
-      showToast('No saved tracks to export', true);
+      showToast(t('msg_no_saved_tracks'), true);
       return;
     }
     const today = new Date().toISOString().slice(0,10);
     downloadFile(buildGeoJsonTracks(tracks), 'vessel_tracks_' + today + '.geojson', 'application/geo+json');
-    showToast('Tracks exported · ' + tracks.length + ' track(s)');
+    showToast(t('msg_tracks_exported') + ' · ' + tracks.length + ' ' + t('msg_tracks_lc'));
   });
 
   function renderTrackScreen(){
@@ -8779,11 +9096,11 @@
 
   async function downloadCurrentMapArea(){
     if(!leafletInstance){
-      showToast('Open the map first', true);
+      showToast(t('msg_open_map_first'), true);
       return;
     }
     if(!('caches' in window)){
-      showToast('Offline storage not supported on this browser', true);
+      showToast(t('msg_offline_storage_not_supported'), true);
       return;
     }
     const center = leafletInstance.getCenter();
@@ -8794,7 +9111,7 @@
 
     const progressEl = document.getElementById('offlineProgress');
     progressEl.style.display = 'block';
-    progressEl.innerHTML = 'Downloading 0 / ' + allTiles.length + ' tiles…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" id="offlineProgressFill" style="width:0%;"></div></div>';
+    progressEl.innerHTML = t('msg_downloading') + ' 0 / ' + allTiles.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" id="offlineProgressFill" style="width:0%;"></div></div>';
 
     const cache = await caches.open(TILE_CACHE_NAME);
     let done = 0, failed = 0;
@@ -8813,7 +9130,7 @@
         } catch(e){ failed++; }
         done++;
         const pct = Math.round(done / allTiles.length * 100);
-        progressEl.innerHTML = 'Downloading ' + done + ' / ' + allTiles.length + ' tiles…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
+        progressEl.innerHTML = t('msg_downloading') + ' ' + done + ' / ' + allTiles.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
       }
     }
     await Promise.all(Array.from({length: CONCURRENCY}, worker));
@@ -8829,7 +9146,7 @@
     saveOfflineAreas(areas);
 
     progressEl.style.display = 'none';
-    showToast(failed === 0 ? 'Area saved for offline use' : 'Area saved (' + failed + ' tiles failed — retry if needed)');
+    showToast(failed === 0 ? t('msg_area_saved') : t('msg_area_saved_partial') + ' (' + failed + ' ' + t('msg_tiles_failed') + ')');
     renderOfflineAreasList();
   }
 
@@ -8843,7 +9160,7 @@
       return;
     }
     listEl.innerHTML = areas.map((a, idx) => {
-      const when = new Date(a.downloaded_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'});
+      const when = new Date(a.downloaded_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
       return '<div class="offline-area-entry">'
         + '<div><div class="oa-main">' + a.lat.toFixed(3) + ', ' + a.lon.toFixed(3) + '</div>'
         + '<div class="oa-meta">±' + a.radius_km + 'km · ' + a.tile_count + ' tiles · saved ' + when + '</div></div>'
@@ -8859,7 +9176,7 @@
     areas.splice(idx, 1);
     saveOfflineAreas(areas);
     renderOfflineAreasList();
-    showToast('Offline area removed from list (cached tiles remain until cache is cleared)');
+    showToast(t('msg_offline_area_removed'));
   });
 
   // ===== Campaigns / projects =====
@@ -8889,7 +9206,7 @@
     const input = document.getElementById('newCampaignName');
     const name = input.value.trim();
     if(!name){
-      showToast('Campaign name is required', true);
+      showToast(t('msg_campaign_name_required'), true);
       input.focus();
       return;
     }
@@ -8904,7 +9221,7 @@
     saveCampaigns(campaigns);
     localStorage.setItem(ACTIVE_CAMPAIGN_KEY, campaign.id);
     input.value = '';
-    showToast('Campaign "' + name + '" started');
+    showToast(t('msg_campaign') + ' "' + name + '" ' + t('msg_started'));
     renderCampaignsScreen();
     updateCampaignBanner();
   });
@@ -8980,7 +9297,7 @@
       const recordCount = allEntries.filter(e => e.campaign_id === c.id).length;
       const spCount = new Set(allEntries.filter(e => e.campaign_id === c.id).map(e => e.species).filter(Boolean)).size;
       const isActive = !c.closed_at && localStorage.getItem(ACTIVE_CAMPAIGN_KEY) === c.id;
-      const statusLabel = isActive ? 'Active' : ('Closed ' + new Date(c.closed_at).toLocaleDateString('en-US', {day:'2-digit', month:'short'}));
+      const statusLabel = isActive ? t('camp_active_short') : (t('camp_closed_short') + ' ' + new Date(c.closed_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'}));
       const statusClass = isActive ? 'active' : 'closed';
       return '<div class="campaign-entry' + (isActive ? ' is-active' : '') + '">'
         + '<div class="ce-header"><div class="ce-main">' + c.name + '</div><span class="ce-status-chip ' + statusClass + '">' + statusLabel + '</span></div>'
