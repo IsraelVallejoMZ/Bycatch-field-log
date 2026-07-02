@@ -2378,54 +2378,54 @@
 <section class="screen" id="screen-sport-session">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Fish Pulse · Sport</span>
-      <button class="switch-mode-btn" id="switchModeBtnSport">Switch Mode</button>
+      <span class="brand" data-i18n="sp_brand">Fish Pulse · Sport</span>
+      <button class="switch-mode-btn" id="switchModeBtnSport" data-i18n="fltrip_switch_mode">Switch Mode</button>
     </div>
-    <h1>Session</h1>
-    <div class="site-line" id="sportSpotLine">No Spot Selected</div>
+    <h1 data-i18n="sp_session">Session</h1>
+    <div class="site-line" id="sportSpotLine" data-i18n="sp_no_spot">No Spot Selected</div>
   </div>
   <main>
     <div class="card" style="background:#0e1b26;border:none;">
-      <div class="insight-card-label" style="color:#8fb4c9;margin-bottom:10px;">Solunar Forecast · Today</div>
+      <div class="insight-card-label" style="color:#8fb4c9;margin-bottom:10px;" data-i18n="sp_solunar_today">Solunar Forecast · Today</div>
       <div id="sportSolunarBox"></div>
     </div>
 
     <div id="sportNoSessionCard">
       <div class="card">
-        <div class="insight-card-label" style="margin-bottom:12px;">Start a new session</div>
-        <label for="sportSpotSelect">Spot</label>
+        <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_start_new_session">Start a new session</div>
+        <label for="sportSpotSelect" data-i18n="sp_spot">Spot</label>
         <select id="sportSpotSelect">
-          <option value="">— No Spot / Open Water —</option>
-          <option value="__new__">+ New Spot</option>
+          <option value="" data-i18n="sp_no_spot_open_water">— No Spot / Open Water —</option>
+          <option value="__new__" data-i18n="sp_new_spot">+ New Spot</option>
         </select>
         <div id="sportNewSpotBox" style="display:none; margin-top:10px;">
-          <label for="sportNewSpotName">Spot Name</label>
+          <label for="sportNewSpotName" data-i18n="sp_spot_name">Spot Name</label>
           <input type="text" id="sportNewSpotName" placeholder="e.g. North Pier">
         </div>
 
-        <label for="sportFishingMethod">Method</label>
+        <label for="sportFishingMethod" data-i18n="sp_method">Method</label>
         <select id="sportFishingMethod">
-          <option value="Shore">Shore</option>
-          <option value="Boat">Boat</option>
-          <option value="Kayak">Kayak</option>
-          <option value="Fly">Fly Fishing</option>
-          <option value="Ice">Ice Fishing</option>
-          <option value="Other">Other</option>
+          <option value="Shore" data-i18n="sp_method_shore">Shore</option>
+          <option value="Boat" data-i18n="sp_method_boat">Boat</option>
+          <option value="Kayak" data-i18n="sp_method_kayak">Kayak</option>
+          <option value="Fly" data-i18n="sp_method_fly">Fly Fishing</option>
+          <option value="Ice" data-i18n="sp_method_ice">Ice Fishing</option>
+          <option value="Other" data-i18n="rec_gear_other">Other</option>
         </select>
 
         <div class="step-card-header" style="margin:16px 0 10px;">
           <div class="sc-icon-box" style="background:var(--blue-mist);">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
           </div>
-          <span class="sc-title">Weather &amp; Tide <span class="optional-tag">at your current location</span></span>
+          <span class="sc-title"><span data-i18n="sp_weather_tide">Weather &amp; Tide</span> <span class="optional-tag" data-i18n="sp_current_location">at your current location</span></span>
         </div>
-        <button type="button" class="btn btn-clear" id="sportFetchWeatherBtn" style="width:100%;">Get Conditions</button>
+        <button type="button" class="btn btn-clear" id="sportFetchWeatherBtn" style="width:100%;" data-i18n="sp_get_conditions">Get Conditions</button>
         <div id="sportWeatherBox" style="display:none; margin-top:10px;"></div>
 
-        <label for="sportConditionsNote" style="margin-top:14px;">Conditions <span class="optional-tag">optional — water, notes</span></label>
+        <label for="sportConditionsNote" style="margin-top:14px;"><span data-i18n="sp_conditions">Conditions</span> <span class="optional-tag" data-i18n="sp_conditions_hint">optional — water, notes</span></label>
         <input type="text" id="sportConditionsNote" placeholder="e.g. Overcast, light chop, incoming tide">
 
-        <button class="btn btn-save" id="sportStartSessionBtn" style="width:100%; margin-top:16px;">Start Session</button>
+        <button class="btn btn-save" id="sportStartSessionBtn" style="width:100%; margin-top:16px;" data-i18n="sp_start_session">Start Session</button>
       </div>
     </div>
 
@@ -2439,7 +2439,7 @@
         </div>
         <div>
           <div class="num" id="sportSessionDuration">0h 00m</div>
-          <div class="hh-meta">Session duration · <span id="sportSessionSpotTag">Open Water</span></div>
+          <div class="hh-meta"><span data-i18n="sp_session_duration">Session duration</span> · <span id="sportSessionSpotTag" data-i18n="sp_open_water">Open Water</span></div>
         </div>
       </div>
 
@@ -2451,14 +2451,14 @@
               <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
             </svg>
           </div>
-          <div class="at-title">Log Catch</div>
+          <div class="at-title" data-i18n="fltrip_log_catch">Log Catch</div>
         </div>
       </div>
 
-      <button class="fleet-close-trip-btn" id="sportEndSessionBtn">End Session</button>
+      <button class="fleet-close-trip-btn" id="sportEndSessionBtn" data-i18n="sp_end_session">End Session</button>
 
       <div class="hist-meta-row">
-        <span class="insight-card-label" style="margin:0;">Catches this session</span>
+        <span class="insight-card-label" style="margin:0;" data-i18n="sp_catches_this_session">Catches this session</span>
       </div>
       <div id="sportSessionCatchList"></div>
     </div>
@@ -2470,10 +2470,10 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" id="sportCatchBackBtn" data-go="sport-session">←</button>
-      <span class="brand" id="sportCatchBrand">Log Catch</span>
+      <span class="brand" id="sportCatchBrand" data-i18n="flcatch_brand">Log Catch</span>
     </div>
-    <h1>Catch Entry</h1>
-    <div class="site-line" id="sportCatchSessionLine">Not Linked To A Session</div>
+    <h1 data-i18n="flcatch_title">Catch Entry</h1>
+    <div class="site-line" id="sportCatchSessionLine" data-i18n="sp_not_linked_session">Not Linked To A Session</div>
   </div>
   <main>
     <div class="card">
@@ -2481,34 +2481,34 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title">Species &amp; size</span>
+        <span class="sc-title" data-i18n="sp_species_size">Species &amp; size</span>
       </div>
-      <label for="sportSpecies">Species</label>
+      <label for="sportSpecies" data-i18n="rec_species_label">Species</label>
       <input type="text" id="sportSpecies" placeholder="e.g. Largemouth bass" list="sport-species-list">
       <datalist id="sport-species-list"></datalist>
 
       <div class="grid2">
         <div>
-          <label for="sportCatchWeight">Weight (kg) <span class="optional-tag">opt.</span></label>
+          <label for="sportCatchWeight"><span data-i18n="sp_weight_kg">Weight (kg)</span> <span class="optional-tag" data-i18n="sp_opt">opt.</span></label>
           <input type="number" id="sportCatchWeight" inputmode="decimal" placeholder="0.0">
         </div>
         <div>
-          <label for="sportCatchLength">Length (cm) <span class="optional-tag">opt.</span></label>
+          <label for="sportCatchLength"><span data-i18n="sp_length_cm">Length (cm)</span> <span class="optional-tag" data-i18n="sp_opt">opt.</span></label>
           <input type="number" id="sportCatchLength" inputmode="decimal" placeholder="0.0">
         </div>
       </div>
 
-      <label for="sportLureUsed">Lure / Bait <span class="optional-tag">optional</span></label>
+      <label for="sportLureUsed"><span data-i18n="sp_lure_bait">Lure / Bait</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="text" id="sportLureUsed" placeholder="e.g. Soft plastic worm" list="sport-lure-list">
       <datalist id="sport-lure-list"></datalist>
 
-      <label>Outcome</label>
+      <label data-i18n="sp_outcome">Outcome</label>
       <div class="grid2">
-        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#dff0e8;color:#2f7a52;font-weight:600;">Kept</button>
-        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#dfeaf0;color:#0a5c8c;font-weight:600;">Released</button>
+        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#dff0e8;color:#2f7a52;font-weight:600;" data-i18n="sp_kept">Kept</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#dfeaf0;color:#0a5c8c;font-weight:600;" data-i18n="rec_cond_released">Released</button>
       </div>
 
-      <label for="sportCatchNotes" style="margin-top:14px;">Notes <span class="optional-tag">optional</span></label>
+      <label for="sportCatchNotes" style="margin-top:14px;"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="text" id="sportCatchNotes" placeholder="e.g. Caught near submerged log">
     </div>
 
@@ -2517,13 +2517,13 @@
         <div class="at-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <div class="at-title">Photo</div>
+        <div class="at-title" data-i18n="rec_photo_label">Photo</div>
       </div>
       <div class="action-tile" id="sportGpsBtnTile">
         <div class="at-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/><circle cx="12" cy="9" r="2" fill="white"/></svg>
         </div>
-        <div class="at-title">GPS</div>
+        <div class="at-title" data-i18n="sp_gps">GPS</div>
       </div>
     </div>
 
@@ -2533,14 +2533,14 @@
 
     <div class="card" id="sportGpsCard" style="display:none;">
       <div id="sportGpsBox" class="gpsbox">
-        <span class="coords pending" id="sportCoordsLabel">not captured</span>
-        <button class="gps-btn" id="sportCaptureGpsBtn" type="button">Capture</button>
+        <span class="coords pending" id="sportCoordsLabel" data-i18n="rec_not_captured">not captured</span>
+        <button class="gps-btn" id="sportCaptureGpsBtn" type="button" data-i18n="rec_capture_gps">Capture</button>
       </div>
     </div>
   </main>
   <div class="savebar">
-    <button class="btn btn-clear" id="sportCatchAddAnotherBtn">+ Add Another</button>
-    <button class="btn btn-save" id="sportCatchSaveBtn">Save &amp; Return</button>
+    <button class="btn btn-clear" id="sportCatchAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
+    <button class="btn btn-save" id="sportCatchSaveBtn" data-i18n="sp_save_return">Save &amp; Return</button>
   </div>
 </section>
 
@@ -2548,13 +2548,13 @@
 <section class="screen" id="screen-sport-catch-log">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Catch Log</span>
+      <span class="brand" data-i18n="sp_catch_log">Catch Log</span>
     </div>
-    <h1>All Catches</h1>
+    <h1 data-i18n="sp_all_catches">All Catches</h1>
     <div class="hist-search-wrap" style="margin-top:10px;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
       <select id="sportCatchLogSpeciesFilter" style="background:none;border:none;outline:none;font-family:var(--display);font-size:13px;color:white;flex:1;padding:0;">
-        <option value="">All species</option>
+        <option value="" data-i18n="sp_all_species">All species</option>
       </select>
     </div>
   </div>
@@ -2570,34 +2570,34 @@
 <section class="screen" id="screen-sport-spots">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Spots</span>
+      <span class="brand" data-i18n="sp_spots">Spots</span>
     </div>
-    <h1>Saved Spots</h1>
-    <div class="site-line">Private — stored only on this device</div>
+    <h1 data-i18n="sp_saved_spots">Saved Spots</h1>
+    <div class="site-line" data-i18n="sp_private_device">Private — stored only on this device</div>
   </div>
   <main>
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;">Add a spot</div>
-      <label for="sportSpotName">Name</label>
+      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_add_spot">Add a spot</div>
+      <label for="sportSpotName" data-i18n="sp_name">Name</label>
       <input type="text" id="sportSpotName" placeholder="e.g. North Pier">
-      <label for="sportSpotNote">Note <span class="optional-tag">optional</span></label>
+      <label for="sportSpotNote"><span data-i18n="sp_note">Note</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="text" id="sportSpotNote" placeholder="e.g. Best at dawn, drop-off 20m out">
       <div id="sportSpotGpsBox" class="gpsbox" style="margin-top:10px;">
-        <span class="coords pending" id="sportSpotCoordsLabel">not captured</span>
-        <button class="gps-btn" id="sportSpotCaptureGpsBtn" type="button">Capture</button>
+        <span class="coords pending" id="sportSpotCoordsLabel" data-i18n="rec_not_captured">not captured</span>
+        <button class="gps-btn" id="sportSpotCaptureGpsBtn" type="button" data-i18n="rec_capture_gps">Capture</button>
       </div>
-      <button class="btn btn-save" id="sportAddSpotBtn" style="width:100%; margin-top:14px;">Save Spot</button>
+      <button class="btn btn-save" id="sportAddSpotBtn" style="width:100%; margin-top:14px;" data-i18n="sp_save_spot">Save Spot</button>
     </div>
 
     <div class="hist-meta-row">
-      <span class="insight-card-label" style="margin:0;">Your spots</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="sp_your_spots">Your spots</span>
     </div>
     <div id="sportSpotsList"></div>
 
     <!-- Map: always visible with layer toggle -->
     <div class="map-layer-toggle" id="sportMapLayerToggle" style="margin-top:14px;">
-      <button class="mlt-btn active" id="sportMltStreet">Street</button>
-      <button class="mlt-btn" id="sportMltSatellite">Satellite</button>
+      <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
+      <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
     </div>
     <div id="sportLeafletMap" style="height:320px; border-radius:var(--radius); margin-top:8px; overflow:hidden;"></div>
   </main>
@@ -2607,37 +2607,37 @@
 <section class="screen" id="screen-sport-documents">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Documents</span>
+      <span class="brand" data-i18n="fldocs_brand">Documents</span>
     </div>
-    <h1>Licenses &amp; Permits</h1>
-    <div class="site-line">Keep your license handy for inspection</div>
+    <h1 data-i18n="sp_licenses_permits">Licenses &amp; Permits</h1>
+    <div class="site-line" data-i18n="sp_keep_license">Keep your license handy for inspection</div>
   </div>
   <main>
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;">Add a document</div>
-      <label for="sportDocType">Document Type</label>
+      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_add_document">Add a document</div>
+      <label for="sportDocType" data-i18n="fldocs_type">Document Type</label>
       <select id="sportDocType">
-        <option value="license">Fishing License</option>
-        <option value="boat_permit">Boat Permit</option>
-        <option value="species_tag">Species Tag / Stamp</option>
-        <option value="other">Other</option>
+        <option value="license" data-i18n="fldocs_fishing_license">Fishing License</option>
+        <option value="boat_permit" data-i18n="sp_boat_permit">Boat Permit</option>
+        <option value="species_tag" data-i18n="sp_species_tag">Species Tag / Stamp</option>
+        <option value="other" data-i18n="rec_gear_other">Other</option>
       </select>
-      <label for="sportDocLabel">Label <span class="optional-tag">optional — e.g. folio number</span></label>
+      <label for="sportDocLabel"><span data-i18n="fldocs_label">Label</span> <span class="optional-tag" data-i18n="sp_folio_hint">optional — e.g. folio number</span></label>
       <input type="text" id="sportDocLabel" placeholder="e.g. 2026 Season">
-      <label for="sportDocExpiry">Expiry Date</label>
+      <label for="sportDocExpiry" data-i18n="fldocs_expiry">Expiry Date</label>
       <input type="date" id="sportDocExpiry">
       <div class="step-card-header" style="margin:14px 0 10px;">
         <div class="sc-icon-box" style="background:var(--blue-mist);">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-        <span class="sc-title">Photo / Scan <span class="optional-tag">optional</span></span>
+        <span class="sc-title"><span data-i18n="fldocs_photo_scan">Photo / Scan</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
       <div class="photobox" id="sportDocPhotoBox"></div>
-      <button class="btn btn-save" id="sportDocAddBtn" style="width:100%; margin-top:16px;">Add Document</button>
+      <button class="btn btn-save" id="sportDocAddBtn" style="width:100%; margin-top:16px;" data-i18n="fldocs_add_btn">Add Document</button>
     </div>
 
     <div class="hist-meta-row">
-      <span class="insight-card-label" style="margin:0;">Your documents</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="sp_your_documents">Your documents</span>
     </div>
     <div id="sportDocumentsList"></div>
   </main>
@@ -2647,10 +2647,10 @@
 <section class="screen" id="screen-sport-stats">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="brand">Stats</span>
+      <span class="brand" data-i18n="ins_tab_stats">Stats</span>
     </div>
-    <h1>Personal Stats</h1>
-    <div class="site-line">From your logged catches</div>
+    <h1 data-i18n="sp_personal_stats">Personal Stats</h1>
+    <div class="site-line" data-i18n="sp_from_logged_catches">From your logged catches</div>
   </div>
   <main>
     <div id="sportStatsBody"></div>
@@ -2681,23 +2681,23 @@
 <nav class="tabbar sport-only" id="tabbarSport">
   <button class="tab active" data-go="sport-session">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4c0 5-1 6-1 10a4 4 0 1 0 5 0c-2-2-4-5-4-10z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    Session
+    <span data-i18n="sp_session">Session</span>
   </button>
   <button class="tab" data-go="sport-catch-log">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    Catch Log
+    <span data-i18n="sp_catch_log">Catch Log</span>
   </button>
   <button class="tab" data-go="sport-spots">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg></span>
-    Spots
+    <span data-i18n="sp_spots">Spots</span>
   </button>
   <button class="tab" data-go="sport-documents">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    Docs
+    <span data-i18n="fltab_docs">Docs</span>
   </button>
   <button class="tab" data-go="sport-stats">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg></span>
-    Stats
+    <span data-i18n="ins_tab_stats">Stats</span>
   </button>
 </nav>
 
@@ -2855,7 +2855,22 @@
       flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
       flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
       flstats_h1: 'Fleet Statistics', fltab_trip: 'Trip', fltab_fuel: 'Fuel', fltab_docs: 'Docs',
-      fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels'
+      fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
+      sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
+      sp_start_new_session: 'Start a new session', sp_spot: 'Spot', sp_no_spot_open_water: '— No Spot / Open Water —', sp_new_spot: '+ New Spot', sp_spot_name: 'Spot Name',
+      sp_method: 'Method', sp_method_shore: 'Shore', sp_method_boat: 'Boat', sp_method_kayak: 'Kayak', sp_method_fly: 'Fly Fishing', sp_method_ice: 'Ice Fishing',
+      sp_weather_tide: 'Weather &amp; Tide', sp_current_location: 'at your current location', sp_get_conditions: 'Get Conditions',
+      sp_conditions: 'Conditions', sp_conditions_hint: 'optional — water, notes', sp_start_session: 'Start Session',
+      sp_session_duration: 'Session duration', sp_open_water: 'Open Water', sp_end_session: 'End Session', sp_catches_this_session: 'Catches this session',
+      sp_not_linked_session: 'Not Linked To A Session', sp_species_size: 'Species &amp; size', sp_weight_kg: 'Weight (kg)', sp_opt: 'opt.', sp_length_cm: 'Length (cm)',
+      sp_lure_bait: 'Lure / Bait', sp_outcome: 'Outcome', sp_kept: 'Kept', sp_save_return: 'Save &amp; Return', sp_gps: 'GPS',
+      sp_catch_log: 'Catch Log', sp_all_catches: 'All Catches', sp_all_species: 'All species',
+      sp_spots: 'Spots', sp_saved_spots: 'Saved Spots', sp_private_device: 'Private — stored only on this device', sp_add_spot: 'Add a spot', sp_name: 'Name',
+      sp_note: 'Note', sp_save_spot: 'Save Spot', sp_your_spots: 'Your spots',
+      sp_licenses_permits: 'Licenses &amp; Permits', sp_keep_license: 'Keep your license handy for inspection', sp_add_document: 'Add a document',
+      sp_boat_permit: 'Boat Permit', sp_species_tag: 'Species Tag / Stamp', sp_folio_hint: 'optional — e.g. folio number', sp_your_documents: 'Your documents',
+      sp_personal_stats: 'Personal Stats', sp_from_logged_catches: 'From your logged catches',
+      sp_linked_current_session: 'Linked To Current Session', sp_linked_session_started: 'Linked To Session Started '
     },
     es: {
       splash_slide1_title: 'Captura datos en el mar', splash_slide1_body: 'Especies, biología, bycatch, GPS — todo sin conexión. No necesitas señal en campo.',
@@ -2977,7 +2992,22 @@
       flvessels_maintenance_interval: 'Intervalo de Mantenimiento (horas en el mar)', flvessels_hours_since_service: 'Horas en el mar desde el último servicio', flvessels_hours_since_service_hint: 'opcional, hoy',
       flvessels_add_btn: 'Agregar Embarcación', flvessels_all_vessels: 'Todas las embarcaciones', flvessels_all_captains: 'Todos los capitanes', flvessels_all_crew: 'Toda la tripulación',
       flstats_h1: 'Estadísticas de la Flota', fltab_trip: 'Viaje', fltab_fuel: 'Combustible', fltab_docs: 'Docs',
-      fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones'
+      fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
+      sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
+      sp_start_new_session: 'Iniciar una nueva sesión', sp_spot: 'Spot', sp_no_spot_open_water: '— Sin Spot / Agua Abierta —', sp_new_spot: '+ Nuevo Spot', sp_spot_name: 'Nombre del Spot',
+      sp_method: 'Método', sp_method_shore: 'Desde Orilla', sp_method_boat: 'Desde Bote', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca en Hielo',
+      sp_weather_tide: 'Clima y Marea', sp_current_location: 'en tu ubicación actual', sp_get_conditions: 'Obtener Condiciones',
+      sp_conditions: 'Condiciones', sp_conditions_hint: 'opcional — agua, notas', sp_start_session: 'Iniciar Sesión',
+      sp_session_duration: 'Duración de la sesión', sp_open_water: 'Agua Abierta', sp_end_session: 'Terminar Sesión', sp_catches_this_session: 'Capturas de esta sesión',
+      sp_not_linked_session: 'No Vinculado a una Sesión', sp_species_size: 'Especie y tamaño', sp_weight_kg: 'Peso (kg)', sp_opt: 'opc.', sp_length_cm: 'Longitud (cm)',
+      sp_lure_bait: 'Señuelo / Carnada', sp_outcome: 'Resultado', sp_kept: 'Conservado', sp_save_return: 'Guardar y Volver', sp_gps: 'GPS',
+      sp_catch_log: 'Registro de Capturas', sp_all_catches: 'Todas las Capturas', sp_all_species: 'Todas las especies',
+      sp_spots: 'Spots', sp_saved_spots: 'Spots Guardados', sp_private_device: 'Privado — guardado solo en este dispositivo', sp_add_spot: 'Agregar un spot', sp_name: 'Nombre',
+      sp_note: 'Nota', sp_save_spot: 'Guardar Spot', sp_your_spots: 'Tus spots',
+      sp_licenses_permits: 'Licencias y Permisos', sp_keep_license: 'Ten tu licencia a la mano para inspección', sp_add_document: 'Agregar un documento',
+      sp_boat_permit: 'Permiso de Embarcación', sp_species_tag: 'Etiqueta / Sello de Especie', sp_folio_hint: 'opcional — ej. número de folio', sp_your_documents: 'Tus documentos',
+      sp_personal_stats: 'Estadísticas Personales', sp_from_logged_catches: 'De tus capturas registradas',
+      sp_linked_current_session: 'Vinculado a la Sesión Actual', sp_linked_session_started: 'Vinculado a Sesión Iniciada el '
     },
     it: {
       splash_slide1_title: 'Cattura dati in mare', splash_slide1_body: 'Specie, biologia, catture accessorie, GPS — tutto offline. Nessun segnale necessario sul campo.',
@@ -3099,7 +3129,22 @@
       flvessels_maintenance_interval: 'Intervallo di Manutenzione (ore in mare)', flvessels_hours_since_service: "Ore in mare dall'ultima manutenzione", flvessels_hours_since_service_hint: 'opzionale, oggi',
       flvessels_add_btn: 'Aggiungi Imbarcazione', flvessels_all_vessels: 'Tutte le imbarcazioni', flvessels_all_captains: 'Tutti i capitani', flvessels_all_crew: 'Tutto l\'equipaggio',
       flstats_h1: 'Statistiche della Flotta', fltab_trip: 'Viaggio', fltab_fuel: 'Carburante', fltab_docs: 'Docs',
-      fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni'
+      fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
+      sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
+      sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
+      sp_method: 'Metodo', sp_method_shore: 'Da Riva', sp_method_boat: 'Da Barca', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca sul Ghiaccio',
+      sp_weather_tide: 'Meteo e Marea', sp_current_location: 'nella tua posizione attuale', sp_get_conditions: 'Ottieni Condizioni',
+      sp_conditions: 'Condizioni', sp_conditions_hint: 'opzionale — acqua, note', sp_start_session: 'Avvia Sessione',
+      sp_session_duration: 'Durata sessione', sp_open_water: 'Acqua Libera', sp_end_session: 'Termina Sessione', sp_catches_this_session: 'Catture di questa sessione',
+      sp_not_linked_session: 'Non Collegata a una Sessione', sp_species_size: 'Specie e taglia', sp_weight_kg: 'Peso (kg)', sp_opt: 'opz.', sp_length_cm: 'Lunghezza (cm)',
+      sp_lure_bait: 'Esca', sp_outcome: 'Esito', sp_kept: 'Trattenuto', sp_save_return: 'Salva e Torna', sp_gps: 'GPS',
+      sp_catch_log: 'Registro Catture', sp_all_catches: 'Tutte le Catture', sp_all_species: 'Tutte le specie',
+      sp_spots: 'Spot', sp_saved_spots: 'Spot Salvati', sp_private_device: 'Privato — salvato solo su questo dispositivo', sp_add_spot: 'Aggiungi uno spot', sp_name: 'Nome',
+      sp_note: 'Nota', sp_save_spot: 'Salva Spot', sp_your_spots: 'I tuoi spot',
+      sp_licenses_permits: 'Licenze e Permessi', sp_keep_license: 'Tieni la licenza a portata di mano per eventuali controlli', sp_add_document: 'Aggiungi un documento',
+      sp_boat_permit: 'Permesso Imbarcazione', sp_species_tag: 'Tag / Bollino Specie', sp_folio_hint: 'opzionale — es. numero folio', sp_your_documents: 'I tuoi documenti',
+      sp_personal_stats: 'Statistiche Personali', sp_from_logged_catches: 'Dalle tue catture registrate',
+      sp_linked_current_session: 'Collegata alla Sessione Corrente', sp_linked_session_started: 'Collegata a Sessione Iniziata il '
     },
     th: {
       splash_slide1_title: 'บันทึกข้อมูลกลางทะเล', splash_slide1_body: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ จีพีเอส — ใช้งานได้แบบออฟไลน์ทั้งหมด ไม่ต้องมีสัญญาณในภาคสนาม',
@@ -3221,7 +3266,22 @@
       flvessels_maintenance_interval: 'ช่วงเวลาบำรุงรักษา (ชั่วโมงในทะเล)', flvessels_hours_since_service: 'ชั่วโมงในทะเลตั้งแต่ซ่อมบำรุงครั้งล่าสุด', flvessels_hours_since_service_hint: 'ไม่บังคับ วันนี้',
       flvessels_add_btn: 'เพิ่มเรือ', flvessels_all_vessels: 'เรือทั้งหมด', flvessels_all_captains: 'กัปตันทั้งหมด', flvessels_all_crew: 'ลูกเรือทั้งหมด',
       flstats_h1: 'สถิติกองเรือ', fltab_trip: 'ทริป', fltab_fuel: 'เชื้อเพลิง', fltab_docs: 'เอกสาร',
-      fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ'
+      fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
+      sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
+      sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
+      sp_method: 'วิธีการ', sp_method_shore: 'ตกจากฝั่ง', sp_method_boat: 'ตกจากเรือ', sp_method_kayak: 'คายัค', sp_method_fly: 'ตกปลาด้วยเหยื่อปลอมลอย', sp_method_ice: 'ตกปลาน้ำแข็ง',
+      sp_weather_tide: 'สภาพอากาศและน้ำขึ้นน้ำลง', sp_current_location: 'ที่ตำแหน่งปัจจุบันของคุณ', sp_get_conditions: 'ดูสภาพอากาศ',
+      sp_conditions: 'สภาพ', sp_conditions_hint: 'ไม่บังคับ — น้ำ บันทึกย่อ', sp_start_session: 'เริ่มเซสชัน',
+      sp_session_duration: 'ระยะเวลาเซสชัน', sp_open_water: 'น้ำเปิด', sp_end_session: 'จบเซสชัน', sp_catches_this_session: 'การจับปลาในเซสชันนี้',
+      sp_not_linked_session: 'ยังไม่ได้เชื่อมกับเซสชัน', sp_species_size: 'ชนิดพันธุ์และขนาด', sp_weight_kg: 'น้ำหนัก (กก.)', sp_opt: 'ไม่บังคับ', sp_length_cm: 'ความยาว (ซม.)',
+      sp_lure_bait: 'เหยื่อล่อ / เหยื่อ', sp_outcome: 'ผลลัพธ์', sp_kept: 'เก็บไว้', sp_save_return: 'บันทึกและกลับ', sp_gps: 'จีพีเอส',
+      sp_catch_log: 'บันทึกการจับปลา', sp_all_catches: 'การจับปลาทั้งหมด', sp_all_species: 'ทุกชนิดพันธุ์',
+      sp_spots: 'จุดตกปลา', sp_saved_spots: 'จุดตกปลาที่บันทึกไว้', sp_private_device: 'ส่วนตัว — บันทึกไว้ในอุปกรณ์นี้เท่านั้น', sp_add_spot: 'เพิ่มจุดตกปลา', sp_name: 'ชื่อ',
+      sp_note: 'บันทึกย่อ', sp_save_spot: 'บันทึกจุดตกปลา', sp_your_spots: 'จุดตกปลาของคุณ',
+      sp_licenses_permits: 'ใบอนุญาตและใบอนุญาตประกอบการ', sp_keep_license: 'เตรียมใบอนุญาตของคุณไว้สำหรับการตรวจสอบ', sp_add_document: 'เพิ่มเอกสาร',
+      sp_boat_permit: 'ใบอนุญาตเรือ', sp_species_tag: 'ป้าย / ตราประทับชนิดพันธุ์', sp_folio_hint: 'ไม่บังคับ — เช่น หมายเลขเอกสาร', sp_your_documents: 'เอกสารของคุณ',
+      sp_personal_stats: 'สถิติส่วนตัว', sp_from_logged_catches: 'จากการจับปลาที่บันทึกไว้',
+      sp_linked_current_session: 'เชื่อมกับเซสชันปัจจุบัน', sp_linked_session_started: 'เชื่อมกับเซสชันที่เริ่มเมื่อ '
     }
   };
 
@@ -5913,7 +5973,7 @@
     if(!session){
       noCard.style.display = 'block';
       activeCard.style.display = 'none';
-      document.getElementById('sportSpotLine').textContent = 'No Spot Selected';
+      document.getElementById('sportSpotLine').textContent = t('sp_no_spot');
       return;
     }
     noCard.style.display = 'none';
@@ -6054,7 +6114,7 @@
     setSportCatchScreenMode();
     clearSportCatchForm();
     const session = getActiveSession();
-    document.getElementById('sportCatchSessionLine').textContent = session ? 'Linked To Current Session' : 'Not Linked To A Session';
+    document.getElementById('sportCatchSessionLine').textContent = session ? t('sp_linked_current_session') : t('sp_not_linked_session');
     sportGoToScreenRaw('log-catch');
   }
   // Opens an existing catch for correction — used from the Catch Log
@@ -6095,7 +6155,7 @@
       resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
     }
     const session = record.session_id ? load(SESSIONS_KEY).find(s => s.session_id === record.session_id) : null;
-    document.getElementById('sportCatchSessionLine').textContent = session ? 'Linked To Session Started ' + new Date(session.started_at).toLocaleDateString() : 'Not Linked To A Session';
+    document.getElementById('sportCatchSessionLine').textContent = session ? t('sp_linked_session_started') + new Date(session.started_at).toLocaleDateString() : t('sp_not_linked_session');
     sportGoToScreenRaw('log-catch');
   }
   // Direct screen swap without the tab-bar bookkeeping sportGoTo does,
