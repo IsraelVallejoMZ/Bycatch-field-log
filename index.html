@@ -2328,8 +2328,74 @@
       <span class="insight-card-label" style="margin:0;" data-i18n="flvessels_all_crew">All crew</span>
     </div>
     <div id="crewList"></div>
+
+    <div class="hist-meta-row" style="margin-top:20px;">
+      <span class="insight-card-label" style="margin:0;" data-i18n="flspecies_codes_title">Species reporting codes</span>
+    </div>
+    <div class="card">
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flspecies_codes_hint">Match each species you log to the official codes used by fisheries authorities. Fill in only the codes relevant to where you report.</div>
+      <label for="speciesCodeName" data-i18n="flspecies_name_label">Species Name (as you type it in catches)</label>
+      <input type="text" id="speciesCodeName" placeholder="e.g. Carcharhinus sorrah">
+      <div class="grid2">
+        <div>
+          <label for="speciesCodeFao" data-i18n="flspecies_fao_code">FAO Code (EU)</label>
+          <input type="text" id="speciesCodeFao" placeholder="e.g. CCV">
+        </div>
+        <div>
+          <label for="speciesCodeNoaa" data-i18n="flspecies_noaa_code">NOAA Code (US)</label>
+          <input type="text" id="speciesCodeNoaa" placeholder="e.g. RSK">
+        </div>
+      </div>
+      <label for="speciesCodeMx" data-i18n="flspecies_mx_code">CONAPESCA Code (Mexico)</label>
+      <input type="text" id="speciesCodeMx" placeholder="e.g. 116">
+      <button class="btn btn-save" id="speciesCodeAddBtn" style="width:100%; margin-top:16px;" data-i18n="flspecies_add_btn">Add Species Code</button>
+    </div>
+    <div id="speciesCodesList"></div>
   </main>
 </section>
+
+<div id="vesselComplianceOverlay" class="fleet-export-overlay" style="display:none; position:fixed;">
+  <div class="fleet-export-panel">
+    <div class="fleet-export-header">
+      <span class="brand" data-i18n="flcompliance_title">Vessel Compliance &amp; Registration</span>
+      <button class="back-btn" id="vesselComplianceCloseBtn">✕</button>
+    </div>
+    <div class="fleet-export-text" style="white-space:normal;">
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:16px; line-height:1.5;" data-i18n="flcompliance_hint">These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.</div>
+
+      <label for="complianceHolderName" data-i18n="flcompliance_permit_holder">Permit Holder / Owner Name</label>
+      <input type="text" id="complianceHolderName" placeholder="e.g. Juan Pérez">
+      <label for="complianceRegNo" data-i18n="flcompliance_registration_no">Vessel Registration Number</label>
+      <input type="text" id="complianceRegNo" placeholder="e.g. matrícula, official reg. no.">
+
+      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_mx_section">Mexico — CONAPESCA</div>
+      <label for="complianceMxRnpaHolder" data-i18n="flcompliance_mx_rnpa_permisionario">R.N.P.A. — Permit Holder</label>
+      <input type="text" id="complianceMxRnpaHolder">
+      <label for="complianceMxRnpaVessel" data-i18n="flcompliance_mx_rnpa_vessel">R.N.P.A. — Vessel</label>
+      <input type="text" id="complianceMxRnpaVessel">
+
+      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_us_section">United States — NOAA</div>
+      <label for="complianceUsPermit" data-i18n="flcompliance_us_permit_number">NOAA Permit Number</label>
+      <input type="text" id="complianceUsPermit">
+
+      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_eu_section">European Union — e-Logbook</div>
+      <label for="complianceEuCfr" data-i18n="flcompliance_eu_cfr">CFR Number</label>
+      <input type="text" id="complianceEuCfr">
+
+      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_th_section">Thailand — DOF / PIPO</div>
+      <label for="complianceThRegNo" data-i18n="flcompliance_th_vessel_registration">Vessel Registration Number</label>
+      <input type="text" id="complianceThRegNo">
+      <label for="complianceThGearLicense" data-i18n="flcompliance_th_gear_license">Fishing Gear License Number</label>
+      <input type="text" id="complianceThGearLicense">
+      <label for="complianceThCaptainCert" data-i18n="flcompliance_th_captain_cert">Captain's Certificate Number</label>
+      <input type="text" id="complianceThCaptainCert">
+    </div>
+    <div class="savebar" style="position:relative;">
+      <button class="btn btn-clear" id="vesselComplianceCloseBtn2" data-i18n="premium_close">Close</button>
+      <button class="btn btn-save" id="vesselComplianceSaveBtn" data-i18n="flcompliance_save_btn">Save</button>
+    </div>
+  </div>
+</div>
 
 <!-- ================= FLEET: STATS ================= -->
 <section class="screen" id="screen-fleet-stats">
@@ -2902,6 +2968,16 @@
       flvessels_target: 'Efficiency Target — Margin Per Trip', flvessels_expected_fuel: 'Expected Daily Fuel Use (L/day)', flvessels_expected_fuel_hint: 'optional — overrides auto average',
       flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
       flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
+      flcompliance_title: 'Vessel Compliance &amp; Registration', flcompliance_hint: 'These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
+      flcompliance_permit_holder: 'Permit Holder / Owner Name', flcompliance_registration_no: 'Vessel Registration Number',
+      flcompliance_mx_section: 'Mexico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permit Holder', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Vessel',
+      flcompliance_us_section: 'United States — NOAA', flcompliance_us_permit_number: 'NOAA Permit Number',
+      flcompliance_eu_section: 'European Union — e-Logbook', flcompliance_eu_cfr: 'CFR Number',
+      flcompliance_th_section: 'Thailand — DOF / PIPO', flcompliance_th_vessel_registration: 'Vessel Registration Number', flcompliance_th_gear_license: 'Fishing Gear License Number', flcompliance_th_captain_cert: "Captain's Certificate Number",
+      flcompliance_save_btn: 'Save', flcompliance_btn: 'Compliance', flcompliance_saved_msg: 'Compliance info saved', flcompliance_filled_chip: 'Compliance info added',
+      flspecies_codes_title: 'Species reporting codes', flspecies_codes_hint: 'Match each species you log to the official codes used by fisheries authorities. Fill in only the codes relevant to where you report.',
+      flspecies_name_label: 'Species Name (as you type it in catches)', flspecies_fao_code: 'FAO Code (EU)', flspecies_noaa_code: 'NOAA Code (US)', flspecies_mx_code: 'CONAPESCA Code (Mexico)',
+      flspecies_add_btn: 'Add Species Code', flspecies_none_yet: 'No species codes added yet.', flspecies_name_required: 'Enter a species name', flspecies_code_added: 'Species code added',
       flstats_h1: 'Fleet Statistics', fltab_trip: 'Trip', fltab_fuel: 'Fuel', fltab_docs: 'Docs',
       flstats_add_vessel: 'Add a vessel to see fleet statistics.', flstats_no_closed_trips: 'No closed trips yet. Statistics build up as trips are completed.',
       flstats_profitability_trend: 'Profitability trend', flstats_last: 'last', flstats_trips_lc: 'trips', flstats_trend_empty: 'Need at least 2 closed trips for this vessel to plot a trend.',
@@ -3137,6 +3213,16 @@
       flvessels_target: 'Meta de Eficiencia — Margen Por Viaje', flvessels_expected_fuel: 'Uso Diario de Combustible Esperado (L/día)', flvessels_expected_fuel_hint: 'opcional — anula el promedio automático',
       flvessels_maintenance_interval: 'Intervalo de Mantenimiento (horas en el mar)', flvessels_hours_since_service: 'Horas en el mar desde el último servicio', flvessels_hours_since_service_hint: 'opcional, hoy',
       flvessels_add_btn: 'Agregar Embarcación', flvessels_all_vessels: 'Todas las embarcaciones', flvessels_all_captains: 'Todos los capitanes', flvessels_all_crew: 'Toda la tripulación',
+      flcompliance_title: 'Cumplimiento y Registro de la Embarcación', flcompliance_hint: 'Estos campos son opcionales y solo se necesitan si planeas generar reportes de cumplimiento para un país específico. Llena solo lo que te aplique.',
+      flcompliance_permit_holder: 'Nombre del Permisionario / Titular', flcompliance_registration_no: 'Número de Registro / Matrícula',
+      flcompliance_mx_section: 'México — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permisionario', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Embarcación',
+      flcompliance_us_section: 'Estados Unidos — NOAA', flcompliance_us_permit_number: 'Número de Permiso NOAA',
+      flcompliance_eu_section: 'Unión Europea — e-Logbook', flcompliance_eu_cfr: 'Número CFR',
+      flcompliance_th_section: 'Tailandia — DOF / PIPO', flcompliance_th_vessel_registration: 'Número de Registro de la Embarcación', flcompliance_th_gear_license: 'Número de Licencia de Arte de Pesca', flcompliance_th_captain_cert: 'Número de Certificado del Capitán',
+      flcompliance_save_btn: 'Guardar', flcompliance_btn: 'Cumplimiento', flcompliance_saved_msg: 'Información de cumplimiento guardada', flcompliance_filled_chip: 'Cumplimiento agregado',
+      flspecies_codes_title: 'Códigos de reporte por especie', flspecies_codes_hint: 'Relaciona cada especie que registras con los códigos oficiales que usan las autoridades pesqueras. Llena solo los códigos relevantes para donde reportas.',
+      flspecies_name_label: 'Nombre de la especie (como la escribes en capturas)', flspecies_fao_code: 'Código FAO (UE)', flspecies_noaa_code: 'Código NOAA (EE.UU.)', flspecies_mx_code: 'Código CONAPESCA (México)',
+      flspecies_add_btn: 'Agregar Código de Especie', flspecies_none_yet: 'Aún no hay códigos de especie agregados.', flspecies_name_required: 'Ingresa un nombre de especie', flspecies_code_added: 'Código de especie agregado',
       flstats_h1: 'Estadísticas de la Flota', fltab_trip: 'Viaje', fltab_fuel: 'Combustible', fltab_docs: 'Docs',
       flstats_add_vessel: 'Agrega una embarcación para ver estadísticas de flota.', flstats_no_closed_trips: 'Aún no hay viajes cerrados. Las estadísticas se acumulan conforme se completan viajes.',
       flstats_profitability_trend: 'Tendencia de rentabilidad', flstats_last: 'últimos', flstats_trips_lc: 'viajes', flstats_trend_empty: 'Se necesitan al menos 2 viajes cerrados de esta embarcación para graficar una tendencia.',
@@ -3372,6 +3458,16 @@
       flvessels_target: 'Obiettivo di Efficienza — Margine Per Viaggio', flvessels_expected_fuel: 'Uso Giornaliero Previsto di Carburante (L/giorno)', flvessels_expected_fuel_hint: 'opzionale — sovrascrive la media automatica',
       flvessels_maintenance_interval: 'Intervallo di Manutenzione (ore in mare)', flvessels_hours_since_service: "Ore in mare dall'ultima manutenzione", flvessels_hours_since_service_hint: 'opzionale, oggi',
       flvessels_add_btn: 'Aggiungi Imbarcazione', flvessels_all_vessels: 'Tutte le imbarcazioni', flvessels_all_captains: 'Tutti i capitani', flvessels_all_crew: 'Tutto l\'equipaggio',
+      flcompliance_title: 'Conformità e Registrazione Imbarcazione', flcompliance_hint: 'Questi campi sono facoltativi e servono solo se prevedi di generare rapporti di conformità per un paese specifico. Compila solo ciò che ti riguarda.',
+      flcompliance_permit_holder: 'Nome del Titolare della Licenza', flcompliance_registration_no: 'Numero di Registrazione dell\'Imbarcazione',
+      flcompliance_mx_section: 'Messico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Titolare Licenza', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Imbarcazione',
+      flcompliance_us_section: 'Stati Uniti — NOAA', flcompliance_us_permit_number: 'Numero di Permesso NOAA',
+      flcompliance_eu_section: 'Unione Europea — e-Logbook', flcompliance_eu_cfr: 'Numero CFR',
+      flcompliance_th_section: 'Tailandia — DOF / PIPO', flcompliance_th_vessel_registration: 'Numero di Registrazione dell\'Imbarcazione', flcompliance_th_gear_license: 'Numero di Licenza per Attrezzo da Pesca', flcompliance_th_captain_cert: 'Numero di Certificato del Capitano',
+      flcompliance_save_btn: 'Salva', flcompliance_btn: 'Conformità', flcompliance_saved_msg: 'Informazioni di conformità salvate', flcompliance_filled_chip: 'Conformità aggiunta',
+      flspecies_codes_title: 'Codici di segnalazione per specie', flspecies_codes_hint: 'Abbina ogni specie che registri ai codici ufficiali usati dalle autorità della pesca. Compila solo i codici rilevanti per dove segnali.',
+      flspecies_name_label: 'Nome della specie (come lo digiti nelle catture)', flspecies_fao_code: 'Codice FAO (UE)', flspecies_noaa_code: 'Codice NOAA (USA)', flspecies_mx_code: 'Codice CONAPESCA (Messico)',
+      flspecies_add_btn: 'Aggiungi Codice Specie', flspecies_none_yet: 'Nessun codice specie ancora aggiunto.', flspecies_name_required: 'Inserisci un nome di specie', flspecies_code_added: 'Codice specie aggiunto',
       flstats_h1: 'Statistiche della Flotta', fltab_trip: 'Viaggio', fltab_fuel: 'Carburante', fltab_docs: 'Docs',
       flstats_add_vessel: 'Aggiungi un\'imbarcazione per vedere le statistiche della flotta.', flstats_no_closed_trips: 'Nessun viaggio chiuso ancora. Le statistiche si accumulano man mano che i viaggi vengono completati.',
       flstats_profitability_trend: 'Tendenza di redditività', flstats_last: 'ultimi', flstats_trips_lc: 'viaggi', flstats_trend_empty: 'Servono almeno 2 viaggi chiusi per questa imbarcazione per tracciare una tendenza.',
@@ -3607,6 +3703,16 @@
       flvessels_target: 'เป้าหมายประสิทธิภาพ — กำไรต่อทริป', flvessels_expected_fuel: 'การใช้เชื้อเพลิงต่อวันที่คาดไว้ (ลิตร/วัน)', flvessels_expected_fuel_hint: 'ไม่บังคับ — แทนที่ค่าเฉลี่ยอัตโนมัติ',
       flvessels_maintenance_interval: 'ช่วงเวลาบำรุงรักษา (ชั่วโมงในทะเล)', flvessels_hours_since_service: 'ชั่วโมงในทะเลตั้งแต่ซ่อมบำรุงครั้งล่าสุด', flvessels_hours_since_service_hint: 'ไม่บังคับ วันนี้',
       flvessels_add_btn: 'เพิ่มเรือ', flvessels_all_vessels: 'เรือทั้งหมด', flvessels_all_captains: 'กัปตันทั้งหมด', flvessels_all_crew: 'ลูกเรือทั้งหมด',
+      flcompliance_title: 'การปฏิบัติตามกฎระเบียบและการจดทะเบียนเรือ', flcompliance_hint: 'ช่องเหล่านี้ไม่บังคับ กรอกเฉพาะเมื่อคุณต้องการสร้างรายงานตามข้อกำหนดของประเทศใดประเทศหนึ่ง กรอกเฉพาะส่วนที่เกี่ยวข้องกับคุณ',
+      flcompliance_permit_holder: 'ชื่อผู้ถือใบอนุญาต / เจ้าของ', flcompliance_registration_no: 'เลขทะเบียนเรือ',
+      flcompliance_mx_section: 'เม็กซิโก — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — ผู้ถือใบอนุญาต', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — เรือ',
+      flcompliance_us_section: 'สหรัฐอเมริกา — NOAA', flcompliance_us_permit_number: 'หมายเลขใบอนุญาต NOAA',
+      flcompliance_eu_section: 'สหภาพยุโรป — e-Logbook', flcompliance_eu_cfr: 'หมายเลข CFR',
+      flcompliance_th_section: 'ไทย — กรมประมง / PIPO', flcompliance_th_vessel_registration: 'เลขทะเบียนเรือ', flcompliance_th_gear_license: 'เลขใบอนุญาตเครื่องมือประมง', flcompliance_th_captain_cert: 'เลขประกาศนียบัตรกัปตัน',
+      flcompliance_save_btn: 'บันทึก', flcompliance_btn: 'การปฏิบัติตามกฎ', flcompliance_saved_msg: 'บันทึกข้อมูลการปฏิบัติตามกฎแล้ว', flcompliance_filled_chip: 'เพิ่มข้อมูลการปฏิบัติตามกฎแล้ว',
+      flspecies_codes_title: 'รหัสรายงานตามชนิดพันธุ์', flspecies_codes_hint: 'จับคู่แต่ละชนิดพันธุ์ที่คุณบันทึกกับรหัสทางการที่หน่วยงานประมงใช้ กรอกเฉพาะรหัสที่เกี่ยวข้องกับที่ที่คุณรายงาน',
+      flspecies_name_label: 'ชื่อชนิดพันธุ์ (ตามที่คุณพิมพ์ในการจับปลา)', flspecies_fao_code: 'รหัส FAO (สหภาพยุโรป)', flspecies_noaa_code: 'รหัส NOAA (สหรัฐฯ)', flspecies_mx_code: 'รหัส CONAPESCA (เม็กซิโก)',
+      flspecies_add_btn: 'เพิ่มรหัสชนิดพันธุ์', flspecies_none_yet: 'ยังไม่มีรหัสชนิดพันธุ์ที่เพิ่ม', flspecies_name_required: 'กรอกชื่อชนิดพันธุ์', flspecies_code_added: 'เพิ่มรหัสชนิดพันธุ์แล้ว',
       flstats_h1: 'สถิติกองเรือ', fltab_trip: 'ทริป', fltab_fuel: 'เชื้อเพลิง', fltab_docs: 'เอกสาร',
       flstats_add_vessel: 'เพิ่มเรือเพื่อดูสถิติกองเรือ', flstats_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว สถิติจะสะสมเมื่อทริปเสร็จสมบูรณ์',
       flstats_profitability_trend: 'แนวโน้มความสามารถในการทำกำไร', flstats_last: 'ล่าสุด', flstats_trips_lc: 'ทริป', flstats_trend_empty: 'ต้องการทริปที่ปิดแล้วอย่างน้อย 2 ทริปสำหรับเรือนี้เพื่อสร้างแนวโน้ม',
@@ -4090,6 +4196,20 @@
   });
 
   const CAPTAINS_KEY = 'fleet_captains_v1';
+  const SPECIES_CODES_KEY = 'fleet_species_codes_v1';
+
+  // Static gear-code lookup for compliance report generation. The gear
+  // dropdown (#fleetGearType) only ever offers these six values, so this
+  // is a fixed table rather than something the person needs to maintain —
+  // unlike species codes, which depend on free-text species names.
+  const GEAR_CODES = {
+    'Demersal trawl': { noaa: 'OTF', fao_isscfg: '03.1.3' },
+    'Otter trawl': { noaa: 'OTF', fao_isscfg: '03.1.3' },
+    'Gillnet': { noaa: 'GLS', fao_isscfg: '07.1' },
+    'Longline': { noaa: 'LLB', fao_isscfg: '09.1' },
+    'Purse seine': { noaa: 'PSE', fao_isscfg: '01.1' },
+    'Other': { noaa: '', fao_isscfg: '' }
+  };
   const CREW_KEY = 'fleet_crew_v1';
   const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
 
@@ -5391,15 +5511,23 @@
           const targetChip = v.margin_target ? '<span class="chip chip-blue">Target '+fmtMoney(v.margin_target, v.default_currency)+'</span>' : '';
           const fuelChip = v.expected_daily_fuel_l ? '<span class="chip chip-grey">'+v.expected_daily_fuel_l+' L/day</span>' : '';
           const maintBtn = v.maintenance_interval_hours ? '<button class="ce-btn-sec" style="margin-top:10px;" data-log-maintenance="'+v.vessel_id+'">Log Service</button>' : '';
+          const hasCompliance = v.compliance && Object.values(v.compliance).some(val => val);
+          const complianceChip = hasCompliance ? '<span class="chip chip-blue">'+t('flcompliance_filled_chip')+'</span>' : '';
           return '<div class="insight-card" style="margin-bottom:8px;">'
             + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);margin-bottom:6px;">'+v.name+'</div>'
             + '<div class="entry-chips">'
             + '<span class="chip chip-grey">'+v.default_currency+'</span>'
-            + targetChip + fuelChip + maintHtml
+            + targetChip + fuelChip + maintHtml + complianceChip
             + '</div>'
+            + '<div style="display:flex; gap:8px; margin-top:10px;">'
             + maintBtn
+            + '<button class="ce-btn-sec" data-edit-compliance="'+v.vessel_id+'">'+t('flcompliance_btn')+'</button>'
+            + '</div>'
             + '</div>';
         }).join('');
+    document.querySelectorAll('[data-edit-compliance]').forEach(btn => {
+      btn.addEventListener('click', () => openVesselComplianceModal(btn.dataset.editCompliance));
+    });
     document.querySelectorAll('[data-log-maintenance]').forEach(btn => {
       btn.addEventListener('click', () => {
         const all = load(VESSELS_KEY);
@@ -5418,8 +5546,85 @@
     document.getElementById('crewList').innerHTML = crew.length === 0
       ? '<div class="empty">No crew yet — added from the Close Trip screen.</div>'
       : crew.map(c => '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+c.name+'</div></div>').join('');
+    const speciesCodes = load(SPECIES_CODES_KEY);
+    document.getElementById('speciesCodesList').innerHTML = speciesCodes.length === 0
+      ? '<div class="empty">'+t('flspecies_none_yet')+'</div>'
+      : speciesCodes.map(s => '<div class="entry"><div><div class="sp">'+s.species_name+'</div>'
+          + '<div class="meta">'+[s.fao_code?('FAO '+s.fao_code):'', s.noaa_code?('NOAA '+s.noaa_code):'', s.mx_code?('CONAPESCA '+s.mx_code):''].filter(Boolean).join(' · ')+'</div></div>'
+          + '<button class="del" data-remove-species-code="'+s.code_id+'" title="remove">×</button></div>').join('');
+    document.querySelectorAll('[data-remove-species-code]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const all = load(SPECIES_CODES_KEY).filter(s => s.code_id !== btn.dataset.removeSpeciesCode);
+        save(SPECIES_CODES_KEY, all);
+        renderFleetVessels();
+      });
+    });
     applyDefaultCurrencyToSelects();
   }
+
+  function openVesselComplianceModal(vesselId){
+    const vessels = load(VESSELS_KEY);
+    const vessel = vessels.find(v => v.vessel_id === vesselId);
+    if(!vessel) return;
+    const c = vessel.compliance || {};
+    document.getElementById('complianceHolderName').value = c.permit_holder_name || '';
+    document.getElementById('complianceRegNo').value = c.vessel_registration_no || '';
+    document.getElementById('complianceMxRnpaHolder').value = c.mx_rnpa_permisionario || '';
+    document.getElementById('complianceMxRnpaVessel').value = c.mx_rnpa_vessel || '';
+    document.getElementById('complianceUsPermit').value = c.us_permit_number || '';
+    document.getElementById('complianceEuCfr').value = c.eu_cfr_number || '';
+    document.getElementById('complianceThRegNo').value = c.th_vessel_registration || '';
+    document.getElementById('complianceThGearLicense').value = c.th_gear_license_number || '';
+    document.getElementById('complianceThCaptainCert').value = c.th_captain_certificate_number || '';
+    document.getElementById('vesselComplianceOverlay').dataset.vesselId = vesselId;
+    document.getElementById('vesselComplianceOverlay').style.display = 'flex';
+  }
+  function closeVesselComplianceModal(){
+    document.getElementById('vesselComplianceOverlay').style.display = 'none';
+  }
+  document.getElementById('vesselComplianceCloseBtn').addEventListener('click', closeVesselComplianceModal);
+  document.getElementById('vesselComplianceCloseBtn2').addEventListener('click', closeVesselComplianceModal);
+  document.getElementById('vesselComplianceSaveBtn').addEventListener('click', () => {
+    const vesselId = document.getElementById('vesselComplianceOverlay').dataset.vesselId;
+    const vessels = load(VESSELS_KEY);
+    const idx = vessels.findIndex(v => v.vessel_id === vesselId);
+    if(idx === -1) return;
+    vessels[idx].compliance = {
+      permit_holder_name: document.getElementById('complianceHolderName').value.trim(),
+      vessel_registration_no: document.getElementById('complianceRegNo').value.trim(),
+      mx_rnpa_permisionario: document.getElementById('complianceMxRnpaHolder').value.trim(),
+      mx_rnpa_vessel: document.getElementById('complianceMxRnpaVessel').value.trim(),
+      us_permit_number: document.getElementById('complianceUsPermit').value.trim(),
+      eu_cfr_number: document.getElementById('complianceEuCfr').value.trim(),
+      th_vessel_registration: document.getElementById('complianceThRegNo').value.trim(),
+      th_gear_license_number: document.getElementById('complianceThGearLicense').value.trim(),
+      th_captain_certificate_number: document.getElementById('complianceThCaptainCert').value.trim()
+    };
+    save(VESSELS_KEY, vessels);
+    showFleetToast(t('flcompliance_saved_msg'));
+    closeVesselComplianceModal();
+    renderFleetVessels();
+  });
+
+  document.getElementById('speciesCodeAddBtn').addEventListener('click', () => {
+    const name = document.getElementById('speciesCodeName').value.trim();
+    if(!name){ showFleetToast(t('flspecies_name_required'), true); return; }
+    const codes = load(SPECIES_CODES_KEY);
+    codes.push({
+      code_id: uid(),
+      species_name: name,
+      fao_code: document.getElementById('speciesCodeFao').value.trim(),
+      noaa_code: document.getElementById('speciesCodeNoaa').value.trim(),
+      mx_code: document.getElementById('speciesCodeMx').value.trim()
+    });
+    save(SPECIES_CODES_KEY, codes);
+    document.getElementById('speciesCodeName').value = '';
+    document.getElementById('speciesCodeFao').value = '';
+    document.getElementById('speciesCodeNoaa').value = '';
+    document.getElementById('speciesCodeMx').value = '';
+    showFleetToast(t('flspecies_code_added'));
+    renderFleetVessels();
+  });
 
   // ===== Daily fuel log (captain) =====
   // One reading per day at sea, kept separate from the single
