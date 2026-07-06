@@ -2003,6 +2003,36 @@
     </div>
 
     <div class="card">
+      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flclose_compliance_section">Trip Compliance Details</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flclose_compliance_hint">Only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.</div>
+      <label for="fleetCloseLandingSite" data-i18n="flclose_landing_site">Landing Site / Port</label>
+      <input type="text" id="fleetCloseLandingSite" placeholder="e.g. Puerto San Carlos">
+      <label for="fleetClosePresentation" data-i18n="flclose_presentation">Catch Presentation (Mexico)</label>
+      <select id="fleetClosePresentation">
+        <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+        <option value="fresh_whole" data-i18n="flclose_pres_fresh_whole">Fresh, Whole</option>
+        <option value="fresh_gutted" data-i18n="flclose_pres_fresh_gutted">Fresh, Gutted</option>
+        <option value="frozen" data-i18n="flclose_pres_frozen">Frozen</option>
+        <option value="other" data-i18n="rec_gear_other">Other</option>
+      </select>
+      <label for="fleetCloseFishingZone" data-i18n="flclose_fishing_zone">Fishing Zone (Mexico)</label>
+      <select id="fleetCloseFishingZone">
+        <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+        <option value="litoral" data-i18n="flclose_zone_litoral">Litoral</option>
+        <option value="bahia" data-i18n="flclose_zone_bahia">Bahía</option>
+        <option value="estuarina" data-i18n="flclose_zone_estuarina">Estuarina</option>
+        <option value="continental" data-i18n="flclose_zone_continental">Continental</option>
+      </select>
+      <label for="fleetCloseTripType" data-i18n="flclose_trip_type">Trip Type (US)</label>
+      <select id="fleetCloseTripType">
+        <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+        <option value="commercial" data-i18n="flclose_triptype_commercial">Commercial</option>
+        <option value="party" data-i18n="flclose_triptype_party">Party</option>
+        <option value="charter" data-i18n="flclose_triptype_charter">Charter</option>
+      </select>
+    </div>
+
+    <div class="card">
       <label for="fleetCloseNotes"><span data-i18n="flclose_trip_notes">Trip Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <textarea id="fleetCloseNotes" rows="2" placeholder="e.g. weather cut trip short, gear repaired mid-trip"></textarea>
     </div>
@@ -2363,32 +2393,63 @@
     <div class="fleet-export-text" style="white-space:normal;">
       <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:16px; line-height:1.5;" data-i18n="flcompliance_hint">These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.</div>
 
+      <label for="complianceReportingCountry" data-i18n="flcompliance_reporting_country">Reporting Authority</label>
+      <select id="complianceReportingCountry">
+        <option value="" data-i18n="flcompliance_reporting_country_none">None (generic Fish Pulse report)</option>
+        <option value="mx" data-i18n="flcompliance_mx_section_short">Mexico — CONAPESCA</option>
+        <option value="us" data-i18n="flcompliance_us_section_short">United States — NOAA</option>
+        <option value="eu" data-i18n="flcompliance_eu_section_short">European Union — e-Logbook</option>
+        <option value="th" data-i18n="flcompliance_th_section_short">Thailand — DOF / PIPO</option>
+      </select>
+
       <label for="complianceHolderName" data-i18n="flcompliance_permit_holder">Permit Holder / Owner Name</label>
       <input type="text" id="complianceHolderName" placeholder="e.g. Juan Pérez">
       <label for="complianceRegNo" data-i18n="flcompliance_registration_no">Vessel Registration Number</label>
       <input type="text" id="complianceRegNo" placeholder="e.g. matrícula, official reg. no.">
 
-      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_mx_section">Mexico — CONAPESCA</div>
-      <label for="complianceMxRnpaHolder" data-i18n="flcompliance_mx_rnpa_permisionario">R.N.P.A. — Permit Holder</label>
-      <input type="text" id="complianceMxRnpaHolder">
-      <label for="complianceMxRnpaVessel" data-i18n="flcompliance_mx_rnpa_vessel">R.N.P.A. — Vessel</label>
-      <input type="text" id="complianceMxRnpaVessel">
+      <div id="complianceMxSection" style="display:none;">
+        <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_mx_section">Mexico — CONAPESCA</div>
+        <label for="complianceMxRnpaHolder" data-i18n="flcompliance_mx_rnpa_permisionario">R.N.P.A. — Permit Holder</label>
+        <input type="text" id="complianceMxRnpaHolder">
+        <label for="complianceMxRnpaVessel" data-i18n="flcompliance_mx_rnpa_vessel">R.N.P.A. — Vessel</label>
+        <input type="text" id="complianceMxRnpaVessel">
+        <label for="complianceMxDocType" data-i18n="flcompliance_mx_doc_type">Document Type</label>
+        <select id="complianceMxDocType">
+          <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+          <option value="aviso_arribo" data-i18n="flcompliance_mx_doc_aviso">Aviso de Arribo (general)</option>
+          <option value="bitacora" data-i18n="flcompliance_mx_doc_bitacora">Bitácora (by fishery)</option>
+        </select>
+        <div id="complianceMxFisheryRow" style="display:none;">
+          <label for="complianceMxFishery" data-i18n="flcompliance_mx_fishery">Fishery (for Bitácora)</label>
+          <select id="complianceMxFishery">
+            <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+            <option value="escama" data-i18n="flcompliance_mx_fishery_escama">Escama (finfish)</option>
+            <option value="camaron" data-i18n="flcompliance_mx_fishery_camaron">Camarón (Pacific)</option>
+          </select>
+        </div>
+      </div>
 
-      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_us_section">United States — NOAA</div>
-      <label for="complianceUsPermit" data-i18n="flcompliance_us_permit_number">NOAA Permit Number</label>
-      <input type="text" id="complianceUsPermit">
+      <div id="complianceUsSection" style="display:none;">
+        <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_us_section">United States — NOAA</div>
+        <label for="complianceUsPermit" data-i18n="flcompliance_us_permit_number">NOAA Permit Number</label>
+        <input type="text" id="complianceUsPermit">
+      </div>
 
-      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_eu_section">European Union — e-Logbook</div>
-      <label for="complianceEuCfr" data-i18n="flcompliance_eu_cfr">CFR Number</label>
-      <input type="text" id="complianceEuCfr">
+      <div id="complianceEuSection" style="display:none;">
+        <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_eu_section">European Union — e-Logbook</div>
+        <label for="complianceEuCfr" data-i18n="flcompliance_eu_cfr">CFR Number</label>
+        <input type="text" id="complianceEuCfr">
+      </div>
 
-      <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_th_section">Thailand — DOF / PIPO</div>
-      <label for="complianceThRegNo" data-i18n="flcompliance_th_vessel_registration">Vessel Registration Number</label>
-      <input type="text" id="complianceThRegNo">
-      <label for="complianceThGearLicense" data-i18n="flcompliance_th_gear_license">Fishing Gear License Number</label>
-      <input type="text" id="complianceThGearLicense">
-      <label for="complianceThCaptainCert" data-i18n="flcompliance_th_captain_cert">Captain's Certificate Number</label>
-      <input type="text" id="complianceThCaptainCert">
+      <div id="complianceThSection" style="display:none;">
+        <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_th_section">Thailand — DOF / PIPO</div>
+        <label for="complianceThRegNo" data-i18n="flcompliance_th_vessel_registration">Vessel Registration Number</label>
+        <input type="text" id="complianceThRegNo">
+        <label for="complianceThGearLicense" data-i18n="flcompliance_th_gear_license">Fishing Gear License Number</label>
+        <input type="text" id="complianceThGearLicense">
+        <label for="complianceThCaptainCert" data-i18n="flcompliance_th_captain_cert">Captain's Certificate Number</label>
+        <input type="text" id="complianceThCaptainCert">
+      </div>
     </div>
     <div class="savebar" style="position:relative;">
       <button class="btn btn-clear" id="vesselComplianceCloseBtn2" data-i18n="premium_close">Close</button>
@@ -2954,6 +3015,10 @@
       flclose_maintenance_hint: 'Maintenance, permits, and port dues are usually added by the office afterward.',
       flclose_crew_on_trip: 'Crew On This Trip', flclose_add: 'Add', flclose_crew_hint: 'Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.',
       flclose_trip_notes: 'Trip Notes', flclose_before_close: 'Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.',
+      flclose_compliance_section: 'Trip Compliance Details', flclose_compliance_hint: 'Only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
+      flclose_landing_site: 'Landing Site / Port', flclose_presentation: 'Catch Presentation (Mexico)', flclose_pres_fresh_whole: 'Fresh, Whole', flclose_pres_fresh_gutted: 'Fresh, Gutted', flclose_pres_frozen: 'Frozen',
+      flclose_fishing_zone: 'Fishing Zone (Mexico)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
+      flclose_trip_type: 'Trip Type (US)', flclose_triptype_commercial: 'Commercial', flclose_triptype_party: 'Party', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
       fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report &amp; Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
       fltripdet_landing_report_label: 'Landing Report', fltripdet_vessel_label: 'Vessel', fltripdet_captain_label: 'Captain', fltripdet_trip_notes_label: 'Trip notes:',
@@ -2991,6 +3056,10 @@
       flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
       flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
       flcompliance_title: 'Vessel Compliance &amp; Registration', flcompliance_hint: 'These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
+      flcompliance_reporting_country: 'Reporting Authority', flcompliance_reporting_country_none: 'None (generic Fish Pulse report)',
+      flcompliance_mx_section_short: 'Mexico — CONAPESCA', flcompliance_us_section_short: 'United States — NOAA', flcompliance_eu_section_short: 'European Union — e-Logbook', flcompliance_th_section_short: 'Thailand — DOF / PIPO',
+      flcompliance_mx_doc_type: 'Document Type', flcompliance_mx_doc_aviso: 'Aviso de Arribo (general)', flcompliance_mx_doc_bitacora: 'Bitácora (by fishery)',
+      flcompliance_mx_fishery: 'Fishery (for Bitácora)', flcompliance_mx_fishery_escama: 'Escama (finfish)', flcompliance_mx_fishery_camaron: 'Camarón (Pacific)',
       flcompliance_permit_holder: 'Permit Holder / Owner Name', flcompliance_registration_no: 'Vessel Registration Number',
       flcompliance_mx_section: 'Mexico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permit Holder', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Vessel',
       flcompliance_us_section: 'United States — NOAA', flcompliance_us_permit_number: 'NOAA Permit Number',
@@ -3199,6 +3268,10 @@
       flclose_maintenance_hint: 'Mantenimiento, permisos y derechos de puerto normalmente los agrega la oficina después.',
       flclose_crew_on_trip: 'Tripulación en Este Viaje', flclose_add: 'Agregar', flclose_crew_hint: 'Marcar quién estuvo a bordo le ahorra a la oficina reescribir nombres en la liquidación — los porcentajes de pago se siguen definiendo ahí.',
       flclose_trip_notes: 'Notas del Viaje', flclose_before_close: 'Antes de cerrar: cerrar bloquea nuevos lances y capturas para este viaje. La oficina todavía puede agregar costos restantes y correr la liquidación desde el panel.',
+      flclose_compliance_section: 'Detalles de Cumplimiento del Viaje', flclose_compliance_hint: 'Solo se necesita si planeas generar reportes de cumplimiento para un país específico. Llena solo lo que te aplique.',
+      flclose_landing_site: 'Sitio / Puerto de Desembarque', flclose_presentation: 'Presentación de la Captura (México)', flclose_pres_fresh_whole: 'Fresco, Entero', flclose_pres_fresh_gutted: 'Fresco, Eviscerado', flclose_pres_frozen: 'Congelado',
+      flclose_fishing_zone: 'Zona de Pesca (México)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
+      flclose_trip_type: 'Tipo de Viaje (EE.UU.)', flclose_triptype_commercial: 'Comercial', flclose_triptype_party: 'Grupo (Party)', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Registro de Viajes', fltriplog_title: 'Viajes Anteriores', fltriplog_all_vessels: 'Todas las Embarcaciones',
       fltripdet_brand: 'Detalle del Viaje', fltripdet_h1: 'Reporte de Desembarque y Liquidación', fltripdet_haul_log: 'Registro de Lances', fltripdet_catches_logged: 'Capturas Individuales Registradas',
       fltripdet_landing_report_label: 'Reporte de Desembarque', fltripdet_vessel_label: 'Embarcación', fltripdet_captain_label: 'Capitán', fltripdet_trip_notes_label: 'Notas del viaje:',
@@ -3236,6 +3309,10 @@
       flvessels_maintenance_interval: 'Intervalo de Mantenimiento (horas en el mar)', flvessels_hours_since_service: 'Horas en el mar desde el último servicio', flvessels_hours_since_service_hint: 'opcional, hoy',
       flvessels_add_btn: 'Agregar Embarcación', flvessels_all_vessels: 'Todas las embarcaciones', flvessels_all_captains: 'Todos los capitanes', flvessels_all_crew: 'Toda la tripulación',
       flcompliance_title: 'Cumplimiento y Registro de la Embarcación', flcompliance_hint: 'Estos campos son opcionales y solo se necesitan si planeas generar reportes de cumplimiento para un país específico. Llena solo lo que te aplique.',
+      flcompliance_reporting_country: 'Autoridad de Reporte', flcompliance_reporting_country_none: 'Ninguna (reporte genérico de Fish Pulse)',
+      flcompliance_mx_section_short: 'México — CONAPESCA', flcompliance_us_section_short: 'Estados Unidos — NOAA', flcompliance_eu_section_short: 'Unión Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
+      flcompliance_mx_doc_type: 'Tipo de Documento', flcompliance_mx_doc_aviso: 'Aviso de Arribo (general)', flcompliance_mx_doc_bitacora: 'Bitácora (por pesquería)',
+      flcompliance_mx_fishery: 'Pesquería (para Bitácora)', flcompliance_mx_fishery_escama: 'Escama', flcompliance_mx_fishery_camaron: 'Camarón (Pacífico)',
       flcompliance_permit_holder: 'Nombre del Permisionario / Titular', flcompliance_registration_no: 'Número de Registro / Matrícula',
       flcompliance_mx_section: 'México — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permisionario', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Embarcación',
       flcompliance_us_section: 'Estados Unidos — NOAA', flcompliance_us_permit_number: 'Número de Permiso NOAA',
@@ -3444,6 +3521,10 @@
       flclose_maintenance_hint: 'Manutenzione, permessi e tasse portuali di solito vengono aggiunti dall\'ufficio in seguito.',
       flclose_crew_on_trip: 'Equipaggio di Questo Viaggio', flclose_add: 'Aggiungi', flclose_crew_hint: 'Segnare chi era a bordo evita all\'ufficio di riscrivere i nomi in fase di liquidazione — le quote di pagamento si impostano comunque lì.',
       flclose_trip_notes: 'Note del Viaggio', flclose_before_close: 'Prima di chiudere: la chiusura blocca nuove calate e catture per questo viaggio. L\'ufficio può comunque aggiungere i costi rimanenti ed eseguire la liquidazione dal pannello.',
+      flclose_compliance_section: 'Dettagli di Conformità del Viaggio', flclose_compliance_hint: 'Necessario solo se prevedi di generare rapporti di conformità per un paese specifico. Compila solo ciò che ti riguarda.',
+      flclose_landing_site: 'Sito / Porto di Sbarco', flclose_presentation: 'Presentazione della Cattura (Messico)', flclose_pres_fresh_whole: 'Fresco, Intero', flclose_pres_fresh_gutted: 'Fresco, Eviscerato', flclose_pres_frozen: 'Congelato',
+      flclose_fishing_zone: 'Zona di Pesca (Messico)', flclose_zone_litoral: 'Litorale', flclose_zone_bahia: 'Baia', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continentale',
+      flclose_trip_type: 'Tipo di Viaggio (USA)', flclose_triptype_commercial: 'Commerciale', flclose_triptype_party: 'Gruppo (Party)', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Registro Viaggi', fltriplog_title: 'Viaggi Passati', fltriplog_all_vessels: 'Tutte le Imbarcazioni',
       fltripdet_brand: 'Dettaglio Viaggio', fltripdet_h1: 'Rapporto di Sbarco e Liquidazione', fltripdet_haul_log: 'Registro Calate', fltripdet_catches_logged: 'Catture Individuali Registrate',
       fltripdet_landing_report_label: 'Rapporto di Sbarco', fltripdet_vessel_label: 'Imbarcazione', fltripdet_captain_label: 'Capitano', fltripdet_trip_notes_label: 'Note del viaggio:',
@@ -3481,6 +3562,10 @@
       flvessels_maintenance_interval: 'Intervallo di Manutenzione (ore in mare)', flvessels_hours_since_service: "Ore in mare dall'ultima manutenzione", flvessels_hours_since_service_hint: 'opzionale, oggi',
       flvessels_add_btn: 'Aggiungi Imbarcazione', flvessels_all_vessels: 'Tutte le imbarcazioni', flvessels_all_captains: 'Tutti i capitani', flvessels_all_crew: 'Tutto l\'equipaggio',
       flcompliance_title: 'Conformità e Registrazione Imbarcazione', flcompliance_hint: 'Questi campi sono facoltativi e servono solo se prevedi di generare rapporti di conformità per un paese specifico. Compila solo ciò che ti riguarda.',
+      flcompliance_reporting_country: 'Autorità di Riferimento', flcompliance_reporting_country_none: 'Nessuna (rapporto generico di Fish Pulse)',
+      flcompliance_mx_section_short: 'Messico — CONAPESCA', flcompliance_us_section_short: 'Stati Uniti — NOAA', flcompliance_eu_section_short: 'Unione Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
+      flcompliance_mx_doc_type: 'Tipo di Documento', flcompliance_mx_doc_aviso: 'Aviso de Arribo (generale)', flcompliance_mx_doc_bitacora: 'Bitácora (per pesca)',
+      flcompliance_mx_fishery: 'Pesca (per Bitácora)', flcompliance_mx_fishery_escama: 'Escama (pesce)', flcompliance_mx_fishery_camaron: 'Camarón (Pacifico)',
       flcompliance_permit_holder: 'Nome del Titolare della Licenza', flcompliance_registration_no: 'Numero di Registrazione dell\'Imbarcazione',
       flcompliance_mx_section: 'Messico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Titolare Licenza', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Imbarcazione',
       flcompliance_us_section: 'Stati Uniti — NOAA', flcompliance_us_permit_number: 'Numero di Permesso NOAA',
@@ -3689,6 +3774,10 @@
       flclose_maintenance_hint: 'ค่าบำรุงรักษา ใบอนุญาต และค่าธรรมเนียมท่าเรือ ปกติจะถูกเพิ่มโดยสำนักงานในภายหลัง',
       flclose_crew_on_trip: 'ลูกเรือในทริปนี้', flclose_add: 'เพิ่ม', flclose_crew_hint: 'การทำเครื่องหมายว่าใครอยู่บนเรือช่วยให้สำนักงานไม่ต้องพิมพ์ชื่อใหม่ตอนคิดบัญชี — ส่วนแบ่งค่าจ้างยังคงกำหนดที่นั่น',
       flclose_trip_notes: 'บันทึกย่อของทริป', flclose_before_close: 'ก่อนปิด: การปิดจะล็อกการลากอวนและการจับปลาใหม่สำหรับทริปนี้ สำนักงานยังสามารถเพิ่มค่าใช้จ่ายที่เหลือและคิดบัญชีได้จากแดชบอร์ด',
+      flclose_compliance_section: 'รายละเอียดการปฏิบัติตามกฎของทริป', flclose_compliance_hint: 'จำเป็นเฉพาะเมื่อคุณต้องการสร้างรายงานตามข้อกำหนดของประเทศใดประเทศหนึ่ง กรอกเฉพาะส่วนที่เกี่ยวข้องกับคุณ',
+      flclose_landing_site: 'สถานที่/ท่าเรือขึ้นท่า', flclose_presentation: 'ลักษณะการนำเสนอการจับปลา (เม็กซิโก)', flclose_pres_fresh_whole: 'สด ทั้งตัว', flclose_pres_fresh_gutted: 'สด ควักไส้แล้ว', flclose_pres_frozen: 'แช่แข็ง',
+      flclose_fishing_zone: 'เขตประมง (เม็กซิโก)', flclose_zone_litoral: 'ชายฝั่ง', flclose_zone_bahia: 'อ่าว', flclose_zone_estuarina: 'ปากแม่น้ำ', flclose_zone_continental: 'ทวีป',
+      flclose_trip_type: 'ประเภททริป (สหรัฐฯ)', flclose_triptype_commercial: 'เชิงพาณิชย์', flclose_triptype_party: 'กลุ่ม (Party)', flclose_triptype_charter: 'เช่าเหมาลำ',
       fltriplog_brand: 'บันทึกทริป', fltriplog_title: 'ทริปที่ผ่านมา', fltriplog_all_vessels: 'เรือทั้งหมด',
       fltripdet_brand: 'รายละเอียดทริป', fltripdet_h1: 'รายงานการขึ้นท่าและการคิดบัญชี', fltripdet_haul_log: 'บันทึกการลากอวน', fltripdet_catches_logged: 'การจับปลาแต่ละรายการที่บันทึก',
       fltripdet_landing_report_label: 'รายงานการขึ้นท่า', fltripdet_vessel_label: 'เรือ', fltripdet_captain_label: 'กัปตัน', fltripdet_trip_notes_label: 'หมายเหตุทริป:',
@@ -3726,6 +3815,10 @@
       flvessels_maintenance_interval: 'ช่วงเวลาบำรุงรักษา (ชั่วโมงในทะเล)', flvessels_hours_since_service: 'ชั่วโมงในทะเลตั้งแต่ซ่อมบำรุงครั้งล่าสุด', flvessels_hours_since_service_hint: 'ไม่บังคับ วันนี้',
       flvessels_add_btn: 'เพิ่มเรือ', flvessels_all_vessels: 'เรือทั้งหมด', flvessels_all_captains: 'กัปตันทั้งหมด', flvessels_all_crew: 'ลูกเรือทั้งหมด',
       flcompliance_title: 'การปฏิบัติตามกฎระเบียบและการจดทะเบียนเรือ', flcompliance_hint: 'ช่องเหล่านี้ไม่บังคับ กรอกเฉพาะเมื่อคุณต้องการสร้างรายงานตามข้อกำหนดของประเทศใดประเทศหนึ่ง กรอกเฉพาะส่วนที่เกี่ยวข้องกับคุณ',
+      flcompliance_reporting_country: 'หน่วยงานที่รายงาน', flcompliance_reporting_country_none: 'ไม่มี (รายงานทั่วไปของ Fish Pulse)',
+      flcompliance_mx_section_short: 'เม็กซิโก — CONAPESCA', flcompliance_us_section_short: 'สหรัฐอเมริกา — NOAA', flcompliance_eu_section_short: 'สหภาพยุโรป — e-Logbook', flcompliance_th_section_short: 'ไทย — กรมประมง / PIPO',
+      flcompliance_mx_doc_type: 'ประเภทเอกสาร', flcompliance_mx_doc_aviso: 'Aviso de Arribo (ทั่วไป)', flcompliance_mx_doc_bitacora: 'Bitácora (ตามประเภทประมง)',
+      flcompliance_mx_fishery: 'ประเภทประมง (สำหรับ Bitácora)', flcompliance_mx_fishery_escama: 'ปลาเกล็ด (Escama)', flcompliance_mx_fishery_camaron: 'กุ้ง (แปซิฟิก)',
       flcompliance_permit_holder: 'ชื่อผู้ถือใบอนุญาต / เจ้าของ', flcompliance_registration_no: 'เลขทะเบียนเรือ',
       flcompliance_mx_section: 'เม็กซิโก — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — ผู้ถือใบอนุญาต', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — เรือ',
       flcompliance_us_section: 'สหรัฐอเมริกา — NOAA', flcompliance_us_permit_number: 'หมายเลขใบอนุญาต NOAA',
@@ -4901,6 +4994,10 @@
     delete document.getElementById('fleetCostIceCurrency').dataset.userTouched;
     delete document.getElementById('fleetCostProvisionsCurrency').dataset.userTouched;
     document.getElementById('fleetCloseNotes').value = '';
+    document.getElementById('fleetCloseLandingSite').value = '';
+    document.getElementById('fleetClosePresentation').value = '';
+    document.getElementById('fleetCloseFishingZone').value = '';
+    document.getElementById('fleetCloseTripType').value = '';
     fleetCloseSelectedCrewIds = [];
     renderFleetCloseCrewChecklist();
 
@@ -4929,6 +5026,10 @@
     trips[idx].fuel_consumed_l = Math.max(0, loaded - remaining);
     trips[idx].crew_ids = fleetCloseSelectedCrewIds.slice();
     trips[idx].closing_notes = document.getElementById('fleetCloseNotes').value.trim();
+    trips[idx].landing_site = document.getElementById('fleetCloseLandingSite').value.trim();
+    trips[idx].catch_presentation = document.getElementById('fleetClosePresentation').value;
+    trips[idx].fishing_zone_mx = document.getElementById('fleetCloseFishingZone').value;
+    trips[idx].trip_type_us = document.getElementById('fleetCloseTripType').value;
     save(TRIPS_KEY, trips);
 
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
@@ -5638,21 +5739,37 @@
     renderFleetTripDetail();
   });
 
+  function updateComplianceVisibility(){
+    const country = document.getElementById('complianceReportingCountry').value;
+    document.getElementById('complianceMxSection').style.display = country === 'mx' ? 'block' : 'none';
+    document.getElementById('complianceUsSection').style.display = country === 'us' ? 'block' : 'none';
+    document.getElementById('complianceEuSection').style.display = country === 'eu' ? 'block' : 'none';
+    document.getElementById('complianceThSection').style.display = country === 'th' ? 'block' : 'none';
+    const docType = document.getElementById('complianceMxDocType').value;
+    document.getElementById('complianceMxFisheryRow').style.display = (country === 'mx' && docType === 'bitacora') ? 'block' : 'none';
+  }
+  document.getElementById('complianceReportingCountry').addEventListener('change', updateComplianceVisibility);
+  document.getElementById('complianceMxDocType').addEventListener('change', updateComplianceVisibility);
+
   function openVesselComplianceModal(vesselId){
     const vessels = load(VESSELS_KEY);
     const vessel = vessels.find(v => v.vessel_id === vesselId);
     if(!vessel) return;
     const c = vessel.compliance || {};
+    document.getElementById('complianceReportingCountry').value = c.reporting_country || '';
     document.getElementById('complianceHolderName').value = c.permit_holder_name || '';
     document.getElementById('complianceRegNo').value = c.vessel_registration_no || '';
     document.getElementById('complianceMxRnpaHolder').value = c.mx_rnpa_permisionario || '';
     document.getElementById('complianceMxRnpaVessel').value = c.mx_rnpa_vessel || '';
+    document.getElementById('complianceMxDocType').value = c.mx_document_type || '';
+    document.getElementById('complianceMxFishery').value = c.mx_fishery || '';
     document.getElementById('complianceUsPermit').value = c.us_permit_number || '';
     document.getElementById('complianceEuCfr').value = c.eu_cfr_number || '';
     document.getElementById('complianceThRegNo').value = c.th_vessel_registration || '';
     document.getElementById('complianceThGearLicense').value = c.th_gear_license_number || '';
     document.getElementById('complianceThCaptainCert').value = c.th_captain_certificate_number || '';
     document.getElementById('vesselComplianceOverlay').dataset.vesselId = vesselId;
+    updateComplianceVisibility();
     document.getElementById('vesselComplianceOverlay').style.display = 'flex';
   }
   function closeVesselComplianceModal(){
@@ -5666,10 +5783,13 @@
     const idx = vessels.findIndex(v => v.vessel_id === vesselId);
     if(idx === -1) return;
     vessels[idx].compliance = {
+      reporting_country: document.getElementById('complianceReportingCountry').value,
       permit_holder_name: document.getElementById('complianceHolderName').value.trim(),
       vessel_registration_no: document.getElementById('complianceRegNo').value.trim(),
       mx_rnpa_permisionario: document.getElementById('complianceMxRnpaHolder').value.trim(),
       mx_rnpa_vessel: document.getElementById('complianceMxRnpaVessel').value.trim(),
+      mx_document_type: document.getElementById('complianceMxDocType').value,
+      mx_fishery: document.getElementById('complianceMxFishery').value,
       us_permit_number: document.getElementById('complianceUsPermit').value.trim(),
       eu_cfr_number: document.getElementById('complianceEuCfr').value.trim(),
       th_vessel_registration: document.getElementById('complianceThRegNo').value.trim(),
