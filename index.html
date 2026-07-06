@@ -2409,24 +2409,17 @@
 
       <div id="complianceMxSection" style="display:none;">
         <div class="insight-card-label" style="margin:20px 0 10px;" data-i18n="flcompliance_mx_section">Mexico — CONAPESCA</div>
+        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flcompliance_mx_hint">The Aviso de Arribo applies automatically to any Mexican vessel. If you also fish a specific target species, select the matching Bitácora below — both will be available to export.</div>
         <label for="complianceMxRnpaHolder" data-i18n="flcompliance_mx_rnpa_permisionario">R.N.P.A. — Permit Holder</label>
         <input type="text" id="complianceMxRnpaHolder">
         <label for="complianceMxRnpaVessel" data-i18n="flcompliance_mx_rnpa_vessel">R.N.P.A. — Vessel</label>
         <input type="text" id="complianceMxRnpaVessel">
-        <label for="complianceMxDocType" data-i18n="flcompliance_mx_doc_type">Document Type</label>
-        <select id="complianceMxDocType">
-          <option value="" data-i18n="rec_select_placeholder">— Select —</option>
-          <option value="aviso_arribo" data-i18n="flcompliance_mx_doc_aviso">Aviso de Arribo (general)</option>
-          <option value="bitacora" data-i18n="flcompliance_mx_doc_bitacora">Bitácora (by fishery)</option>
+        <label for="complianceMxFishery" data-i18n="flcompliance_mx_fishery">Applicable Bitácora</label>
+        <select id="complianceMxFishery">
+          <option value="" data-i18n="flcompliance_mx_fishery_none">None — Aviso de Arribo only</option>
+          <option value="escama" data-i18n="flcompliance_mx_fishery_escama">Escama (finfish)</option>
+          <option value="camaron" data-i18n="flcompliance_mx_fishery_camaron">Camarón (Pacific)</option>
         </select>
-        <div id="complianceMxFisheryRow" style="display:none;">
-          <label for="complianceMxFishery" data-i18n="flcompliance_mx_fishery">Fishery (for Bitácora)</label>
-          <select id="complianceMxFishery">
-            <option value="" data-i18n="rec_select_placeholder">— Select —</option>
-            <option value="escama" data-i18n="flcompliance_mx_fishery_escama">Escama (finfish)</option>
-            <option value="camaron" data-i18n="flcompliance_mx_fishery_camaron">Camarón (Pacific)</option>
-          </select>
-        </div>
       </div>
 
       <div id="complianceUsSection" style="display:none;">
@@ -3058,8 +3051,9 @@
       flcompliance_title: 'Vessel Compliance &amp; Registration', flcompliance_hint: 'These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
       flcompliance_reporting_country: 'Reporting Authority', flcompliance_reporting_country_none: 'None (generic Fish Pulse report)',
       flcompliance_mx_section_short: 'Mexico — CONAPESCA', flcompliance_us_section_short: 'United States — NOAA', flcompliance_eu_section_short: 'European Union — e-Logbook', flcompliance_th_section_short: 'Thailand — DOF / PIPO',
-      flcompliance_mx_doc_type: 'Document Type', flcompliance_mx_doc_aviso: 'Aviso de Arribo (general)', flcompliance_mx_doc_bitacora: 'Bitácora (by fishery)',
-      flcompliance_mx_fishery: 'Fishery (for Bitácora)', flcompliance_mx_fishery_escama: 'Escama (finfish)', flcompliance_mx_fishery_camaron: 'Camarón (Pacific)',
+      flcompliance_mx_hint: 'The Aviso de Arribo applies automatically to any Mexican vessel. If you also fish a specific target species, select the matching Bitácora below — both will be available to export.',
+      flcompliance_mx_fishery: 'Applicable Bitácora', flcompliance_mx_fishery_none: 'None — Aviso de Arribo only',
+      flcompliance_mx_fishery_escama: 'Escama (finfish)', flcompliance_mx_fishery_camaron: 'Camarón (Pacific)',
       flcompliance_permit_holder: 'Permit Holder / Owner Name', flcompliance_registration_no: 'Vessel Registration Number',
       flcompliance_mx_section: 'Mexico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permit Holder', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Vessel',
       flcompliance_us_section: 'United States — NOAA', flcompliance_us_permit_number: 'NOAA Permit Number',
@@ -3311,8 +3305,9 @@
       flcompliance_title: 'Cumplimiento y Registro de la Embarcación', flcompliance_hint: 'Estos campos son opcionales y solo se necesitan si planeas generar reportes de cumplimiento para un país específico. Llena solo lo que te aplique.',
       flcompliance_reporting_country: 'Autoridad de Reporte', flcompliance_reporting_country_none: 'Ninguna (reporte genérico de Fish Pulse)',
       flcompliance_mx_section_short: 'México — CONAPESCA', flcompliance_us_section_short: 'Estados Unidos — NOAA', flcompliance_eu_section_short: 'Unión Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
-      flcompliance_mx_doc_type: 'Tipo de Documento', flcompliance_mx_doc_aviso: 'Aviso de Arribo (general)', flcompliance_mx_doc_bitacora: 'Bitácora (por pesquería)',
-      flcompliance_mx_fishery: 'Pesquería (para Bitácora)', flcompliance_mx_fishery_escama: 'Escama', flcompliance_mx_fishery_camaron: 'Camarón (Pacífico)',
+      flcompliance_mx_hint: 'El Aviso de Arribo aplica automáticamente a cualquier embarcación mexicana. Si además pescas una especie objetivo específica, selecciona la Bitácora correspondiente abajo — ambos quedarán disponibles para exportar.',
+      flcompliance_mx_fishery: 'Bitácora Aplicable', flcompliance_mx_fishery_none: 'Ninguna — solo Aviso de Arribo',
+      flcompliance_mx_fishery_escama: 'Escama', flcompliance_mx_fishery_camaron: 'Camarón (Pacífico)',
       flcompliance_permit_holder: 'Nombre del Permisionario / Titular', flcompliance_registration_no: 'Número de Registro / Matrícula',
       flcompliance_mx_section: 'México — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permisionario', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Embarcación',
       flcompliance_us_section: 'Estados Unidos — NOAA', flcompliance_us_permit_number: 'Número de Permiso NOAA',
@@ -3564,8 +3559,9 @@
       flcompliance_title: 'Conformità e Registrazione Imbarcazione', flcompliance_hint: 'Questi campi sono facoltativi e servono solo se prevedi di generare rapporti di conformità per un paese specifico. Compila solo ciò che ti riguarda.',
       flcompliance_reporting_country: 'Autorità di Riferimento', flcompliance_reporting_country_none: 'Nessuna (rapporto generico di Fish Pulse)',
       flcompliance_mx_section_short: 'Messico — CONAPESCA', flcompliance_us_section_short: 'Stati Uniti — NOAA', flcompliance_eu_section_short: 'Unione Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
-      flcompliance_mx_doc_type: 'Tipo di Documento', flcompliance_mx_doc_aviso: 'Aviso de Arribo (generale)', flcompliance_mx_doc_bitacora: 'Bitácora (per pesca)',
-      flcompliance_mx_fishery: 'Pesca (per Bitácora)', flcompliance_mx_fishery_escama: 'Escama (pesce)', flcompliance_mx_fishery_camaron: 'Camarón (Pacifico)',
+      flcompliance_mx_hint: "L'Aviso de Arribo si applica automaticamente a qualsiasi imbarcazione messicana. Se peschi anche una specie target specifica, seleziona la Bitácora corrispondente qui sotto — entrambi saranno disponibili per l'esportazione.",
+      flcompliance_mx_fishery: 'Bitácora Applicabile', flcompliance_mx_fishery_none: 'Nessuna — solo Aviso de Arribo',
+      flcompliance_mx_fishery_escama: 'Escama (pesce)', flcompliance_mx_fishery_camaron: 'Camarón (Pacifico)',
       flcompliance_permit_holder: 'Nome del Titolare della Licenza', flcompliance_registration_no: 'Numero di Registrazione dell\'Imbarcazione',
       flcompliance_mx_section: 'Messico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Titolare Licenza', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Imbarcazione',
       flcompliance_us_section: 'Stati Uniti — NOAA', flcompliance_us_permit_number: 'Numero di Permesso NOAA',
@@ -3817,8 +3813,9 @@
       flcompliance_title: 'การปฏิบัติตามกฎระเบียบและการจดทะเบียนเรือ', flcompliance_hint: 'ช่องเหล่านี้ไม่บังคับ กรอกเฉพาะเมื่อคุณต้องการสร้างรายงานตามข้อกำหนดของประเทศใดประเทศหนึ่ง กรอกเฉพาะส่วนที่เกี่ยวข้องกับคุณ',
       flcompliance_reporting_country: 'หน่วยงานที่รายงาน', flcompliance_reporting_country_none: 'ไม่มี (รายงานทั่วไปของ Fish Pulse)',
       flcompliance_mx_section_short: 'เม็กซิโก — CONAPESCA', flcompliance_us_section_short: 'สหรัฐอเมริกา — NOAA', flcompliance_eu_section_short: 'สหภาพยุโรป — e-Logbook', flcompliance_th_section_short: 'ไทย — กรมประมง / PIPO',
-      flcompliance_mx_doc_type: 'ประเภทเอกสาร', flcompliance_mx_doc_aviso: 'Aviso de Arribo (ทั่วไป)', flcompliance_mx_doc_bitacora: 'Bitácora (ตามประเภทประมง)',
-      flcompliance_mx_fishery: 'ประเภทประมง (สำหรับ Bitácora)', flcompliance_mx_fishery_escama: 'ปลาเกล็ด (Escama)', flcompliance_mx_fishery_camaron: 'กุ้ง (แปซิฟิก)',
+      flcompliance_mx_hint: 'Aviso de Arribo ใช้กับเรือเม็กซิโกทุกลำโดยอัตโนมัติ หากคุณจับชนิดพันธุ์เป้าหมายเฉพาะด้วย ให้เลือก Bitácora ที่ตรงกันด้านล่าง — ทั้งสองอย่างจะพร้อมให้ส่งออก',
+      flcompliance_mx_fishery: 'Bitácora ที่ใช้', flcompliance_mx_fishery_none: 'ไม่มี — เฉพาะ Aviso de Arribo',
+      flcompliance_mx_fishery_escama: 'ปลาเกล็ด (Escama)', flcompliance_mx_fishery_camaron: 'กุ้ง (แปซิฟิก)',
       flcompliance_permit_holder: 'ชื่อผู้ถือใบอนุญาต / เจ้าของ', flcompliance_registration_no: 'เลขทะเบียนเรือ',
       flcompliance_mx_section: 'เม็กซิโก — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — ผู้ถือใบอนุญาต', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — เรือ',
       flcompliance_us_section: 'สหรัฐอเมริกา — NOAA', flcompliance_us_permit_number: 'หมายเลขใบอนุญาต NOAA',
@@ -5745,11 +5742,8 @@
     document.getElementById('complianceUsSection').style.display = country === 'us' ? 'block' : 'none';
     document.getElementById('complianceEuSection').style.display = country === 'eu' ? 'block' : 'none';
     document.getElementById('complianceThSection').style.display = country === 'th' ? 'block' : 'none';
-    const docType = document.getElementById('complianceMxDocType').value;
-    document.getElementById('complianceMxFisheryRow').style.display = (country === 'mx' && docType === 'bitacora') ? 'block' : 'none';
   }
   document.getElementById('complianceReportingCountry').addEventListener('change', updateComplianceVisibility);
-  document.getElementById('complianceMxDocType').addEventListener('change', updateComplianceVisibility);
 
   function openVesselComplianceModal(vesselId){
     const vessels = load(VESSELS_KEY);
@@ -5761,7 +5755,6 @@
     document.getElementById('complianceRegNo').value = c.vessel_registration_no || '';
     document.getElementById('complianceMxRnpaHolder').value = c.mx_rnpa_permisionario || '';
     document.getElementById('complianceMxRnpaVessel').value = c.mx_rnpa_vessel || '';
-    document.getElementById('complianceMxDocType').value = c.mx_document_type || '';
     document.getElementById('complianceMxFishery').value = c.mx_fishery || '';
     document.getElementById('complianceUsPermit').value = c.us_permit_number || '';
     document.getElementById('complianceEuCfr').value = c.eu_cfr_number || '';
@@ -5788,7 +5781,6 @@
       vessel_registration_no: document.getElementById('complianceRegNo').value.trim(),
       mx_rnpa_permisionario: document.getElementById('complianceMxRnpaHolder').value.trim(),
       mx_rnpa_vessel: document.getElementById('complianceMxRnpaVessel').value.trim(),
-      mx_document_type: document.getElementById('complianceMxDocType').value,
       mx_fishery: document.getElementById('complianceMxFishery').value,
       us_permit_number: document.getElementById('complianceUsPermit').value.trim(),
       eu_cfr_number: document.getElementById('complianceEuCfr').value.trim(),
