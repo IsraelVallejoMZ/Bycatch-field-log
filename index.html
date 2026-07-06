@@ -2397,6 +2397,28 @@
   </div>
 </div>
 
+<div id="speciesCodeQuickOverlay" class="fleet-export-overlay" style="display:none; position:fixed;">
+  <div class="fleet-export-panel">
+    <div class="fleet-export-header">
+      <span class="brand" id="speciesCodeQuickTitle" data-i18n="flspecies_codes_title">Species reporting codes</span>
+      <button class="back-btn" id="speciesCodeQuickCloseBtn">✕</button>
+    </div>
+    <div class="fleet-export-text" style="white-space:normal;">
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:16px; line-height:1.5;" data-i18n="flspecies_codes_hint">Match each species you log to the official codes used by fisheries authorities. Fill in only the codes relevant to where you report.</div>
+      <label for="speciesCodeQuickFao" data-i18n="flspecies_fao_code">FAO Code (EU)</label>
+      <input type="text" id="speciesCodeQuickFao" placeholder="e.g. CCV">
+      <label for="speciesCodeQuickNoaa" data-i18n="flspecies_noaa_code">NOAA Code (US)</label>
+      <input type="text" id="speciesCodeQuickNoaa" placeholder="e.g. RSK">
+      <label for="speciesCodeQuickMx" data-i18n="flspecies_mx_code">CONAPESCA Code (Mexico)</label>
+      <input type="text" id="speciesCodeQuickMx" placeholder="e.g. 116">
+    </div>
+    <div class="savebar" style="position:relative;">
+      <button class="btn btn-clear" id="speciesCodeQuickCloseBtn2" data-i18n="premium_close">Close</button>
+      <button class="btn btn-save" id="speciesCodeQuickSaveBtn" data-i18n="flcompliance_save_btn">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ================= FLEET: STATS ================= -->
 <section class="screen" id="screen-fleet-stats">
   <div class="topbar">
@@ -2977,7 +2999,7 @@
       flcompliance_save_btn: 'Save', flcompliance_btn: 'Compliance', flcompliance_saved_msg: 'Compliance info saved', flcompliance_filled_chip: 'Compliance info added',
       flspecies_codes_title: 'Species reporting codes', flspecies_codes_hint: 'Match each species you log to the official codes used by fisheries authorities. Fill in only the codes relevant to where you report.',
       flspecies_name_label: 'Species Name (as you type it in catches)', flspecies_fao_code: 'FAO Code (EU)', flspecies_noaa_code: 'NOAA Code (US)', flspecies_mx_code: 'CONAPESCA Code (Mexico)',
-      flspecies_add_btn: 'Add Species Code', flspecies_none_yet: 'No species codes added yet.', flspecies_name_required: 'Enter a species name', flspecies_code_added: 'Species code added',
+      flspecies_add_btn: 'Add Species Code', flspecies_none_yet: 'No species codes added yet.', flspecies_name_required: 'Enter a species name', flspecies_code_added: 'Species code added', flspecies_add_code_short: '+ add code',
       flstats_h1: 'Fleet Statistics', fltab_trip: 'Trip', fltab_fuel: 'Fuel', fltab_docs: 'Docs',
       flstats_add_vessel: 'Add a vessel to see fleet statistics.', flstats_no_closed_trips: 'No closed trips yet. Statistics build up as trips are completed.',
       flstats_profitability_trend: 'Profitability trend', flstats_last: 'last', flstats_trips_lc: 'trips', flstats_trend_empty: 'Need at least 2 closed trips for this vessel to plot a trend.',
@@ -3222,7 +3244,7 @@
       flcompliance_save_btn: 'Guardar', flcompliance_btn: 'Cumplimiento', flcompliance_saved_msg: 'Información de cumplimiento guardada', flcompliance_filled_chip: 'Cumplimiento agregado',
       flspecies_codes_title: 'Códigos de reporte por especie', flspecies_codes_hint: 'Relaciona cada especie que registras con los códigos oficiales que usan las autoridades pesqueras. Llena solo los códigos relevantes para donde reportas.',
       flspecies_name_label: 'Nombre de la especie (como la escribes en capturas)', flspecies_fao_code: 'Código FAO (UE)', flspecies_noaa_code: 'Código NOAA (EE.UU.)', flspecies_mx_code: 'Código CONAPESCA (México)',
-      flspecies_add_btn: 'Agregar Código de Especie', flspecies_none_yet: 'Aún no hay códigos de especie agregados.', flspecies_name_required: 'Ingresa un nombre de especie', flspecies_code_added: 'Código de especie agregado',
+      flspecies_add_btn: 'Agregar Código de Especie', flspecies_none_yet: 'Aún no hay códigos de especie agregados.', flspecies_name_required: 'Ingresa un nombre de especie', flspecies_code_added: 'Código de especie agregado', flspecies_add_code_short: '+ agregar código',
       flstats_h1: 'Estadísticas de la Flota', fltab_trip: 'Viaje', fltab_fuel: 'Combustible', fltab_docs: 'Docs',
       flstats_add_vessel: 'Agrega una embarcación para ver estadísticas de flota.', flstats_no_closed_trips: 'Aún no hay viajes cerrados. Las estadísticas se acumulan conforme se completan viajes.',
       flstats_profitability_trend: 'Tendencia de rentabilidad', flstats_last: 'últimos', flstats_trips_lc: 'viajes', flstats_trend_empty: 'Se necesitan al menos 2 viajes cerrados de esta embarcación para graficar una tendencia.',
@@ -3467,7 +3489,7 @@
       flcompliance_save_btn: 'Salva', flcompliance_btn: 'Conformità', flcompliance_saved_msg: 'Informazioni di conformità salvate', flcompliance_filled_chip: 'Conformità aggiunta',
       flspecies_codes_title: 'Codici di segnalazione per specie', flspecies_codes_hint: 'Abbina ogni specie che registri ai codici ufficiali usati dalle autorità della pesca. Compila solo i codici rilevanti per dove segnali.',
       flspecies_name_label: 'Nome della specie (come lo digiti nelle catture)', flspecies_fao_code: 'Codice FAO (UE)', flspecies_noaa_code: 'Codice NOAA (USA)', flspecies_mx_code: 'Codice CONAPESCA (Messico)',
-      flspecies_add_btn: 'Aggiungi Codice Specie', flspecies_none_yet: 'Nessun codice specie ancora aggiunto.', flspecies_name_required: 'Inserisci un nome di specie', flspecies_code_added: 'Codice specie aggiunto',
+      flspecies_add_btn: 'Aggiungi Codice Specie', flspecies_none_yet: 'Nessun codice specie ancora aggiunto.', flspecies_name_required: 'Inserisci un nome di specie', flspecies_code_added: 'Codice specie aggiunto', flspecies_add_code_short: '+ aggiungi codice',
       flstats_h1: 'Statistiche della Flotta', fltab_trip: 'Viaggio', fltab_fuel: 'Carburante', fltab_docs: 'Docs',
       flstats_add_vessel: 'Aggiungi un\'imbarcazione per vedere le statistiche della flotta.', flstats_no_closed_trips: 'Nessun viaggio chiuso ancora. Le statistiche si accumulano man mano che i viaggi vengono completati.',
       flstats_profitability_trend: 'Tendenza di redditività', flstats_last: 'ultimi', flstats_trips_lc: 'viaggi', flstats_trend_empty: 'Servono almeno 2 viaggi chiusi per questa imbarcazione per tracciare una tendenza.',
@@ -3712,7 +3734,7 @@
       flcompliance_save_btn: 'บันทึก', flcompliance_btn: 'การปฏิบัติตามกฎ', flcompliance_saved_msg: 'บันทึกข้อมูลการปฏิบัติตามกฎแล้ว', flcompliance_filled_chip: 'เพิ่มข้อมูลการปฏิบัติตามกฎแล้ว',
       flspecies_codes_title: 'รหัสรายงานตามชนิดพันธุ์', flspecies_codes_hint: 'จับคู่แต่ละชนิดพันธุ์ที่คุณบันทึกกับรหัสทางการที่หน่วยงานประมงใช้ กรอกเฉพาะรหัสที่เกี่ยวข้องกับที่ที่คุณรายงาน',
       flspecies_name_label: 'ชื่อชนิดพันธุ์ (ตามที่คุณพิมพ์ในการจับปลา)', flspecies_fao_code: 'รหัส FAO (สหภาพยุโรป)', flspecies_noaa_code: 'รหัส NOAA (สหรัฐฯ)', flspecies_mx_code: 'รหัส CONAPESCA (เม็กซิโก)',
-      flspecies_add_btn: 'เพิ่มรหัสชนิดพันธุ์', flspecies_none_yet: 'ยังไม่มีรหัสชนิดพันธุ์ที่เพิ่ม', flspecies_name_required: 'กรอกชื่อชนิดพันธุ์', flspecies_code_added: 'เพิ่มรหัสชนิดพันธุ์แล้ว',
+      flspecies_add_btn: 'เพิ่มรหัสชนิดพันธุ์', flspecies_none_yet: 'ยังไม่มีรหัสชนิดพันธุ์ที่เพิ่ม', flspecies_name_required: 'กรอกชื่อชนิดพันธุ์', flspecies_code_added: 'เพิ่มรหัสชนิดพันธุ์แล้ว', flspecies_add_code_short: '+ เพิ่มรหัส',
       flstats_h1: 'สถิติกองเรือ', fltab_trip: 'ทริป', fltab_fuel: 'เชื้อเพลิง', fltab_docs: 'เอกสาร',
       flstats_add_vessel: 'เพิ่มเรือเพื่อดูสถิติกองเรือ', flstats_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว สถิติจะสะสมเมื่อทริปเสร็จสมบูรณ์',
       flstats_profitability_trend: 'แนวโน้มความสามารถในการทำกำไร', flstats_last: 'ล่าสุด', flstats_trips_lc: 'ทริป', flstats_trend_empty: 'ต้องการทริปที่ปิดแล้วอย่างน้อย 2 ทริปสำหรับเรือนี้เพื่อสร้างแนวโน้ม',
@@ -4376,6 +4398,7 @@
   function renderFleetTrip(){
     renderVesselOptions();
     renderCaptainOptions();
+    if(window.populateDatalist) window.populateDatalist('fleet-species-list', 'fleet_known_species');
     const trip = getActiveTrip();
     const noTripCard = document.getElementById('fleetNoTripCard');
     const activeCard = document.getElementById('fleetActiveTripCard');
@@ -4754,6 +4777,8 @@
   function saveFleetCatch(){
     const species = document.getElementById('fleetSpecies').value.trim();
     if(!species){ showFleetToast(t('msg_species_category_required'), true); return false; }
+    rememberValue('fleet_known_species', species);
+    populateDatalist('fleet-species-list', 'fleet_known_species');
     const kg = parseFloat(document.getElementById('fleetCatchKg').value) || 0;
     const price = document.getElementById('fleetRefPrice').value;
     const currency = document.getElementById('fleetRefCurrency').value;
@@ -5090,7 +5115,9 @@
       + '</div>'
       + (trip.closing_notes ? '<div style="background:var(--panel); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:10px; font-family:var(--data); font-size:12px; color:var(--ink); line-height:1.5;"><b>'+t('fltripdet_trip_notes_label')+'</b> '+trip.closing_notes+'</div>' : '')
       + landingGroups.map(g => '<div class="entry"><div><div class="sp">'+g.species+'</div>'
-          + '<div class="meta">'+(g.hasActual?t('fltripdet_scale_label')+' '+g.actualKg.toFixed(1)+' kg':t('fltripdet_estimated_not_scaled'))+'</div></div>'
+          + '<div class="meta">'+(g.hasActual?t('fltripdet_scale_label')+' '+g.actualKg.toFixed(1)+' kg':t('fltripdet_estimated_not_scaled'))+'</div>'
+          + speciesCodeChipHtml(g.species)
+          + '</div>'
           + '<div class="duration-line" style="margin:0;">'+g.estKg.toFixed(1)+' '+t('fltripdet_kg_est')+'</div></div>').join('')
       + '<div class="duration-line" style="margin-top:10px;">'+t('fltripdet_total_label')+' '+totalEstKg.toFixed(1)+' '+t('fltripdet_kg_estimated')+(hasActuals?' · '+totalActualKg.toFixed(1)+' '+t('fltripdet_kg_scaled'):'')+'</div>'
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">'+t('fltripdet_report_disclaimer')+'</div>'
@@ -5099,6 +5126,9 @@
 
     document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
       generateFleetLandingReportPdf({ vessel, captain, trip, landingGroups, totalEstKg, totalActualKg, hasActuals });
+    });
+    document.querySelectorAll('[data-edit-species-code]').forEach(el => {
+      el.addEventListener('click', () => openSpeciesCodeQuickEdit(el.dataset.editSpeciesCode));
     });
 
     // Individual catches, collapsed by default — lets a correction (wrong
@@ -5561,6 +5591,52 @@
     });
     applyDefaultCurrencyToSelects();
   }
+
+  // Species codes are looked up by exact species name match against the
+  // SPECIES_CODES_KEY table (same store the Vessels screen bulk-editor
+  // uses) — this is the Settlement-side entry point discussed with Israel:
+  // capture the code right where the species already appears grouped by
+  // catch, instead of a separate screen no one remembers to visit.
+  function findSpeciesCode(speciesName){
+    return load(SPECIES_CODES_KEY).find(s => s.species_name === speciesName) || null;
+  }
+  function speciesCodeChipHtml(speciesName){
+    const code = findSpeciesCode(speciesName);
+    const summary = code ? [code.fao_code?('FAO '+code.fao_code):'', code.noaa_code?('NOAA '+code.noaa_code):'', code.mx_code?('CONAPESCA '+code.mx_code):''].filter(Boolean).join(' · ') : '';
+    const label = summary || t('flspecies_add_code_short');
+    return '<button type="button" class="chip chip-blue" style="border:none; cursor:pointer; margin-top:4px;" data-edit-species-code="'+speciesName.replace(/"/g,'&quot;')+'">'+label+'</button>';
+  }
+  function openSpeciesCodeQuickEdit(speciesName){
+    const code = findSpeciesCode(speciesName) || {};
+    document.getElementById('speciesCodeQuickTitle').textContent = speciesName;
+    document.getElementById('speciesCodeQuickFao').value = code.fao_code || '';
+    document.getElementById('speciesCodeQuickNoaa').value = code.noaa_code || '';
+    document.getElementById('speciesCodeQuickMx').value = code.mx_code || '';
+    document.getElementById('speciesCodeQuickOverlay').dataset.speciesName = speciesName;
+    document.getElementById('speciesCodeQuickOverlay').style.display = 'flex';
+  }
+  function closeSpeciesCodeQuickEdit(){
+    document.getElementById('speciesCodeQuickOverlay').style.display = 'none';
+  }
+  document.getElementById('speciesCodeQuickCloseBtn').addEventListener('click', closeSpeciesCodeQuickEdit);
+  document.getElementById('speciesCodeQuickCloseBtn2').addEventListener('click', closeSpeciesCodeQuickEdit);
+  document.getElementById('speciesCodeQuickSaveBtn').addEventListener('click', () => {
+    const speciesName = document.getElementById('speciesCodeQuickOverlay').dataset.speciesName;
+    const codes = load(SPECIES_CODES_KEY);
+    const idx = codes.findIndex(s => s.species_name === speciesName);
+    const entry = {
+      code_id: idx > -1 ? codes[idx].code_id : uid(),
+      species_name: speciesName,
+      fao_code: document.getElementById('speciesCodeQuickFao').value.trim(),
+      noaa_code: document.getElementById('speciesCodeQuickNoaa').value.trim(),
+      mx_code: document.getElementById('speciesCodeQuickMx').value.trim()
+    };
+    if(idx > -1) codes[idx] = entry; else codes.push(entry);
+    save(SPECIES_CODES_KEY, codes);
+    showFleetToast(t('flspecies_code_added'));
+    closeSpeciesCodeQuickEdit();
+    renderFleetTripDetail();
+  });
 
   function openVesselComplianceModal(vesselId){
     const vessels = load(VESSELS_KEY);
@@ -7405,6 +7481,13 @@
     const combined = extraOptions ? extraOptions.concat(known.filter(v => !extraOptions.includes(v))) : known;
     datalist.innerHTML = combined.map(v => '<option value="'+v.replace(/"/g,'&quot;')+'">').join('');
   }
+  // These three helpers are generic (not Field-Research-specific), so the
+  // Fishing Operations and Sport modules — separate, unwrapped script
+  // blocks — reuse them for their own species datalists rather than each
+  // reimplementing the same "remember what was typed" logic.
+  window.getKnownValues = getKnownValues;
+  window.rememberValue = rememberValue;
+  window.populateDatalist = populateDatalist;
 
   populateDatalist('observer-list', LAST_OBSERVER_KEY);
   const lastObserver = localStorage.getItem(LAST_OBSERVER_KEY);
