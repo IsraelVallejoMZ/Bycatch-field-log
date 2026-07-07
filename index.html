@@ -2446,6 +2446,15 @@
         <option value="MXN">MXN</option>
         <option value="VND">VND</option>
       </select>
+      <label for="vesselsNewCountry" data-i18n="flcompliance_reporting_country">Reporting Authority</label>
+      <select id="vesselsNewCountry">
+        <option value="" data-i18n="flcompliance_reporting_country_none">None (generic Fish Pulse report)</option>
+        <option value="mx" data-i18n="flcompliance_mx_section_short">Mexico — CONAPESCA</option>
+        <option value="us" data-i18n="flcompliance_us_section_short">United States — NOAA</option>
+        <option value="eu" data-i18n="flcompliance_eu_section_short">European Union — e-Logbook</option>
+        <option value="th" data-i18n="flcompliance_th_section_short">Thailand — DOF / PIPO</option>
+      </select>
+      <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:6px; margin-bottom:14px; line-height:1.5;" data-i18n="fltrip_new_vessel_country_hint">This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.</div>
       <label for="vesselsNewTarget"><span data-i18n="flvessels_target">Efficiency Target — Margin Per Trip</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <input type="number" id="vesselsNewTarget" inputmode="decimal" placeholder="e.g. 8000">
       <label for="vesselsNewExpectedDailyFuel"><span data-i18n="flvessels_expected_fuel">Expected Daily Fuel Use (L/day)</span> <span class="optional-tag" data-i18n="flvessels_expected_fuel_hint">optional — overrides auto average</span></label>
@@ -4738,9 +4747,11 @@
     // vessel already has 40 hours since its last service"), we back-date
     // maintenance_done_at by that many hours from now as the baseline;
     // future trips simply add their duration on top when calculated.
+    const vesselsNewCountry = document.getElementById('vesselsNewCountry').value;
     const vessel = {
       vessel_id: uid(), name,
       default_currency: document.getElementById('vesselsNewCurrency').value,
+      compliance: vesselsNewCountry ? { reporting_country: vesselsNewCountry } : {},
       margin_target: document.getElementById('vesselsNewTarget').value || '',
       expected_daily_fuel_l: document.getElementById('vesselsNewExpectedDailyFuel').value || '',
       maintenance_interval_hours: document.getElementById('vesselsNewMaintenanceInterval').value || '',
@@ -4752,6 +4763,7 @@
     document.getElementById('vesselsNewExpectedDailyFuel').value = '';
     document.getElementById('vesselsNewMaintenanceInterval').value = '';
     document.getElementById('vesselsNewLastMaintenanceHours').value = '';
+    document.getElementById('vesselsNewCountry').value = '';
     delete document.getElementById('vesselsNewCurrency').dataset.userTouched;
     showFleetToast(t('msg_vessel_added'));
     renderFleetVessels();
