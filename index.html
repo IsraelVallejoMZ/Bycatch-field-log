@@ -1841,6 +1841,21 @@
     </div>
 
     <div class="card">
+      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flhaul_bycatch_section">Fauna de Acompañamiento (Mexico)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flhaul_bycatch_hint">Only needed for Mexican shrimp/finfish trawl bitácoras — estimated kg of non-target species caught in this haul, kept or discarded.</div>
+      <div class="grid2">
+        <div>
+          <label for="fleetBycatchKeptKg" data-i18n="flhaul_bycatch_kept">Kept On Board (kg)</label>
+          <input type="number" inputmode="decimal" id="fleetBycatchKeptKg">
+        </div>
+        <div>
+          <label for="fleetBycatchDiscardedKg" data-i18n="flhaul_bycatch_discarded">Discarded At Sea (kg)</label>
+          <input type="number" inputmode="decimal" id="fleetBycatchDiscardedKg">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <label for="fleetHaulNotes"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
       <textarea id="fleetHaulNotes" rows="2" placeholder="e.g. net snagged on reef, unusual bycatch, engine trouble"></textarea>
     </div>
@@ -2007,6 +2022,10 @@
       <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flclose_compliance_hint">Only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.</div>
       <label for="fleetCloseLandingSite" data-i18n="flclose_landing_site">Landing Site / Port</label>
       <input type="text" id="fleetCloseLandingSite" placeholder="e.g. Puerto San Carlos">
+      <label for="fleetCloseDeparturePort" data-i18n="flclose_departure_port">Departure Port (Mexico)</label>
+      <input type="text" id="fleetCloseDeparturePort" placeholder="e.g. Puerto San Carlos">
+      <label for="fleetCloseFishingGround" data-i18n="flclose_fishing_ground">Fishing Ground (Mexico)</label>
+      <input type="text" id="fleetCloseFishingGround" placeholder="e.g. Campo Bajamar" data-i18n-placeholder="flclose_fishing_ground_placeholder">
       <label for="fleetClosePresentation" data-i18n="flclose_presentation">Catch Presentation (Mexico)</label>
       <select id="fleetClosePresentation">
         <option value="" data-i18n="rec_select_placeholder">— Select —</option>
@@ -2419,7 +2438,47 @@
           <option value="" data-i18n="flcompliance_mx_fishery_none">None — Aviso de Arribo only</option>
           <option value="escama" data-i18n="flcompliance_mx_fishery_escama">Escama (finfish)</option>
           <option value="camaron" data-i18n="flcompliance_mx_fishery_camaron">Camarón (Pacific)</option>
+          <option value="tiburon" data-i18n="flcompliance_mx_fishery_tiburon">Tiburón (medium/minor fleet)</option>
         </select>
+        <label for="complianceMxPermitNo" data-i18n="flcompliance_mx_permit_no">Bitácora Fishing Permit/Concession No.</label>
+        <input type="text" id="complianceMxPermitNo">
+        <label for="complianceMxPermitDate" data-i18n="flcompliance_mx_permit_date">Permit Issue Date</label>
+        <input type="date" id="complianceMxPermitDate">
+        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin:14px 0 8px; line-height:1.5;" data-i18n="flcompliance_mx_gear_hint">Gear setup below rarely changes trip to trip — fill it in once here instead of every bitácora.</div>
+        <div class="grid2">
+          <div>
+            <label for="complianceMxNetsPerSide" data-i18n="flcompliance_mx_nets_per_side">Nets Per Side</label>
+            <select id="complianceMxNetsPerSide">
+              <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
+          <div>
+            <label for="complianceMxNetType" data-i18n="flcompliance_mx_net_type">Net Type / Model</label>
+            <input type="text" id="complianceMxNetType" placeholder="e.g. cholo, fantasma">
+          </div>
+        </div>
+        <label for="complianceMxHeadrope" data-i18n="flcompliance_mx_headrope">Headrope Length (m)</label>
+        <input type="number" inputmode="decimal" id="complianceMxHeadrope">
+        <div class="grid2">
+          <div>
+            <label for="complianceMxMeshWings" data-i18n="flcompliance_mx_mesh_wings">Mesh — Wings (cm)</label>
+            <input type="number" inputmode="decimal" id="complianceMxMeshWings">
+          </div>
+          <div>
+            <label for="complianceMxMeshBody" data-i18n="flcompliance_mx_mesh_body">Mesh — Body (cm)</label>
+            <input type="number" inputmode="decimal" id="complianceMxMeshBody">
+          </div>
+        </div>
+        <label for="complianceMxMeshBag" data-i18n="flcompliance_mx_mesh_bag">Mesh — Bag/Cod-end (cm)</label>
+        <input type="number" inputmode="decimal" id="complianceMxMeshBag">
+        <label for="complianceMxTed" data-i18n="flcompliance_mx_ted">Turtle Excluder Device (qty &amp; model)</label>
+        <input type="text" id="complianceMxTed">
+        <label for="complianceMxFed" data-i18n="flcompliance_mx_fed">Fish Excluder Device (qty &amp; model)</label>
+        <input type="text" id="complianceMxFed">
+        <label for="complianceMxEngineNhp" data-i18n="flcompliance_mx_engine_nhp">Main Engine (NHP)</label>
+        <input type="number" inputmode="decimal" id="complianceMxEngineNhp">
       </div>
 
       <div id="complianceUsSection" style="display:none;">
@@ -2996,6 +3055,8 @@
       fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
       flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear &amp; effort',
       flhaul_start: 'Haul Start', flhaul_end: 'Haul End', flhaul_notes: 'Notes',
+      flhaul_bycatch_section: 'Fauna de Acompañamiento (Mexico)', flhaul_bycatch_hint: 'Only needed for Mexican shrimp/finfish trawl bitácoras — estimated kg of non-target species caught in this haul, kept or discarded.',
+      flhaul_bycatch_kept: 'Kept On Board (kg)', flhaul_bycatch_discarded: 'Discarded At Sea (kg)',
       flhaul_log_catch_now: 'Log catch for this haul now', flhaul_log_catch_hint: 'Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.',
       flhaul_cancel: 'Cancel', flhaul_save: 'Save Haul',
       flcatch_brand: 'Log Catch', flcatch_title: 'Catch Entry', flcatch_not_linked: 'Not Linked To A Haul',
@@ -3009,7 +3070,7 @@
       flclose_crew_on_trip: 'Crew On This Trip', flclose_add: 'Add', flclose_crew_hint: 'Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.',
       flclose_trip_notes: 'Trip Notes', flclose_before_close: 'Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.',
       flclose_compliance_section: 'Trip Compliance Details', flclose_compliance_hint: 'Only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
-      flclose_landing_site: 'Landing Site / Port', flclose_presentation: 'Catch Presentation (Mexico)', flclose_pres_fresh_whole: 'Fresh, Whole', flclose_pres_fresh_gutted: 'Fresh, Gutted', flclose_pres_frozen: 'Frozen',
+      flclose_landing_site: 'Landing Site / Port', flclose_departure_port: 'Departure Port (Mexico)', flclose_fishing_ground: 'Fishing Ground (Mexico)', flclose_fishing_ground_placeholder: 'e.g. Campo Bajamar', flclose_presentation: 'Catch Presentation (Mexico)', flclose_pres_fresh_whole: 'Fresh, Whole', flclose_pres_fresh_gutted: 'Fresh, Gutted', flclose_pres_frozen: 'Frozen',
       flclose_fishing_zone: 'Fishing Zone (Mexico)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Trip Type (US)', flclose_triptype_commercial: 'Commercial', flclose_triptype_party: 'Party', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
@@ -3019,6 +3080,7 @@
       fltripdet_kg_estimated: 'kg Estimated', fltripdet_kg_scaled: 'kg Scaled', fltripdet_report_disclaimer: 'This report supports a landing declaration or capture certificate application — it is not itself an official certificate.',
       fltripdet_export_pdf_btn: 'Export as PDF', fltripdet_no_hauls: 'No hauls logged.', fltripdet_no_catches: 'No catches logged.',
       flmx_aviso_export_btn: 'Export Aviso de Arribo (Mexico)',
+      flmx_escama_export_btn: 'Export Bitácora de Escama (Mexico)', flmx_camaron_export_btn: 'Export Bitácora de Camarón (Mexico)', flmx_tiburon_export_btn: 'Export Bitácora de Tiburón (Mexico)',
       fltripdet_unnamed_species: 'unnamed', fltripdet_ref_price_short: 'Ref.', fltripdet_profitability_glance: 'Trip Profitability At A Glance *',
       fltripdet_profitability_footnote: '* These figures are informative estimates based on your logged catch, reference prices, and costs. Actual results depend on final scale weights and confirmed sale prices.',
       fltripdet_trip_settlement: 'Trip Settlement', fltripdet_based_on_estimate: 'based on estimate, not yet scaled', fltripdet_scaled_price_estimated: 'scaled, price still estimated',
@@ -3054,7 +3116,12 @@
       flcompliance_mx_section_short: 'Mexico — CONAPESCA', flcompliance_us_section_short: 'United States — NOAA', flcompliance_eu_section_short: 'European Union — e-Logbook', flcompliance_th_section_short: 'Thailand — DOF / PIPO',
       flcompliance_mx_hint: 'The Aviso de Arribo applies automatically to any Mexican vessel. If you also fish a specific target species, select the matching Bitácora below — both will be available to export.',
       flcompliance_mx_fishery: 'Applicable Bitácora', flcompliance_mx_fishery_none: 'None — Aviso de Arribo only',
-      flcompliance_mx_fishery_escama: 'Escama (finfish)', flcompliance_mx_fishery_camaron: 'Camarón (Pacific)',
+      flcompliance_mx_fishery_escama: 'Escama (finfish)', flcompliance_mx_fishery_camaron: 'Camarón (Pacific)', flcompliance_mx_fishery_tiburon: 'Tiburón (medium/minor fleet)',
+      flcompliance_mx_permit_no: 'Bitácora Fishing Permit/Concession No.', flcompliance_mx_permit_date: 'Permit Issue Date',
+      flcompliance_mx_gear_hint: 'Gear setup below rarely changes trip to trip — fill it in once here instead of every bitácora.',
+      flcompliance_mx_nets_per_side: 'Nets Per Side', flcompliance_mx_net_type: 'Net Type / Model', flcompliance_mx_headrope: 'Headrope Length (m)',
+      flcompliance_mx_mesh_wings: 'Mesh — Wings (cm)', flcompliance_mx_mesh_body: 'Mesh — Body (cm)', flcompliance_mx_mesh_bag: 'Mesh — Bag/Cod-end (cm)',
+      flcompliance_mx_ted: 'Turtle Excluder Device (qty & model)', flcompliance_mx_fed: 'Fish Excluder Device (qty & model)', flcompliance_mx_engine_nhp: 'Main Engine (NHP)',
       flcompliance_permit_holder: 'Permit Holder / Owner Name', flcompliance_registration_no: 'Vessel Registration Number',
       flcompliance_mx_section: 'Mexico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permit Holder', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Vessel',
       flcompliance_us_section: 'United States — NOAA', flcompliance_us_permit_number: 'NOAA Permit Number',
@@ -3251,6 +3318,8 @@
       fltrip_catches_this_trip: 'Capturas de este viaje', fltrip_hauls_this_trip: 'Lances de este viaje', fltrip_view_map: 'Ver Mapa',
       flhaul_brand: 'Registrar Lance', flhaul_title: 'Detalles del Lance', flhaul_gear_effort: 'Arte y esfuerzo',
       flhaul_start: 'Inicio del Lance', flhaul_end: 'Fin del Lance', flhaul_notes: 'Notas',
+      flhaul_bycatch_section: 'Fauna de Acompañamiento (México)', flhaul_bycatch_hint: 'Solo necesario para bitácoras mexicanas de arrastre de camarón/escama — kg estimados de especies no objetivo capturadas en este lance, retenidas o desechadas.',
+      flhaul_bycatch_kept: 'Retenida a Bordo (kg)', flhaul_bycatch_discarded: 'Desechada al Mar (kg)',
       flhaul_log_catch_now: 'Registrar captura de este lance ahora', flhaul_log_catch_hint: 'Déjalo sin marcar para volver al viaje y registrar la captura después — o combinar toda la captura al final del viaje.',
       flhaul_cancel: 'Cancelar', flhaul_save: 'Guardar Lance',
       flcatch_brand: 'Registrar Captura', flcatch_title: 'Entrada de Captura', flcatch_not_linked: 'No Vinculado a un Lance',
@@ -3264,7 +3333,7 @@
       flclose_crew_on_trip: 'Tripulación en Este Viaje', flclose_add: 'Agregar', flclose_crew_hint: 'Marcar quién estuvo a bordo le ahorra a la oficina reescribir nombres en la liquidación — los porcentajes de pago se siguen definiendo ahí.',
       flclose_trip_notes: 'Notas del Viaje', flclose_before_close: 'Antes de cerrar: cerrar bloquea nuevos lances y capturas para este viaje. La oficina todavía puede agregar costos restantes y correr la liquidación desde el panel.',
       flclose_compliance_section: 'Detalles de Cumplimiento del Viaje', flclose_compliance_hint: 'Solo se necesita si planeas generar reportes de cumplimiento para un país específico. Llena solo lo que te aplique.',
-      flclose_landing_site: 'Sitio / Puerto de Desembarque', flclose_presentation: 'Presentación de la Captura (México)', flclose_pres_fresh_whole: 'Fresco, Entero', flclose_pres_fresh_gutted: 'Fresco, Eviscerado', flclose_pres_frozen: 'Congelado',
+      flclose_landing_site: 'Sitio / Puerto de Desembarque', flclose_departure_port: 'Puerto de Salida (México)', flclose_fishing_ground: 'Lugar de Captura (México)', flclose_fishing_ground_placeholder: 'ej. Campo Bajamar', flclose_presentation: 'Presentación de la Captura (México)', flclose_pres_fresh_whole: 'Fresco, Entero', flclose_pres_fresh_gutted: 'Fresco, Eviscerado', flclose_pres_frozen: 'Congelado',
       flclose_fishing_zone: 'Zona de Pesca (México)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Tipo de Viaje (EE.UU.)', flclose_triptype_commercial: 'Comercial', flclose_triptype_party: 'Grupo (Party)', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Registro de Viajes', fltriplog_title: 'Viajes Anteriores', fltriplog_all_vessels: 'Todas las Embarcaciones',
@@ -3274,6 +3343,7 @@
       fltripdet_kg_estimated: 'kg Estimados', fltripdet_kg_scaled: 'kg Pesados', fltripdet_report_disclaimer: 'Este reporte apoya una declaración de desembarque o solicitud de certificado de captura — no es en sí mismo un certificado oficial.',
       fltripdet_export_pdf_btn: 'Exportar como PDF', fltripdet_no_hauls: 'No hay lances registrados.', fltripdet_no_catches: 'No hay capturas registradas.',
       flmx_aviso_export_btn: 'Exportar Aviso de Arribo (México)',
+      flmx_escama_export_btn: 'Exportar Bitácora de Escama (México)', flmx_camaron_export_btn: 'Exportar Bitácora de Camarón (México)', flmx_tiburon_export_btn: 'Exportar Bitácora de Tiburón (México)',
       fltripdet_unnamed_species: 'sin nombre', fltripdet_ref_price_short: 'Ref.', fltripdet_profitability_glance: 'Rentabilidad del Viaje de un Vistazo *',
       fltripdet_profitability_footnote: '* Estas cifras son estimaciones informativas basadas en tu captura registrada, precios de referencia y costos. Los resultados reales dependen del peso final en báscula y los precios de venta confirmados.',
       fltripdet_trip_settlement: 'Liquidación del Viaje', fltripdet_based_on_estimate: 'basado en estimación, aún sin pesar', fltripdet_scaled_price_estimated: 'pesado, precio aún estimado',
@@ -3309,7 +3379,12 @@
       flcompliance_mx_section_short: 'México — CONAPESCA', flcompliance_us_section_short: 'Estados Unidos — NOAA', flcompliance_eu_section_short: 'Unión Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
       flcompliance_mx_hint: 'El Aviso de Arribo aplica automáticamente a cualquier embarcación mexicana. Si además pescas una especie objetivo específica, selecciona la Bitácora correspondiente abajo — ambos quedarán disponibles para exportar.',
       flcompliance_mx_fishery: 'Bitácora Aplicable', flcompliance_mx_fishery_none: 'Ninguna — solo Aviso de Arribo',
-      flcompliance_mx_fishery_escama: 'Escama', flcompliance_mx_fishery_camaron: 'Camarón (Pacífico)',
+      flcompliance_mx_fishery_escama: 'Escama', flcompliance_mx_fishery_camaron: 'Camarón (Pacífico)', flcompliance_mx_fishery_tiburon: 'Tiburón (flota mediana/menor)',
+      flcompliance_mx_permit_no: 'No. de Permiso o Concesión de Pesca (Bitácora)', flcompliance_mx_permit_date: 'Fecha de Emisión del Permiso',
+      flcompliance_mx_gear_hint: 'El aparejo casi no cambia de viaje a viaje — llénalo una sola vez aquí en vez de en cada bitácora.',
+      flcompliance_mx_nets_per_side: 'Redes por Banda', flcompliance_mx_net_type: 'Tipo de Red / Modelo', flcompliance_mx_headrope: 'Long. de la Relinga Superior (m)',
+      flcompliance_mx_mesh_wings: 'Luz de Malla — Alas (cm)', flcompliance_mx_mesh_body: 'Luz de Malla — Cuerpo (cm)', flcompliance_mx_mesh_bag: 'Luz de Malla — Bolso (cm)',
+      flcompliance_mx_ted: 'Excluidor de Tortugas (cant. y modelo)', flcompliance_mx_fed: 'Excluidor de Peces (cant. y modelo)', flcompliance_mx_engine_nhp: 'Motor Principal (NHP)',
       flcompliance_permit_holder: 'Nombre del Permisionario / Titular', flcompliance_registration_no: 'Número de Registro / Matrícula',
       flcompliance_mx_section: 'México — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Permisionario', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Embarcación',
       flcompliance_us_section: 'Estados Unidos — NOAA', flcompliance_us_permit_number: 'Número de Permiso NOAA',
@@ -3506,6 +3581,8 @@
       fltrip_catches_this_trip: 'Catture di questo viaggio', fltrip_hauls_this_trip: 'Calate di questo viaggio', fltrip_view_map: 'Vedi Mappa',
       flhaul_brand: 'Registra Calata', flhaul_title: 'Dettagli Calata', flhaul_gear_effort: 'Attrezzo e sforzo',
       flhaul_start: 'Inizio Calata', flhaul_end: 'Fine Calata', flhaul_notes: 'Note',
+      flhaul_bycatch_section: 'Fauna de Acompañamiento (Messico)', flhaul_bycatch_hint: 'Necessario solo per le bitácoras messicane di traino gamberi/pesce — kg stimati di specie non bersaglio catturate in questa calata, trattenute o scartate.',
+      flhaul_bycatch_kept: 'Trattenuta a Bordo (kg)', flhaul_bycatch_discarded: 'Scartata in Mare (kg)',
       flhaul_log_catch_now: 'Registra ora la cattura di questa calata', flhaul_log_catch_hint: 'Lascia deselezionato per tornare al viaggio e registrare la cattura più tardi — o combinare tutta la cattura a fine viaggio.',
       flhaul_cancel: 'Annulla', flhaul_save: 'Salva Calata',
       flcatch_brand: 'Registra Cattura', flcatch_title: 'Inserimento Cattura', flcatch_not_linked: 'Non Collegata a una Calata',
@@ -3519,7 +3596,7 @@
       flclose_crew_on_trip: 'Equipaggio di Questo Viaggio', flclose_add: 'Aggiungi', flclose_crew_hint: 'Segnare chi era a bordo evita all\'ufficio di riscrivere i nomi in fase di liquidazione — le quote di pagamento si impostano comunque lì.',
       flclose_trip_notes: 'Note del Viaggio', flclose_before_close: 'Prima di chiudere: la chiusura blocca nuove calate e catture per questo viaggio. L\'ufficio può comunque aggiungere i costi rimanenti ed eseguire la liquidazione dal pannello.',
       flclose_compliance_section: 'Dettagli di Conformità del Viaggio', flclose_compliance_hint: 'Necessario solo se prevedi di generare rapporti di conformità per un paese specifico. Compila solo ciò che ti riguarda.',
-      flclose_landing_site: 'Sito / Porto di Sbarco', flclose_presentation: 'Presentazione della Cattura (Messico)', flclose_pres_fresh_whole: 'Fresco, Intero', flclose_pres_fresh_gutted: 'Fresco, Eviscerato', flclose_pres_frozen: 'Congelato',
+      flclose_landing_site: 'Sito / Porto di Sbarco', flclose_departure_port: 'Porto di Partenza (Messico)', flclose_fishing_ground: 'Zona di Cattura (Messico)', flclose_fishing_ground_placeholder: 'es. Campo Bajamar', flclose_presentation: 'Presentazione della Cattura (Messico)', flclose_pres_fresh_whole: 'Fresco, Intero', flclose_pres_fresh_gutted: 'Fresco, Eviscerato', flclose_pres_frozen: 'Congelato',
       flclose_fishing_zone: 'Zona di Pesca (Messico)', flclose_zone_litoral: 'Litorale', flclose_zone_bahia: 'Baia', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continentale',
       flclose_trip_type: 'Tipo di Viaggio (USA)', flclose_triptype_commercial: 'Commerciale', flclose_triptype_party: 'Gruppo (Party)', flclose_triptype_charter: 'Charter',
       fltriplog_brand: 'Registro Viaggi', fltriplog_title: 'Viaggi Passati', fltriplog_all_vessels: 'Tutte le Imbarcazioni',
@@ -3529,6 +3606,7 @@
       fltripdet_kg_estimated: 'kg Stimati', fltripdet_kg_scaled: 'kg Pesati', fltripdet_report_disclaimer: 'Questo rapporto supporta una dichiarazione di sbarco o una richiesta di certificato di cattura — non è di per sé un certificato ufficiale.',
       fltripdet_export_pdf_btn: 'Esporta come PDF', fltripdet_no_hauls: 'Nessuna calata registrata.', fltripdet_no_catches: 'Nessuna cattura registrata.',
       flmx_aviso_export_btn: 'Esporta Aviso de Arribo (Messico)',
+      flmx_escama_export_btn: 'Esporta Bitácora de Escama (Messico)', flmx_camaron_export_btn: 'Esporta Bitácora de Camarón (Messico)', flmx_tiburon_export_btn: 'Esporta Bitácora de Tiburón (Messico)',
       fltripdet_unnamed_species: 'senza nome', fltripdet_ref_price_short: 'Rif.', fltripdet_profitability_glance: 'Redditività del Viaggio in Sintesi *',
       fltripdet_profitability_footnote: '* Queste cifre sono stime informative basate sulla cattura registrata, sui prezzi di riferimento e sui costi. I risultati reali dipendono dal peso finale in bilancia e dai prezzi di vendita confermati.',
       fltripdet_trip_settlement: 'Liquidazione del Viaggio', fltripdet_based_on_estimate: 'basato su stima, non ancora pesato', fltripdet_scaled_price_estimated: 'pesato, prezzo ancora stimato',
@@ -3564,7 +3642,12 @@
       flcompliance_mx_section_short: 'Messico — CONAPESCA', flcompliance_us_section_short: 'Stati Uniti — NOAA', flcompliance_eu_section_short: 'Unione Europea — e-Logbook', flcompliance_th_section_short: 'Tailandia — DOF / PIPO',
       flcompliance_mx_hint: "L'Aviso de Arribo si applica automaticamente a qualsiasi imbarcazione messicana. Se peschi anche una specie target specifica, seleziona la Bitácora corrispondente qui sotto — entrambi saranno disponibili per l'esportazione.",
       flcompliance_mx_fishery: 'Bitácora Applicabile', flcompliance_mx_fishery_none: 'Nessuna — solo Aviso de Arribo',
-      flcompliance_mx_fishery_escama: 'Escama (pesce)', flcompliance_mx_fishery_camaron: 'Camarón (Pacifico)',
+      flcompliance_mx_fishery_escama: 'Escama (pesce)', flcompliance_mx_fishery_camaron: 'Camarón (Pacifico)', flcompliance_mx_fishery_tiburon: 'Tiburón (flotta media/minore)',
+      flcompliance_mx_permit_no: 'N. Permesso o Concessione di Pesca (Bitácora)', flcompliance_mx_permit_date: 'Data di Emissione del Permesso',
+      flcompliance_mx_gear_hint: 'L\'attrezzatura cambia raramente da viaggio a viaggio — compilalo qui una sola volta invece che in ogni bitácora.',
+      flcompliance_mx_nets_per_side: 'Reti per Lato', flcompliance_mx_net_type: 'Tipo di Rete / Modello', flcompliance_mx_headrope: 'Lunghezza della Lima da Sugheri (m)',
+      flcompliance_mx_mesh_wings: 'Luce di Maglia — Ali (cm)', flcompliance_mx_mesh_body: 'Luce di Maglia — Corpo (cm)', flcompliance_mx_mesh_bag: 'Luce di Maglia — Sacco (cm)',
+      flcompliance_mx_ted: 'Escluditore di Tartarughe (qtà e modello)', flcompliance_mx_fed: 'Escluditore di Pesci (qtà e modello)', flcompliance_mx_engine_nhp: 'Motore Principale (NHP)',
       flcompliance_permit_holder: 'Nome del Titolare della Licenza', flcompliance_registration_no: 'Numero di Registrazione dell\'Imbarcazione',
       flcompliance_mx_section: 'Messico — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — Titolare Licenza', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — Imbarcazione',
       flcompliance_us_section: 'Stati Uniti — NOAA', flcompliance_us_permit_number: 'Numero di Permesso NOAA',
@@ -3761,6 +3844,8 @@
       fltrip_catches_this_trip: 'การจับปลาในทริปนี้', fltrip_hauls_this_trip: 'การลากอวนในทริปนี้', fltrip_view_map: 'ดูแผนที่',
       flhaul_brand: 'บันทึกการลากอวน', flhaul_title: 'รายละเอียดการลากอวน', flhaul_gear_effort: 'เครื่องมือประมงและความพยายาม',
       flhaul_start: 'เริ่มลากอวน', flhaul_end: 'สิ้นสุดลากอวน', flhaul_notes: 'บันทึกย่อ',
+      flhaul_bycatch_section: 'Fauna de Acompañamiento (เม็กซิโก)', flhaul_bycatch_hint: 'จำเป็นเฉพาะ bitácora การลากอวนกุ้ง/ปลาเกล็ดของเม็กซิโก — กก. โดยประมาณของสัตว์น้ำที่ไม่ใช่เป้าหมายที่จับได้ในเที่ยวลากอวนนี้ ไม่ว่าจะเก็บไว้หรือทิ้งไป',
+      flhaul_bycatch_kept: 'เก็บไว้บนเรือ (กก.)', flhaul_bycatch_discarded: 'ทิ้งกลางทะเล (กก.)',
       flhaul_log_catch_now: 'บันทึกการจับปลาของการลากอวนนี้ตอนนี้', flhaul_log_catch_hint: 'ไม่ต้องเลือกหากต้องการกลับไปที่ทริปแล้วบันทึกการจับปลาทีหลัง — หรือรวมการจับปลาทั้งหมดตอนจบทริป',
       flhaul_cancel: 'ยกเลิก', flhaul_save: 'บันทึกการลากอวน',
       flcatch_brand: 'บันทึกการจับปลา', flcatch_title: 'รายการจับปลา', flcatch_not_linked: 'ยังไม่ได้เชื่อมกับการลากอวน',
@@ -3774,7 +3859,7 @@
       flclose_crew_on_trip: 'ลูกเรือในทริปนี้', flclose_add: 'เพิ่ม', flclose_crew_hint: 'การทำเครื่องหมายว่าใครอยู่บนเรือช่วยให้สำนักงานไม่ต้องพิมพ์ชื่อใหม่ตอนคิดบัญชี — ส่วนแบ่งค่าจ้างยังคงกำหนดที่นั่น',
       flclose_trip_notes: 'บันทึกย่อของทริป', flclose_before_close: 'ก่อนปิด: การปิดจะล็อกการลากอวนและการจับปลาใหม่สำหรับทริปนี้ สำนักงานยังสามารถเพิ่มค่าใช้จ่ายที่เหลือและคิดบัญชีได้จากแดชบอร์ด',
       flclose_compliance_section: 'รายละเอียดการปฏิบัติตามกฎของทริป', flclose_compliance_hint: 'จำเป็นเฉพาะเมื่อคุณต้องการสร้างรายงานตามข้อกำหนดของประเทศใดประเทศหนึ่ง กรอกเฉพาะส่วนที่เกี่ยวข้องกับคุณ',
-      flclose_landing_site: 'สถานที่/ท่าเรือขึ้นท่า', flclose_presentation: 'ลักษณะการนำเสนอการจับปลา (เม็กซิโก)', flclose_pres_fresh_whole: 'สด ทั้งตัว', flclose_pres_fresh_gutted: 'สด ควักไส้แล้ว', flclose_pres_frozen: 'แช่แข็ง',
+      flclose_landing_site: 'สถานที่/ท่าเรือขึ้นท่า', flclose_departure_port: 'ท่าเรือออกเดินทาง (เม็กซิโก)', flclose_fishing_ground: 'แหล่งจับปลา (เม็กซิโก)', flclose_fishing_ground_placeholder: 'เช่น Campo Bajamar', flclose_presentation: 'ลักษณะการนำเสนอการจับปลา (เม็กซิโก)', flclose_pres_fresh_whole: 'สด ทั้งตัว', flclose_pres_fresh_gutted: 'สด ควักไส้แล้ว', flclose_pres_frozen: 'แช่แข็ง',
       flclose_fishing_zone: 'เขตประมง (เม็กซิโก)', flclose_zone_litoral: 'ชายฝั่ง', flclose_zone_bahia: 'อ่าว', flclose_zone_estuarina: 'ปากแม่น้ำ', flclose_zone_continental: 'ทวีป',
       flclose_trip_type: 'ประเภททริป (สหรัฐฯ)', flclose_triptype_commercial: 'เชิงพาณิชย์', flclose_triptype_party: 'กลุ่ม (Party)', flclose_triptype_charter: 'เช่าเหมาลำ',
       fltriplog_brand: 'บันทึกทริป', fltriplog_title: 'ทริปที่ผ่านมา', fltriplog_all_vessels: 'เรือทั้งหมด',
@@ -3784,6 +3869,7 @@
       fltripdet_kg_estimated: 'กก. ประมาณการ', fltripdet_kg_scaled: 'กก. ชั่งแล้ว', fltripdet_report_disclaimer: 'รายงานนี้ใช้ประกอบคำประกาศการขึ้นท่าหรือการขอใบรับรองการจับสัตว์น้ำ — ไม่ใช่ใบรับรองอย่างเป็นทางการในตัวเอง',
       fltripdet_export_pdf_btn: 'ส่งออกเป็น PDF', fltripdet_no_hauls: 'ไม่มีการลากอวนที่บันทึกไว้', fltripdet_no_catches: 'ไม่มีการจับปลาที่บันทึกไว้',
       flmx_aviso_export_btn: 'ส่งออก Aviso de Arribo (เม็กซิโก)',
+      flmx_escama_export_btn: 'ส่งออก Bitácora de Escama (เม็กซิโก)', flmx_camaron_export_btn: 'ส่งออก Bitácora de Camarón (เม็กซิโก)', flmx_tiburon_export_btn: 'ส่งออก Bitácora de Tiburón (เม็กซิโก)',
       fltripdet_unnamed_species: 'ไม่มีชื่อ', fltripdet_ref_price_short: 'อ้างอิง', fltripdet_profitability_glance: 'ความสามารถในการทำกำไรของทริปโดยสรุป *',
       fltripdet_profitability_footnote: '* ตัวเลขเหล่านี้เป็นการประมาณการเพื่อให้ข้อมูลตามการจับปลาที่บันทึกไว้ ราคาอ้างอิง และค่าใช้จ่าย ผลลัพธ์จริงขึ้นอยู่กับน้ำหนักชั่งสุดท้ายและราคาขายที่ยืนยันแล้ว',
       fltripdet_trip_settlement: 'การคิดบัญชีทริป', fltripdet_based_on_estimate: 'อิงจากการประมาณการ ยังไม่ได้ชั่ง', fltripdet_scaled_price_estimated: 'ชั่งแล้ว ราคายังเป็นการประมาณการ',
@@ -3819,7 +3905,12 @@
       flcompliance_mx_section_short: 'เม็กซิโก — CONAPESCA', flcompliance_us_section_short: 'สหรัฐอเมริกา — NOAA', flcompliance_eu_section_short: 'สหภาพยุโรป — e-Logbook', flcompliance_th_section_short: 'ไทย — กรมประมง / PIPO',
       flcompliance_mx_hint: 'Aviso de Arribo ใช้กับเรือเม็กซิโกทุกลำโดยอัตโนมัติ หากคุณจับชนิดพันธุ์เป้าหมายเฉพาะด้วย ให้เลือก Bitácora ที่ตรงกันด้านล่าง — ทั้งสองอย่างจะพร้อมให้ส่งออก',
       flcompliance_mx_fishery: 'Bitácora ที่ใช้', flcompliance_mx_fishery_none: 'ไม่มี — เฉพาะ Aviso de Arribo',
-      flcompliance_mx_fishery_escama: 'ปลาเกล็ด (Escama)', flcompliance_mx_fishery_camaron: 'กุ้ง (แปซิฟิก)',
+      flcompliance_mx_fishery_escama: 'ปลาเกล็ด (Escama)', flcompliance_mx_fishery_camaron: 'กุ้ง (แปซิฟิก)', flcompliance_mx_fishery_tiburon: 'ฉลาม (กองเรือขนาดกลาง/เล็ก)',
+      flcompliance_mx_permit_no: 'เลขที่ใบอนุญาต/สัมปทานประมง (Bitácora)', flcompliance_mx_permit_date: 'วันที่ออกใบอนุญาต',
+      flcompliance_mx_gear_hint: 'อุปกรณ์ประมงแทบไม่เปลี่ยนในแต่ละเที่ยว — กรอกที่นี่ครั้งเดียวแทนการกรอกทุก bitácora',
+      flcompliance_mx_nets_per_side: 'จำนวนอวนต่อข้าง', flcompliance_mx_net_type: 'ประเภท/รุ่นของอวน', flcompliance_mx_headrope: 'ความยาวเชือกหัวอวน (ม.)',
+      flcompliance_mx_mesh_wings: 'ขนาดตาอวน — ปีก (ซม.)', flcompliance_mx_mesh_body: 'ขนาดตาอวน — ลำตัว (ซม.)', flcompliance_mx_mesh_bag: 'ขนาดตาอวน — ถุงอวน (ซม.)',
+      flcompliance_mx_ted: 'อุปกรณ์กันเต่า (จำนวนและรุ่น)', flcompliance_mx_fed: 'อุปกรณ์กันปลา (จำนวนและรุ่น)', flcompliance_mx_engine_nhp: 'เครื่องยนต์หลัก (NHP)',
       flcompliance_permit_holder: 'ชื่อผู้ถือใบอนุญาต / เจ้าของ', flcompliance_registration_no: 'เลขทะเบียนเรือ',
       flcompliance_mx_section: 'เม็กซิโก — CONAPESCA', flcompliance_mx_rnpa_permisionario: 'R.N.P.A. — ผู้ถือใบอนุญาต', flcompliance_mx_rnpa_vessel: 'R.N.P.A. — เรือ',
       flcompliance_us_section: 'สหรัฐอเมริกา — NOAA', flcompliance_us_permit_number: 'หมายเลขใบอนุญาต NOAA',
@@ -4797,6 +4888,8 @@
       hook_count: document.getElementById('fleetHookCount').value || '',
       lat: fleetHaulCoords ? fleetHaulCoords.lat : '',
       lon: fleetHaulCoords ? fleetHaulCoords.lon : '',
+      bycatch_kept_kg: document.getElementById('fleetBycatchKeptKg').value || '',
+      bycatch_discarded_kg: document.getElementById('fleetBycatchDiscardedKg').value || '',
       notes: document.getElementById('fleetHaulNotes').value.trim()
     };
     const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
@@ -4809,6 +4902,8 @@
     document.getElementById('fleetHaulEnd').value = '';
     document.getElementById('fleetNetWidth').value = '';
     document.getElementById('fleetHookCount').value = '';
+    document.getElementById('fleetBycatchKeptKg').value = '';
+    document.getElementById('fleetBycatchDiscardedKg').value = '';
     document.getElementById('fleetHaulNotes').value = '';
     document.getElementById('fleetHaulDurationLine').textContent = t('msg_duration') + ': —';
     resetFleetHaulGps();
@@ -4996,6 +5091,8 @@
     delete document.getElementById('fleetCostProvisionsCurrency').dataset.userTouched;
     document.getElementById('fleetCloseNotes').value = '';
     document.getElementById('fleetCloseLandingSite').value = '';
+    document.getElementById('fleetCloseDeparturePort').value = '';
+    document.getElementById('fleetCloseFishingGround').value = '';
     document.getElementById('fleetClosePresentation').value = '';
     document.getElementById('fleetCloseFishingZone').value = '';
     document.getElementById('fleetCloseTripType').value = '';
@@ -5028,6 +5125,8 @@
     trips[idx].crew_ids = fleetCloseSelectedCrewIds.slice();
     trips[idx].closing_notes = document.getElementById('fleetCloseNotes').value.trim();
     trips[idx].landing_site = document.getElementById('fleetCloseLandingSite').value.trim();
+    trips[idx].departure_port_mx = document.getElementById('fleetCloseDeparturePort').value.trim();
+    trips[idx].fishing_ground_mx = document.getElementById('fleetCloseFishingGround').value.trim();
     trips[idx].catch_presentation = document.getElementById('fleetClosePresentation').value;
     trips[idx].fishing_zone_mx = document.getElementById('fleetCloseFishingZone').value;
     trips[idx].trip_type_us = document.getElementById('fleetCloseTripType').value;
@@ -5227,6 +5326,15 @@
       + (vessel && vessel.compliance && vessel.compliance.reporting_country === 'mx'
           ? '<button class="exportbtn" id="fleetExportMxAvisoBtn" style="margin-top:8px;padding:10px 16px;font-size:12px;">'+t('flmx_aviso_export_btn')+'</button>'
           : '')
+      + (vessel && vessel.compliance && vessel.compliance.reporting_country === 'mx' && vessel.compliance.mx_fishery === 'escama'
+          ? '<button class="exportbtn" id="fleetExportEscamaBtn" style="margin-top:8px;padding:10px 16px;font-size:12px;">'+t('flmx_escama_export_btn')+'</button>'
+          : '')
+      + (vessel && vessel.compliance && vessel.compliance.reporting_country === 'mx' && vessel.compliance.mx_fishery === 'camaron'
+          ? '<button class="exportbtn" id="fleetExportCamaronBtn" style="margin-top:8px;padding:10px 16px;font-size:12px;">'+t('flmx_camaron_export_btn')+'</button>'
+          : '')
+      + (vessel && vessel.compliance && vessel.compliance.reporting_country === 'mx' && vessel.compliance.mx_fishery === 'tiburon'
+          ? '<button class="exportbtn" id="fleetExportTiburonBtn" style="margin-top:8px;padding:10px 16px;font-size:12px;">'+t('flmx_tiburon_export_btn')+'</button>'
+          : '')
       + '</div>';
 
     document.getElementById('fleetExportLandingBtn').addEventListener('click', () => {
@@ -5236,6 +5344,24 @@
     if(exportMxAvisoBtn){
       exportMxAvisoBtn.addEventListener('click', () => {
         generateMxAvisoArriboPdf({ vessel, trip, catches, landingGroups, totalEstKg, totalActualKg, hasActuals });
+      });
+    }
+    const exportEscamaBtn = document.getElementById('fleetExportEscamaBtn');
+    if(exportEscamaBtn){
+      exportEscamaBtn.addEventListener('click', () => {
+        generateEscamaBitacoraPdf({ vessel, trip, catches });
+      });
+    }
+    const exportCamaronBtn = document.getElementById('fleetExportCamaronBtn');
+    if(exportCamaronBtn){
+      exportCamaronBtn.addEventListener('click', () => {
+        generateCamaronBitacoraPdf({ vessel, trip, catches });
+      });
+    }
+    const exportTiburonBtn = document.getElementById('fleetExportTiburonBtn');
+    if(exportTiburonBtn){
+      exportTiburonBtn.addEventListener('click', () => {
+        generateTiburonBitacoraPdf({ vessel, trip, catches });
       });
     }
     document.querySelectorAll('[data-edit-species-code]').forEach(el => {
@@ -5544,17 +5670,13 @@
 
     const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
-    // Field 4 — "días de trabajo de pesca": count of distinct calendar days
-    // with at least one logged haul for this trip. Falls back to the
-    // trip's calendar-day span if no hauls were logged, since the real
-    // figure must reflect actual fishing days, not just elapsed time —
-    // shown with a note either way so the captain can correct it.
-    const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
-    const haulDays = new Set(tripHauls.filter(h => h.haul_start).map(h => h.haul_start.slice(0,10)));
+    // Field 4 — "días de trabajo de pesca": Hauls only store a time
+    // (HH:MM, from a <input type="time">), not a date, so distinct haul
+    // dates can't be counted. The only reliable source is the trip's own
+    // calendar-day span — shown with a note so the captain can correct it
+    // if the real fishing days were fewer than the full trip span.
     let workingDaysText, workingDaysNote = '';
-    if(haulDays.size > 0){
-      workingDaysText = String(haulDays.size);
-    } else if(trip.started_at && trip.ended_at) {
+    if(trip.started_at && trip.ended_at) {
       const days = Math.max(1, Math.round((new Date(trip.ended_at) - new Date(trip.started_at)) / 86400000) + 1);
       workingDaysText = String(days);
       workingDaysNote = ' (estimado por duración del viaje, verificar)';
@@ -5602,7 +5724,7 @@
     writeField(10, 'Número de embarcaciones utilizadas', '1');
     writeField(11, 'Sitio de desembarque', trip.landing_site || NOT_CAPTURED);
     writeField(12, 'Clave sitio de desembarque', OFFICE_ONLY);
-    writeField(13, 'Lugar de captura', NOT_CAPTURED);
+    writeField(13, 'Lugar de captura', trip.fishing_ground_mx || NOT_CAPTURED);
     writeField(14, 'Clave lugar de captura', OFFICE_ONLY);
     writeField(15, 'Zona de pesca', trip.fishing_zone_mx ? ZONE_LABELS[trip.fishing_zone_mx] : NOT_CAPTURED);
     writeField(16, 'Pesquería acuacultural', OFFICE_ONLY);
@@ -5660,7 +5782,7 @@
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9.5);
-    const mxFisheryLabels = { escama: 'Bitácora de Escama', camaron: 'Bitácora de Camarón (Pacífico)' };
+    const mxFisheryLabels = { escama: 'Bitácora de Escama', camaron: 'Bitácora de Camarón (Pacífico)', tiburon: 'Bitácora de Tiburón' };
     const anexo = c.mx_fishery && mxFisheryLabels[c.mx_fishery]
       ? '23. Documentos anexos: ' + mxFisheryLabels[c.mx_fishery] + ' de este viaje (adjuntar por separado).'
       : '23. Documentos anexos: ninguno indicado.';
@@ -5674,6 +5796,451 @@
     const filename = 'aviso-arribo-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
     const blob = doc.output('blob');
     showFleetPdfExport(blob, filename, t('flmx_aviso_export_btn'));
+  }
+
+  // Shared across all Mexico bitácoras: "Viaje de Pesca No." is a
+  // per-season sequential number, not a value anyone types in directly —
+  // computed by counting this vessel's closed trips within the same
+  // calendar year as this trip, in chronological order.
+  function computeMxSeasonTripNumber(vessel, trip){
+    if(!vessel || !trip.started_at) return null;
+    const year = new Date(trip.started_at).getFullYear();
+    const sameYearTrips = load(TRIPS_KEY)
+      .filter(tr => tr.vessel_id === vessel.vessel_id && tr.started_at && new Date(tr.started_at).getFullYear() === year)
+      .sort((a,b) => new Date(a.started_at) - new Date(b.started_at));
+    const idx = sameYearTrips.findIndex(tr => tr.trip_id === trip.trip_id);
+    return idx === -1 ? null : idx + 1;
+  }
+
+  // Mexico — Bitácora de la Pesquería de Escama, Flota Arrastrera
+  // (SAGARPA-BP-07). Same "hoja de transcripción" philosophy as the Aviso
+  // de Arribo: field labels and order match the verified instructivo,
+  // office-only/uncaptured fields are shown as blanks, never guessed.
+  // Per-lance position/time come from Haul Log GPS capture and start/end
+  // time; hauls in Fish Pulse store time only (no date), so the per-lance
+  // table doesn't fabricate a date column — the trip's own date range is
+  // shown once at the top instead.
+  function generateEscamaBitacoraPdf(data){
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
+    const { vessel, trip, catches } = data;
+    const c = (vessel && vessel.compliance) || {};
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 44;
+    let y = 54;
+    const OFFICE_ONLY = '(a llenar por la oficina de pesca)';
+    const NOT_CAPTURED = '_____ (completar a mano)';
+    const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+    const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const seasonNo = computeMxSeasonTripNumber(vessel, trip);
+    const fuelInitial = (trip.fuel_loaded_l != null && trip.fuel_loaded_l !== '') ? parseFloat(trip.fuel_loaded_l) : null;
+    const fuelFinal = (fuelInitial != null && trip.fuel_consumed_l != null && trip.fuel_consumed_l !== '') ? (fuelInitial - parseFloat(trip.fuel_consumed_l)) : null;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Bitácora de Pesca — Escama, Flota Arrastrera', margin, y, { maxWidth: pageWidth - margin*2 }); y += 18;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse — hoja de transcripción, con base en el instructivo SAGARPA-BP-07', margin, y); y += 22;
+    doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+
+    doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    const lineHeight = 15;
+    const writeField = (label, value, labelWidth) => {
+      labelWidth = labelWidth || 220;
+      if(y > pageHeight - 70){ doc.addPage(); y = 50; }
+      doc.setFont('helvetica', 'bold');
+      doc.text(label + ':', margin, y, { maxWidth: labelWidth });
+      doc.setFont('helvetica', 'normal');
+      const valueX = margin + labelWidth + 8;
+      doc.text(String(value), valueX, y, { maxWidth: pageWidth - margin - valueX });
+      y += lineHeight;
+    };
+    const sectionHeader = (title) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      y += 6; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(title, margin, y); y += 16;
+      doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    };
+
+    sectionHeader('Información General del Viaje de Pesca');
+    writeField('Nombre o razón social del permisionario', c.permit_holder_name || NOT_CAPTURED);
+    writeField('Permiso o Concesión de Pesca No.', c.mx_permit_no || NOT_CAPTURED);
+    writeField('Fecha de Emisión', c.mx_permit_date ? fmtDate(c.mx_permit_date) : NOT_CAPTURED);
+    writeField('Nombre de la embarcación', vessel ? vessel.name : NOT_CAPTURED);
+    writeField('Matrícula', c.vessel_registration_no || NOT_CAPTURED);
+    writeField('R.N.P.', c.mx_rnpa_vessel || OFFICE_ONLY);
+    writeField('Viaje de Pesca No.', seasonNo != null ? (seasonNo + ' (calculado, temporada ' + new Date(trip.started_at).getFullYear() + ')') : NOT_CAPTURED);
+
+    sectionHeader('Duración del Viaje de Pesca');
+    writeField('Puerto de salida', trip.departure_port_mx || NOT_CAPTURED);
+    writeField('Fecha de salida', fmtDate(trip.started_at));
+    writeField('Puerto de arribo', trip.landing_site || NOT_CAPTURED);
+    writeField('Fecha de arribo', trip.ended_at ? fmtDate(trip.ended_at) : '—');
+    writeField('Volumen de combustible al inicio (L)', fuelInitial != null ? fuelInitial.toFixed(1) : NOT_CAPTURED);
+    writeField('Volumen de combustible al término (L)', fuelFinal != null ? fuelFinal.toFixed(1) : NOT_CAPTURED);
+
+    sectionHeader('Información del Sistema de Pesca');
+    writeField('Número de redes por banda', c.mx_nets_per_side || NOT_CAPTURED);
+    writeField('Tipo de red', c.mx_net_type || NOT_CAPTURED);
+    writeField('Long. de la relinga superior (m)', c.mx_headrope_m || NOT_CAPTURED);
+    writeField('Excluidor de tortugas (cant./modelo)', c.mx_ted || NOT_CAPTURED);
+    writeField('Luz de malla — Alas (cm)', c.mx_mesh_wings_cm || NOT_CAPTURED);
+    writeField('Luz de malla — Cuerpo (cm)', c.mx_mesh_body_cm || NOT_CAPTURED);
+    writeField('Luz de malla — Bolso (cm)', c.mx_mesh_bag_cm || NOT_CAPTURED);
+    writeField('Motor principal (NHP)', c.mx_engine_nhp || NOT_CAPTURED);
+    writeField('Excluidor de peces (cant./modelo)', c.mx_fed || NOT_CAPTURED);
+
+    sectionHeader('Registro de Operaciones (por lance)');
+    doc.setFontSize(8.5); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse no registra fecha por lance (solo hora) — todos los lances de este viaje corresponden al rango de fechas anotado arriba.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 20;
+    const colLance = margin, colHora = margin + 40, colProf = margin + 145, colPos = margin + 220, colKg = pageWidth - margin - 55;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Lance', colLance, y); doc.text('Hora ini–fin', colHora, y); doc.text('Prof. (m)', colProf, y); doc.text('Posición', colPos, y); doc.text('Kg', colKg, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    if(tripHauls.length === 0){
+      doc.setFont('helvetica', 'normal'); doc.text('Sin lances registrados en Fish Pulse para este viaje.', margin, y); y += 16;
+    }
+    tripHauls.forEach((h, i) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const haulCatches = catches.filter(cc => cc.haul_id === h.haul_id);
+      const haulKg = haulCatches.reduce((s, cc) => s + (parseFloat(cc.kg) || 0), 0);
+      const pos = (h.lat && h.lon) ? (parseFloat(h.lat).toFixed(3) + ', ' + parseFloat(h.lon).toFixed(3)) : NOT_CAPTURED;
+      doc.setFont('helvetica', 'normal');
+      doc.text(String(i + 1), colLance, y);
+      doc.text((h.haul_start || '—') + '–' + (h.haul_end || '—'), colHora, y);
+      doc.text(h.depth ? String(h.depth) : '—', colProf, y);
+      doc.text(pos, colPos, y, { maxWidth: 90 });
+      doc.text(haulKg.toFixed(1), colKg, y);
+      y += 16;
+    });
+
+    sectionHeader('Indicar las Especies (orden de importancia) y Captura Acumulativa por Especie');
+    const speciesTotals = {};
+    catches.forEach(cc => { speciesTotals[cc.species] = (speciesTotals[cc.species] || 0) + (parseFloat(cc.actual_kg) || parseFloat(cc.kg) || 0); });
+    const speciesSorted = Object.entries(speciesTotals).sort((a,b) => b[1] - a[1]);
+    const colSpecies = margin, colCode = margin + 240, colTotalKg = pageWidth - margin - 60;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Especie', colSpecies, y); doc.text('Clave', colCode, y); doc.text('Kg acumulados', colTotalKg, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    speciesSorted.forEach(([species, kg], i) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const code = (typeof findSpeciesCode === 'function' ? findSpeciesCode(species) : null);
+      const mxCode = code && code.mx_code ? code.mx_code : '(sin clave)';
+      doc.setFont('helvetica', i < 7 ? 'bold' : 'normal');
+      doc.text((i + 1) + '. ' + species + (i < 7 ? '' : ' (resto)'), colSpecies, y, { maxWidth: 220 });
+      doc.text(mxCode, colCode, y);
+      doc.text(kg.toFixed(1), colTotalKg, y);
+      y += 16;
+    });
+
+    sectionHeader('Responsable de los Datos Asentados en Este Documento');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    doc.text('El capitán y/o patrón de pesca escribirá su nombre y firmará responsabilizándose de la información vertida en ésta.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 34;
+    doc.text('Nombre: _______________________________     Firma: _______________________________', margin, y);
+    y += 26;
+
+    doc.setFontSize(8.5); doc.setTextColor(140, 140, 140);
+    doc.text('Esta hoja no es el formato oficial CONAPESCA-01-042-F ni la sustituye. Úsela para transcribir los datos al cuadernillo impreso o a BITPESCA. Los campos marcados "a llenar por la oficina de pesca" son claves internas asignadas por CONAPESCA.', margin, y, { maxWidth: pageWidth - margin*2 });
+
+    const filename = 'bitacora-escama-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('flmx_escama_export_btn'));
+  }
+
+  // Mexico — Bitácora de la Pesquería de Camarón, Flota Arrastrera,
+  // Océano Pacífico (SAGARPA-BP-03). Adds Fauna de Acompañamiento
+  // (retenida a bordo / desechada, per lance) — required by this
+  // instructivo, unlike Escama's. Tortugas marinas (muertas/vivas) is a
+  // real gap: Fish Pulse doesn't capture turtle bycatch counts yet, so
+  // it's shown as blank rather than guessed.
+  function generateCamaronBitacoraPdf(data){
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
+    const { vessel, trip, catches } = data;
+    const c = (vessel && vessel.compliance) || {};
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 44;
+    let y = 54;
+    const OFFICE_ONLY = '(a llenar por la oficina de pesca)';
+    const NOT_CAPTURED = '_____ (completar a mano)';
+    const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+    const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const seasonNo = computeMxSeasonTripNumber(vessel, trip);
+    const fuelInitial = (trip.fuel_loaded_l != null && trip.fuel_loaded_l !== '') ? parseFloat(trip.fuel_loaded_l) : null;
+    const fuelFinal = (fuelInitial != null && trip.fuel_consumed_l != null && trip.fuel_consumed_l !== '') ? (fuelInitial - parseFloat(trip.fuel_consumed_l)) : null;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Bitácora de Pesca — Camarón, Flota Arrastrera, Océano Pacífico', margin, y, { maxWidth: pageWidth - margin*2 }); y += 18;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse — hoja de transcripción, con base en el instructivo SAGARPA-BP-03', margin, y); y += 22;
+    doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+
+    doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    const lineHeight = 15;
+    const writeField = (label, value, labelWidth) => {
+      labelWidth = labelWidth || 220;
+      if(y > pageHeight - 70){ doc.addPage(); y = 50; }
+      doc.setFont('helvetica', 'bold');
+      doc.text(label + ':', margin, y, { maxWidth: labelWidth });
+      doc.setFont('helvetica', 'normal');
+      const valueX = margin + labelWidth + 8;
+      doc.text(String(value), valueX, y, { maxWidth: pageWidth - margin - valueX });
+      y += lineHeight;
+    };
+    const sectionHeader = (title) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      y += 6; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(title, margin, y); y += 16;
+      doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    };
+
+    sectionHeader('Información General del Viaje de Pesca');
+    writeField('Nombre o razón social del permisionario/concesionario', c.permit_holder_name || NOT_CAPTURED);
+    writeField('Permiso o Concesión de Pesca No.', c.mx_permit_no || NOT_CAPTURED);
+    writeField('Fecha de Emisión', c.mx_permit_date ? fmtDate(c.mx_permit_date) : NOT_CAPTURED);
+    writeField('Nombre de la embarcación', vessel ? vessel.name : NOT_CAPTURED);
+    writeField('Matrícula', c.vessel_registration_no || NOT_CAPTURED);
+    writeField('R.N.P.', c.mx_rnpa_vessel || OFFICE_ONLY);
+    writeField('Viaje de Pesca No.', seasonNo != null ? (seasonNo + ' (calculado, temporada ' + new Date(trip.started_at).getFullYear() + ')') : NOT_CAPTURED);
+
+    sectionHeader('Duración del Viaje de Pesca');
+    writeField('Puerto de salida', trip.departure_port_mx || NOT_CAPTURED);
+    writeField('Fecha de salida', fmtDate(trip.started_at));
+    writeField('Puerto de arribo', trip.landing_site || NOT_CAPTURED);
+    writeField('Fecha de arribo', trip.ended_at ? fmtDate(trip.ended_at) : '—');
+    writeField('Volumen de combustible al inicio (L)', fuelInitial != null ? fuelInitial.toFixed(1) : NOT_CAPTURED);
+    writeField('Volumen de combustible al término (L)', fuelFinal != null ? fuelFinal.toFixed(1) : NOT_CAPTURED);
+    writeField('Total de lances en el viaje', String(tripHauls.length));
+
+    sectionHeader('Información del Sistema de Pesca');
+    writeField('Número de redes por banda', c.mx_nets_per_side || NOT_CAPTURED);
+    writeField('Tipo de red', c.mx_net_type || NOT_CAPTURED);
+    writeField('Long. de la relinga superior (m)', c.mx_headrope_m || NOT_CAPTURED);
+    writeField('Excluidor de tortugas (cant./modelo)', c.mx_ted || NOT_CAPTURED);
+    writeField('Luz de malla — Alas (cm)', c.mx_mesh_wings_cm || NOT_CAPTURED);
+    writeField('Luz de malla — Cuerpo (cm)', c.mx_mesh_body_cm || NOT_CAPTURED);
+    writeField('Luz de malla — Bolso (cm)', c.mx_mesh_bag_cm || NOT_CAPTURED);
+    writeField('Motor principal (NHP)', c.mx_engine_nhp || NOT_CAPTURED);
+    writeField('Excluidor de peces (cant./modelo)', c.mx_fed || NOT_CAPTURED);
+
+    const targetKg = catches.reduce((s, cc) => s + (parseFloat(cc.actual_kg) || parseFloat(cc.kg) || 0), 0);
+    const bycatchKept = tripHauls.reduce((s, h) => s + (parseFloat(h.bycatch_kept_kg) || 0), 0);
+    const bycatchDiscarded = tripHauls.reduce((s, h) => s + (parseFloat(h.bycatch_discarded_kg) || 0), 0);
+
+    sectionHeader('Captura de Camarón y Fauna de Acompañamiento en el Viaje');
+    writeField('Captura de camarón en el viaje (kg)', targetKg.toFixed(1));
+    writeField('Fauna de acompañamiento — retenida a bordo (kg)', bycatchKept.toFixed(1));
+    writeField('Fauna de acompañamiento — desechada al mar (kg)', bycatchDiscarded.toFixed(1));
+    writeField('Fauna de acompañamiento — total (kg)', (bycatchKept + bycatchDiscarded).toFixed(1));
+    writeField('Tortugas marinas capturadas — muertas / vivas', NOT_CAPTURED);
+
+    sectionHeader('Registro por Lance');
+    doc.setFontSize(8.5); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse no registra fecha por lance (solo hora) — todos los lances de este viaje corresponden al rango de fechas anotado arriba.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 20;
+    const colLance = margin, colHora = margin + 40, colProf = margin + 140, colKg2 = margin + 210, colBordo = margin + 265, colMar = margin + 320;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Lance', colLance, y); doc.text('Hora ini–fin', colHora, y); doc.text('Prof. (m)', colProf, y);
+    doc.text('Kg camarón', colKg2, y); doc.text('Fauna a bordo', colBordo, y); doc.text('Fauna al mar', colMar, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    if(tripHauls.length === 0){
+      doc.setFont('helvetica', 'normal'); doc.text('Sin lances registrados en Fish Pulse para este viaje.', margin, y); y += 16;
+    }
+    tripHauls.forEach((h, i) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const haulCatches = catches.filter(cc => cc.haul_id === h.haul_id);
+      const haulKg = haulCatches.reduce((s, cc) => s + (parseFloat(cc.kg) || 0), 0);
+      doc.setFont('helvetica', 'normal');
+      doc.text(String(i + 1), colLance, y);
+      doc.text((h.haul_start || '—') + '–' + (h.haul_end || '—'), colHora, y);
+      doc.text(h.depth ? String(h.depth) : '—', colProf, y);
+      doc.text(haulKg.toFixed(1), colKg2, y);
+      doc.text(h.bycatch_kept_kg ? String(h.bycatch_kept_kg) : '—', colBordo, y);
+      doc.text(h.bycatch_discarded_kg ? String(h.bycatch_discarded_kg) : '—', colMar, y);
+      y += 16;
+    });
+
+    sectionHeader('Captura Acumulada por Especie');
+    const speciesTotals = {};
+    catches.forEach(cc => { speciesTotals[cc.species] = (speciesTotals[cc.species] || 0) + (parseFloat(cc.actual_kg) || parseFloat(cc.kg) || 0); });
+    const colSpecies = margin, colCode = margin + 240, colTotalKg = pageWidth - margin - 60;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Especie', colSpecies, y); doc.text('Clave', colCode, y); doc.text('Kg acumulados', colTotalKg, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    Object.entries(speciesTotals).forEach(([species, kg]) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const code = (typeof findSpeciesCode === 'function' ? findSpeciesCode(species) : null);
+      const mxCode = code && code.mx_code ? code.mx_code : '(sin clave)';
+      doc.setFont('helvetica', 'normal');
+      doc.text(species, colSpecies, y, { maxWidth: 220 });
+      doc.text(mxCode, colCode, y);
+      doc.text(kg.toFixed(1), colTotalKg, y);
+      y += 16;
+    });
+
+    sectionHeader('Responsable de los Datos Asentados en Este Documento');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    doc.text('El capitán y/o patrón de pesca escribirá su nombre y firmará responsabilizándose de la información vertida en ésta.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 34;
+    doc.text('Nombre: _______________________________     Firma: _______________________________', margin, y);
+    y += 26;
+
+    doc.setFontSize(8.5); doc.setTextColor(140, 140, 140);
+    doc.text('Esta hoja no es el formato oficial CONAPESCA-01-042-B/A ni la sustituye. Úsela para transcribir los datos al cuadernillo impreso o a BITPESCA. Los campos marcados "a llenar por la oficina de pesca" son claves internas asignadas por CONAPESCA.', margin, y, { maxWidth: pageWidth - margin*2 });
+
+    const filename = 'bitacora-camaron-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('flmx_camaron_export_btn'));
+  }
+
+  // Mexico — Bitácora de Tiburón (Flota Mediana Altura / Flota Menor).
+  // Biggest honest gap of the three: this instructivo is built around
+  // longline (palangre) gear and per-species individual counts
+  // ("número de ejemplares"), neither of which Fish Pulse's data model
+  // captures today (we log kg per haul, not headcounts, and our gear
+  // fields describe trawl nets, not longline). Those fields are left
+  // blank rather than approximated with the wrong unit.
+  function generateTiburonBitacoraPdf(data){
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
+    const { vessel, trip, catches } = data;
+    const c = (vessel && vessel.compliance) || {};
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 44;
+    let y = 54;
+    const OFFICE_ONLY = '(a llenar por la oficina de pesca)';
+    const NOT_CAPTURED = '_____ (completar a mano)';
+    const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+    const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const seasonNo = computeMxSeasonTripNumber(vessel, trip);
+    const fuelInitial = (trip.fuel_loaded_l != null && trip.fuel_loaded_l !== '') ? parseFloat(trip.fuel_loaded_l) : null;
+    const fuelFinal = (fuelInitial != null && trip.fuel_consumed_l != null && trip.fuel_consumed_l !== '') ? (fuelInitial - parseFloat(trip.fuel_consumed_l)) : null;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Bitácora de Pesca — Tiburón (Flota Mediana/Menor)', margin, y, { maxWidth: pageWidth - margin*2 }); y += 18;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse — hoja de transcripción, con base en el cuaderno de bitácora aplicable a flota tiburonera', margin, y, { maxWidth: pageWidth - margin*2 }); y += 22;
+    doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+
+    doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    const lineHeight = 15;
+    const writeField = (label, value, labelWidth) => {
+      labelWidth = labelWidth || 220;
+      if(y > pageHeight - 70){ doc.addPage(); y = 50; }
+      doc.setFont('helvetica', 'bold');
+      doc.text(label + ':', margin, y, { maxWidth: labelWidth });
+      doc.setFont('helvetica', 'normal');
+      const valueX = margin + labelWidth + 8;
+      doc.text(String(value), valueX, y, { maxWidth: pageWidth - margin - valueX });
+      y += lineHeight;
+    };
+    const sectionHeader = (title) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      y += 6; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 18;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(title, margin, y); y += 16;
+      doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
+    };
+
+    sectionHeader('Datos de Registro');
+    writeField('Nombre de la embarcación', vessel ? vessel.name : NOT_CAPTURED);
+    writeField('Nombre del titular del permiso o concesión', c.permit_holder_name || NOT_CAPTURED);
+    writeField('Matrícula de la embarcación', c.vessel_registration_no || NOT_CAPTURED);
+    writeField('Razón social (cooperativa o sector privado)', NOT_CAPTURED);
+    writeField('No. de permiso de pesca', c.mx_permit_no || NOT_CAPTURED);
+    writeField('No. de viaje de pesca', seasonNo != null ? (seasonNo + ' (calculado, temporada ' + new Date(trip.started_at).getFullYear() + ')') : NOT_CAPTURED);
+    writeField('Puerto de salida vía la pesca', trip.departure_port_mx || NOT_CAPTURED);
+    writeField('Fecha de salida vía la pesca', fmtDate(trip.started_at));
+    writeField('Volumen de combustible inicial (L)', fuelInitial != null ? fuelInitial.toFixed(1) : NOT_CAPTURED);
+    writeField('Puerto de arribo al final del viaje', trip.landing_site || NOT_CAPTURED);
+    writeField('Fecha de arribo al final del viaje', trip.ended_at ? fmtDate(trip.ended_at) : '—');
+    writeField('Volumen de combustible final (L)', fuelFinal != null ? fuelFinal.toFixed(1) : NOT_CAPTURED);
+    writeField('Averías durante el viaje', NOT_CAPTURED);
+
+    sectionHeader('Características Técnicas');
+    doc.setFontSize(8.5); doc.setTextColor(120, 120, 120);
+    doc.text('Este formato está diseñado para palangre (línea madre, anzuelos), que Fish Pulse no captura hoy — solo lo de red, si aplica a su flota.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 20; doc.setFontSize(9.5); doc.setTextColor(20,20,20);
+    writeField('Tipo de palangre', NOT_CAPTURED);
+    writeField('Longitud de la línea madre', NOT_CAPTURED);
+    writeField('Anzuelos (No., tipo, tamaño)', NOT_CAPTURED);
+    writeField('No. de palangres / No. de lances con palangre', String(tripHauls.length) + ' lances registrados en Fish Pulse');
+    writeField('Tipo de red (si opera con red)', c.mx_net_type || NOT_CAPTURED);
+    writeField('Long. de la relinga superior (m)', c.mx_headrope_m || NOT_CAPTURED);
+    writeField('Tamaño de malla (cm)', c.mx_mesh_body_cm || NOT_CAPTURED);
+
+    const targetKg = catches.reduce((s, cc) => s + (parseFloat(cc.actual_kg) || parseFloat(cc.kg) || 0), 0);
+    const bycatchKept = tripHauls.reduce((s, h) => s + (parseFloat(h.bycatch_kept_kg) || 0), 0);
+    writeField('Captura total de tiburón en el viaje (kg)', targetKg.toFixed(1) + ' — el formato pide toneladas y No. de ejemplares; conviertan según corresponda');
+    writeField('Captura total de otras especies (kg, aprox.)', bycatchKept.toFixed(1));
+
+    sectionHeader('Registro por Lance');
+    doc.setFontSize(8.5); doc.setTextColor(120, 120, 120);
+    doc.text('Fish Pulse registra kg por especie, no número de ejemplares; temperatura superficial y estado del mar no se capturan — complete esas columnas a mano.', margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 20;
+    const colLance = margin, colHora = margin + 40, colProf = margin + 145, colPos = margin + 220, colKg = pageWidth - margin - 55;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Lance', colLance, y); doc.text('Hora ini–fin', colHora, y); doc.text('Prof. (m)', colProf, y); doc.text('Posición', colPos, y); doc.text('Kg', colKg, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    if(tripHauls.length === 0){
+      doc.setFont('helvetica', 'normal'); doc.text('Sin lances registrados en Fish Pulse para este viaje.', margin, y); y += 16;
+    }
+    tripHauls.forEach((h, i) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const haulCatches = catches.filter(cc => cc.haul_id === h.haul_id);
+      const haulKg = haulCatches.reduce((s, cc) => s + (parseFloat(cc.kg) || 0), 0);
+      const pos = (h.lat && h.lon) ? (parseFloat(h.lat).toFixed(3) + ', ' + parseFloat(h.lon).toFixed(3)) : NOT_CAPTURED;
+      doc.setFont('helvetica', 'normal');
+      doc.text(String(i + 1), colLance, y);
+      doc.text((h.haul_start || '—') + '–' + (h.haul_end || '—'), colHora, y);
+      doc.text(h.depth ? String(h.depth) : '—', colProf, y);
+      doc.text(pos, colPos, y, { maxWidth: 90 });
+      doc.text(haulKg.toFixed(1), colKg, y);
+      y += 16;
+    });
+
+    sectionHeader('Captura por Especie (Kg Registrados en Fish Pulse)');
+    const speciesTotals = {};
+    catches.forEach(cc => { speciesTotals[cc.species] = (speciesTotals[cc.species] || 0) + (parseFloat(cc.actual_kg) || parseFloat(cc.kg) || 0); });
+    const colSpecies = margin, colCode = margin + 240, colTotalKg = pageWidth - margin - 60;
+    doc.setFontSize(8.5); doc.setTextColor(110, 110, 110);
+    doc.text('Especie', colSpecies, y); doc.text('Clave', colCode, y); doc.text('Kg acumulados', colTotalKg, y);
+    y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, pageWidth - margin, y); y += 14;
+    doc.setTextColor(20, 20, 20);
+    Object.entries(speciesTotals).forEach(([species, kg]) => {
+      if(y > pageHeight - 90){ doc.addPage(); y = 50; }
+      const code = (typeof findSpeciesCode === 'function' ? findSpeciesCode(species) : null);
+      const mxCode = code && code.mx_code ? code.mx_code : '(sin clave)';
+      doc.setFont('helvetica', 'normal');
+      doc.text(species, colSpecies, y, { maxWidth: 220 });
+      doc.text(mxCode, colCode, y);
+      doc.text(kg.toFixed(1), colTotalKg, y);
+      y += 16;
+    });
+
+    sectionHeader('Información de Verificación y Recepción');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    writeField('Oficina de pesca', OFFICE_ONLY);
+    writeField('Jefe de oficina', OFFICE_ONLY);
+
+    y += 12;
+    doc.setFontSize(8.5); doc.setTextColor(140, 140, 140);
+    doc.text('Esta hoja no es el formato oficial de la bitácora tiburonera ni la sustituye. Varias columnas de este formato (número de ejemplares, línea madre, anzuelos, temperatura, estado del mar) no las captura Fish Pulse hoy y deben completarse a mano. Úsela como apoyo para transcribir el resto de los datos al cuadernillo impreso o a BITPESCA.', margin, y, { maxWidth: pageWidth - margin*2 });
+
+    const filename = 'bitacora-tiburon-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('flmx_tiburon_export_btn'));
   }
 
   function showFleetPdfExport(blob, filename, title){
@@ -5932,6 +6499,17 @@
     document.getElementById('complianceMxRnpaHolder').value = c.mx_rnpa_permisionario || '';
     document.getElementById('complianceMxRnpaVessel').value = c.mx_rnpa_vessel || '';
     document.getElementById('complianceMxFishery').value = c.mx_fishery || '';
+    document.getElementById('complianceMxPermitNo').value = c.mx_permit_no || '';
+    document.getElementById('complianceMxPermitDate').value = c.mx_permit_date || '';
+    document.getElementById('complianceMxNetsPerSide').value = c.mx_nets_per_side || '';
+    document.getElementById('complianceMxNetType').value = c.mx_net_type || '';
+    document.getElementById('complianceMxHeadrope').value = c.mx_headrope_m || '';
+    document.getElementById('complianceMxMeshWings').value = c.mx_mesh_wings_cm || '';
+    document.getElementById('complianceMxMeshBody').value = c.mx_mesh_body_cm || '';
+    document.getElementById('complianceMxMeshBag').value = c.mx_mesh_bag_cm || '';
+    document.getElementById('complianceMxTed').value = c.mx_ted || '';
+    document.getElementById('complianceMxFed').value = c.mx_fed || '';
+    document.getElementById('complianceMxEngineNhp').value = c.mx_engine_nhp || '';
     document.getElementById('complianceUsPermit').value = c.us_permit_number || '';
     document.getElementById('complianceEuCfr').value = c.eu_cfr_number || '';
     document.getElementById('complianceThRegNo').value = c.th_vessel_registration || '';
@@ -5958,6 +6536,17 @@
       mx_rnpa_permisionario: document.getElementById('complianceMxRnpaHolder').value.trim(),
       mx_rnpa_vessel: document.getElementById('complianceMxRnpaVessel').value.trim(),
       mx_fishery: document.getElementById('complianceMxFishery').value,
+      mx_permit_no: document.getElementById('complianceMxPermitNo').value.trim(),
+      mx_permit_date: document.getElementById('complianceMxPermitDate').value,
+      mx_nets_per_side: document.getElementById('complianceMxNetsPerSide').value,
+      mx_net_type: document.getElementById('complianceMxNetType').value.trim(),
+      mx_headrope_m: document.getElementById('complianceMxHeadrope').value,
+      mx_mesh_wings_cm: document.getElementById('complianceMxMeshWings').value,
+      mx_mesh_body_cm: document.getElementById('complianceMxMeshBody').value,
+      mx_mesh_bag_cm: document.getElementById('complianceMxMeshBag').value,
+      mx_ted: document.getElementById('complianceMxTed').value.trim(),
+      mx_fed: document.getElementById('complianceMxFed').value.trim(),
+      mx_engine_nhp: document.getElementById('complianceMxEngineNhp').value,
       us_permit_number: document.getElementById('complianceUsPermit').value.trim(),
       eu_cfr_number: document.getElementById('complianceEuCfr').value.trim(),
       th_vessel_registration: document.getElementById('complianceThRegNo').value.trim(),
