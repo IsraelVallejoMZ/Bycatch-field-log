@@ -2005,6 +2005,10 @@
           <option value="other" data-i18n="rec_gear_other">Other</option>
         </select>
       </div>
+      <div id="fleetCatchThFields">
+        <label for="fleetCatchThLocalName"><span data-i18n="flcatch_th_local_name">Local / Regional Name (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <input type="text" id="fleetCatchThLocalName" placeholder="e.g. หมึกศอก, หมึกหลอด">
+      </div>
     </div>
 
     <div class="card">
@@ -2150,6 +2154,18 @@
         </select>
         <label for="fleetCloseAnglers"><span data-i18n="flclose_anglers">Number of Anglers</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
         <input type="number" inputmode="numeric" id="fleetCloseAnglers" placeholder="e.g. 6">
+      </div>
+      <div id="fleetCloseThFields">
+        <label for="fleetCloseThPiNo" data-i18n="flclose_th_pi_no">PI No. — Port-In Notification Number (Thailand)</label>
+        <input type="text" id="fleetCloseThPiNo" placeholder="e.g. 6602203227">
+        <label for="fleetCloseThProvince" data-i18n="flclose_th_province">Arrival Province (Thailand)</label>
+        <input type="text" id="fleetCloseThProvince" placeholder="e.g. สมุทรสาคร / Samut Sakhon">
+        <label for="fleetCloseThZone"><span data-i18n="flclose_th_zone">Coastal Sea Zone (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <input type="text" id="fleetCloseThZone" placeholder="e.g. เขตทะเลชายฝั่ง">
+        <label for="fleetCloseThTotalKg"><span data-i18n="flclose_th_total_kg">Total Aquatic Animal Quantity — kg (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <input type="number" inputmode="decimal" id="fleetCloseThTotalKg" placeholder="e.g. 4368.0">
+        <label for="fleetCloseThEggCrabs"><span data-i18n="flclose_th_egg_crabs">Egg-Bearing Crabs Released — units (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <input type="number" inputmode="numeric" id="fleetCloseThEggCrabs" placeholder="ปล่อยปูไข่">
       </div>
     </div>
 
@@ -2638,6 +2654,26 @@
         <input type="text" id="complianceThGearLicense">
         <label for="complianceThCaptainCert" data-i18n="flcompliance_th_captain_cert">Captain's Certificate Number</label>
         <input type="text" id="complianceThCaptainCert">
+        <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin:14px 0 8px; line-height:1.5;" data-i18n="flcompliance_th_gear_hint">Trawl gear setup below rarely changes trip to trip — fill it in once here instead of every haul. Reference minimums are from the DOF PIPO gear-inspection standard; they're shown as a guide, not enforced.</div>
+        <label for="complianceThTrawlType" data-i18n="flcompliance_th_trawl_type">Trawl Type</label>
+        <select id="complianceThTrawlType">
+          <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+          <option value="beam" data-i18n="flcompliance_th_trawl_beam">Beam Trawl (อวนลากคานถ่าง)</option>
+          <option value="otter" data-i18n="flcompliance_th_trawl_otter">Otter Board Trawl (อวนลากแผ่นตะเข่)</option>
+          <option value="pair" data-i18n="flcompliance_th_trawl_pair">Pair Trawl (อวนลากคู่)</option>
+        </select>
+        <div class="grid2">
+          <div>
+            <label for="complianceThCodendMesh" data-i18n="flcompliance_th_codend_mesh">Cod-end Mesh Size (cm)</label>
+            <input type="number" inputmode="decimal" id="complianceThCodendMesh" placeholder="e.g. 4 (legal min.)">
+          </div>
+          <div>
+            <label for="complianceThExtensionMesh" data-i18n="flcompliance_th_extension_mesh">Extension Piece Mesh Size (cm)</label>
+            <input type="number" inputmode="decimal" id="complianceThExtensionMesh" placeholder="e.g. 7 (legal min.)">
+          </div>
+        </div>
+        <label for="complianceThCodendLength" data-i18n="flcompliance_th_codend_length">Cod-end Length (m)</label>
+        <input type="number" inputmode="decimal" id="complianceThCodendLength" placeholder="e.g. 6 (pair trawl min.)">
       </div>
     </div>
     <div class="savebar" style="position:relative;">
@@ -3132,7 +3168,7 @@
       rec_species_label: 'Scientific Name', rec_common_name_label: 'Common Name',
       rec_step4_title: 'Biometrics', rec_length_label: 'Length (cm)', rec_weight_label: 'Weight (kg)',
       flcatch_specimen_count: 'No. of Specimens', flcatch_specimen_count_placeholder: 'e.g. 3',
-      flcatch_discarded_kg: 'Discarded Weight (kg)', flcatch_discard_reason: 'Discard Disposition',
+      flcatch_discarded_kg: 'Discarded Weight (kg)', flcatch_discard_reason: 'Discard Disposition', flcatch_th_local_name: 'Local / Regional Name (Thailand)',
       flcatch_discard_undersize: 'Below Minimum Size', flcatch_discard_regulatory: 'Regulatory (quota/closure/prohibited species)', flcatch_discard_predation: 'Damaged / Predation', flcatch_discard_market: 'Market Condition',
       rec_sex_label: 'Sex', rec_condition_label: 'Condition At Release',
       rec_step5_title: 'Bycatch Status', rec_bycatch_label: 'Is This Bycatch?',
@@ -3222,6 +3258,7 @@
       flclose_landing_site: 'Landing Site / Port', flclose_departure_port: 'Departure Port', flclose_fishing_ground: 'Fishing Ground (Mexico)', flclose_fishing_ground_placeholder: 'e.g. Campo Bajamar', flclose_presentation: 'Catch Presentation (Mexico)', flclose_pres_fresh_whole: 'Fresh, Whole', flclose_pres_fresh_gutted: 'Fresh, Gutted', flclose_pres_frozen: 'Frozen',
       flclose_fishing_zone: 'Fishing Zone (Mexico)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Trip Type (US)', flclose_triptype_commercial: 'Commercial', flclose_triptype_party: 'Party', flclose_triptype_charter: 'Charter', flclose_anglers: 'Number of Anglers',
+      flclose_th_pi_no: 'PI No. — Port-In Notification Number (Thailand)', flclose_th_province: 'Arrival Province (Thailand)', flclose_th_zone: 'Coastal Sea Zone (Thailand)', flclose_th_total_kg: 'Total Aquatic Animal Quantity — kg (Thailand)', flclose_th_egg_crabs: 'Egg-Bearing Crabs Released — units (Thailand)',
       fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
       fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report &amp; Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
       fltripdet_landing_report_label: 'Landing Report', fltripdet_vessel_label: 'Vessel', fltripdet_captain_label: 'Captain', fltripdet_trip_notes_label: 'Trip notes:', fltripdet_fish_ticket_no: 'Fish Ticket Number (US)', fltripdet_dealer_name: 'Dealer Name (US)', fltripdet_dealer_permit: 'Dealer Permit Number (US)',
@@ -3282,6 +3319,9 @@
       flcompliance_us_operator_permit: 'Operator Permit Number', flcompliance_us_ifq_account: 'IFQ Account Number', flcompliance_us_ifq_account_placeholder: 'e.g. Shorebased IFQ / gear switchers only',
       flcompliance_eu_section: 'European Union — e-Logbook', flcompliance_eu_cfr: 'CFR Number',
       flcompliance_th_section: 'Thailand — DOF / PIPO', flcompliance_th_vessel_registration: 'Vessel Registration Number', flcompliance_th_gear_license: 'Fishing Gear License Number', flcompliance_th_captain_cert: "Captain's Certificate Number",
+      flcompliance_th_gear_hint: "Trawl gear setup below rarely changes trip to trip — fill it in once here instead of every haul. Reference minimums are from the DOF PIPO gear-inspection standard; they're shown as a guide, not enforced.",
+      flcompliance_th_trawl_type: 'Trawl Type', flcompliance_th_trawl_beam: 'Beam Trawl (อวนลากคานถ่าง)', flcompliance_th_trawl_otter: 'Otter Board Trawl (อวนลากแผ่นตะเข่)', flcompliance_th_trawl_pair: 'Pair Trawl (อวนลากคู่)',
+      flcompliance_th_codend_mesh: 'Cod-end Mesh Size (cm)', flcompliance_th_extension_mesh: 'Extension Piece Mesh Size (cm)', flcompliance_th_codend_length: 'Cod-end Length (m)',
       flcompliance_save_btn: 'Save', flcompliance_btn: 'Compliance', flcompliance_saved_msg: 'Compliance info saved', flcompliance_filled_chip: 'Compliance info added',
       flspecies_codes_title: 'Species reporting codes', flspecies_codes_hint: 'Match each species you log to the official codes used by fisheries authorities. Fill in only the codes relevant to where you report.',
       flspecies_name_label: 'Species Name (as you type it in catches)', flspecies_fao_code: 'FAO Code (EU)', flspecies_noaa_code: 'NOAA Code (US)', flspecies_mx_code: 'CONAPESCA Code (Mexico)',
@@ -3413,7 +3453,7 @@
       rec_species_label: 'Nombre Científico', rec_common_name_label: 'Nombre Común',
       rec_step4_title: 'Biometría', rec_length_label: 'Longitud (cm)', rec_weight_label: 'Peso (kg)',
       flcatch_specimen_count: 'No. de Ejemplares', flcatch_specimen_count_placeholder: 'ej. 3',
-      flcatch_discarded_kg: 'Peso Descartado (kg)', flcatch_discard_reason: 'Motivo de Descarte',
+      flcatch_discarded_kg: 'Peso Descartado (kg)', flcatch_discard_reason: 'Motivo de Descarte', flcatch_th_local_name: 'Nombre Local / Regional (Tailandia)',
       flcatch_discard_undersize: 'Talla Menor al Mínimo', flcatch_discard_regulatory: 'Regulatorio (cuota/veda/especie prohibida)', flcatch_discard_predation: 'Dañado / Depredación', flcatch_discard_market: 'Condición de Mercado',
       rec_sex_label: 'Sexo', rec_condition_label: 'Condición al Liberar',
       rec_step5_title: 'Estatus de Bycatch', rec_bycatch_label: '¿Es Esto Bycatch?',
@@ -3503,6 +3543,7 @@
       flclose_landing_site: 'Sitio / Puerto de Desembarque', flclose_departure_port: 'Puerto de Salida', flclose_fishing_ground: 'Lugar de Captura (México)', flclose_fishing_ground_placeholder: 'ej. Campo Bajamar', flclose_presentation: 'Presentación de la Captura (México)', flclose_pres_fresh_whole: 'Fresco, Entero', flclose_pres_fresh_gutted: 'Fresco, Eviscerado', flclose_pres_frozen: 'Congelado',
       flclose_fishing_zone: 'Zona de Pesca (México)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Tipo de Viaje (EE.UU.)', flclose_triptype_commercial: 'Comercial', flclose_triptype_party: 'Grupo (Party)', flclose_triptype_charter: 'Charter', flclose_anglers: 'Número de Pescadores (Anglers)',
+      flclose_th_pi_no: 'No. PI — Número de Aviso de Entrada a Puerto (Tailandia)', flclose_th_province: 'Provincia de Arribo (Tailandia)', flclose_th_zone: 'Zona de Mar Costero (Tailandia)', flclose_th_total_kg: 'Cantidad Total de Fauna Acuática — kg (Tailandia)', flclose_th_egg_crabs: 'Cangrejas Ovígeras Liberadas — unidades (Tailandia)',
       fltriplog_brand: 'Registro de Viajes', fltriplog_title: 'Viajes Anteriores', fltriplog_all_vessels: 'Todas las Embarcaciones',
       fltripdet_brand: 'Detalle del Viaje', fltripdet_h1: 'Reporte de Desembarque y Liquidación', fltripdet_haul_log: 'Registro de Lances', fltripdet_catches_logged: 'Capturas Individuales Registradas',
       fltripdet_landing_report_label: 'Reporte de Desembarque', fltripdet_vessel_label: 'Embarcación', fltripdet_captain_label: 'Capitán', fltripdet_trip_notes_label: 'Notas del viaje:', fltripdet_fish_ticket_no: 'Número de Fish Ticket (EE.UU.)', fltripdet_dealer_name: 'Nombre del Comprador/Dealer (EE.UU.)', fltripdet_dealer_permit: 'No. de Permiso del Comprador (EE.UU.)',
@@ -3563,6 +3604,9 @@
       flcompliance_us_operator_permit: 'Número de Permiso del Operador', flcompliance_us_ifq_account: 'Número de Cuenta IFQ', flcompliance_us_ifq_account_placeholder: 'ej. solo IFQ de tierra / gear switchers',
       flcompliance_eu_section: 'Unión Europea — e-Logbook', flcompliance_eu_cfr: 'Número CFR',
       flcompliance_th_section: 'Tailandia — DOF / PIPO', flcompliance_th_vessel_registration: 'Número de Registro de la Embarcación', flcompliance_th_gear_license: 'Número de Licencia de Arte de Pesca', flcompliance_th_captain_cert: 'Número de Certificado del Capitán',
+      flcompliance_th_gear_hint: 'El arte de arrastre casi no cambia de viaje a viaje — captúralo aquí una sola vez en lugar de en cada lance. Los mínimos de referencia vienen del estándar de inspección de artes del manual PIPO del DOF; se muestran como guía, no se validan de forma forzosa.',
+      flcompliance_th_trawl_type: 'Tipo de Arrastre', flcompliance_th_trawl_beam: 'Arrastre de Vigas (อวนลากคานถ่าง)', flcompliance_th_trawl_otter: 'Arrastre de Tablas (อวนลากแผ่นตะเข่)', flcompliance_th_trawl_pair: 'Arrastre de Pareja (อวนลากคู่)',
+      flcompliance_th_codend_mesh: 'Tamaño de Malla del Copo (cm)', flcompliance_th_extension_mesh: 'Tamaño de Malla del Alargador (cm)', flcompliance_th_codend_length: 'Longitud del Copo (m)',
       flcompliance_save_btn: 'Guardar', flcompliance_btn: 'Cumplimiento', flcompliance_saved_msg: 'Información de cumplimiento guardada', flcompliance_filled_chip: 'Cumplimiento agregado',
       flspecies_codes_title: 'Códigos de reporte por especie', flspecies_codes_hint: 'Relaciona cada especie que registras con los códigos oficiales que usan las autoridades pesqueras. Llena solo los códigos relevantes para donde reportas.',
       flspecies_name_label: 'Nombre de la especie (como la escribes en capturas)', flspecies_fao_code: 'Código FAO (UE)', flspecies_noaa_code: 'Código NOAA (EE.UU.)', flspecies_mx_code: 'Código CONAPESCA (México)',
@@ -3694,7 +3738,7 @@
       rec_species_label: 'Nome Scientifico', rec_common_name_label: 'Nome Comune',
       rec_step4_title: 'Biometria', rec_length_label: 'Lunghezza (cm)', rec_weight_label: 'Peso (kg)',
       flcatch_specimen_count: 'N. di Esemplari', flcatch_specimen_count_placeholder: 'es. 3',
-      flcatch_discarded_kg: 'Peso Scartato (kg)', flcatch_discard_reason: 'Motivo dello Scarto',
+      flcatch_discarded_kg: 'Peso Scartato (kg)', flcatch_discard_reason: 'Motivo dello Scarto', flcatch_th_local_name: 'Nome Locale / Regionale (Thailandia)',
       flcatch_discard_undersize: 'Sotto Taglia Minima', flcatch_discard_regulatory: 'Normativo (quota/chiusura/specie proibita)', flcatch_discard_predation: 'Danneggiato / Predazione', flcatch_discard_market: 'Condizione di Mercato',
       rec_sex_label: 'Sesso', rec_condition_label: 'Condizione al Rilascio',
       rec_step5_title: 'Stato di Cattura Accessoria', rec_bycatch_label: 'È una Cattura Accessoria?',
@@ -3784,6 +3828,7 @@
       flclose_landing_site: 'Sito / Porto di Sbarco', flclose_departure_port: 'Porto di Partenza', flclose_fishing_ground: 'Zona di Cattura (Messico)', flclose_fishing_ground_placeholder: 'es. Campo Bajamar', flclose_presentation: 'Presentazione della Cattura (Messico)', flclose_pres_fresh_whole: 'Fresco, Intero', flclose_pres_fresh_gutted: 'Fresco, Eviscerato', flclose_pres_frozen: 'Congelato',
       flclose_fishing_zone: 'Zona di Pesca (Messico)', flclose_zone_litoral: 'Litorale', flclose_zone_bahia: 'Baia', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continentale',
       flclose_trip_type: 'Tipo di Viaggio (USA)', flclose_triptype_commercial: 'Commerciale', flclose_triptype_party: 'Gruppo (Party)', flclose_triptype_charter: 'Charter', flclose_anglers: 'Numero di Pescatori (Anglers)',
+      flclose_th_pi_no: 'N. PI — Numero di Notifica di Ingresso in Porto (Thailandia)', flclose_th_province: 'Provincia di Arrivo (Thailandia)', flclose_th_zone: 'Zona di Mare Costiera (Thailandia)', flclose_th_total_kg: 'Quantità Totale di Fauna Acquatica — kg (Thailandia)', flclose_th_egg_crabs: 'Granchi Ovigeri Rilasciati — unità (Thailandia)',
       fltriplog_brand: 'Registro Viaggi', fltriplog_title: 'Viaggi Passati', fltriplog_all_vessels: 'Tutte le Imbarcazioni',
       fltripdet_brand: 'Dettaglio Viaggio', fltripdet_h1: 'Rapporto di Sbarco e Liquidazione', fltripdet_haul_log: 'Registro Calate', fltripdet_catches_logged: 'Catture Individuali Registrate',
       fltripdet_landing_report_label: 'Rapporto di Sbarco', fltripdet_vessel_label: 'Imbarcazione', fltripdet_captain_label: 'Capitano', fltripdet_trip_notes_label: 'Note del viaggio:', fltripdet_fish_ticket_no: 'Numero Fish Ticket (USA)', fltripdet_dealer_name: 'Nome del Compratore/Dealer (USA)', fltripdet_dealer_permit: 'N. Permesso del Compratore (USA)',
@@ -3844,6 +3889,9 @@
       flcompliance_us_operator_permit: "Numero di Permesso dell'Operatore", flcompliance_us_ifq_account: 'Numero di Conto IFQ', flcompliance_us_ifq_account_placeholder: 'es. solo IFQ costiero / gear switchers',
       flcompliance_eu_section: 'Unione Europea — e-Logbook', flcompliance_eu_cfr: 'Numero CFR',
       flcompliance_th_section: 'Tailandia — DOF / PIPO', flcompliance_th_vessel_registration: 'Numero di Registrazione dell\'Imbarcazione', flcompliance_th_gear_license: 'Numero di Licenza per Attrezzo da Pesca', flcompliance_th_captain_cert: 'Numero di Certificato del Capitano',
+      flcompliance_th_gear_hint: "L'attrezzo da traino qui sotto cambia raramente da viaggio a viaggio — compilalo una volta qui invece che ad ogni calata. I valori minimi di riferimento provengono dallo standard di ispezione attrezzi del manuale PIPO del DOF; sono mostrati come guida, non sono verificati in modo forzato.",
+      flcompliance_th_trawl_type: 'Tipo di Traino', flcompliance_th_trawl_beam: 'Traino a Trave (อวนลากคานถ่าง)', flcompliance_th_trawl_otter: 'Traino a Divergenti (อวนลากแผ่นตะเข่)', flcompliance_th_trawl_pair: 'Traino a Coppia (อวนลากคู่)',
+      flcompliance_th_codend_mesh: 'Dimensione Maglia del Sacco (cm)', flcompliance_th_extension_mesh: 'Dimensione Maglia del Prolungamento (cm)', flcompliance_th_codend_length: 'Lunghezza del Sacco (m)',
       flcompliance_save_btn: 'Salva', flcompliance_btn: 'Conformità', flcompliance_saved_msg: 'Informazioni di conformità salvate', flcompliance_filled_chip: 'Conformità aggiunta',
       flspecies_codes_title: 'Codici di segnalazione per specie', flspecies_codes_hint: 'Abbina ogni specie che registri ai codici ufficiali usati dalle autorità della pesca. Compila solo i codici rilevanti per dove segnali.',
       flspecies_name_label: 'Nome della specie (come lo digiti nelle catture)', flspecies_fao_code: 'Codice FAO (UE)', flspecies_noaa_code: 'Codice NOAA (USA)', flspecies_mx_code: 'Codice CONAPESCA (Messico)',
@@ -3975,7 +4023,7 @@
       rec_species_label: 'ชื่อวิทยาศาสตร์', rec_common_name_label: 'ชื่อสามัญ',
       rec_step4_title: 'ข้อมูลชีวมิติ', rec_length_label: 'ความยาว (ซม.)', rec_weight_label: 'น้ำหนัก (กก.)',
       flcatch_specimen_count: 'จำนวนตัวอย่าง', flcatch_specimen_count_placeholder: 'เช่น 3',
-      flcatch_discarded_kg: 'น้ำหนักที่ทิ้ง (กก.)', flcatch_discard_reason: 'เหตุผลการทิ้ง',
+      flcatch_discarded_kg: 'น้ำหนักที่ทิ้ง (กก.)', flcatch_discard_reason: 'เหตุผลการทิ้ง', flcatch_th_local_name: 'ชื่อท้องถิ่น/ชื่อภูมิภาค',
       flcatch_discard_undersize: 'ขนาดต่ำกว่าเกณฑ์', flcatch_discard_regulatory: 'ข้อบังคับ (โควตา/ปิดฤดู/ชนิดต้องห้าม)', flcatch_discard_predation: 'เสียหาย / ถูกล่า', flcatch_discard_market: 'สภาพตลาด',
       rec_sex_label: 'เพศ', rec_condition_label: 'สภาพขณะปล่อยคืน',
       rec_step5_title: 'สถานะสัตว์น้ำพลอยได้', rec_bycatch_label: 'นี่คือสัตว์น้ำพลอยได้หรือไม่?',
@@ -4065,6 +4113,7 @@
       flclose_landing_site: 'สถานที่/ท่าเรือขึ้นท่า', flclose_departure_port: 'ท่าเรือออกเดินทาง', flclose_fishing_ground: 'แหล่งจับปลา (เม็กซิโก)', flclose_fishing_ground_placeholder: 'เช่น Campo Bajamar', flclose_presentation: 'ลักษณะการนำเสนอการจับปลา (เม็กซิโก)', flclose_pres_fresh_whole: 'สด ทั้งตัว', flclose_pres_fresh_gutted: 'สด ควักไส้แล้ว', flclose_pres_frozen: 'แช่แข็ง',
       flclose_fishing_zone: 'เขตประมง (เม็กซิโก)', flclose_zone_litoral: 'ชายฝั่ง', flclose_zone_bahia: 'อ่าว', flclose_zone_estuarina: 'ปากแม่น้ำ', flclose_zone_continental: 'ทวีป',
       flclose_trip_type: 'ประเภททริป (สหรัฐฯ)', flclose_triptype_commercial: 'เชิงพาณิชย์', flclose_triptype_party: 'กลุ่ม (Party)', flclose_triptype_charter: 'เช่าเหมาลำ', flclose_anglers: 'จำนวนนักตกปลา',
+      flclose_th_pi_no: 'เลข PI — เลขที่แจ้งเข้าท่า (ไทย)', flclose_th_province: 'จังหวัดที่เข้าเทียบท่า (ไทย)', flclose_th_zone: 'เขตทะเลชายฝั่ง (ไทย)', flclose_th_total_kg: 'ปริมาณสัตว์น้ำรวมทั้งหมด — กก. (ไทย)', flclose_th_egg_crabs: 'ปล่อยปูไข่ — ตัว (ไทย)',
       fltriplog_brand: 'บันทึกทริป', fltriplog_title: 'ทริปที่ผ่านมา', fltriplog_all_vessels: 'เรือทั้งหมด',
       fltripdet_brand: 'รายละเอียดทริป', fltripdet_h1: 'รายงานการขึ้นท่าและการคิดบัญชี', fltripdet_haul_log: 'บันทึกการลากอวน', fltripdet_catches_logged: 'การจับปลาแต่ละรายการที่บันทึก',
       fltripdet_landing_report_label: 'รายงานการขึ้นท่า', fltripdet_vessel_label: 'เรือ', fltripdet_captain_label: 'กัปตัน', fltripdet_trip_notes_label: 'หมายเหตุทริป:', fltripdet_fish_ticket_no: 'หมายเลข Fish Ticket (สหรัฐฯ)', fltripdet_dealer_name: 'ชื่อผู้รับซื้อ/Dealer (สหรัฐฯ)', fltripdet_dealer_permit: 'หมายเลขใบอนุญาตผู้รับซื้อ (สหรัฐฯ)',
@@ -4125,6 +4174,9 @@
       flcompliance_us_operator_permit: 'หมายเลขใบอนุญาตผู้ควบคุมเรือ', flcompliance_us_ifq_account: 'หมายเลขบัญชี IFQ', flcompliance_us_ifq_account_placeholder: 'เช่น เฉพาะ Shorebased IFQ / gear switchers',
       flcompliance_eu_section: 'สหภาพยุโรป — e-Logbook', flcompliance_eu_cfr: 'หมายเลข CFR',
       flcompliance_th_section: 'ไทย — กรมประมง / PIPO', flcompliance_th_vessel_registration: 'เลขทะเบียนเรือ', flcompliance_th_gear_license: 'เลขใบอนุญาตเครื่องมือประมง', flcompliance_th_captain_cert: 'เลขประกาศนียบัตรกัปตัน',
+      flcompliance_th_gear_hint: 'ข้อมูลเครื่องมืออวนลากด้านล่างแทบไม่เปลี่ยนแปลงในแต่ละเที่ยว กรอกครั้งเดียวที่นี่แทนการกรอกทุกครั้งที่ลงอวน ค่าต่ำสุดอ้างอิงมาจากมาตรฐานการตรวจเครื่องมือของคู่มือ PIPO กรมประมง แสดงเป็นแนวทางเท่านั้น ไม่ได้บังคับตรวจสอบ',
+      flcompliance_th_trawl_type: 'ประเภทอวนลาก', flcompliance_th_trawl_beam: 'อวนลากคานถ่าง', flcompliance_th_trawl_otter: 'อวนลากแผ่นตะเข่', flcompliance_th_trawl_pair: 'อวนลากคู่',
+      flcompliance_th_codend_mesh: 'ขนาดตาอวนถุงก้น (ซม.)', flcompliance_th_extension_mesh: 'ขนาดตาอวนส่วนต่อ (ซม.)', flcompliance_th_codend_length: 'ความยาวถุงก้นอวน (ม.)',
       flcompliance_save_btn: 'บันทึก', flcompliance_btn: 'การปฏิบัติตามกฎ', flcompliance_saved_msg: 'บันทึกข้อมูลการปฏิบัติตามกฎแล้ว', flcompliance_filled_chip: 'เพิ่มข้อมูลการปฏิบัติตามกฎแล้ว',
       flspecies_codes_title: 'รหัสรายงานตามชนิดพันธุ์', flspecies_codes_hint: 'จับคู่แต่ละชนิดพันธุ์ที่คุณบันทึกกับรหัสทางการที่หน่วยงานประมงใช้ กรอกเฉพาะรหัสที่เกี่ยวข้องกับที่ที่คุณรายงาน',
       flspecies_name_label: 'ชื่อชนิดพันธุ์ (ตามที่คุณพิมพ์ในการจับปลา)', flspecies_fao_code: 'รหัส FAO (สหภาพยุโรป)', flspecies_noaa_code: 'รหัส NOAA (สหรัฐฯ)', flspecies_mx_code: 'รหัส CONAPESCA (เม็กซิโก)',
@@ -4958,6 +5010,7 @@
   }
   function applyFleetCatchCountryVisibility(tripId){
     document.getElementById('fleetCatchUsFields').style.display = fleetCatchVesselCountry(tripId) === 'us' ? '' : 'none';
+    document.getElementById('fleetCatchThFields').style.display = fleetCatchVesselCountry(tripId) === 'th' ? '' : 'none';
   }
   function enterFleetLogCatch(haulId){
     currentEditingCatchId = null;
@@ -4989,6 +5042,7 @@
     document.getElementById('fleetCatchSpecimenCount').value = record.specimen_count || '';
     document.getElementById('fleetCatchDiscardedKg').value = record.discarded_kg || '';
     document.getElementById('fleetCatchDiscardReason').value = record.discard_reason || '';
+    document.getElementById('fleetCatchThLocalName').value = record.th_local_name || '';
     document.getElementById('fleetRefPrice').value = record.ref_price || '';
     if(record.currency) document.getElementById('fleetRefCurrency').value = record.currency;
     updateFleetEstValue();
@@ -5254,6 +5308,7 @@
     document.getElementById('fleetCatchSpecimenCount').value = '';
     document.getElementById('fleetCatchDiscardedKg').value = '';
     document.getElementById('fleetCatchDiscardReason').value = '';
+    document.getElementById('fleetCatchThLocalName').value = '';
     document.getElementById('fleetRefPrice').value = '';
     document.getElementById('fleetEstValueLine').textContent = t('msg_estimated_value') + ': —';
     document.getElementById('fleetPriceSuggestionLine').style.display = 'none';
@@ -5270,6 +5325,7 @@
     const specimenCount = document.getElementById('fleetCatchSpecimenCount').value || '';
     const discardedKg = document.getElementById('fleetCatchDiscardedKg').value || '';
     const discardReason = document.getElementById('fleetCatchDiscardReason').value || '';
+    const thLocalName = document.getElementById('fleetCatchThLocalName').value.trim();
     const price = document.getElementById('fleetRefPrice').value;
     const currency = document.getElementById('fleetRefCurrency').value;
     const catches = load(CATCHES_KEY);
@@ -5282,6 +5338,7 @@
         specimen_count: specimenCount,
         discarded_kg: discardedKg,
         discard_reason: discardReason,
+        th_local_name: thLocalName,
         ref_price: price || '',
         currency,
         estimated_value: price ? kg * parseFloat(price) : '',
@@ -5301,6 +5358,7 @@
       specimen_count: specimenCount,
       discarded_kg: discardedKg,
       discard_reason: discardReason,
+      th_local_name: thLocalName,
       ref_price: price || '',
       currency,
       estimated_value: price ? kg * parseFloat(price) : '',
@@ -5404,9 +5462,15 @@
     document.getElementById('fleetCloseFishingZone').value = '';
     document.getElementById('fleetCloseTripType').value = '';
     document.getElementById('fleetCloseAnglers').value = '';
+    document.getElementById('fleetCloseThPiNo').value = '';
+    document.getElementById('fleetCloseThProvince').value = '';
+    document.getElementById('fleetCloseThZone').value = '';
+    document.getElementById('fleetCloseThTotalKg').value = '';
+    document.getElementById('fleetCloseThEggCrabs').value = '';
     const closeCountry = vessel && vessel.compliance ? vessel.compliance.reporting_country : '';
     document.getElementById('fleetCloseMxFields').style.display = closeCountry === 'mx' ? '' : 'none';
     document.getElementById('fleetCloseUsFields').style.display = closeCountry === 'us' ? '' : 'none';
+    document.getElementById('fleetCloseThFields').style.display = closeCountry === 'th' ? '' : 'none';
     fleetCloseSelectedCrewIds = [];
     renderFleetCloseCrewChecklist();
 
@@ -5442,6 +5506,11 @@
     trips[idx].fishing_zone_mx = document.getElementById('fleetCloseFishingZone').value;
     trips[idx].trip_type_us = document.getElementById('fleetCloseTripType').value;
     trips[idx].anglers_us = document.getElementById('fleetCloseAnglers').value || '';
+    trips[idx].th_pi_no = document.getElementById('fleetCloseThPiNo').value.trim();
+    trips[idx].th_province = document.getElementById('fleetCloseThProvince').value.trim();
+    trips[idx].th_zone = document.getElementById('fleetCloseThZone').value.trim();
+    trips[idx].th_total_kg = document.getElementById('fleetCloseThTotalKg').value || '';
+    trips[idx].th_egg_crabs_released = document.getElementById('fleetCloseThEggCrabs').value || '';
     save(TRIPS_KEY, trips);
 
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
@@ -7221,6 +7290,10 @@
     document.getElementById('complianceThRegNo').value = c.th_vessel_registration || '';
     document.getElementById('complianceThGearLicense').value = c.th_gear_license_number || '';
     document.getElementById('complianceThCaptainCert').value = c.th_captain_certificate_number || '';
+    document.getElementById('complianceThTrawlType').value = c.th_trawl_type || '';
+    document.getElementById('complianceThCodendMesh').value = c.th_codend_mesh_cm || '';
+    document.getElementById('complianceThExtensionMesh').value = c.th_extension_mesh_cm || '';
+    document.getElementById('complianceThCodendLength').value = c.th_codend_length_m || '';
     document.getElementById('vesselComplianceOverlay').dataset.vesselId = vesselId;
     updateComplianceVisibility();
     document.getElementById('vesselComplianceOverlay').style.display = 'flex';
@@ -7263,7 +7336,11 @@
       eu_cfr_number: document.getElementById('complianceEuCfr').value.trim(),
       th_vessel_registration: document.getElementById('complianceThRegNo').value.trim(),
       th_gear_license_number: document.getElementById('complianceThGearLicense').value.trim(),
-      th_captain_certificate_number: document.getElementById('complianceThCaptainCert').value.trim()
+      th_captain_certificate_number: document.getElementById('complianceThCaptainCert').value.trim(),
+      th_trawl_type: document.getElementById('complianceThTrawlType').value,
+      th_codend_mesh_cm: document.getElementById('complianceThCodendMesh').value,
+      th_extension_mesh_cm: document.getElementById('complianceThExtensionMesh').value,
+      th_codend_length_m: document.getElementById('complianceThCodendLength').value
     };
     save(VESSELS_KEY, vessels);
     showFleetToast(t('flcompliance_saved_msg'));
