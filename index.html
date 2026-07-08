@@ -8622,6 +8622,16 @@
 
   // ===== Sport-scoped navigation =====
   // Mirrors fleetGoTo(): only ever touches sport-* screens.
+  // toISOString() always returns the UTC date, not the person's local
+  // calendar date — for anyone west of UTC (e.g. Mexico City, UTC-6),
+  // once local time passes ~6pm the UTC date has already rolled over to
+  // tomorrow, so any "is this today?" check built on toISOString() goes
+  // stale for the rest of the evening. Open-Meteo's timezone=auto
+  // responses are already in local time, so comparisons against them
+  // need a local-date string too, not a UTC one.
+  function sportLocalDateStr(d){
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
   function sportGoTo(screen){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-sport-' + screen).classList.add('active');
@@ -8958,7 +8968,7 @@
       const data = await res.json();
       const daily = data.daily;
       if(!daily || !daily.time){ strip.innerHTML = ''; return; }
-      const todayStr = new Date().toISOString().slice(0,10);
+      const todayStr = sportLocalDateStr(new Date());
       strip.innerHTML = daily.time.map((dateStr, i) => {
         const temp = daily.temperature_2m_max[i];
         const code = daily.weathercode[i];
@@ -9080,7 +9090,7 @@
       const data = await wxRes.json();
       sportWeatherDetailData = data.hourly;
       sportWeatherDetailWaterData = marineRes.ok ? (await marineRes.json()).hourly : null;
-      if(!sportWeatherDetailSelectedDate) sportWeatherDetailSelectedDate = new Date().toISOString().slice(0,10);
+      if(!sportWeatherDetailSelectedDate) sportWeatherDetailSelectedDate = sportLocalDateStr(new Date());
       renderSportWeatherDetailDayStrip();
       renderSportWeatherDetailHours();
       loading.style.display = 'none';
@@ -9096,7 +9106,13 @@
     const dates = [];
     sportWeatherDetailData.time.forEach(tm => { const d = tm.slice(0,10); if(!seen[d]){ seen[d]=true; dates.push(d); } });
     strip.innerHTML = dates.map(dateStr => {
-      const idx = sportWeatherDetailData.time.findIndex(tm => tm.slice(0,10) === dateStr);
+      // Midday, not the first hour of the date (midnight) — the
+      // original version always grabbed hour 0, which in most climates
+      // is the coldest point of the day, so nearly every card landed in
+      // the cold band regardless of what the day actually felt like.
+      const dayIndices = [];
+      sportWeatherDetailData.time.forEach((tm, i) => { if(tm.slice(0,10) === dateStr) dayIndices.push(i); });
+      const idx = dayIndices.find(i => new Date(sportWeatherDetailData.time[i]).getHours() === 12) || dayIndices[Math.floor(dayIndices.length/2)];
       const temp = sportWeatherDetailData.temperature_2m[idx];
       const band = sportTempBandColor(temp);
       const d = new Date(dateStr + 'T12:00:00');
@@ -9191,6 +9207,18 @@
     wind: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h11a2.5 2.5 0 1 0-2.5-2.5M3 12h15a2.5 2.5 0 1 1-2.5 2.5M3 16h9a2.5 2.5 0 1 1-2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     uv: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
   };
+  // Colorful version used only in the big per-hour "sky" row, where
+  // there's room for it to read as an actual sun/cloud/rain glyph
+  // instead of a thin monochrome line icon — yellow sun, dark cloud,
+  // blue rain, matching what Israel pointed at in the reference image.
+  // The small monochrome sportWeatherIconSvg stays as-is for the
+  // compact day-strip tiles, where it needs to match the tile's own
+  // text color instead of carrying its own palette.
+  function sportWeatherIconColorSvg(code){
+    if(code === 0 || code === 1) return '<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5" fill="#F2B33D"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="#F2B33D" stroke-width="2" stroke-linecap="round"/></svg>';
+    if(code >= 51 && code <= 82) return '<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M6 12a4.5 4.5 0 0 1-.5-8.97A5.5 5.5 0 0 1 16 5.5a4 4 0 0 1 .5 7.98" fill="#3A3F3D"/><path d="M8 16l-1.2 3M13 16l-1.2 3M18 16l-1.2 3" stroke="#378ADD" stroke-width="2" stroke-linecap="round"/></svg>';
+    return '<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M6 15a4.5 4.5 0 0 1-.5-8.97A5.5 5.5 0 0 1 16 8.5a4 4 0 0 1 .5 7.98" fill="#9AA6A6"/></svg>';
+  }
   function renderSportWeatherDetailHours(){
     if(!sportWeatherDetailData) return;
     const box = document.getElementById('sportWeatherDetailHourly');
@@ -9201,84 +9229,77 @@
     sportWeatherDetailData.time.forEach((tm, i) => { if(tm.slice(0,10) === sportWeatherDetailSelectedDate) indices.push(i); });
     if(indices.length === 0){ box.innerHTML = ''; return; }
     const colWidth = 64;
-    const labelWidth = 34;
-    // Whichever hour column is "now" (only when the selected day is
-    // today) gets a continuous highlighted band down the whole table —
-    // matching the reference app's shaded "Now" column. Achieved by
-    // giving every cell at that same horizontal position the same
-    // background; since column width and row structure are identical
-    // across rows, the individual cell backgrounds line up into what
-    // reads as one solid band rather than separate tinted boxes.
-    const todayStr = new Date().toISOString().slice(0,10);
+
+    const todayStr = sportLocalDateStr(new Date());
     const isToday = sportWeatherDetailSelectedDate === todayStr;
     const nowHour = new Date().getHours();
     const nowPos = isToday ? indices.findIndex(i => new Date(sportWeatherDetailData.time[i]).getHours() === nowHour) : -1;
     const NOW_BG = '#D6E9FA';
 
-    // Padding moved from the row onto each cell (rather than the row
-    // wrapper) so a cell's highlight background naturally covers the
-    // row's full height — stacked across every row, that's what makes
-    // the "Now" column read as one unbroken band top to bottom.
+    // Two fully separate columns instead of one wide scrolling table
+    // with a "position:sticky" label column — sticky nested this deep
+    // (row > label cell, repeated per row, inside a scrolling card) was
+    // never reliably pinning to the left edge, which is what caused the
+    // icon column to visibly drift and show a sliver of already-scrolled
+    // content behind it. A label column that simply isn't part of the
+    // scrolling area at all can't have that problem.
+    const rowBorder = 'border-bottom:0.5px solid #e6e2d6;';
+    const labelRow = (iconKey, last) => '<div style="padding:10px 0; display:flex; align-items:center; justify-content:center; color:#0F6E56; '+(last?'':rowBorder)+'">'+(SPORT_ROW_ICONS[iconKey]||'')+'</div>';
     const cell = (content, pos, extra) => '<div style="width:'+colWidth+'px; flex-shrink:0; text-align:center; padding:10px 0; box-sizing:border-box; '+(pos===nowPos?'background:'+NOW_BG+';':'')+(extra||'')+'">'+content+'</div>';
-    const rowLabel = (iconKey) => '<div style="width:'+labelWidth+'px; flex-shrink:0; position:sticky; left:0; background:#ffffff; color:#0F6E56; display:flex; align-items:center; justify-content:center; padding:10px 0;">'+(SPORT_ROW_ICONS[iconKey]||'')+'</div>';
-    const row = (iconKey, cellsHtml, extraStyle) => '<div style="display:flex; align-items:stretch; border-bottom:0.5px solid #e6e2d6; '+(extraStyle||'')+'">' + rowLabel(iconKey) + cellsHtml + '</div>';
+    const dataRow = (cellsHtml, last) => '<div style="display:flex; align-items:stretch; '+(last?'':rowBorder)+'">' + cellsHtml + '</div>';
 
     const temps = indices.map(i => sportWeatherDetailData.temperature_2m[i]);
 
-    let html = '<div class="card" style="padding:16px 0 16px 14px; overflow-x:auto;">';
-    html += '<div style="min-width:'+(labelWidth + indices.length*colWidth)+'px;">';
+    // Left column: one icon per row, fixed, never scrolls
+    let labelHtml = labelRow('') + labelRow('sky') + labelRow('trend') + labelRow('temp') + labelRow('precip') + labelRow('humidity') + labelRow('pressure') + labelRow('wind') + labelRow('uv', true);
 
-    // Hour labels — "Ahora" instead of the clock time in the current column
-    html += row('', indices.map((i, pos) => cell(
+    // Right column: same rows, data only, scrolls horizontally on its own
+    let dataHtml = '<div style="min-width:'+(indices.length*colWidth)+'px;">';
+    dataHtml += dataRow(indices.map((i, pos) => cell(
       pos === nowPos
         ? '<span style="font-family:var(--display); font-size:11px; color:#185FA5; font-weight:700;">'+t('sp_now')+'</span>'
         : '<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft); font-weight:500;">'+new Date(sportWeatherDetailData.time[i]).toLocaleTimeString(window.fishPulseLocale(),{hour:'numeric'})+'</span>',
       pos
     )).join(''));
-    // Weather icon
-    html += row('sky', indices.map((i, pos) => cell('<span style="color:#0F6E56; display:inline-block;">'+sportWeatherIconSvg(sportWeatherDetailData.weathercode[i]).replace('width="16" height="16"','width="24" height="24"')+'</span>', pos)).join(''));
-    // Temperature trend sparkline (spans the hour columns)
-    html += '<div style="display:flex; align-items:center; padding:8px 0; border-bottom:0.5px solid #e6e2d6;">' + rowLabel('trend') + '<div style="width:'+(indices.length*colWidth)+'px;">'+sportSparklineSvg(temps)+'</div></div>';
-    // Temperature (colored chip, large)
-    html += row('temp', indices.map((i, pos) => {
+    dataHtml += dataRow(indices.map((i, pos) => cell('<span style="display:inline-block;">'+sportWeatherIconColorSvg(sportWeatherDetailData.weathercode[i])+'</span>', pos)).join(''));
+    dataHtml += '<div style="display:flex; align-items:center; padding:8px 0; '+rowBorder+'"><div style="width:'+(indices.length*colWidth)+'px;">'+sportSparklineSvg(temps)+'</div></div>';
+    dataHtml += dataRow(indices.map((i, pos) => {
       const temp = sportWeatherDetailData.temperature_2m[i];
       const band = sportTempBandColor(temp);
       return cell('<span style="background:'+band.bg+'; color:'+band.text+'; border-radius:8px; padding:5px 0; font-size:14px; font-weight:600; display:inline-block; width:38px;">'+Math.round(temp)+'°</span>', pos);
     }).join(''));
     // Precipitation probability — background intensity scales with %,
-    // its own small bar-chart rather than plain text, similar to how
-    // the reference app color-fills cells instead of just printing a
-    // number in neutral gray.
-    html += row('precip', indices.map((i, pos) => {
+    // its own small bar-chart rather than plain text.
+    dataHtml += dataRow(indices.map((i, pos) => {
       const precip = sportWeatherDetailData.precipitation_probability ? sportWeatherDetailData.precipitation_probability[i] : null;
       const intensity = precip!=null ? Math.min(precip, 100) / 100 : 0;
       const barBg = precip!=null ? 'rgba(55,138,221,'+(0.12 + intensity*0.55)+')' : 'transparent';
       const barText = intensity > 0.55 ? '#ffffff' : '#185FA5';
       return cell('<span style="background:'+barBg+'; color:'+barText+'; border-radius:8px; padding:5px 0; font-size:11.5px; font-weight:500; display:inline-block; width:38px; font-family:var(--data);">'+(precip!=null?precip+'%':'—')+'</span>', pos);
     }).join(''));
-    // Humidity
-    html += row('humidity', indices.map((i, pos) => {
+    dataHtml += dataRow(indices.map((i, pos) => {
       const hum = sportWeatherDetailData.relative_humidity_2m ? sportWeatherDetailData.relative_humidity_2m[i] : null;
       return cell('<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft);">'+(hum!=null?hum+'%':'—')+'</span>', pos);
     }).join(''));
-    // Pressure
-    html += row('pressure', indices.map((i, pos) => {
+    dataHtml += dataRow(indices.map((i, pos) => {
       const p = sportWeatherDetailData.surface_pressure ? sportWeatherDetailData.surface_pressure[i] : null;
       return cell('<span style="font-family:var(--data); font-size:11.5px; color:var(--ink-soft);">'+(p!=null?Math.round(p):'—')+'</span>', pos);
     }).join(''));
-    // Wind
-    html += row('wind', indices.map((i, pos) => {
+    dataHtml += dataRow(indices.map((i, pos) => {
       const wind = sportWeatherDetailData.wind_speed_10m ? sportWeatherDetailData.wind_speed_10m[i] : null;
       const winddir = sportWeatherDetailData.wind_direction_10m ? sportWeatherDetailData.wind_direction_10m[i] : 0;
       return cell('<span style="display:inline-flex; flex-direction:column; align-items:center; gap:2px; color:#0F6E56;">'+sportWindArrowSvg(winddir)+'<span style="font-family:var(--data); font-size:11px; color:var(--ink-soft);">'+(wind!=null?Math.round(wind):'—')+'</span></span>', pos);
     }).join(''));
-    // UV
-    html += row('uv', indices.map((i, pos) => {
+    dataHtml += dataRow(indices.map((i, pos) => {
       const uv = sportWeatherDetailData.uv_index ? sportWeatherDetailData.uv_index[i] : null;
-      return cell('<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft);">'+(uv!=null?Math.round(uv*10)/10:'—')+'</span>', pos, 'border-radius:0 0 8px 8px;');
-    }).join(''), 'border-bottom:none;');
+      return cell('<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft);">'+(uv!=null?Math.round(uv*10)/10:'—')+'</span>', pos);
+    }).join(''), true);
+    dataHtml += '</div>';
 
-    html += '</div></div>';
+    const html = '<div class="card" style="padding:16px 14px; display:flex; gap:8px;">'
+      + '<div style="flex-shrink:0; width:26px;">' + labelHtml + '</div>'
+      + '<div style="flex:1; min-width:0; overflow-x:auto;">' + dataHtml + '</div>'
+      + '</div>';
 
     box.innerHTML = sportWaterCardHtml(indices) + html;
     const waterCard = document.getElementById('sportWaterCard');
