@@ -37,6 +37,34 @@
     --ink-panel: #16303f;
   }
 
+  /* ===== Sport/Recreational palette override =====
+     Field Research and Fishing Operations keep the original navy/blue
+     system (professional, built for someone at work). Sport gets its
+     own warmer, more vivid identity — confirmed with Israel over several
+     mockup rounds. Because almost every shared component (.topbar,
+     .home-hero, .action-tile.primary, .card-label, .btn-save, etc.)
+     already reads its colors from these custom properties instead of
+     hardcoded hex, redefining them scoped to body.mode-sport is enough
+     to recolor the whole module consistently — no need to touch every
+     card individually. Only .action-tile.primary gets its own extra
+     override below, since that's the one deliberate saturated "pop"
+     color (pink) — everything else in Sport uses the teal family so it
+     doesn't turn into a rainbow. */
+  body.mode-sport{
+    --ink:        #04342C;
+    --ink-panel:  #04342C;
+    --paper:      #EAF4F3;
+    --blue:       #0F6E56;
+    --blue-deep:  #085041;
+    --blue-mist:  #E1F5EE;
+  }
+  body.mode-sport .action-tile.primary{ background: #D4537E; }
+  body.mode-sport .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.2); }
+  body.mode-sport .tabbar{ background: #ffffff; border-top: 0.5px solid #9FE1CB; }
+  body.mode-sport .tab{ color: #6b8f85; }
+  body.mode-sport .tab.active{ color: #04342C; }
+  body.mode-sport .tab.active::before{ background: #1D9E75; }
+
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
   body{
@@ -2786,16 +2814,38 @@
     <div class="site-line" id="sportSpotLine" data-i18n="sp_no_spot">No Spot Selected</div>
   </div>
   <main>
-    <div class="card" style="background:#0e1b26;border:none;">
-      <div class="insight-card-label" style="color:#8fb4c9;margin-bottom:10px;" data-i18n="sp_solunar_today">Solunar Forecast · Today</div>
+    <div class="card" style="border-left:4px solid #1D9E75;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:#E1F5EE; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="#0F6E56"/></svg>
+        </div>
+        <div class="insight-card-label" style="margin-bottom:0; color:var(--ink-soft);" data-i18n="sp_solunar_today">Solunar Forecast · Today</div>
+      </div>
       <div id="sportSolunarBox"></div>
+    </div>
+
+    <div class="insight-card-label" style="margin:4px 0 8px;" data-i18n="sp_forecast_label">Forecast</div>
+    <div id="sportDailyForecastStrip" style="display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;"></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+      <button type="button" id="sportQuickSpotsBtn" style="background:#CECBF6; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="#3C3489" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="#3C3489"/></svg>
+        <div id="sportQuickSpotsCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#26215C; margin-top:6px;">0 spots</div>
+        <div style="font-family:var(--data); font-size:10px; color:#534AB7;" data-i18n="sp_saved">saved</div>
+      </button>
+      <button type="button" id="sportQuickCatchesBtn" style="background:#9FE1CB; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#085041"/></svg>
+        <div id="sportQuickCatchesCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#04342C; margin-top:6px;">0 catches</div>
+        <div style="font-family:var(--data); font-size:10px; color:#0F6E56;" data-i18n="sp_this_month">this month</div>
+      </button>
     </div>
 
     <div id="sportNoSessionCard">
       <div class="card">
         <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_start_new_session">Start a new session</div>
-        <label for="sportSpotSelect" data-i18n="sp_spot">Spot</label>
-        <select id="sportSpotSelect">
+        <label data-i18n="sp_spot">Spot</label>
+        <div id="sportSpotTiles" style="display:flex; gap:8px; overflow-x:auto; margin-bottom:6px;"></div>
+        <select id="sportSpotSelect" style="display:none;">
           <option value="" data-i18n="sp_no_spot_open_water">— No Spot / Open Water —</option>
           <option value="__new__" data-i18n="sp_new_spot">+ New Spot</option>
         </select>
@@ -2804,8 +2854,9 @@
           <input type="text" id="sportNewSpotName" placeholder="e.g. North Pier">
         </div>
 
-        <label for="sportFishingMethod" data-i18n="sp_method">Method</label>
-        <select id="sportFishingMethod">
+        <label style="margin-top:14px;" data-i18n="sp_method">Method</label>
+        <div id="sportMethodTiles" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:6px;"></div>
+        <select id="sportFishingMethod" style="display:none;">
           <option value="Shore" data-i18n="sp_method_shore">Shore</option>
           <option value="Boat" data-i18n="sp_method_boat">Boat</option>
           <option value="Kayak" data-i18n="sp_method_kayak">Kayak</option>
@@ -2815,8 +2866,8 @@
         </select>
 
         <div class="step-card-header" style="margin:16px 0 10px;">
-          <div class="sc-icon-box" style="background:var(--blue-mist);">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="sc-icon-box" style="background:#1D9E75;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/></svg>
           </div>
           <span class="sc-title"><span data-i18n="sp_weather_tide">Weather &amp; Tide</span> <span class="optional-tag" data-i18n="sp_current_location">at your current location</span></span>
         </div>
@@ -2834,8 +2885,8 @@
       <div class="home-hero">
         <div class="hh-icon">
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24 6c0 8-2 10-2 16a6 6 0 1 0 8 0c-4-3-6-7-6-16z" stroke="#5fc7ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="24" cy="14" r="2" fill="#5fc7ee"/>
+            <path d="M24 6c0 8-2 10-2 16a6 6 0 1 0 8 0c-4-3-6-7-6-16z" stroke="#5DCAA5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="14" r="2" fill="#5DCAA5"/>
           </svg>
         </div>
         <div>
@@ -2848,8 +2899,8 @@
         <div class="action-tile primary" id="sportLogCatchBtn" style="grid-column: 1 / -1; flex-direction:row; align-items:center;">
           <div class="at-icon-box">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/>
-              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
+              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/>
+              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0F6E56"/>
             </svg>
           </div>
           <div class="at-title" data-i18n="fltrip_log_catch">Log Catch</div>
@@ -2880,7 +2931,7 @@
     <div class="card">
       <div class="step-card-header" style="margin-bottom:14px;">
         <div class="sc-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0F6E56"/></svg>
         </div>
         <span class="sc-title" data-i18n="sp_species_size">Species &amp; size</span>
       </div>
@@ -2906,7 +2957,7 @@
       <label data-i18n="sp_outcome">Outcome</label>
       <div class="grid2">
         <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#dff0e8;color:#2f7a52;font-weight:600;" data-i18n="sp_kept">Kept</button>
-        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#dfeaf0;color:#0a5c8c;font-weight:600;" data-i18n="rec_cond_released">Released</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#E1F5EE;color:#0F6E56;font-weight:600;" data-i18n="rec_cond_released">Released</button>
       </div>
 
       <label for="sportCatchNotes" style="margin-top:14px;"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
@@ -2916,13 +2967,13 @@
     <div class="quick-actions">
       <div class="action-tile" id="sportPhotoBtnTile">
         <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0F6E56" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0F6E56" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0F6E56" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <div class="at-title" data-i18n="rec_photo_label">Photo</div>
       </div>
       <div class="action-tile" id="sportGpsBtnTile">
         <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/><circle cx="12" cy="9" r="2" fill="white"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0F6E56"/><circle cx="12" cy="9" r="2" fill="white"/></svg>
         </div>
         <div class="at-title" data-i18n="sp_gps">GPS</div>
       </div>
@@ -3029,7 +3080,7 @@
       <input type="date" id="sportDocExpiry">
       <div class="step-card-header" style="margin:14px 0 10px;">
         <div class="sc-icon-box" style="background:var(--blue-mist);">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0a5c8c" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0a5c8c" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0a5c8c" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0F6E56" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0F6E56" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0F6E56" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <span class="sc-title"><span data-i18n="fldocs_photo_scan">Photo / Scan</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
@@ -3351,6 +3402,8 @@
       flstats_margin_footnote: 'Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.',
       fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
       sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
+      sp_forecast_label: 'Forecast', sp_saved: 'saved', sp_this_month: 'this month', sp_new_spot_short: 'New', sp_enable_location: 'Enable location for forecast', sp_spots_lc: 'spots', sp_catches_lc: 'catches',
+      sp_day_sun: 'Sun', sp_day_mon: 'Mon', sp_day_tue: 'Tue', sp_day_wed: 'Wed', sp_day_thu: 'Thu', sp_day_fri: 'Fri', sp_day_sat: 'Sat',
       sp_start_new_session: 'Start a new session', sp_spot: 'Spot', sp_no_spot_open_water: '— No Spot / Open Water —', sp_new_spot: '+ New Spot', sp_spot_name: 'Spot Name',
       sp_method: 'Method', sp_method_shore: 'Shore', sp_method_boat: 'Boat', sp_method_kayak: 'Kayak', sp_method_fly: 'Fly Fishing', sp_method_ice: 'Ice Fishing',
       sp_weather_tide: 'Weather &amp; Tide', sp_current_location: 'at your current location', sp_get_conditions: 'Get Conditions',
@@ -3639,6 +3692,8 @@
       flstats_margin_footnote: 'Margen mostrado como % del ingreso (neto ÷ ingreso), no en moneda absoluta — seguro de comparar aunque las embarcaciones usen monedas predeterminadas distintas.',
       fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
       sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
+      sp_forecast_label: 'Pronóstico', sp_saved: 'guardados', sp_this_month: 'este mes', sp_new_spot_short: 'Nuevo', sp_enable_location: 'Activar ubicación para el pronóstico', sp_spots_lc: 'spots', sp_catches_lc: 'capturas',
+      sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mié', sp_day_thu: 'Jue', sp_day_fri: 'Vie', sp_day_sat: 'Sáb',
       sp_start_new_session: 'Iniciar una nueva sesión', sp_spot: 'Spot', sp_no_spot_open_water: '— Sin Spot / Agua Abierta —', sp_new_spot: '+ Nuevo Spot', sp_spot_name: 'Nombre del Spot',
       sp_method: 'Método', sp_method_shore: 'Desde Orilla', sp_method_boat: 'Desde Bote', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca en Hielo',
       sp_weather_tide: 'Clima y Marea', sp_current_location: 'en tu ubicación actual', sp_get_conditions: 'Obtener Condiciones',
@@ -3927,6 +3982,8 @@
       flstats_margin_footnote: 'Margine mostrato come % del reddito (netto ÷ reddito), non valuta assoluta — sicuro da confrontare anche quando le imbarcazioni usano valute predefinite diverse.',
       fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
       sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
+      sp_forecast_label: 'Previsioni', sp_saved: 'salvati', sp_this_month: 'questo mese', sp_new_spot_short: 'Nuovo', sp_enable_location: 'Attiva posizione per le previsioni', sp_spots_lc: 'spot', sp_catches_lc: 'catture',
+      sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mer', sp_day_thu: 'Gio', sp_day_fri: 'Ven', sp_day_sat: 'Sab',
       sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
       sp_method: 'Metodo', sp_method_shore: 'Da Riva', sp_method_boat: 'Da Barca', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca sul Ghiaccio',
       sp_weather_tide: 'Meteo e Marea', sp_current_location: 'nella tua posizione attuale', sp_get_conditions: 'Ottieni Condizioni',
@@ -4215,6 +4272,8 @@
       flstats_margin_footnote: 'กำไรขั้นต้นแสดงเป็น % ของรายได้ (สุทธิ ÷ รายได้) ไม่ใช่สกุลเงินสัมบูรณ์ — สามารถเปรียบเทียบได้อย่างปลอดภัยแม้เรือจะใช้สกุลเงินเริ่มต้นต่างกัน',
       fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
       sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
+      sp_forecast_label: 'พยากรณ์อากาศ', sp_saved: 'บันทึกไว้', sp_this_month: 'เดือนนี้', sp_new_spot_short: 'ใหม่', sp_enable_location: 'เปิดตำแหน่งเพื่อดูพยากรณ์', sp_spots_lc: 'จุด', sp_catches_lc: 'ครั้งที่จับได้',
+      sp_day_sun: 'อา', sp_day_mon: 'จ', sp_day_tue: 'อ', sp_day_wed: 'พ', sp_day_thu: 'พฤ', sp_day_fri: 'ศ', sp_day_sat: 'ส',
       sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
       sp_method: 'วิธีการ', sp_method_shore: 'ตกจากฝั่ง', sp_method_boat: 'ตกจากเรือ', sp_method_kayak: 'คายัค', sp_method_fly: 'ตกปลาด้วยเหยื่อปลอมลอย', sp_method_ice: 'ตกปลาน้ำแข็ง',
       sp_weather_tide: 'สภาพอากาศและน้ำขึ้นน้ำลง', sp_current_location: 'ที่ตำแหน่งปัจจุบันของคุณ', sp_get_conditions: 'ดูสภาพอากาศ',
@@ -8636,6 +8695,20 @@
   // Both are public, no key, no backend needed. Tide specifically is
   // flagged by Open-Meteo itself as approximate (8km model resolution) —
   // shown here as a reference for trip planning, not for navigation.
+  //
+  // Temperature color bands (confirmed with Israel): cold < 20°C (blue),
+  // mild 20–26.9°C (teal/green), warm 27–31.9°C (amber), hot 32°C+
+  // (coral). Sport-only — Field Research/Fishing Operations weather
+  // stays plain text, no color coding, since that's a deliberate part of
+  // keeping those two modules more "at work" and Sport more "at a
+  // glance". Bg/text pairs use the same ramp stop for both so text stays
+  // readable against the fill in both light and dark contexts.
+  function sportTempBandColor(tempC){
+    if(tempC < 20) return { bg: '#B5D4F4', text: '#042C53' };
+    if(tempC < 27) return { bg: '#9FE1CB', text: '#04342C' };
+    if(tempC < 32) return { bg: '#FAC775', text: '#412402' };
+    return { bg: '#F0997B', text: '#4A1B0C' };
+  }
   async function fetchSportWeather(lat, lon){
     const box = document.getElementById('sportWeatherBox');
     box.style.display = 'block';
@@ -8643,14 +8716,36 @@
     box.textContent = t('msg_fetching_conditions');
     try{
       const [wxRes, marineRes] = await Promise.all([
-        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl'),
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,wind_speed_10m,wind_direction_10m,pressure_msl&hourly=temperature_2m&forecast_days=1'),
         fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=wave_height,sea_surface_temperature,sea_level_height_msl')
       ]);
       const wx = await wxRes.json();
       const marine = marineRes.ok ? await marineRes.json() : null;
       const c = wx.current || {};
       const m = marine && marine.current ? marine.current : {};
-      let html = '<div><b>'+(c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'—')+'</b> air · '
+
+      let stripHtml = '';
+      if(wx.hourly && wx.hourly.time && wx.hourly.temperature_2m){
+        const nowHour = new Date().getHours();
+        const times = wx.hourly.time;
+        const temps = wx.hourly.temperature_2m;
+        let startIdx = times.findIndex(tm => new Date(tm).getHours() === nowHour);
+        if(startIdx === -1) startIdx = 0;
+        const cells = [];
+        for(let i = startIdx; i < Math.min(startIdx + 6, times.length); i++){
+          const temp = temps[i];
+          if(temp == null) continue;
+          const hourLabel = new Date(times[i]).toLocaleTimeString(window.fishPulseLocale(), { hour: 'numeric' });
+          const band = sportTempBandColor(temp);
+          cells.push('<div style="flex:0 0 auto; width:46px; text-align:center; background:'+band.bg+'; border-radius:10px; padding:6px 0;">'
+            + '<div style="font-size:10px; color:'+band.text+'; opacity:0.75;">'+hourLabel+'</div>'
+            + '<div style="font-size:12px; font-weight:500; color:'+band.text+';">'+Math.round(temp)+'°</div></div>');
+        }
+        if(cells.length) stripHtml = '<div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:8px;">'+cells.join('')+'</div>';
+      }
+
+      let html = stripHtml
+        + '<div><b>'+(c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'—')+'</b> air · '
         + (c.wind_speed_10m!=null?Math.round(c.wind_speed_10m)+' km/h wind':'wind —') + ' · '
         + (c.pressure_msl!=null?Math.round(c.pressure_msl)+' hPa':'—') + '</div>';
       if(m && (m.wave_height!=null || m.sea_surface_temperature!=null)){
@@ -8730,25 +8825,165 @@
     const minorTimes = minorOffsets.map(o => formatHM(o)).sort();
     const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? t('sp_strength_strong') : (moon.illumination > 0.6 || moon.illumination < 0.4 ? t('sp_strength_moderate') : t('sp_strength_mild'));
     box.innerHTML =
-      '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">'
+      '<div style="font-family:var(--data);font-size:10px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">'
       + moon.label + ' · ' + Math.round(moon.illumination*100) + t('sp_illuminated') + ' · ' + strength + t('sp_activity') + '</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
-      + '<div style="background:#163040;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 '+t('sp_major_peaks')+'</div>'
-      + majorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#5fc7ee;line-height:1.2;">'+t2+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">'+t('sp_90min_window')+'</div>'
+      + '<div style="background:#E1F5EE;border-radius:8px;padding:12px;">'
+      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 '+t('sp_major_peaks')+'</div>'
+      + majorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#04342C;line-height:1.2;">'+t2+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;margin-top:4px;">'+t('sp_90min_window')+'</div>'
       + '</div>'
-      + '<div style="background:#163040;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 '+t('sp_minor_peaks')+'</div>'
-      + minorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#9fc8de;line-height:1.2;">'+t2+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:4px;">'+t('sp_45min_window')+'</div>'
+      + '<div style="background:#E1F5EE;border-radius:8px;padding:12px;">'
+      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 '+t('sp_minor_peaks')+'</div>'
+      + minorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#085041;line-height:1.2;">'+t2+'</div>').join('')
+      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;margin-top:4px;">'+t('sp_45min_window')+'</div>'
       + '</div>'
       + '</div>'
-      + '<div style="font-family:var(--data);font-size:10px;color:#7fa3b5;margin-top:8px;line-height:1.5;">'+t('sp_estimated_periods')+'</div>';
+      + '<div style="font-family:var(--data);font-size:10px;color:var(--text-secondary,#5a7a70);margin-top:8px;line-height:1.5;">'+t('sp_estimated_periods')+'</div>';
   }
+
+  // ===== Method & Spot as tap tiles =====
+  // The underlying <select id="sportFishingMethod"> and <select
+  // id="sportSpotSelect"> stay in the DOM (hidden) as the actual source
+  // of truth Start Session reads from — this way the existing save
+  // logic, the "+ New Spot" flow, and the change-listener that reveals
+  // sportNewSpotBox all keep working untouched. These tiles just drive
+  // that hidden select's value and dispatch a change event, same as a
+  // person interacting with the select directly would.
+  const SPORT_METHOD_ICONS = {
+    Shore: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20c2-1 4-1 6 0s4 1 6 0 4-1 4-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3v9M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    Boat: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15l1.5 4h13L20 15H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 15V5M12 5l4 3M12 8l-4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    Kayak: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="12" rx="9" ry="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 8l16 8M20 8L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    Fly: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="7" r="1.4" fill="currentColor"/></svg>',
+    Ice: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    Other: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18" cy="12" r="1.4" fill="currentColor"/></svg>'
+  };
+  function renderSportMethodTiles(){
+    const select = document.getElementById('sportFishingMethod');
+    const wrap = document.getElementById('sportMethodTiles');
+    const current = select.value || 'Shore';
+    wrap.innerHTML = Array.from(select.options).map(opt => {
+      const active = opt.value === current;
+      const bg = active ? '#1D9E75' : '#ffffff';
+      const border = active ? 'none' : '0.5px solid #9FE1CB';
+      const color = active ? '#ffffff' : '#0F6E56';
+      const textColor = active ? '#ffffff' : '#04342C';
+      return '<button type="button" class="sport-method-tile" data-method="'+opt.value+'" style="background:'+bg+'; border:'+border+'; border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; color:'+color+';">'
+        + (SPORT_METHOD_ICONS[opt.value] || SPORT_METHOD_ICONS.Other)
+        + '<div style="font-family:var(--display); font-weight:500; font-size:10.5px; color:'+textColor+'; margin-top:5px;">'+opt.textContent+'</div>'
+        + '</button>';
+    }).join('');
+    wrap.querySelectorAll('.sport-method-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        select.value = btn.dataset.method;
+        renderSportMethodTiles();
+      });
+    });
+  }
+  function renderSportSpotTiles(){
+    const select = document.getElementById('sportSpotSelect');
+    const wrap = document.getElementById('sportSpotTiles');
+    const spots = load(SPOTS_KEY);
+    const current = select.value;
+    const tileHtml = (value, label, iconSvg, activeColor, activeText) => {
+      const active = value === current;
+      const bg = active ? activeColor : '#ffffff';
+      const border = active ? 'none' : '0.5px solid #9FE1CB';
+      const color = active ? '#ffffff' : '#0F6E56';
+      const textColor = active ? activeText : '#04342C';
+      return '<button type="button" class="sport-spot-tile" data-spot="'+value+'" style="flex:0 0 auto; min-width:74px; background:'+bg+'; border:'+border+'; border-radius:12px; padding:10px 12px; text-align:center; cursor:pointer; color:'+color+';">'
+        + iconSvg
+        + '<div style="font-family:var(--display); font-weight:500; font-size:11px; color:'+textColor+'; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">'+label+'</div>'
+        + '</button>';
+    };
+    const waterIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c2-2 4 2 6 0s4 2 6 0 4-2 6 0M3 17c2-2 4 2 6 0s4 2 6 0 4-2 6 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    const pinIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg>';
+    const plusIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    let html = tileHtml('', t('sp_open_water'), waterIcon, '#1D9E75', '#ffffff');
+    html += spots.map(s => tileHtml(s.spot_id, s.name, pinIcon, '#7F77DD', '#ffffff')).join('');
+    html += tileHtml('__new__', t('sp_new_spot_short'), plusIcon, '#D4537E', '#ffffff');
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.sport-spot-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        select.value = btn.dataset.spot;
+        select.dispatchEvent(new Event('change'));
+        renderSportSpotTiles();
+      });
+    });
+  }
+
+  // ===== 5-day forecast strip =====
+  // Auto-loads on screen entry (unlike the detailed "Get Conditions"
+  // wind/wave box below, which stays tap-triggered since it needs a
+  // fresh, precise GPS fix). The daily strip only needs an approximate
+  // location, so it reuses the browser's last-known position silently
+  // when available and falls back to a small "enable location" prompt
+  // otherwise — never blocks the rest of the screen from rendering.
+  function sportWeatherIconSvg(code){
+    if(code === 0 || code === 1) return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    if(code >= 51 && code <= 82) return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 11a4 4 0 0 1-.5-7.97A5 5 0 0 1 15 4.5a3.5 3.5 0 0 1 .5 6.98" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 15v3M12 15v3M16 15v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 15a4 4 0 0 1-.5-7.97A5 5 0 0 1 15 8.5a3.5 3.5 0 0 1 .5 6.98" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  }
+  const SPORT_DAY_ABBR = ['sp_day_sun','sp_day_mon','sp_day_tue','sp_day_wed','sp_day_thu','sp_day_fri','sp_day_sat'];
+  async function fetchSportDailyForecast(lat, lon){
+    const strip = document.getElementById('sportDailyForecastStrip');
+    try{
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&daily=weathercode,temperature_2m_max&forecast_days=5&timezone=auto');
+      const data = await res.json();
+      const daily = data.daily;
+      if(!daily || !daily.time){ strip.innerHTML = ''; return; }
+      const todayStr = new Date().toISOString().slice(0,10);
+      strip.innerHTML = daily.time.map((dateStr, i) => {
+        const temp = daily.temperature_2m_max[i];
+        const code = daily.weathercode[i];
+        const band = sportTempBandColor(temp);
+        const d = new Date(dateStr + 'T12:00:00');
+        const isToday = dateStr === todayStr;
+        const border = isToday ? 'border:1.5px solid #04342C;' : '';
+        return '<div style="flex:0 0 auto; width:54px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; '+border+'">'
+          + '<div style="font-size:10px; color:'+band.text+'; font-weight:500;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
+          + '<div style="font-size:13px; font-weight:500; color:'+band.text+';">'+d.getDate()+'</div>'
+          + '<div style="margin-top:2px; color:'+band.text+';">'+sportWeatherIconSvg(code)+'</div>'
+          + '<div style="font-size:11px; font-weight:500; color:'+band.text+'; margin-top:2px;">'+Math.round(temp)+'°</div></div>';
+      }).join('');
+    } catch(err){
+      strip.innerHTML = '';
+    }
+  }
+  function initSportDailyForecast(){
+    if(!navigator.geolocation){ return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchSportDailyForecast(pos.coords.latitude, pos.coords.longitude),
+      () => {
+        document.getElementById('sportDailyForecastStrip').innerHTML =
+          '<button type="button" id="sportEnableForecastBtn" style="flex:0 0 auto; background:#ffffff; border:0.5px dashed #9FE1CB; border-radius:12px; padding:10px 14px; color:#0F6E56; font-family:var(--display); font-size:12px; cursor:pointer;">'+t('sp_enable_location')+'</button>';
+        const btn = document.getElementById('sportEnableForecastBtn');
+        if(btn) btn.addEventListener('click', initSportDailyForecast);
+      },
+      { timeout: 8000 }
+    );
+  }
+
+  // ===== Quick stats row (Spots / Catches shortcuts) =====
+  function renderSportQuickStats(){
+    const spots = load(SPOTS_KEY);
+    document.getElementById('sportQuickSpotsCount').textContent = spots.length + ' ' + t('sp_spots_lc');
+    const now = new Date();
+    const monthCatches = load(CATCHES_KEY).filter(c => {
+      const d = new Date(c.caught_at || c.logged_at || 0);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    document.getElementById('sportQuickCatchesCount').textContent = monthCatches.length + ' ' + t('sp_catches_lc');
+  }
+  document.getElementById('sportQuickSpotsBtn').addEventListener('click', () => sportGoTo('spots'));
+  document.getElementById('sportQuickCatchesBtn').addEventListener('click', () => sportGoTo('catch-log'));
 
   function renderSportSession(){
     renderSportSolunar();
+    renderSportMethodTiles();
+    renderSportSpotTiles();
+    renderSportQuickStats();
+    initSportDailyForecast();
     renderSportSpotOptions();
     const session = getActiveSession();
     const noCard = document.getElementById('sportNoSessionCard');
@@ -8774,7 +9009,7 @@
 
     const catches = load(CATCHES_KEY).filter(c => c.session_id === session.session_id);
     const list = document.getElementById('sportSessionCatchList');
-    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0F6E56"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet this session.</div>'
       : catches.slice().reverse().map(c =>
@@ -9013,7 +9248,7 @@
     const catches = filterSpecies ? all.filter(c => c.species === filterSpecies) : all;
     const countEl = document.getElementById('sportCatchLogCountLine');
     if(countEl) countEl.textContent = catches.length + (catches.length===1?' CATCH':' CATCHES') + (filterSpecies ? ' (filtered)' : '');
-    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0F6E56"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     const list = document.getElementById('sportCatchLogList');
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet.</div>'
@@ -9089,7 +9324,7 @@
     list.innerHTML = spots.length === 0
       ? '<div class="empty">No spots saved yet.</div>'
       : spots.slice().reverse().map(s => {
-          const catchCount = catches.filter(c => c.spot_id === s.spot_id).length;          const pinSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0a5c8c"/><circle cx="12" cy="9" r="2" fill="white"/></svg>`;
+          const catchCount = catches.filter(c => c.spot_id === s.spot_id).length;          const pinSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0F6E56"/><circle cx="12" cy="9" r="2" fill="white"/></svg>`;
           return '<div class="entry">'
             + '<div class="entry-icon">' + pinSvg + '</div>'
             + '<div class="entry-body">'
@@ -9298,7 +9533,7 @@
       const bH = Math.round((cnt/maxHour)*55);
       const x = i*(bW+1);
       const isPeak = i === peakHour;
-      bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#5fc7ee':'#0a5c8c'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
+      bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#5fc7ee':'#0F6E56'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
       if(i%6===0) xLabels += `<text x="${x+bW/2}" y="${svgH}" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${i===0?'0h':i+'h'}</text>`;
     });
     html += `<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Best fishing hours · Peak ${peakHour}:00–${peakHour+1}:00</div><svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${bars}${xLabels}</svg></div>`;
