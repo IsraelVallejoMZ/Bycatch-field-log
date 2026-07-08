@@ -2917,6 +2917,23 @@
   </main>
 </section>
 
+<!-- ================= SPORT: WEATHER DETAIL ================= -->
+<section class="screen" id="screen-sport-weather-detail">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="sport-session">←</button>
+      <span class="brand" data-i18n="sp_brand">Fish Pulse · Sport</span>
+    </div>
+    <h1 data-i18n="sp_weather_detail_title">Weather</h1>
+    <div class="site-line" id="sportWeatherDetailDateLine">&nbsp;</div>
+  </div>
+  <main>
+    <div id="sportWeatherDetailDayStrip" style="display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;"></div>
+    <div id="sportWeatherDetailLoading" class="duration-line" data-i18n="msg_fetching_conditions">Fetching conditions…</div>
+    <div id="sportWeatherDetailHourly" style="display:none;"></div>
+  </main>
+</section>
+
 <!-- ================= SPORT: LOG CATCH ================= -->
 <section class="screen" id="screen-sport-log-catch">
   <div class="topbar">
@@ -3402,7 +3419,7 @@
       flstats_margin_footnote: 'Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.',
       fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
       sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
-      sp_forecast_label: 'Forecast', sp_saved: 'saved', sp_this_month: 'this month', sp_new_spot_short: 'New', sp_enable_location: 'Enable location for forecast', sp_spots_lc: 'spots', sp_catches_lc: 'catches',
+      sp_forecast_label: 'Forecast', sp_saved: 'saved', sp_this_month: 'this month', sp_new_spot_short: 'New', sp_enable_location: 'Enable location for forecast', sp_spots_lc: 'spots', sp_catches_lc: 'catches', sp_weather_detail_title: 'Weather',
       sp_day_sun: 'Sun', sp_day_mon: 'Mon', sp_day_tue: 'Tue', sp_day_wed: 'Wed', sp_day_thu: 'Thu', sp_day_fri: 'Fri', sp_day_sat: 'Sat',
       sp_start_new_session: 'Start a new session', sp_spot: 'Spot', sp_no_spot_open_water: '— No Spot / Open Water —', sp_new_spot: '+ New Spot', sp_spot_name: 'Spot Name',
       sp_method: 'Method', sp_method_shore: 'Shore', sp_method_boat: 'Boat', sp_method_kayak: 'Kayak', sp_method_fly: 'Fly Fishing', sp_method_ice: 'Ice Fishing',
@@ -3692,7 +3709,7 @@
       flstats_margin_footnote: 'Margen mostrado como % del ingreso (neto ÷ ingreso), no en moneda absoluta — seguro de comparar aunque las embarcaciones usen monedas predeterminadas distintas.',
       fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
       sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
-      sp_forecast_label: 'Pronóstico', sp_saved: 'guardados', sp_this_month: 'este mes', sp_new_spot_short: 'Nuevo', sp_enable_location: 'Activar ubicación para el pronóstico', sp_spots_lc: 'spots', sp_catches_lc: 'capturas',
+      sp_forecast_label: 'Pronóstico', sp_saved: 'guardados', sp_this_month: 'este mes', sp_new_spot_short: 'Nuevo', sp_enable_location: 'Activar ubicación para el pronóstico', sp_spots_lc: 'spots', sp_catches_lc: 'capturas', sp_weather_detail_title: 'Clima',
       sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mié', sp_day_thu: 'Jue', sp_day_fri: 'Vie', sp_day_sat: 'Sáb',
       sp_start_new_session: 'Iniciar una nueva sesión', sp_spot: 'Spot', sp_no_spot_open_water: '— Sin Spot / Agua Abierta —', sp_new_spot: '+ Nuevo Spot', sp_spot_name: 'Nombre del Spot',
       sp_method: 'Método', sp_method_shore: 'Desde Orilla', sp_method_boat: 'Desde Bote', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca en Hielo',
@@ -3982,7 +3999,7 @@
       flstats_margin_footnote: 'Margine mostrato come % del reddito (netto ÷ reddito), non valuta assoluta — sicuro da confrontare anche quando le imbarcazioni usano valute predefinite diverse.',
       fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
       sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
-      sp_forecast_label: 'Previsioni', sp_saved: 'salvati', sp_this_month: 'questo mese', sp_new_spot_short: 'Nuovo', sp_enable_location: 'Attiva posizione per le previsioni', sp_spots_lc: 'spot', sp_catches_lc: 'catture',
+      sp_forecast_label: 'Previsioni', sp_saved: 'salvati', sp_this_month: 'questo mese', sp_new_spot_short: 'Nuovo', sp_enable_location: 'Attiva posizione per le previsioni', sp_spots_lc: 'spot', sp_catches_lc: 'catture', sp_weather_detail_title: 'Meteo',
       sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mer', sp_day_thu: 'Gio', sp_day_fri: 'Ven', sp_day_sat: 'Sab',
       sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
       sp_method: 'Metodo', sp_method_shore: 'Da Riva', sp_method_boat: 'Da Barca', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca sul Ghiaccio',
@@ -4272,7 +4289,7 @@
       flstats_margin_footnote: 'กำไรขั้นต้นแสดงเป็น % ของรายได้ (สุทธิ ÷ รายได้) ไม่ใช่สกุลเงินสัมบูรณ์ — สามารถเปรียบเทียบได้อย่างปลอดภัยแม้เรือจะใช้สกุลเงินเริ่มต้นต่างกัน',
       fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
       sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
-      sp_forecast_label: 'พยากรณ์อากาศ', sp_saved: 'บันทึกไว้', sp_this_month: 'เดือนนี้', sp_new_spot_short: 'ใหม่', sp_enable_location: 'เปิดตำแหน่งเพื่อดูพยากรณ์', sp_spots_lc: 'จุด', sp_catches_lc: 'ครั้งที่จับได้',
+      sp_forecast_label: 'พยากรณ์อากาศ', sp_saved: 'บันทึกไว้', sp_this_month: 'เดือนนี้', sp_new_spot_short: 'ใหม่', sp_enable_location: 'เปิดตำแหน่งเพื่อดูพยากรณ์', sp_spots_lc: 'จุด', sp_catches_lc: 'ครั้งที่จับได้', sp_weather_detail_title: 'สภาพอากาศ',
       sp_day_sun: 'อา', sp_day_mon: 'จ', sp_day_tue: 'อ', sp_day_wed: 'พ', sp_day_thu: 'พฤ', sp_day_fri: 'ศ', sp_day_sat: 'ส',
       sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
       sp_method: 'วิธีการ', sp_method_shore: 'ตกจากฝั่ง', sp_method_boat: 'ตกจากเรือ', sp_method_kayak: 'คายัค', sp_method_fly: 'ตกปลาด้วยเหยื่อปลอมลอย', sp_method_ice: 'ตกปลาน้ำแข็ง',
@@ -8608,6 +8625,7 @@
     if(screen === 'spots'){ renderSportSpots(); renderSportSpotsMap(); }
     if(screen === 'documents') renderSportDocuments();
     if(screen === 'stats') renderSportStats();
+    if(screen === 'weather-detail') initSportWeatherDetail();
     const active = document.querySelector('.screen.active');
     if(active) active.scrollTop = 0;
   }
@@ -8851,12 +8869,12 @@
   // that hidden select's value and dispatch a change event, same as a
   // person interacting with the select directly would.
   const SPORT_METHOD_ICONS = {
-    Shore: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20c2-1 4-1 6 0s4 1 6 0 4-1 4-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3v9M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    Boat: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15l1.5 4h13L20 15H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 15V5M12 5l4 3M12 8l-4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    Kayak: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="12" rx="9" ry="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 8l16 8M20 8L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    Fly: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="7" r="1.4" fill="currentColor"/></svg>',
-    Ice: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    Other: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18" cy="12" r="1.4" fill="currentColor"/></svg>'
+    Shore: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20c2-1 4-1 6 0s4 1 6 0 4-1 4-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3v9M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    Boat: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15l1.5 4h13L20 15H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 15V5M12 5l4 3M12 8l-4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    Kayak: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="12" rx="9" ry="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 8l16 8M20 8L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    Fly: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="7" r="1.4" fill="currentColor"/></svg>',
+    Ice: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    Other: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18" cy="12" r="1.4" fill="currentColor"/></svg>'
   };
   function renderSportMethodTiles(){
     const select = document.getElementById('sportFishingMethod');
@@ -8868,7 +8886,7 @@
       const border = active ? 'none' : '0.5px solid #9FE1CB';
       const color = active ? '#ffffff' : '#0F6E56';
       const textColor = active ? '#ffffff' : '#04342C';
-      return '<button type="button" class="sport-method-tile" data-method="'+opt.value+'" style="background:'+bg+'; border:'+border+'; border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; color:'+color+';">'
+      return '<button type="button" class="sport-method-tile" data-method="'+opt.value+'" style="background:'+bg+'; border:'+border+'; border-radius:12px; padding:8px 4px; text-align:center; cursor:pointer; color:'+color+';">'
         + (SPORT_METHOD_ICONS[opt.value] || SPORT_METHOD_ICONS.Other)
         + '<div style="font-family:var(--display); font-weight:500; font-size:10.5px; color:'+textColor+'; margin-top:5px;">'+opt.textContent+'</div>'
         + '</button>';
@@ -8940,12 +8958,18 @@
         const d = new Date(dateStr + 'T12:00:00');
         const isToday = dateStr === todayStr;
         const border = isToday ? 'border:1.5px solid #04342C;' : '';
-        return '<div style="flex:0 0 auto; width:54px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; '+border+'">'
+        return '<button type="button" class="sport-daily-tile" data-date="'+dateStr+'" style="flex:0 0 auto; width:54px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; cursor:pointer; '+border+'">'
           + '<div style="font-size:10px; color:'+band.text+'; font-weight:500;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
           + '<div style="font-size:13px; font-weight:500; color:'+band.text+';">'+d.getDate()+'</div>'
           + '<div style="margin-top:2px; color:'+band.text+';">'+sportWeatherIconSvg(code)+'</div>'
-          + '<div style="font-size:11px; font-weight:500; color:'+band.text+'; margin-top:2px;">'+Math.round(temp)+'°</div></div>';
+          + '<div style="font-size:11px; font-weight:500; color:'+band.text+'; margin-top:2px;">'+Math.round(temp)+'°</div></button>';
       }).join('');
+      strip.querySelectorAll('.sport-daily-tile').forEach(btn => {
+        btn.addEventListener('click', () => {
+          sportWeatherDetailSelectedDate = btn.dataset.date;
+          sportGoTo('weather-detail');
+        });
+      });
     } catch(err){
       strip.innerHTML = '';
     }
@@ -8962,6 +8986,108 @@
       },
       { timeout: 8000 }
     );
+  }
+
+  // ===== Weather detail screen =====
+  // Reached by tapping a day in the Start Session forecast strip. Fetches
+  // 5 days of hourly data in one call (rather than one call per day) and
+  // keeps it in memory for the session on this screen — switching the
+  // selected day just re-slices the same response, no refetch.
+  let sportWeatherDetailData = null;
+  let sportWeatherDetailSelectedDate = null;
+  function sportRainIconSvg(){
+    return '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c3 4 6 7 6 10a6 6 0 1 1-12 0c0-3 3-6 6-10z" stroke="currentColor" stroke-width="1.6"/></svg>';
+  }
+  function sportWindArrowSvg(deg){
+    return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:rotate('+(deg||0)+'deg);"><path d="M12 3v18M12 3l-5 5M12 3l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function initSportWeatherDetail(){
+    const loading = document.getElementById('sportWeatherDetailLoading');
+    const box = document.getElementById('sportWeatherDetailHourly');
+    if(sportWeatherDetailData){
+      // Already fetched this visit to Sport (e.g. came back from a
+      // second day tap) — just re-render instead of re-fetching.
+      loading.style.display = 'none';
+      box.style.display = 'block';
+      renderSportWeatherDetailDayStrip();
+      renderSportWeatherDetailHours();
+      return;
+    }
+    loading.style.display = 'block';
+    loading.textContent = t('msg_fetching_conditions');
+    box.style.display = 'none';
+    if(!navigator.geolocation){ loading.textContent = t('msg_geo_not_supported'); return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchSportWeatherDetail(pos.coords.latitude, pos.coords.longitude),
+      () => { loading.textContent = t('msg_could_not_get_location'); },
+      { timeout: 8000 }
+    );
+  }
+  async function fetchSportWeatherDetail(lat, lon){
+    const loading = document.getElementById('sportWeatherDetailLoading');
+    const box = document.getElementById('sportWeatherDetailHourly');
+    try{
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&hourly=temperature_2m,weathercode,precipitation_probability,wind_speed_10m,wind_direction_10m&forecast_days=5&timezone=auto');
+      const data = await res.json();
+      sportWeatherDetailData = data.hourly;
+      if(!sportWeatherDetailSelectedDate) sportWeatherDetailSelectedDate = new Date().toISOString().slice(0,10);
+      renderSportWeatherDetailDayStrip();
+      renderSportWeatherDetailHours();
+      loading.style.display = 'none';
+      box.style.display = 'block';
+    } catch(err){
+      loading.textContent = t('msg_fetch_conditions_failed');
+    }
+  }
+  function renderSportWeatherDetailDayStrip(){
+    if(!sportWeatherDetailData) return;
+    const strip = document.getElementById('sportWeatherDetailDayStrip');
+    const seen = {};
+    const dates = [];
+    sportWeatherDetailData.time.forEach(tm => { const d = tm.slice(0,10); if(!seen[d]){ seen[d]=true; dates.push(d); } });
+    strip.innerHTML = dates.map(dateStr => {
+      const idx = sportWeatherDetailData.time.findIndex(tm => tm.slice(0,10) === dateStr);
+      const temp = sportWeatherDetailData.temperature_2m[idx];
+      const band = sportTempBandColor(temp);
+      const d = new Date(dateStr + 'T12:00:00');
+      const active = dateStr === sportWeatherDetailSelectedDate;
+      const border = active ? 'border:1.5px solid #04342C;' : '';
+      return '<button type="button" class="sport-wd-day-tile" data-date="'+dateStr+'" style="flex:0 0 auto; width:52px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; cursor:pointer; '+border+'">'
+        + '<div style="font-size:10px; color:'+band.text+'; font-weight:500;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
+        + '<div style="font-size:13px; font-weight:500; color:'+band.text+';">'+d.getDate()+'</div></button>';
+    }).join('');
+    strip.querySelectorAll('.sport-wd-day-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sportWeatherDetailSelectedDate = btn.dataset.date;
+        renderSportWeatherDetailDayStrip();
+        renderSportWeatherDetailHours();
+      });
+    });
+  }
+  function renderSportWeatherDetailHours(){
+    if(!sportWeatherDetailData) return;
+    const box = document.getElementById('sportWeatherDetailHourly');
+    const dateLine = document.getElementById('sportWeatherDetailDateLine');
+    const d = new Date(sportWeatherDetailSelectedDate + 'T12:00:00');
+    dateLine.textContent = d.toLocaleDateString(window.fishPulseLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
+    const indices = [];
+    sportWeatherDetailData.time.forEach((tm, i) => { if(tm.slice(0,10) === sportWeatherDetailSelectedDate) indices.push(i); });
+    box.innerHTML = indices.map(i => {
+      const hourLabel = new Date(sportWeatherDetailData.time[i]).toLocaleTimeString(window.fishPulseLocale(), { hour: 'numeric' });
+      const temp = sportWeatherDetailData.temperature_2m[i];
+      const code = sportWeatherDetailData.weathercode[i];
+      const precip = sportWeatherDetailData.precipitation_probability ? sportWeatherDetailData.precipitation_probability[i] : null;
+      const wind = sportWeatherDetailData.wind_speed_10m ? sportWeatherDetailData.wind_speed_10m[i] : null;
+      const winddir = sportWeatherDetailData.wind_direction_10m ? sportWeatherDetailData.wind_direction_10m[i] : 0;
+      const band = sportTempBandColor(temp);
+      return '<div style="display:flex; align-items:center; gap:10px; background:#ffffff; border-radius:10px; padding:10px 12px; margin-bottom:6px;">'
+        + '<div style="width:42px; font-family:var(--data); font-size:11px; color:var(--ink-soft); flex-shrink:0;">' + hourLabel + '</div>'
+        + '<div style="color:#0F6E56; flex-shrink:0;">' + sportWeatherIconSvg(code) + '</div>'
+        + '<div style="width:38px; text-align:center; background:'+band.bg+'; border-radius:8px; padding:3px 0; font-size:12px; font-weight:500; color:'+band.text+'; flex-shrink:0;">' + Math.round(temp) + '°</div>'
+        + '<div style="flex:1; display:flex; align-items:center; gap:4px; font-family:var(--data); font-size:10.5px; color:var(--ink-soft);">' + sportRainIconSvg() + (precip!=null ? precip+'%' : '—') + '</div>'
+        + '<div style="display:flex; align-items:center; gap:4px; font-family:var(--data); font-size:10.5px; color:var(--ink-soft); flex-shrink:0;">' + sportWindArrowSvg(winddir) + (wind!=null ? Math.round(wind)+'km/h' : '—') + '</div>'
+        + '</div>';
+    }).join('');
   }
 
   // ===== Quick stats row (Spots / Catches shortcuts) =====
