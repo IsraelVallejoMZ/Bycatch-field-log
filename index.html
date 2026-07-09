@@ -27,7 +27,6 @@
     --coral-soft: #f3e2d8;
     --released:   #2f7a52;
     --amber:      #b8893a;
-    --gold:       #e0a868;
 
     --display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
     --body: 'Inter', 'Noto Sans Thai', -apple-system, sans-serif;
@@ -50,36 +49,24 @@
      card individually. Only .action-tile.primary gets its own extra
      override below, since that's the one deliberate saturated "pop"
      color (pink) — everything else in Sport uses the teal family so it
-     doesn't turn into a rainbow. */
+     doesn't turn into a rainbow. The sunrise gradient lives only on the
+     new Home greeting card (.sport-greeting-hero) — it is NOT the
+     module-wide theme; teal stays the identity for topbar, tabs, and
+     every other surface. */
   body.mode-sport{
     --ink:        #04342C;
     --ink-panel:  #04342C;
-    --paper:      #FBF6EE;
+    --paper:      #EAF4F3;
     --blue:       #0F6E56;
     --blue-deep:  #085041;
     --blue-mist:  #E1F5EE;
-    /* Sunrise identity — this is the part that makes Sport actually feel
-       different from Research/Operations, not just recolored interiors. */
-    --sport-sunrise:  linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%);
-    --sport-sea-grad: linear-gradient(135deg, #12A493 0%, #0F8A7E 60%, #0B6B61 100%);
-    --sport-coral:    #EE6C4D;
-    --sport-gold:     #F2A65A;
   }
-  body.mode-sport .topbar{
-    background: var(--sport-sunrise); border-bottom: none;
-    border-radius: 0 0 22px 22px; position: relative; overflow: hidden;
-  }
-  body.mode-sport .topbar::after{
-    content:''; position:absolute; right:-30px; top:-40px; width:130px; height:130px;
-    border-radius:50%; background:rgba(255,255,255,0.16); pointer-events:none;
-  }
-  body.mode-sport .action-tile.primary{ background: var(--sport-coral); box-shadow: 0 8px 20px rgba(238,108,77,0.32); }
+  body.mode-sport .action-tile.primary{ background: #D4537E; }
   body.mode-sport .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.2); }
   body.mode-sport .tabbar{ background: #ffffff; border-top: 0.5px solid #9FE1CB; }
   body.mode-sport .tab{ color: #6b8f85; }
-  body.mode-sport .tab.active{ color: var(--sport-coral); }
-  body.mode-sport .tab.active::before{ background: var(--sport-coral); }
-  body.mode-sport .card, body.mode-sport .home-hero{ border-radius: 20px; }
+  body.mode-sport .tab.active{ color: #04342C; }
+  body.mode-sport .tab.active::before{ background: #1D9E75; }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
@@ -136,6 +123,45 @@
   }
 
   main{ padding: 18px 16px; max-width: 580px; margin: 0 auto; }
+  main.sport-hero-main{ padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
+
+  /* ===== Sport Home greeting hero =====
+     Lives only on screen-sport-session, replacing the standard dark
+     .topbar for this one screen. Deliberately the one place in Sport
+     that uses the bright sunrise gradient confirmed with Israel — the
+     rest of the module (topbar elsewhere, tabs, cards) stays teal. Kept
+     as its own component rather than a .topbar variant since it needs
+     rounded-all-corners + in-flow placement, not the sticky full-bleed
+     behavior every other topbar uses. */
+  .sport-greeting-hero{
+    background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 100%);
+    border-radius: 16px; padding: 16px 18px 18px; color: #ffffff;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+  }
+  .sgh-top-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .sgh-brand{
+    font-family: var(--data); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(255,255,255,0.85); font-weight: 500;
+  }
+  .sgh-switch-btn{
+    background: rgba(255,255,255,0.22); border:none; color:#fff;
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .sgh-main-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .sgh-greeting{
+    font-family: var(--display); font-weight:700; font-size:22px; line-height:1.25;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.14); cursor:pointer;
+  }
+  .sgh-water{ text-align:right; flex-shrink:0; }
+  .sgh-water .num{ font-family: var(--display); font-weight:700; font-size:24px; line-height:1; text-shadow: 0 1px 3px rgba(0,0,0,0.14); }
+  .sgh-water .lbl{ font-family: var(--data); font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.85); margin-top:2px; }
+  .sgh-sub-row{ display:flex; align-items:center; gap:8px; margin-top:12px; }
+  .sgh-sub-icon{
+    width:26px; height:26px; border-radius:8px; background: rgba(255,255,255,0.2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
+  }
+  .sgh-sub-text{ font-family: var(--body); font-size:12px; color: rgba(255,255,255,0.92); }
 
   /* ===== Home screen ===== */
   .home-stat{
@@ -831,12 +857,8 @@
   .mode-card:active{ transform: scale(0.98); }
   .captain-card{ background: var(--blue); }
   .ops-card{ background: #163040; border: 1.5px solid rgba(255,255,255,0.1); }
-  .mode-card-icon-lg{
-    width:54px; height:54px; margin-bottom:14px; border-radius:16px;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    background: rgba(255,255,255,0.14);
-  }
-  .mode-card-icon-lg svg{ width:26px; height:26px; }
+  .mode-card-icon-lg{ width:36px; height:36px; margin-bottom:14px; }
+  .mode-card-icon-lg svg{ width:100%; height:100%; }
   .mode-card-icon{ flex-shrink:0; width: 30px; height:30px; }
   .mode-card-icon svg{ width:100%; height:100%; }
   .mode-card-title{ font-family: var(--display); font-weight:700; font-size: 20px; color: white; margin-bottom:6px; }
@@ -852,14 +874,11 @@
     background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
     border:none;
   }
-  .segment-card:nth-child(2){ background: linear-gradient(135deg, #3a4d57 0%, #0e1b26 100%); }
-  /* Sport is the 3rd segment card — give it the sunrise gradient right on
-     the picker, so its different identity is felt before you even enter it. */
-  .segment-card:nth-child(3){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 100%); }
+  .segment-card:nth-child(2){ background: linear-gradient(135deg, #0e6fa5 0%, #0a5c8c 100%); }
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, #0a5c8c 0%, #163040 100%); }
   .segment-card:nth-child(4){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
-  .segment-card .mode-card-title{ color:white; font-size:17px; }
+  .segment-card .mode-card-title{ color:white; font-size:16px; }
   .segment-card .mode-card-sub{ color:#9fc8de; }
-  .segment-card:nth-child(3) .mode-card-sub{ color:rgba(255,255,255,0.85); }
 
   .fleet-close-trip-btn{
     width:100%; background:#163040; color:#e0a868;
@@ -875,7 +894,7 @@
   }
 
   /* ===== Splash / onboarding screen ===== */
-  #screen-splash{ background: radial-gradient(circle at 30% 0%, #123a4d 0%, #0e1b26 55%); }
+  #screen-splash{ background:#0e1b26; }
   .splash-wrap{
     height:100%; display:flex; flex-direction:column;
     padding: calc(18px + env(safe-area-inset-top,0px)) 24px calc(28px + env(safe-area-inset-bottom,0px));
@@ -887,8 +906,8 @@
   .hamburger-btn span{ display:block; width:20px; height:2px; background:#9fc8de; border-radius:1px; }
   .splash-logo-wrap{ text-align:center; margin-bottom:28px; }
   .splash-logo-wrap svg{ width:72px; height:72px; }
-  .splash-title{ font-family:var(--display); font-weight:700; font-size:32px; color:white; letter-spacing:-0.02em; margin-top:14px; margin-bottom:6px; }
-  .splash-sub{ font-family:var(--data); font-size:11.5px; color:#8fb4c9; letter-spacing:0.18em; text-transform:uppercase; white-space:nowrap; }
+  .splash-title{ font-family:var(--display); font-weight:700; font-size:28px; color:white; letter-spacing:-0.01em; margin-top:14px; margin-bottom:6px; }
+  .splash-sub{ font-family:var(--data); font-size:12px; color:#7fa3b5; letter-spacing:0.06em; text-transform:uppercase; }
   .splash-slide{ background:#163040; border-radius:16px; padding:22px 20px; flex:1; display:flex; flex-direction:column; justify-content:center; }
   .splash-slide-icon{ width:38px; height:38px; border-radius:10px; background:var(--blue); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
   .splash-slide-icon svg{ width:20px; height:20px; }
@@ -897,8 +916,7 @@
   .splash-dots{ display:flex; justify-content:center; gap:6px; margin:16px 0; }
   .splash-dot{ height:4px; border-radius:2px; background:#2a4452; transition:width 0.3s,background 0.3s; width:6px; }
   .splash-dot.active{ width:20px; background:#5fc7ee; }
-  .splash-cta{ width:100%; background:#5fc7ee; color:#0e1b26; border:none; border-radius:14px; padding:17px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer; margin-bottom:12px; box-shadow: 0 10px 24px rgba(95,199,238,0.25); }
-  .premium-panel .splash-cta{ background: var(--gold); box-shadow: none; }
+  .splash-cta{ width:100%; background:#5fc7ee; color:#0e1b26; border:none; border-radius:12px; padding:16px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer; margin-bottom:12px; }
   .splash-cta:active{ transform:scale(0.98); }
   .splash-premium{ display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; padding:4px; }
   .splash-premium-label{ font-family:var(--display); font-size:13px; font-weight:600; color:#e0a868; }
@@ -937,13 +955,9 @@
   }
   .premium-panel h2{ font-family:var(--display); font-weight:700; font-size:22px; color:white; margin:0 0 6px; }
   .premium-panel .premium-sub{ font-family:var(--data); font-size:11px; color:#7fa3b5; margin-bottom:18px; }
-  .premium-feature{ display:flex; gap:11px; align-items:flex-start; margin-bottom:13px; }
-  .premium-feature-dot{
-    width:20px; height:20px; border-radius:6px; background:rgba(224,168,104,0.15);
-    flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center;
-  }
-  .premium-feature-dot::after{ content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); }
-  .premium-feature-text{ font-family:var(--display); font-size:13.5px; color:#d5e6ec; line-height:1.45; }
+  .premium-feature{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; }
+  .premium-feature-dot{ width:8px; height:8px; border-radius:50%; background:#e0a868; flex-shrink:0; margin-top:4px; }
+  .premium-feature-text{ font-family:var(--display); font-size:13px; color:#cfe7f4; line-height:1.4; }
   .premium-close{ width:100%; background:rgba(255,255,255,0.08); color:#9fc8de; border:none; border-radius:10px; padding:12px; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer; margin-top:16px; }
 
   /* Mode visibility — tab bars and chrome stay hidden unless body carries the matching mode class */
@@ -967,26 +981,12 @@
     </div>
 
     <div class="splash-logo-wrap">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fish Pulse" style="width:78px;height:78px;">
-        <defs>
-          <linearGradient id="fp-bg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#0e6ea0"/>
-            <stop offset="1" stop-color="#06384f"/>
-          </linearGradient>
-          <linearGradient id="fp-fish" x1="12" y1="20" x2="50" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#9fe6fb"/>
-            <stop offset="1" stop-color="#3fa8d6"/>
-          </linearGradient>
-        </defs>
-        <circle cx="32" cy="32" r="32" fill="url(#fp-bg)"/>
-        <path d="M46 32 L57 22.5 C55.3 27 55.3 37 57 41.5 Z" fill="url(#fp-fish)"/>
-        <path d="M10 32.5 C10 25.5 15.5 20 23.5 18 C31 16.1 39.5 17.6 46 22.5 C48.7 24.5 48.7 28 46.8 30.2 C48.6 30.7 49.6 31.6 49.6 32.5 C49.6 33.4 48.6 34.3 46.8 34.8 C48.7 37 48.7 39.5 46 41.5 C39.5 46.4 31 47.9 23.5 46 C15.5 44 10 39.5 10 32.5 Z" fill="url(#fp-fish)"/>
-        <path d="M24 18.6 C26.7 14.6 31 12.6 35 13.4 C32.6 16.3 30.8 19 29.7 21.6 Z" fill="url(#fp-fish)"/>
-        <path d="M25 34 C23 38.4 20.6 41.2 17.6 42.8 C18.7 39 19.9 35.9 21.4 33.4 Z" fill="#2f8fbd" opacity="0.85"/>
-        <path d="M32.5 20.5 C30.6 24 29.6 28 29.6 32 C29.6 36 30.6 40 32.5 43.5" stroke="#0d5478" stroke-width="1.1" opacity="0.55" fill="none"/>
-        <circle cx="20.3" cy="26.6" r="2.35" fill="#06384f"/>
-        <circle cx="19.6" cy="25.9" r="0.7" fill="#eaf8ff"/>
-        <path d="M4 32.5 H12 L15.5 25.5 L20 40 L23.5 30.5 L26.5 35.3 L30 30.5 L33.5 36.5 L38 32.5 H60" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="36" fill="#0a5c8c"/>
+        <path d="M12 36c9-12 22-17 32-11-2.5 5-2.5 17 0 22-10 5-23 0-32-11z" fill="#5fc7ee"/>
+        <path d="M44 27c5-2.5 10-2.5 11-2.5-1.2 4-1.2 10 0 14-1 0-6 0-11-2.5" fill="#5fc7ee"/>
+        <circle cx="20" cy="34" r="2.5" fill="#0e1b26"/>
+        <path d="M14 50h7l3-7 4 13 3-9 3 5 3-9 4 11h8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
       </svg>
       <div class="splash-title">Fish Pulse</div>
       <div class="splash-sub">Field · Fleet · Sport</div>
@@ -2847,15 +2847,27 @@
 
 <!-- ================= SPORT: SESSION ================= -->
 <section class="screen" id="screen-sport-session">
-  <div class="topbar">
-    <div class="topbar-row">
-      <span class="brand" data-i18n="sp_brand">Fish Pulse · Sport</span>
-      <button class="switch-mode-btn" id="switchModeBtnSport" data-i18n="fltrip_switch_mode">Switch Mode</button>
+  <main class="sport-hero-main">
+    <div class="sport-greeting-hero">
+      <div class="sgh-top-row">
+        <span class="sgh-brand" data-i18n="sp_brand">Fish Pulse · Sport</span>
+        <button class="sgh-switch-btn" id="switchModeBtnSport" aria-label="Switch mode">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 21l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="sgh-main-row">
+        <div class="sgh-greeting" id="sportGreetingText">Good morning</div>
+        <div class="sgh-water" id="sportGreetingWaterBox" style="display:none;">
+          <div class="num" id="sportGreetingWaterTemp">—</div>
+          <div class="lbl" data-i18n="sp_water_label">water</div>
+        </div>
+      </div>
+      <div class="sgh-sub-row">
+        <div class="sgh-sub-icon" id="sportGreetingWxIcon"></div>
+        <div class="sgh-sub-text" id="sportGreetingSubline">&nbsp;</div>
+      </div>
     </div>
-    <h1 data-i18n="sp_session">Session</h1>
-    <div class="site-line" id="sportSpotLine" data-i18n="sp_no_spot">No Spot Selected</div>
-  </div>
-  <main>
+    <div class="site-line" id="sportSpotLine" style="display:none;" data-i18n="sp_no_spot">No Spot Selected</div>
     <div class="card" style="border-left:4px solid #1D9E75;">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
         <div style="width:34px; height:34px; border-radius:10px; background:#E1F5EE; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
@@ -3480,6 +3492,10 @@
       sp_personal_stats: 'Personal Stats', sp_from_logged_catches: 'From your logged catches',
       sp_moon_new: 'New Moon', sp_moon_waxing_crescent: 'Waxing Crescent', sp_moon_first_quarter: 'First Quarter', sp_moon_waxing_gibbous: 'Waxing Gibbous',
       sp_moon_full: 'Full Moon', sp_moon_waning_gibbous: 'Waning Gibbous', sp_moon_last_quarter: 'Last Quarter', sp_moon_waning_crescent: 'Waning Crescent',
+      sp_greeting_morning: 'Good morning', sp_greeting_afternoon: 'Good afternoon', sp_greeting_evening: 'Good evening',
+      sp_water_label: 'water', sp_tap_add_name: 'tap to add your name', sp_name_prompt: 'What should we call you?',
+      sp_wx_clear: 'Sunny', sp_wx_partly_cloudy: 'Partly cloudy', sp_wx_cloudy: 'Cloudy', sp_wx_foggy: 'Foggy', sp_wx_rainy: 'Rainy', sp_wx_stormy: 'Stormy',
+      sp_tide_rising: 'Rising tide', sp_tide_falling: 'Falling tide', sp_tide_unavailable: 'Tide data unavailable',
       sp_strength_strong: 'Strong', sp_strength_moderate: 'Moderate', sp_strength_mild: 'Mild', sp_illuminated: '% illuminated', sp_activity: ' activity',
       sp_major_peaks: 'Major peaks', sp_90min_window: '90 min window', sp_minor_peaks: 'Minor peaks', sp_45min_window: '45 min window',
       sp_estimated_periods: 'Estimated periods — not a precision ephemeris.',
@@ -3772,6 +3788,10 @@
       sp_personal_stats: 'Estadísticas Personales', sp_from_logged_catches: 'De tus capturas registradas',
       sp_moon_new: 'Luna Nueva', sp_moon_waxing_crescent: 'Creciente Iluminante', sp_moon_first_quarter: 'Cuarto Creciente', sp_moon_waxing_gibbous: 'Gibosa Creciente',
       sp_moon_full: 'Luna Llena', sp_moon_waning_gibbous: 'Gibosa Menguante', sp_moon_last_quarter: 'Cuarto Menguante', sp_moon_waning_crescent: 'Creciente Menguante',
+      sp_greeting_morning: 'Buenos días', sp_greeting_afternoon: 'Buenas tardes', sp_greeting_evening: 'Buenas noches',
+      sp_water_label: 'agua', sp_tap_add_name: 'toca para agregar tu nombre', sp_name_prompt: '¿Cómo te llamamos?',
+      sp_wx_clear: 'Despejado', sp_wx_partly_cloudy: 'Parcialmente nublado', sp_wx_cloudy: 'Nublado', sp_wx_foggy: 'Neblina', sp_wx_rainy: 'Lluvioso', sp_wx_stormy: 'Tormentoso',
+      sp_tide_rising: 'Marea creciente', sp_tide_falling: 'Marea menguante', sp_tide_unavailable: 'Sin datos de marea',
       sp_strength_strong: 'Fuerte', sp_strength_moderate: 'Moderada', sp_strength_mild: 'Leve', sp_illuminated: '% iluminada', sp_activity: ' de actividad',
       sp_major_peaks: 'Picos mayores', sp_90min_window: 'Ventana de 90 min', sp_minor_peaks: 'Picos menores', sp_45min_window: 'Ventana de 45 min',
       sp_estimated_periods: 'Periodos estimados — no es una efeméride de precisión.',
@@ -4064,6 +4084,10 @@
       sp_personal_stats: 'Statistiche Personali', sp_from_logged_catches: 'Dalle tue catture registrate',
       sp_moon_new: 'Luna Nuova', sp_moon_waxing_crescent: 'Crescente Illuminante', sp_moon_first_quarter: 'Primo Quarto', sp_moon_waxing_gibbous: 'Gibbosa Crescente',
       sp_moon_full: 'Luna Piena', sp_moon_waning_gibbous: 'Gibbosa Calante', sp_moon_last_quarter: 'Ultimo Quarto', sp_moon_waning_crescent: 'Calante Illuminante',
+      sp_greeting_morning: 'Buongiorno', sp_greeting_afternoon: 'Buon pomeriggio', sp_greeting_evening: 'Buonasera',
+      sp_water_label: 'acqua', sp_tap_add_name: 'tocca per aggiungere il tuo nome', sp_name_prompt: 'Come ti chiamiamo?',
+      sp_wx_clear: 'Sereno', sp_wx_partly_cloudy: 'Parzialmente nuvoloso', sp_wx_cloudy: 'Nuvoloso', sp_wx_foggy: 'Nebbia', sp_wx_rainy: 'Piovoso', sp_wx_stormy: 'Temporalesco',
+      sp_tide_rising: 'Marea in crescita', sp_tide_falling: 'Marea in calo', sp_tide_unavailable: 'Dati marea non disponibili',
       sp_strength_strong: 'Forte', sp_strength_moderate: 'Moderata', sp_strength_mild: 'Lieve', sp_illuminated: '% illuminata', sp_activity: ' di attività',
       sp_major_peaks: 'Picchi maggiori', sp_90min_window: 'Finestra di 90 min', sp_minor_peaks: 'Picchi minori', sp_45min_window: 'Finestra di 45 min',
       sp_estimated_periods: 'Periodi stimati — non è un\'effemeride di precisione.',
@@ -4356,6 +4380,10 @@
       sp_personal_stats: 'สถิติส่วนตัว', sp_from_logged_catches: 'จากการจับปลาที่บันทึกไว้',
       sp_moon_new: 'จันทร์ดับ', sp_moon_waxing_crescent: 'จันทร์เสี้ยวข้างขึ้น', sp_moon_first_quarter: 'จันทร์ครึ่งดวงข้างขึ้น', sp_moon_waxing_gibbous: 'จันทร์เกือบเต็มข้างขึ้น',
       sp_moon_full: 'จันทร์เต็มดวง', sp_moon_waning_gibbous: 'จันทร์เกือบเต็มข้างแรม', sp_moon_last_quarter: 'จันทร์ครึ่งดวงข้างแรม', sp_moon_waning_crescent: 'จันทร์เสี้ยวข้างแรม',
+      sp_greeting_morning: 'สวัสดีตอนเช้า', sp_greeting_afternoon: 'สวัสดีตอนบ่าย', sp_greeting_evening: 'สวัสดีตอนเย็น',
+      sp_water_label: 'น้ำ', sp_tap_add_name: 'แตะเพื่อเพิ่มชื่อของคุณ', sp_name_prompt: 'เรียกคุณว่าอะไรดี',
+      sp_wx_clear: 'แจ่มใส', sp_wx_partly_cloudy: 'เมฆบางส่วน', sp_wx_cloudy: 'มีเมฆมาก', sp_wx_foggy: 'มีหมอก', sp_wx_rainy: 'ฝนตก', sp_wx_stormy: 'พายุฝนฟ้าคะนอง',
+      sp_tide_rising: 'น้ำขึ้น', sp_tide_falling: 'น้ำลง', sp_tide_unavailable: 'ไม่มีข้อมูลน้ำขึ้นน้ำลง',
       sp_strength_strong: 'แรง', sp_strength_moderate: 'ปานกลาง', sp_strength_mild: 'อ่อน', sp_illuminated: '% สว่าง', sp_activity: ' กิจกรรม',
       sp_major_peaks: 'ช่วงพีคหลัก', sp_90min_window: 'ช่วงเวลา 90 นาที', sp_minor_peaks: 'ช่วงพีครอง', sp_45min_window: 'ช่วงเวลา 45 นาที',
       sp_estimated_periods: 'ช่วงเวลาโดยประมาณ — ไม่ใช่ปฏิทินดาราศาสตร์ที่แม่นยำ',
@@ -8634,6 +8662,13 @@
   const SPOTS_KEY = 'sport_spots_v1';
   const DOCS_KEY = 'sport_docs_v1';
   const ACTIVE_SESSION_KEY = 'sport_active_session_id';
+  // Provisional home for the display name until there's a real
+  // Settings/Profile screen — this key is deliberately app-wide
+  // (fishpulse_*, not sport_*) since a name isn't a Sport-only concept
+  // and should carry over once Settings exists for the other modules.
+  const USER_NAME_KEY = 'fishpulse_user_name';
+  function getUserName(){ return (localStorage.getItem(USER_NAME_KEY) || '').trim(); }
+  function setUserName(name){ localStorage.setItem(USER_NAME_KEY, name.trim()); }
   // No offline tile-download system in this segment (same situation as
   // Fishing Operations) — fixed subdomain kept for consistency across
   // segments rather than out of strict necessity here.
@@ -8783,7 +8818,7 @@
   // readable against the fill in both light and dark contexts.
   function sportTempBandColor(tempC){
     if(tempC < 20) return { bg: '#B5D4F4', text: '#042C53' };
-    if(tempC < 27) return { bg: '#9FE1CB', text: '#04342C' };
+    if(tempC < 27) return { bg: '#C0DD97', text: '#173404' };
     if(tempC < 32) return { bg: '#FAC775', text: '#412402' };
     return { bg: '#F0997B', text: '#4A1B0C' };
   }
@@ -8891,6 +8926,89 @@
     const h12 = h % 12 === 0 ? 12 : h % 12;
     return h12 + ':' + String(m).padStart(2,'0') + ' ' + period;
   }
+  // ===== Home greeting hero =====
+  // Sync part (greeting text, name, moon phase) renders instantly on
+  // screen entry — no need to wait on network for that. Water temp,
+  // sky condition, and tide direction come from a silent best-effort
+  // geolocation fetch, same non-blocking pattern as
+  // initSportDailyForecast: if location isn't available or the fetch
+  // fails, the subline just falls back to moon phase alone rather than
+  // blocking or showing an error.
+  function sportGreetingTimeText(){
+    const h = new Date().getHours();
+    if(h < 12) return t('sp_greeting_morning');
+    if(h < 18) return t('sp_greeting_afternoon');
+    return t('sp_greeting_evening');
+  }
+  function sportWeatherCodeLabel(code){
+    if(code === 0) return t('sp_wx_clear');
+    if(code === 1 || code === 2) return t('sp_wx_partly_cloudy');
+    if(code === 3) return t('sp_wx_cloudy');
+    if(code === 45 || code === 48) return t('sp_wx_foggy');
+    if((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return t('sp_wx_rainy');
+    if(code >= 95) return t('sp_wx_stormy');
+    return t('sp_wx_cloudy');
+  }
+  function renderSportGreetingName(){
+    const name = getUserName();
+    const time = sportGreetingTimeText();
+    const el = document.getElementById('sportGreetingText');
+    el.textContent = name ? (time + ', ' + name) : time;
+  }
+  function renderSportGreetingHero(){
+    renderSportGreetingName();
+    const moon = getMoonPhase(new Date());
+    document.getElementById('sportGreetingSubline').textContent = moon.label;
+    document.getElementById('sportGreetingWxIcon').innerHTML =
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/></svg>';
+    if(!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchSportGreetingConditions(pos.coords.latitude, pos.coords.longitude, moon.label),
+      () => {} // silent — subline just stays on moon phase alone
+    );
+  }
+  async function fetchSportGreetingConditions(lat, lon, moonLabel){
+    try{
+      const [wxRes, marineRes] = await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=weathercode&timezone=auto'),
+        fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=sea_surface_temperature&hourly=sea_level_height_msl&timezone=auto&forecast_days=1')
+      ]);
+      const wx = await wxRes.json();
+      const marine = await marineRes.json();
+      const parts = [];
+      const code = wx && wx.current ? wx.current.weathercode : null;
+      if(code != null) parts.push(sportWeatherCodeLabel(code));
+      parts.push(moonLabel);
+      let tideText = t('sp_tide_unavailable');
+      const levels = marine && marine.hourly ? marine.hourly.sea_level_height_msl : null;
+      if(levels && levels.length > 1){
+        const times = marine.hourly.time;
+        const nowIso = new Date().toISOString().slice(0,13);
+        let idx = times.findIndex(tt => tt.slice(0,13) === nowIso);
+        if(idx === -1) idx = 0;
+        if(idx < levels.length - 1 && levels[idx] != null && levels[idx+1] != null){
+          tideText = levels[idx+1] > levels[idx] ? t('sp_tide_rising') : t('sp_tide_falling');
+        }
+      }
+      parts.push(tideText);
+      document.getElementById('sportGreetingSubline').textContent = parts.join(' · ');
+      const waterTemp = marine && marine.current ? marine.current.sea_surface_temperature : null;
+      if(waterTemp != null){
+        document.getElementById('sportGreetingWaterTemp').textContent = Math.round(waterTemp) + '°';
+        document.getElementById('sportGreetingWaterBox').style.display = 'block';
+      }
+    } catch(err){
+      // subline already shows moon phase alone from the sync render — fine as a fallback
+    }
+  }
+  document.getElementById('sportGreetingText').addEventListener('click', () => {
+    const current = getUserName();
+    const next = window.prompt(t('sp_name_prompt'), current);
+    if(next === null) return;
+    setUserName(next);
+    renderSportGreetingName();
+  });
+
   function renderSportSolunar(){
     const box = document.getElementById('sportSolunarBox');
     const now = new Date();
@@ -9376,6 +9494,7 @@
   document.getElementById('sportQuickCatchesBtn').addEventListener('click', () => sportGoTo('catch-log'));
 
   function renderSportSession(){
+    renderSportGreetingHero();
     renderSportSolunar();
     renderSportMethodTiles();
     renderSportSpotTiles();
