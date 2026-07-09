@@ -3156,6 +3156,7 @@
     <div class="map-layer-toggle" id="sportMapLayerToggle">
       <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
       <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
+      <button class="mlt-btn" id="sportMltDepth" data-i18n="sp_map_depth">Depth</button>
     </div>
     <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
 
@@ -3565,6 +3566,9 @@
       sp_ready_to_fish: 'Ready to fish?', sp_start_session_hint: 'Tap to pick a spot and method', sp_best_catch: 'Best',
       sp_stats_this_session: 'This session', sp_stats_all_time: 'All time', sp_stats_no_session_catches: 'No catches logged in this session yet.',
       sp_show_off_catch: 'Show off your catch 📸', sp_fight_rating: 'How was the fight?',
+      sp_row_lbl_sky: 'SKY', sp_row_lbl_trend: 'TREND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'RAIN',
+      sp_row_lbl_humidity: 'HUM', sp_row_lbl_pressure: 'PRES', sp_row_lbl_wind: 'WIND', sp_row_lbl_uv: 'UV',
+      sp_map_depth: 'Depth', sp_current_label: 'Current', sp_current_unavailable: 'Current data unavailable',
       sp_strength_strong: 'Strong', sp_strength_moderate: 'Moderate', sp_strength_mild: 'Mild', sp_illuminated: '% illuminated', sp_activity: ' activity',
       sp_major_peaks: 'Major peaks', sp_90min_window: '90 min window', sp_minor_peaks: 'Minor peaks', sp_45min_window: '45 min window',
       sp_estimated_periods: 'Estimated periods — not a precision ephemeris.',
@@ -3867,6 +3871,9 @@
       sp_ready_to_fish: '¿Listo para pescar?', sp_start_session_hint: 'Toca para elegir spot y método', sp_best_catch: 'Mejor',
       sp_stats_this_session: 'Esta sesión', sp_stats_all_time: 'Todo el tiempo', sp_stats_no_session_catches: 'Todavía no hay capturas registradas en esta sesión.',
       sp_show_off_catch: 'Presume tu captura 📸', sp_fight_rating: '¿Cómo estuvo la pelea?',
+      sp_row_lbl_sky: 'CIELO', sp_row_lbl_trend: 'TEND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'LLUVIA',
+      sp_row_lbl_humidity: 'HUM', sp_row_lbl_pressure: 'PRES', sp_row_lbl_wind: 'VIENTO', sp_row_lbl_uv: 'UV',
+      sp_map_depth: 'Profundidad', sp_current_label: 'Corriente', sp_current_unavailable: 'Sin datos de corriente',
       sp_strength_strong: 'Fuerte', sp_strength_moderate: 'Moderada', sp_strength_mild: 'Leve', sp_illuminated: '% iluminada', sp_activity: ' de actividad',
       sp_major_peaks: 'Picos mayores', sp_90min_window: 'Ventana de 90 min', sp_minor_peaks: 'Picos menores', sp_45min_window: 'Ventana de 45 min',
       sp_estimated_periods: 'Periodos estimados — no es una efeméride de precisión.',
@@ -4169,6 +4176,9 @@
       sp_ready_to_fish: 'Pronto a pescare?', sp_start_session_hint: 'Tocca per scegliere spot e metodo', sp_best_catch: 'Migliore',
       sp_stats_this_session: 'Questa sessione', sp_stats_all_time: 'Sempre', sp_stats_no_session_catches: 'Nessuna cattura registrata in questa sessione.',
       sp_show_off_catch: 'Mostra la tua cattura 📸', sp_fight_rating: 'Come è andata la lotta?',
+      sp_row_lbl_sky: 'CIELO', sp_row_lbl_trend: 'TREND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'PIOGGIA',
+      sp_row_lbl_humidity: 'UMID', sp_row_lbl_pressure: 'PRESS', sp_row_lbl_wind: 'VENTO', sp_row_lbl_uv: 'UV',
+      sp_map_depth: 'Profondità', sp_current_label: 'Corrente', sp_current_unavailable: 'Dati corrente non disponibili',
       sp_strength_strong: 'Forte', sp_strength_moderate: 'Moderata', sp_strength_mild: 'Lieve', sp_illuminated: '% illuminata', sp_activity: ' di attività',
       sp_major_peaks: 'Picchi maggiori', sp_90min_window: 'Finestra di 90 min', sp_minor_peaks: 'Picchi minori', sp_45min_window: 'Finestra di 45 min',
       sp_estimated_periods: 'Periodi stimati — non è un\'effemeride di precisione.',
@@ -4471,6 +4481,9 @@
       sp_ready_to_fish: 'พร้อมตกปลาหรือยัง', sp_start_session_hint: 'แตะเพื่อเลือกจุดตกปลาและวิธีการ', sp_best_catch: 'ดีที่สุด',
       sp_stats_this_session: 'เซสชันนี้', sp_stats_all_time: 'ทั้งหมด', sp_stats_no_session_catches: 'ยังไม่มีการบันทึกการจับปลาในเซสชันนี้',
       sp_show_off_catch: 'อวดปลาที่จับได้ 📸', sp_fight_rating: 'การต่อสู้เป็นอย่างไรบ้าง',
+      sp_row_lbl_sky: 'ท้องฟ้า', sp_row_lbl_trend: 'แนวโน้ม', sp_row_lbl_temp: 'อุณหภูมิ', sp_row_lbl_precip: 'ฝน',
+      sp_row_lbl_humidity: 'ความชื้น', sp_row_lbl_pressure: 'ความกด', sp_row_lbl_wind: 'ลม', sp_row_lbl_uv: 'UV',
+      sp_map_depth: 'ความลึก', sp_current_label: 'กระแสน้ำ', sp_current_unavailable: 'ไม่มีข้อมูลกระแสน้ำ',
       sp_strength_strong: 'แรง', sp_strength_moderate: 'ปานกลาง', sp_strength_mild: 'อ่อน', sp_illuminated: '% สว่าง', sp_activity: ' กิจกรรม',
       sp_major_peaks: 'ช่วงพีคหลัก', sp_90min_window: 'ช่วงเวลา 90 นาที', sp_minor_peaks: 'ช่วงพีครอง', sp_45min_window: 'ช่วงเวลา 45 นาที',
       sp_estimated_periods: 'ช่วงเวลาโดยประมาณ — ไม่ใช่ปฏิทินดาราศาสตร์ที่แม่นยำ',
@@ -9609,7 +9622,7 @@
     // their data row further down the list. A shared ROW_H forces every
     // row pair to line up regardless of what's inside.
     const ROW_H = 46;
-    const labelRow = (iconKey, last) => '<div style="height:'+ROW_H+'px; display:flex; align-items:center; justify-content:center; box-sizing:border-box; '+(last?'':rowBorder)+'">'+(SPORT_ROW_ICONS[iconKey]||'')+'</div>';
+    const labelRow = (iconKey, last) => '<div style="height:'+ROW_H+'px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-sizing:border-box; '+(last?'':rowBorder)+'">'+(SPORT_ROW_ICONS[iconKey]||'')+(iconKey?'<span style="font-family:var(--data); font-size:7.5px; letter-spacing:0.02em; text-transform:uppercase; color:var(--ink-soft, #5E7168);">'+t('sp_row_lbl_'+iconKey)+'</span>':'')+'</div>';
     const cell = (content, pos, extra) => '<div style="width:'+colWidth+'px; height:'+ROW_H+'px; flex-shrink:0; display:flex; align-items:center; justify-content:center; box-sizing:border-box; '+(pos===nowPos?'background:'+NOW_BG+';':'')+(extra||'')+'">'+content+'</div>';
     const dataRow = (cellsHtml, last) => '<div style="display:flex; align-items:stretch; '+(last?'':rowBorder)+'">' + cellsHtml + '</div>';
 
@@ -9664,7 +9677,7 @@
     dataHtml += '</div>';
 
     const html = '<div class="card" style="padding:16px 14px; display:flex; gap:8px;">'
-      + '<div style="flex-shrink:0; width:26px;">' + labelHtml + '</div>'
+      + '<div style="flex-shrink:0; width:36px;">' + labelHtml + '</div>'
       + '<div style="flex:1; min-width:0; overflow-x:auto;">' + dataHtml + '</div>'
       + '</div>'
       + '<div style="font-family:var(--data); font-size:9.5px; color:var(--ink-soft); margin-top:6px; padding:0 4px; line-height:1.6;">' + t('sp_uv_legend') + '</div>';
@@ -9992,6 +10005,24 @@
     'linear-gradient(135deg,#F2A65A,#EE6C4D)',
     'linear-gradient(135deg,#85B7EB,#0F8A7E)'
   ];
+  // Species-keyed emoji (matching Israel's Claude-Design reference
+  // pattern — specific species get a specific fish emoji). Species is
+  // free text with a suggestions datalist, not a fixed enum, so this
+  // can never fully cover it — anything not in the map rotates through
+  // the fallback set by card position instead of always defaulting to
+  // the same 🐟, so the list still reads as varied even for
+  // unrecognized species names.
+  const SPORT_SPECIES_EMOJI = {
+    'barramundi': '🐟', 'giant trevally': '🐠', 'mangrove jack': '🎣', 'queenfish': '🐟', 'snapper': '🐡',
+    'largemouth bass': '🐟', 'smallmouth bass': '🐟', 'bass': '🐟', 'trout': '🐠', 'rainbow trout': '🐠',
+    'salmon': '🐟', 'catfish': '🐡', 'tarpon': '🦈', 'grouper': '🐡', 'tuna': '🐟', 'shark': '🦈',
+    'walleye': '🐟', 'crappie': '🐠', 'pike': '🐊', 'perch': '🐠', 'carp': '🐡', 'redfish': '🐟', 'cobia': '🐟'
+  };
+  const SPORT_FALLBACK_EMOJI = ['🐟','🐠','🎣','🐡'];
+  function sportCatchEmoji(species, index){
+    const key = (species || '').trim().toLowerCase();
+    return SPORT_SPECIES_EMOJI[key] || SPORT_FALLBACK_EMOJI[index % SPORT_FALLBACK_EMOJI.length];
+  }
   function renderSportCatchLogList(){
     const filterSpecies = document.getElementById('sportCatchLogSpeciesFilter').value;
     const all = load(CATCHES_KEY);
@@ -10012,7 +10043,7 @@
           const spotName = spot ? spot.name : t('sp_open_water');
           const photoInner = c.photo
             ? '<img src="'+c.photo+'" alt="" style="width:100%; height:100%; object-fit:cover;">'
-            : '<div style="width:100%; height:100%; background:'+SPORT_CATCH_PHOTO_GRADS[i % SPORT_CATCH_PHOTO_GRADS.length]+'; display:flex; align-items:center; justify-content:center;"><span style="font-size:42px; filter:drop-shadow(0 3px 6px rgba(0,0,0,.25));">🐟</span></div>';
+            : '<div style="width:100%; height:100%; background:'+SPORT_CATCH_PHOTO_GRADS[i % SPORT_CATCH_PHOTO_GRADS.length]+'; display:flex; align-items:center; justify-content:center;"><span style="font-size:42px; filter:drop-shadow(0 3px 6px rgba(0,0,0,.25));">'+sportCatchEmoji(c.species, i)+'</span></div>';
           return '<div class="entry-clickable" data-sport-catch-edit="'+c.catch_id+'" style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid var(--line,#ECE0CD); box-shadow:0 4px 14px rgba(30,58,52,.06); margin-bottom:14px; cursor:pointer;">'
             + '<div style="height:140px; position:relative;">' + photoInner
             + (c.length_cm ? '<span style="position:absolute; top:8px; left:8px; background:rgba(255,255,255,.92); border-radius:999px; padding:3px 9px; font-family:var(--display); font-weight:700; font-size:11px; color:var(--ink);">'+c.length_cm+' cm</span>' : '')
@@ -10141,6 +10172,91 @@
   document.getElementById('sportMltStreet').addEventListener('click', () => setSportMapLayer('street'));
   document.getElementById('sportMltSatellite').addEventListener('click', () => setSportMapLayer('satellite'));
 
+  // Bathymetry/depth overlay — GEBCO (global, ~460m, colour-coded by
+  // elevation) as the base layer, with EMODnet Bathymetry (Europe only,
+  // ~115m, much finer) stacked on top. EMODnet's WMS renders fully
+  // transparent PNG outside its own European coverage extent, so
+  // layering it over GEBCO gives "EMODnet where it exists, GEBCO
+  // everywhere else" automatically — no manual region-detection logic
+  // needed. Neither service reaches Navionics' ~0.5m private-sonar
+  // detail (that's licensed B2B data, not something embeddable for
+  // free — confirmed when this was first researched), but both are
+  // real, free, no-API-key public datasets, attributed per their terms.
+  let sportGebcoLayer = null;
+  let sportEmodnetLayer = null;
+  let sportDepthLayerOn = false;
+  function toggleSportDepthLayer(){
+    if(!sportLeafletInstance) return;
+    sportDepthLayerOn = !sportDepthLayerOn;
+    document.getElementById('sportMltDepth').classList.toggle('active', sportDepthLayerOn);
+    if(!sportGebcoLayer){
+      sportGebcoLayer = L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
+        layers: 'GEBCO_LATEST_2', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.65, attribution: 'GEBCO Compilation Group'
+      });
+    }
+    if(!sportEmodnetLayer){
+      sportEmodnetLayer = L.tileLayer.wms('https://ows.emodnet-bathymetry.eu/wms', {
+        layers: 'emodnet:mean_multicolour', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.75, attribution: 'EMODnet Bathymetry'
+      });
+    }
+    if(sportDepthLayerOn){
+      sportGebcoLayer.addTo(sportLeafletInstance);
+      sportEmodnetLayer.addTo(sportLeafletInstance);
+    } else {
+      sportLeafletInstance.removeLayer(sportGebcoLayer);
+      sportLeafletInstance.removeLayer(sportEmodnetLayer);
+    }
+  }
+  document.getElementById('sportMltDepth').addEventListener('click', toggleSportDepthLayer);
+
+  // Ocean current indicator — a small always-on-top readout (not a
+  // full vector field of arrows across the map, which would need many
+  // API calls; this is one representative reading at the map's current
+  // center, refreshed whenever the map stops moving).
+  let sportCurrentControl = null;
+  function sportCurrentArrowSvg(directionDeg, speedMs){
+    // ocean_current_direction follows meteorological convention (the
+    // direction the current is coming FROM, like wind) — rotate the
+    // arrow to point where the current is heading TO, i.e. +180°.
+    const heading = (directionDeg + 180) % 360;
+    const intensity = speedMs > 0.5 ? '#EE6C4D' : (speedMs > 0.15 ? '#F2A65A' : '#85B7EB');
+    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  async function refreshSportCurrentIndicator(){
+    if(!sportLeafletInstance) return;
+    const center = sportLeafletInstance.getCenter();
+    try{
+      const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
+      const data = await res.json();
+      const speed = data && data.current ? data.current.ocean_current_velocity : null;
+      const dir = data && data.current ? data.current.ocean_current_direction : null;
+      if(!sportCurrentControl){
+        const Control = L.Control.extend({
+          onAdd: function(){
+            const div = L.DomUtil.create('div');
+            div.id = 'sportCurrentIndicator';
+            div.style.cssText = 'background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
+            return div;
+          }
+        });
+        sportCurrentControl = new Control({ position: 'bottomleft' });
+        sportCurrentControl.addTo(sportLeafletInstance);
+      }
+      const el = document.getElementById('sportCurrentIndicator');
+      if(el){
+        if(speed == null || dir == null){
+          el.innerHTML = t('sp_current_unavailable');
+        } else {
+          el.innerHTML = sportCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
+        }
+      }
+    } catch(err){
+      // silent — current indicator just doesn't appear this refresh
+    }
+  }
+
   function renderSportSpotsMap(){
     const spots = load(SPOTS_KEY).filter(s => s.lat !== '' && s.lat != null);
     if(!sportLeafletInstance){
@@ -10148,6 +10264,7 @@
       sportStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
       sportSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
       sportStreetLayer.addTo(sportLeafletInstance);
+      sportLeafletInstance.on('moveend', refreshSportCurrentIndicator);
     }
     sportLeafletInstance.eachLayer(layer => {
       if(layer instanceof L.Marker) sportLeafletInstance.removeLayer(layer);
