@@ -54,14 +54,22 @@
      module-wide theme; teal stays the identity for topbar, tabs, and
      every other surface. */
   body.mode-sport{
-    --ink:        #04342C;
-    --ink-panel:  #04342C;
-    --paper:      #FCEFE2;
-    --blue:       #0F6E56;
-    --blue-deep:  #085041;
-    --blue-mist:  #E1F5EE;
+    --ink:        #1E3A34;
+    --ink-panel:  #14453D;
+    --paper:      #FBF3E7;
+    --blue:       #EE6C4D;
+    --blue-deep:  #0F8A7E;
+    --blue-mist:  #DDEFE7;
     /* Tokens lifted directly from Israel's Claude-Design HTML/JS reference
-       (Fish_Pulse_-_HTML_JS_Puro.html) — exact values, not approximated. */
+       (Fish_Pulse_-_HTML_JS_Puro.html) — exact values, not approximated.
+       --blue is now coral (not teal) to match that reference exactly:
+       it's the interactive-accent variable (buttons, focus states, tile
+       actives) used all over the shared component CSS, so this one
+       change is what actually cascades the sunrise identity through
+       the rest of Sport instead of it staying isolated to the greeting
+       card. --blue-deep stays sea-teal on purpose — that's the "deep
+       panel" variable (Solunar-style cards), giving the module some
+       variation instead of reading as flat all-orange. */
     --sport-coral: #EE6C4D;
     --sport-gold:  #F2A65A;
     --sport-sunrise: linear-gradient(135deg,#F9B45C 0%,#EE6C4D 58%,#E0556A 100%);
@@ -78,12 +86,16 @@
     --sport-temp-warm-bg: #F7D28A; --sport-temp-warm-fg: #6B4412;
     --sport-temp-hot-bg:  #F3A281; --sport-temp-hot-fg:  #6B2412;
   }
-  body.mode-sport .action-tile.primary{ background: #D4537E; }
+  body.mode-sport .action-tile.primary{ background: #EE6C4D; }
   body.mode-sport .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.2); }
-  body.mode-sport .tabbar{ background: #ffffff; border-top: 0.5px solid #9FE1CB; }
-  body.mode-sport .tab{ color: #6b8f85; }
-  body.mode-sport .tab.active{ color: #04342C; }
-  body.mode-sport .tab.active::before{ background: #1D9E75; }
+  body.mode-sport .tabbar{ background: #ffffff; border-top: 0.5px solid #ECE0CD; }
+  body.mode-sport .tab{ color: #9aa79f; }
+  body.mode-sport .tab.active{ color: var(--sport-coral, #EE6C4D); }
+  body.mode-sport .tab.active::before{ background: var(--sport-coral, #EE6C4D); }
+  body.mode-sport .btn-clear{ background: transparent; color: var(--sport-coral, #EE6C4D); border: 1.5px solid var(--sport-coral, #EE6C4D); }
+  body.mode-sport #sportEndSessionBtn{ background: var(--paper); color: var(--ink-soft, #5E7168); border: none; box-shadow: none; }
+  body.mode-sport #sportKeptBtn.active{ box-shadow: inset 0 0 0 2px #6B2412; }
+  body.mode-sport #sportReleasedBtn.active{ box-shadow: inset 0 0 0 2px #0F8A7E; }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
@@ -179,6 +191,31 @@
     display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
   }
   .sgh-sub-text{ font-family: var(--body); font-size:12px; color: rgba(255,255,255,0.92); }
+
+  /* ===== Sunrise topbar (Catches, Spots, Stats, Documents) =====
+     Same gradient/rounding language as .sport-greeting-hero, but as a
+     sticky full-bleed topbar replacement (not an in-flow card) since
+     these screens are tab-bar destinations at the same level Session
+     used to be, not detail screens pushed on top of it. In Israel's
+     reference file every Sport screen uses this same orange header —
+     there's no separate dark-topbar variant for Sport at all. */
+  .sport-sunrise-topbar{
+    position: sticky; top:0; z-index:20; overflow: hidden;
+    background: var(--sport-sunrise, linear-gradient(135deg,#F9B45C 0%,#EE6C4D 58%,#E0556A 100%));
+    color:#fff; padding: calc(14px + env(safe-area-inset-top, 0px)) 18px 20px;
+    border-bottom-left-radius: 22px; border-bottom-right-radius: 22px;
+  }
+  .sport-sunrise-topbar .sst-row{ display:flex; justify-content:space-between; align-items:flex-start; position:relative; }
+  .sport-sunrise-topbar .sst-brand{ font-family: var(--data); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.9; }
+  .sport-sunrise-topbar h1{ font-family: var(--display); font-weight:700; font-size:22px; letter-spacing:-0.01em; margin:5px 0 0; line-height:1.1; }
+  .sport-sunrise-topbar .sst-sub{ font-family: var(--body); font-size:12px; opacity:0.92; margin-top:3px; }
+  .sport-sunrise-topbar select{
+    background:none; border:none; outline:none; font-family:var(--display);
+    font-size:13px; color:#fff; flex:1; padding:0; appearance:none;
+  }
+  .sport-sunrise-topbar select option{ color: var(--ink); }
+  .sst-circ1{ position:absolute; right:-40px; top:-50px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,.16); }
+  .sst-circ2{ position:absolute; right:46px; top:34px; width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,.14); }
 
   /* ===== Home screen ===== */
   .home-stat{
@@ -2893,20 +2930,25 @@
     <div id="sportDailyForecastStrip" style="display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;"></div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
-      <button type="button" id="sportQuickSpotsBtn" style="background:#CECBF6; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="#3C3489" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="#3C3489"/></svg>
-        <div id="sportQuickSpotsCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#26215C; margin-top:6px;">0 spots</div>
-        <div style="font-family:var(--data); font-size:10px; color:#534AB7;" data-i18n="sp_saved">saved</div>
+      <button type="button" id="sportQuickSpotsBtn" style="background:#FAD9A6; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="#6B4412" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="#6B4412"/></svg>
+        <div id="sportQuickSpotsCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#6B4412; margin-top:6px;">0 spots</div>
+        <div style="font-family:var(--data); font-size:10px; color:#8a5c1f;" data-i18n="sp_saved">saved</div>
       </button>
-      <button type="button" id="sportQuickCatchesBtn" style="background:#9FE1CB; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#085041"/></svg>
-        <div id="sportQuickCatchesCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#04342C; margin-top:6px;">0 catches</div>
-        <div style="font-family:var(--data); font-size:10px; color:#0F6E56;" data-i18n="sp_this_month">this month</div>
+      <button type="button" id="sportQuickCatchesBtn" style="background:#DDEFE7; border:none; border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F8A7E"/></svg>
+        <div id="sportQuickCatchesCount" style="font-family:var(--display); font-weight:600; font-size:13px; color:#0F8A7E; margin-top:6px;">0 catches</div>
+        <div style="font-family:var(--data); font-size:10px; color:#3a8073;" data-i18n="sp_this_month">this month</div>
       </button>
     </div>
 
     <div id="sportNoSessionCard">
-      <div class="card">
+      <div id="sportSessionPromptCard" style="background: var(--sport-sunrise, linear-gradient(135deg,#F9B45C 0%,#EE6C4D 58%,#E0556A 100%)); border-radius:22px; padding:20px 18px; text-align:center;">
+        <div style="font-family:var(--data); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:rgba(255,255,255,0.85); margin-bottom:14px;" data-i18n="sp_ready_to_fish">Ready to fish?</div>
+        <button type="button" id="sportRevealFormBtn" style="width:100%; padding:20px; border-radius:20px; font-size:16px; background:rgba(255,255,255,0.22); color:#fff; border:none; font-family:var(--display); font-weight:700; cursor:pointer;" data-i18n="sp_start_session">+ Start a session</button>
+        <div style="font-family:var(--body); font-size:12px; color:rgba(255,255,255,0.85); margin-top:10px;" data-i18n="sp_start_session_hint">Tap to pick a spot and method</div>
+      </div>
+      <div class="card" id="sportSessionFormDetail" style="display:none;">
         <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_start_new_session">Start a new session</div>
         <label data-i18n="sp_spot">Spot</label>
         <div id="sportSpotTiles" style="display:flex; gap:8px; overflow-x:auto; margin-bottom:6px;"></div>
@@ -2931,7 +2973,7 @@
         </select>
 
         <div class="step-card-header" style="margin:16px 0 10px;">
-          <div class="sc-icon-box" style="background:#1D9E75;">
+          <div class="sc-icon-box" style="background:#EE6C4D;">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/></svg>
           </div>
           <span class="sc-title"><span data-i18n="sp_weather_tide">Weather &amp; Tide</span> <span class="optional-tag" data-i18n="sp_current_location">at your current location</span></span>
@@ -2950,8 +2992,8 @@
       <div class="home-hero">
         <div class="hh-icon">
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24 6c0 8-2 10-2 16a6 6 0 1 0 8 0c-4-3-6-7-6-16z" stroke="#5DCAA5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="24" cy="14" r="2" fill="#5DCAA5"/>
+            <path d="M24 6c0 8-2 10-2 16a6 6 0 1 0 8 0c-4-3-6-7-6-16z" stroke="#F2A65A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="14" r="2" fill="#F2A65A"/>
           </svg>
         </div>
         <div>
@@ -2961,11 +3003,11 @@
       </div>
 
       <div class="quick-actions">
-        <div class="action-tile primary" id="sportLogCatchBtn" style="grid-column: 1 / -1; flex-direction:row; align-items:center;">
+        <div class="action-tile primary" id="sportLogCatchBtn" style="grid-column: 1 / -1; flex-direction:row; align-items:center; justify-content:center; gap:12px;">
           <div class="at-icon-box">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/>
-              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0F6E56"/>
+              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#EE6C4D"/>
+              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#EE6C4D"/>
             </svg>
           </div>
           <div class="at-title" data-i18n="fltrip_log_catch">Log Catch</div>
@@ -2984,13 +3026,16 @@
 
 <!-- ================= SPORT: WEATHER DETAIL ================= -->
 <section class="screen" id="screen-sport-weather-detail">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="sport-session">←</button>
-      <span class="brand" data-i18n="sp_brand">Fish Pulse · Sport</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" data-i18n="sp_brand">Fish Pulse · Sport</div>
+        <h1 data-i18n="sp_weather_detail_title">Weather</h1>
+        <div class="sst-sub" id="sportWeatherDetailDateLine">&nbsp;</div>
+      </div>
+      <button class="back-btn" data-go="sport-session" style="background:rgba(255,255,255,.25); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:15px; cursor:pointer; flex-shrink:0;">←</button>
     </div>
-    <h1 data-i18n="sp_weather_detail_title">Weather</h1>
-    <div class="site-line" id="sportWeatherDetailDateLine">&nbsp;</div>
   </div>
   <main>
     <div id="sportWeatherDetailDayStrip" style="display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;"></div>
@@ -3001,19 +3046,26 @@
 
 <!-- ================= SPORT: LOG CATCH ================= -->
 <section class="screen" id="screen-sport-log-catch">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" id="sportCatchBackBtn" data-go="sport-session">←</button>
-      <span class="brand" id="sportCatchBrand" data-i18n="flcatch_brand">Log Catch</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" id="sportCatchBrand" data-i18n="flcatch_brand">Log Catch</div>
+        <h1 data-i18n="flcatch_title">Catch Entry</h1>
+        <div class="sst-sub" id="sportCatchSessionLine" data-i18n="sp_not_linked_session">Not Linked To A Session</div>
+      </div>
+      <button class="back-btn" id="sportCatchBackBtn" data-go="sport-session" style="background:rgba(255,255,255,.25); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:15px; cursor:pointer; flex-shrink:0;">←</button>
     </div>
-    <h1 data-i18n="flcatch_title">Catch Entry</h1>
-    <div class="site-line" id="sportCatchSessionLine" data-i18n="sp_not_linked_session">Not Linked To A Session</div>
   </div>
   <main>
+    <div class="card" id="sportPhotoCard" style="padding:0; border:none; background:none;">
+      <div class="photobox" id="sportPhotoBox" style="border:2px dashed #B8E2D4; background:#DDEFE7; padding:26px 20px; margin-bottom:16px;"></div>
+    </div>
+
     <div class="card">
       <div class="step-card-header" style="margin-bottom:14px;">
         <div class="sc-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0F6E56"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#EE6C4D"/></svg>
         </div>
         <span class="sc-title" data-i18n="sp_species_size">Species &amp; size</span>
       </div>
@@ -3036,40 +3088,23 @@
       <input type="text" id="sportLureUsed" placeholder="e.g. Soft plastic worm" list="sport-lure-list">
       <datalist id="sport-lure-list"></datalist>
 
-      <label data-i18n="sp_outcome">Outcome</label>
+      <label style="margin-top:14px;" data-i18n="sp_fight_rating">How was the fight?</label>
+      <div id="sportFightRatingTiles" style="display:flex; gap:8px; margin-bottom:6px;"></div>
+
+      <label style="margin-top:14px;" data-i18n="sp_outcome">Outcome</label>
       <div class="grid2">
-        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#dff0e8;color:#2f7a52;font-weight:600;" data-i18n="sp_kept">Kept</button>
-        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#E1F5EE;color:#0F6E56;font-weight:600;" data-i18n="rec_cond_released">Released</button>
+        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#F3C9BC;color:#6B2412;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;" data-i18n="sp_kept">🐟 Kept</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#DDEFE7;color:#0F8A7E;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;" data-i18n="rec_cond_released">↩ Released</button>
       </div>
 
-      <label for="sportCatchNotes" style="margin-top:14px;"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
-      <input type="text" id="sportCatchNotes" placeholder="e.g. Caught near submerged log">
-    </div>
-
-    <div class="quick-actions">
-      <div class="action-tile" id="sportPhotoBtnTile">
-        <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0F6E56" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0F6E56" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0F6E56" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </div>
-        <div class="at-title" data-i18n="rec_photo_label">Photo</div>
-      </div>
-      <div class="action-tile" id="sportGpsBtnTile">
-        <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0F6E56"/><circle cx="12" cy="9" r="2" fill="white"/></svg>
-        </div>
-        <div class="at-title" data-i18n="sp_gps">GPS</div>
-      </div>
-    </div>
-
-    <div class="card" id="sportPhotoCard" style="display:none;">
-      <div class="photobox" id="sportPhotoBox"></div>
-    </div>
-
-    <div class="card" id="sportGpsCard" style="display:none;">
+      <label style="margin-top:14px;" data-i18n="sp_gps">GPS</label>
       <div id="sportGpsBox" class="gpsbox">
         <span class="coords pending" id="sportCoordsLabel" data-i18n="rec_not_captured">not captured</span>
         <button class="gps-btn" id="sportCaptureGpsBtn" type="button" data-i18n="rec_capture_gps">Capture</button>
       </div>
+
+      <label for="sportCatchNotes" style="margin-top:14px;"><span data-i18n="flhaul_notes">Notes</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+      <input type="text" id="sportCatchNotes" placeholder="e.g. Caught near submerged log">
     </div>
   </main>
   <div class="savebar">
@@ -3080,14 +3115,17 @@
 
 <!-- ================= SPORT: CATCH LOG ================= -->
 <section class="screen" id="screen-sport-catch-log">
-  <div class="topbar">
-    <div class="topbar-row">
-      <span class="brand" data-i18n="sp_catch_log">Catch Log</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" data-i18n="sp_catches_tab">Catches</div>
+        <h1 data-i18n="sp_all_catches">All Catches</h1>
+      </div>
     </div>
-    <h1 data-i18n="sp_all_catches">All Catches</h1>
-    <div class="hist-search-wrap" style="margin-top:10px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
-      <select id="sportCatchLogSpeciesFilter" style="background:none;border:none;outline:none;font-family:var(--display);font-size:13px;color:white;flex:1;padding:0;">
+    <div class="hist-search-wrap" style="margin-top:10px; position:relative;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="2" opacity="0.85"/><path d="M16.5 16.5L21 21" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.85"/></svg>
+      <select id="sportCatchLogSpeciesFilter">
         <option value="" data-i18n="sp_all_species">All species</option>
       </select>
     </div>
@@ -3102,15 +3140,26 @@
 
 <!-- ================= SPORT: SPOTS ================= -->
 <section class="screen" id="screen-sport-spots">
-  <div class="topbar">
-    <div class="topbar-row">
-      <span class="brand" data-i18n="sp_spots">Spots</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" data-i18n="sp_spots">Spots</div>
+        <h1 data-i18n="sp_saved_spots">Saved Spots</h1>
+        <div class="sst-sub" data-i18n="sp_private_device">Private — stored only on this device</div>
+      </div>
+      <button type="button" id="sportAddSpotToggleBtn" aria-label="Add a spot" style="background:rgba(255,255,255,.25); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:20px; cursor:pointer; flex-shrink:0; line-height:1;">+</button>
     </div>
-    <h1 data-i18n="sp_saved_spots">Saved Spots</h1>
-    <div class="site-line" data-i18n="sp_private_device">Private — stored only on this device</div>
   </div>
   <main>
-    <div class="card">
+    <!-- Map: always visible with layer toggle -->
+    <div class="map-layer-toggle" id="sportMapLayerToggle">
+      <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
+      <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
+    </div>
+    <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
+
+    <div class="card" id="sportAddSpotCard" style="margin-bottom:16px; display:none;">
       <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_add_spot">Add a spot</div>
       <label for="sportSpotName" data-i18n="sp_name">Name</label>
       <input type="text" id="sportSpotName" placeholder="e.g. North Pier">
@@ -3127,24 +3176,20 @@
       <span class="insight-card-label" style="margin:0;" data-i18n="sp_your_spots">Your spots</span>
     </div>
     <div id="sportSpotsList"></div>
-
-    <!-- Map: always visible with layer toggle -->
-    <div class="map-layer-toggle" id="sportMapLayerToggle" style="margin-top:14px;">
-      <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
-      <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
-    </div>
-    <div id="sportLeafletMap" style="height:320px; border-radius:var(--radius); margin-top:8px; overflow:hidden;"></div>
   </main>
 </section>
 
 <!-- ================= SPORT: DOCUMENTS ================= -->
 <section class="screen" id="screen-sport-documents">
-  <div class="topbar">
-    <div class="topbar-row">
-      <span class="brand" data-i18n="fldocs_brand">Documents</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" data-i18n="fldocs_brand">Documents</div>
+        <h1 data-i18n="sp_licenses_permits">Licenses &amp; Permits</h1>
+        <div class="sst-sub" data-i18n="sp_keep_license">Keep your license handy for inspection</div>
+      </div>
     </div>
-    <h1 data-i18n="sp_licenses_permits">Licenses &amp; Permits</h1>
-    <div class="site-line" data-i18n="sp_keep_license">Keep your license handy for inspection</div>
   </div>
   <main>
     <div class="card">
@@ -3162,7 +3207,7 @@
       <input type="date" id="sportDocExpiry">
       <div class="step-card-header" style="margin:14px 0 10px;">
         <div class="sc-icon-box" style="background:var(--blue-mist);">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#0F6E56" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#0F6E56" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#0F6E56" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="#EE6C4D" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="#EE6C4D" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="#EE6C4D" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
         <span class="sc-title"><span data-i18n="fldocs_photo_scan">Photo / Scan</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></span>
       </div>
@@ -3179,14 +3224,21 @@
 
 <!-- ================= SPORT: STATS ================= -->
 <section class="screen" id="screen-sport-stats">
-  <div class="topbar">
-    <div class="topbar-row">
-      <span class="brand" data-i18n="ins_tab_stats">Stats</span>
+  <div class="sport-sunrise-topbar">
+    <div class="sst-circ1"></div><div class="sst-circ2"></div>
+    <div class="sst-row">
+      <div>
+        <div class="sst-brand" data-i18n="ins_tab_stats">Stats</div>
+        <h1 data-i18n="sp_personal_stats">Personal Stats</h1>
+        <div class="sst-sub" data-i18n="sp_from_logged_catches">From your logged catches</div>
+      </div>
     </div>
-    <h1 data-i18n="sp_personal_stats">Personal Stats</h1>
-    <div class="site-line" data-i18n="sp_from_logged_catches">From your logged catches</div>
   </div>
   <main>
+    <div id="sportStatsScopeToggle" style="display:flex; gap:8px; margin-bottom:14px;">
+      <button type="button" class="sport-stats-scope-btn" data-scope="session" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_this_session">This session</button>
+      <button type="button" class="sport-stats-scope-btn" data-scope="all" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_all_time">All time</button>
+    </div>
     <div id="sportStatsBody"></div>
   </main>
 </section>
@@ -3218,8 +3270,8 @@
     <span data-i18n="sp_session">Session</span>
   </button>
   <button class="tab" data-go="sport-catch-log">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    <span data-i18n="sp_catch_log">Catch Log</span>
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" stroke="currentColor" stroke-width="1.8"/><circle cx="6.5" cy="11" r="1" fill="currentColor"/></svg></span>
+    <span data-i18n="sp_catches_tab">Catches</span>
   </button>
   <button class="tab" data-go="sport-spots">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg></span>
@@ -3495,7 +3547,7 @@
       sp_session_duration: 'Session duration', sp_open_water: 'Open Water', sp_end_session: 'End Session', sp_catches_this_session: 'Catches this session',
       sp_not_linked_session: 'Not Linked To A Session', sp_species_size: 'Species &amp; size', sp_weight_kg: 'Weight (kg)', sp_opt: 'opt.', sp_length_cm: 'Length (cm)',
       sp_lure_bait: 'Lure / Bait', sp_outcome: 'Outcome', sp_kept: 'Kept', sp_save_return: 'Save &amp; Return', sp_gps: 'GPS',
-      sp_catch_log: 'Catch Log', sp_all_catches: 'All Catches', sp_all_species: 'All species',
+      sp_catch_log: 'Catch Log', sp_catches_tab: 'Catches', sp_all_catches: 'All Catches', sp_all_species: 'All species',
       sp_spots: 'Spots', sp_saved_spots: 'Saved Spots', sp_private_device: 'Private — stored only on this device', sp_add_spot: 'Add a spot', sp_name: 'Name',
       sp_note: 'Note', sp_save_spot: 'Save Spot', sp_your_spots: 'Your spots',
       sp_licenses_permits: 'Licenses &amp; Permits', sp_keep_license: 'Keep your license handy for inspection', sp_add_document: 'Add a document',
@@ -3510,6 +3562,9 @@
       sp_great_day: 'Great day to fish', sp_good_day: 'Good day to fish', sp_slow_day: 'Slow day to fish',
       sp_score_caption: 'Based on pressure, moon, weather, tide, and wind',
       sp_uv_legend: 'UV Index (WHO/EPA): 0-2 low · 3-5 moderate · 6-7 high · 8-10 very high · 11+ extreme',
+      sp_ready_to_fish: 'Ready to fish?', sp_start_session_hint: 'Tap to pick a spot and method', sp_best_catch: 'Best',
+      sp_stats_this_session: 'This session', sp_stats_all_time: 'All time', sp_stats_no_session_catches: 'No catches logged in this session yet.',
+      sp_show_off_catch: 'Show off your catch 📸', sp_fight_rating: 'How was the fight?',
       sp_strength_strong: 'Strong', sp_strength_moderate: 'Moderate', sp_strength_mild: 'Mild', sp_illuminated: '% illuminated', sp_activity: ' activity',
       sp_major_peaks: 'Major peaks', sp_90min_window: '90 min window', sp_minor_peaks: 'Minor peaks', sp_45min_window: '45 min window',
       sp_estimated_periods: 'Estimated periods — not a precision ephemeris.',
@@ -3794,7 +3849,7 @@
       sp_session_duration: 'Duración de la sesión', sp_open_water: 'Agua Abierta', sp_end_session: 'Terminar Sesión', sp_catches_this_session: 'Capturas de esta sesión',
       sp_not_linked_session: 'No Vinculado a una Sesión', sp_species_size: 'Especie y tamaño', sp_weight_kg: 'Peso (kg)', sp_opt: 'opc.', sp_length_cm: 'Longitud (cm)',
       sp_lure_bait: 'Señuelo / Carnada', sp_outcome: 'Resultado', sp_kept: 'Conservado', sp_save_return: 'Guardar y Volver', sp_gps: 'GPS',
-      sp_catch_log: 'Registro de Capturas', sp_all_catches: 'Todas las Capturas', sp_all_species: 'Todas las especies',
+      sp_catch_log: 'Registro de Capturas', sp_catches_tab: 'Capturas', sp_all_catches: 'Todas las Capturas', sp_all_species: 'Todas las especies',
       sp_spots: 'Spots', sp_saved_spots: 'Spots Guardados', sp_private_device: 'Privado — guardado solo en este dispositivo', sp_add_spot: 'Agregar un spot', sp_name: 'Nombre',
       sp_note: 'Nota', sp_save_spot: 'Guardar Spot', sp_your_spots: 'Tus spots',
       sp_licenses_permits: 'Licencias y Permisos', sp_keep_license: 'Ten tu licencia a la mano para inspección', sp_add_document: 'Agregar un documento',
@@ -3809,6 +3864,9 @@
       sp_great_day: 'Buen día para pescar', sp_good_day: 'Día decente para pescar', sp_slow_day: 'Día flojo para pescar',
       sp_score_caption: 'Basado en presión, luna, clima, marea y viento',
       sp_uv_legend: 'Índice UV (OMS/EPA): 0-2 bajo · 3-5 moderado · 6-7 alto · 8-10 muy alto · 11+ extremo',
+      sp_ready_to_fish: '¿Listo para pescar?', sp_start_session_hint: 'Toca para elegir spot y método', sp_best_catch: 'Mejor',
+      sp_stats_this_session: 'Esta sesión', sp_stats_all_time: 'Todo el tiempo', sp_stats_no_session_catches: 'Todavía no hay capturas registradas en esta sesión.',
+      sp_show_off_catch: 'Presume tu captura 📸', sp_fight_rating: '¿Cómo estuvo la pelea?',
       sp_strength_strong: 'Fuerte', sp_strength_moderate: 'Moderada', sp_strength_mild: 'Leve', sp_illuminated: '% iluminada', sp_activity: ' de actividad',
       sp_major_peaks: 'Picos mayores', sp_90min_window: 'Ventana de 90 min', sp_minor_peaks: 'Picos menores', sp_45min_window: 'Ventana de 45 min',
       sp_estimated_periods: 'Periodos estimados — no es una efeméride de precisión.',
@@ -4093,7 +4151,7 @@
       sp_session_duration: 'Durata sessione', sp_open_water: 'Acqua Libera', sp_end_session: 'Termina Sessione', sp_catches_this_session: 'Catture di questa sessione',
       sp_not_linked_session: 'Non Collegata a una Sessione', sp_species_size: 'Specie e taglia', sp_weight_kg: 'Peso (kg)', sp_opt: 'opz.', sp_length_cm: 'Lunghezza (cm)',
       sp_lure_bait: 'Esca', sp_outcome: 'Esito', sp_kept: 'Trattenuto', sp_save_return: 'Salva e Torna', sp_gps: 'GPS',
-      sp_catch_log: 'Registro Catture', sp_all_catches: 'Tutte le Catture', sp_all_species: 'Tutte le specie',
+      sp_catch_log: 'Registro Catture', sp_catches_tab: 'Catture', sp_all_catches: 'Tutte le Catture', sp_all_species: 'Tutte le specie',
       sp_spots: 'Spot', sp_saved_spots: 'Spot Salvati', sp_private_device: 'Privato — salvato solo su questo dispositivo', sp_add_spot: 'Aggiungi uno spot', sp_name: 'Nome',
       sp_note: 'Nota', sp_save_spot: 'Salva Spot', sp_your_spots: 'I tuoi spot',
       sp_licenses_permits: 'Licenze e Permessi', sp_keep_license: 'Tieni la licenza a portata di mano per eventuali controlli', sp_add_document: 'Aggiungi un documento',
@@ -4103,11 +4161,14 @@
       sp_moon_full: 'Luna Piena', sp_moon_waning_gibbous: 'Gibbosa Calante', sp_moon_last_quarter: 'Ultimo Quarto', sp_moon_waning_crescent: 'Calante Illuminante',
       sp_greeting_morning: 'Buongiorno', sp_greeting_afternoon: 'Buon pomeriggio', sp_greeting_evening: 'Buonasera',
       sp_water_label: 'acqua', sp_tap_add_name: 'tocca per aggiungere il tuo nome', sp_name_prompt: 'Come ti chiamiamo?',
-      sp_wx_clear: 'Sereno', sp_wx_partly_cloudy: 'Parzialmente nuvoloso', sp_wx_cloudy: 'Nuvoloso', sp_wx_foggy: 'Nebbia', sp_wx_rainy: 'Piovoso', sp_wx_stormy: 'Temporalesco',
+      sp_wx_clear: 'Sereno', sp_wx_partly_cloudy: 'Parzialmente nuvoloso', sp_wx_cloudy: 'Nuvoloso', sp_wx_foggy: 'Nebbia', sp_wx_rainy: 'Piovoso', sp_wx_stormy: 'Tempestoso',
       sp_tide_rising: 'Marea in crescita', sp_tide_falling: 'Marea in calo', sp_tide_unavailable: 'Dati marea non disponibili',
       sp_great_day: 'Ottimo giorno per pescare', sp_good_day: 'Buon giorno per pescare', sp_slow_day: 'Giorno fiacco per pescare',
       sp_score_caption: 'Basato su pressione, luna, meteo, marea e vento',
       sp_uv_legend: 'Indice UV (OMS/EPA): 0-2 basso · 3-5 moderato · 6-7 alto · 8-10 molto alto · 11+ estremo',
+      sp_ready_to_fish: 'Pronto a pescare?', sp_start_session_hint: 'Tocca per scegliere spot e metodo', sp_best_catch: 'Migliore',
+      sp_stats_this_session: 'Questa sessione', sp_stats_all_time: 'Sempre', sp_stats_no_session_catches: 'Nessuna cattura registrata in questa sessione.',
+      sp_show_off_catch: 'Mostra la tua cattura 📸', sp_fight_rating: 'Come è andata la lotta?',
       sp_strength_strong: 'Forte', sp_strength_moderate: 'Moderata', sp_strength_mild: 'Lieve', sp_illuminated: '% illuminata', sp_activity: ' di attività',
       sp_major_peaks: 'Picchi maggiori', sp_90min_window: 'Finestra di 90 min', sp_minor_peaks: 'Picchi minori', sp_45min_window: 'Finestra di 45 min',
       sp_estimated_periods: 'Periodi stimati — non è un\'effemeride di precisione.',
@@ -4392,7 +4453,7 @@
       sp_session_duration: 'ระยะเวลาเซสชัน', sp_open_water: 'น้ำเปิด', sp_end_session: 'จบเซสชัน', sp_catches_this_session: 'การจับปลาในเซสชันนี้',
       sp_not_linked_session: 'ยังไม่ได้เชื่อมกับเซสชัน', sp_species_size: 'ชนิดพันธุ์และขนาด', sp_weight_kg: 'น้ำหนัก (กก.)', sp_opt: 'ไม่บังคับ', sp_length_cm: 'ความยาว (ซม.)',
       sp_lure_bait: 'เหยื่อล่อ / เหยื่อ', sp_outcome: 'ผลลัพธ์', sp_kept: 'เก็บไว้', sp_save_return: 'บันทึกและกลับ', sp_gps: 'จีพีเอส',
-      sp_catch_log: 'บันทึกการจับปลา', sp_all_catches: 'การจับปลาทั้งหมด', sp_all_species: 'ทุกชนิดพันธุ์',
+      sp_catch_log: 'บันทึกการจับปลา', sp_catches_tab: 'การจับปลา', sp_all_catches: 'การจับปลาทั้งหมด', sp_all_species: 'ทุกชนิดพันธุ์',
       sp_spots: 'จุดตกปลา', sp_saved_spots: 'จุดตกปลาที่บันทึกไว้', sp_private_device: 'ส่วนตัว — บันทึกไว้ในอุปกรณ์นี้เท่านั้น', sp_add_spot: 'เพิ่มจุดตกปลา', sp_name: 'ชื่อ',
       sp_note: 'บันทึกย่อ', sp_save_spot: 'บันทึกจุดตกปลา', sp_your_spots: 'จุดตกปลาของคุณ',
       sp_licenses_permits: 'ใบอนุญาตและใบอนุญาตประกอบการ', sp_keep_license: 'เตรียมใบอนุญาตของคุณไว้สำหรับการตรวจสอบ', sp_add_document: 'เพิ่มเอกสาร',
@@ -4407,6 +4468,9 @@
       sp_great_day: 'วันที่ดีมากสำหรับตกปลา', sp_good_day: 'วันที่ดีสำหรับตกปลา', sp_slow_day: 'วันที่ปลากัดน้อย',
       sp_score_caption: 'คำนวณจากความกดอากาศ ดวงจันทร์ สภาพอากาศ น้ำขึ้นน้ำลง และลม',
       sp_uv_legend: 'ดัชนี UV (WHO/EPA): 0-2 ต่ำ · 3-5 ปานกลาง · 6-7 สูง · 8-10 สูงมาก · 11+ รุนแรง',
+      sp_ready_to_fish: 'พร้อมตกปลาหรือยัง', sp_start_session_hint: 'แตะเพื่อเลือกจุดตกปลาและวิธีการ', sp_best_catch: 'ดีที่สุด',
+      sp_stats_this_session: 'เซสชันนี้', sp_stats_all_time: 'ทั้งหมด', sp_stats_no_session_catches: 'ยังไม่มีการบันทึกการจับปลาในเซสชันนี้',
+      sp_show_off_catch: 'อวดปลาที่จับได้ 📸', sp_fight_rating: 'การต่อสู้เป็นอย่างไรบ้าง',
       sp_strength_strong: 'แรง', sp_strength_moderate: 'ปานกลาง', sp_strength_mild: 'อ่อน', sp_illuminated: '% สว่าง', sp_activity: ' กิจกรรม',
       sp_major_peaks: 'ช่วงพีคหลัก', sp_90min_window: 'ช่วงเวลา 90 นาที', sp_minor_peaks: 'ช่วงพีครอง', sp_45min_window: 'ช่วงเวลา 45 นาที',
       sp_estimated_periods: 'ช่วงเวลาโดยประมาณ — ไม่ใช่ปฏิทินดาราศาสตร์ที่แม่นยำ',
@@ -8785,24 +8849,18 @@
   // state and re-attaches a fresh input — used when a form is reset
   // (clearSportCatchForm) so a previous photo doesn't linger visually
   // on the next new catch/document.
-  function resetSportPhotoBox(boxId, onPicked){
+  function resetSportPhotoBox(boxId, onPicked, hintText, hintIconSvg){
     const box = document.getElementById(boxId);
     box.classList.remove('filled');
-    box.innerHTML = '<span class="photo-hint">tap to take or attach a photo</span>';
+    box.innerHTML = (hintIconSvg || '') + '<span class="photo-hint">'+(hintText || 'tap to take or attach a photo')+'</span>';
     box.appendChild(buildSportPhotoInput(boxId, onPicked));
   }
-  // Photo and GPS tile toggles in Log Catch
-  document.getElementById('sportPhotoBtnTile').addEventListener('click', () => {
-    const card = document.getElementById('sportPhotoCard');
-    card.style.display = card.style.display === 'none' ? 'block' : 'none';
-  });
-  document.getElementById('sportGpsBtnTile').addEventListener('click', () => {
-    const card = document.getElementById('sportGpsCard');
-    const isNowVisible = card.style.display === 'none';
-    card.style.display = isNowVisible ? 'block' : 'none';
-  });
+  // Photo box in Log Catch is now always-visible at the top of the
+  // screen (matching Israel's reference — a dashed mint box, tap
+  // anywhere to take/attach a photo), same pattern GPS already moved
+  // to under Kept/Released — no more toggle tile/card pairs here.
 
-  resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
+  resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; }, t('sp_show_off_catch'), '<div style="color:#0F8A7E; margin-bottom:8px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>');
   resetSportPhotoBox('sportDocPhotoBox', (d) => { sportDocPhotoDataUrl = d; });
   document.getElementById('sportPhotoBox').addEventListener('click', () => {
     document.getElementById('sportPhotoBox').querySelector('input[type=file]').click();
@@ -9190,10 +9248,10 @@
     const current = select.value || 'Shore';
     wrap.innerHTML = Array.from(select.options).map(opt => {
       const active = opt.value === current;
-      const bg = active ? '#1D9E75' : '#ffffff';
-      const border = active ? 'none' : '0.5px solid #9FE1CB';
-      const color = active ? '#ffffff' : '#0F6E56';
-      const textColor = active ? '#ffffff' : '#04342C';
+      const bg = active ? '#EE6C4D' : '#ffffff';
+      const border = active ? 'none' : '0.5px solid #ECE0CD';
+      const color = active ? '#ffffff' : '#EE6C4D';
+      const textColor = active ? '#ffffff' : '#1E3A34';
       return '<button type="button" class="sport-method-tile" data-method="'+opt.value+'" style="background:'+bg+'; border:'+border+'; border-radius:12px; padding:8px 4px; text-align:center; cursor:pointer; color:'+color+';">'
         + (SPORT_METHOD_ICONS[opt.value] || SPORT_METHOD_ICONS.Other)
         + '<div style="font-family:var(--display); font-weight:500; font-size:10.5px; color:'+textColor+'; margin-top:5px;">'+opt.textContent+'</div>'
@@ -9214,9 +9272,9 @@
     const tileHtml = (value, label, iconSvg, activeColor, activeText) => {
       const active = value === current;
       const bg = active ? activeColor : '#ffffff';
-      const border = active ? 'none' : '0.5px solid #9FE1CB';
-      const color = active ? '#ffffff' : '#0F6E56';
-      const textColor = active ? activeText : '#04342C';
+      const border = active ? 'none' : '0.5px solid #ECE0CD';
+      const color = active ? '#ffffff' : '#EE6C4D';
+      const textColor = active ? activeText : '#1E3A34';
       return '<button type="button" class="sport-spot-tile" data-spot="'+value+'" style="flex:0 0 auto; min-width:74px; background:'+bg+'; border:'+border+'; border-radius:12px; padding:10px 12px; text-align:center; cursor:pointer; color:'+color+';">'
         + iconSvg
         + '<div style="font-family:var(--display); font-weight:500; font-size:11px; color:'+textColor+'; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">'+label+'</div>'
@@ -9225,9 +9283,9 @@
     const waterIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c2-2 4 2 6 0s4 2 6 0 4-2 6 0M3 17c2-2 4 2 6 0s4 2 6 0 4-2 6 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
     const pinIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg>';
     const plusIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-    let html = tileHtml('', t('sp_open_water'), waterIcon, '#1D9E75', '#ffffff');
-    html += spots.map(s => tileHtml(s.spot_id, s.name, pinIcon, '#7F77DD', '#ffffff')).join('');
-    html += tileHtml('__new__', t('sp_new_spot_short'), plusIcon, '#D4537E', '#ffffff');
+    let html = tileHtml('', t('sp_open_water'), waterIcon, '#EE6C4D', '#ffffff');
+    html += spots.map(s => tileHtml(s.spot_id, s.name, pinIcon, '#F2A65A', '#6B4412')).join('');
+    html += tileHtml('__new__', t('sp_new_spot_short'), plusIcon, '#EE6C4D', '#ffffff');
     wrap.innerHTML = html;
     wrap.querySelectorAll('.sport-spot-tile').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -9286,7 +9344,7 @@
       (pos) => fetchSportDailyForecast(pos.coords.latitude, pos.coords.longitude),
       () => {
         document.getElementById('sportDailyForecastStrip').innerHTML =
-          '<button type="button" id="sportEnableForecastBtn" style="flex:0 0 auto; background:#ffffff; border:0.5px dashed #9FE1CB; border-radius:12px; padding:10px 14px; color:#0F6E56; font-family:var(--display); font-size:12px; cursor:pointer;">'+t('sp_enable_location')+'</button>';
+          '<button type="button" id="sportEnableForecastBtn" style="flex:0 0 auto; background:#ffffff; border:0.5px dashed #ECE0CD; border-radius:12px; padding:10px 14px; color:#EE6C4D; font-family:var(--display); font-size:12px; cursor:pointer;">'+t('sp_enable_location')+'</button>';
         const btn = document.getElementById('sportEnableForecastBtn');
         if(btn) btn.addEventListener('click', initSportDailyForecast);
       },
@@ -9405,7 +9463,7 @@
       const band = sportTempBandColor(temp);
       const d = new Date(dateStr + 'T12:00:00');
       const active = dateStr === sportWeatherDetailSelectedDate;
-      const border = active ? 'border:1.5px solid #04342C;' : '';
+      const border = active ? 'border:1.5px solid #1E3A34;' : '';
       return '<button type="button" class="sport-wd-day-tile" data-date="'+dateStr+'" style="flex:0 0 auto; width:50px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; cursor:pointer; '+border+'">'
         + '<div style="font-size:10px; color:'+band.text+'; font-weight:500;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
         + '<div style="font-size:13px; font-weight:500; color:'+band.text+';">'+d.getDate()+'</div></button>';
@@ -9456,12 +9514,12 @@
       + '<div style="width:52px; height:52px; border-radius:14px; background:'+band.bg+'; display:flex; align-items:center; justify-content:center; flex-shrink:0;">'+sportThermometerSvg(band.text)+'</div>'
       + '<div style="flex:1;">'
       + '<div style="font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em;">'+t('sp_water_temp')+'</div>'
-      + '<div style="font-size:28px; font-weight:600; color:#04342C; line-height:1.15;">'+Math.round(waterTemp)+'°C</div>'
+      + '<div style="font-size:28px; font-weight:600; color:#1E3A34; line-height:1.15;">'+Math.round(waterTemp)+'°C</div>'
       + '</div>'
       + '<div style="background:'+band.bg+'; color:'+band.text+'; border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:500; text-align:center; max-width:130px;">'+info.tag+'</div>'
       + '</div>'
       + '<div id="sportWaterCardDetail" style="display:'+(sportWaterDetailExpanded?'block':'none')+'; margin-top:12px; padding-top:12px; border-top:0.5px solid #e6e2d6;">'
-      + '<div style="font-family:var(--body); font-size:13px; color:#04342C; line-height:1.5; margin-bottom:8px;">'+info.advice+'</div>'
+      + '<div style="font-family:var(--body); font-size:13px; color:#1E3A34; line-height:1.5; margin-bottom:8px;">'+info.advice+'</div>'
       + '<div style="font-family:var(--body); font-size:11.5px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">'+info.technical+'</div>'
       + '<div style="font-size:10.5px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;">'+t('sp_example_species')+'</div>'
       + '<div style="display:flex; gap:6px; flex-wrap:wrap;">' + info.species.map(s => '<span style="background:'+band.bg+'; color:'+band.text+'; border-radius:8px; padding:4px 8px; font-size:11px;">'+s+'</span>').join('') + '</div>'
@@ -9490,9 +9548,9 @@
     trend: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 15l5-5 4 3 8-9" stroke="#F18F63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     temp: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a2 2 0 0 0-2 2v9.5a4 4 0 1 0 4 0V5a2 2 0 0 0-2-2z" stroke="#D9534F" stroke-width="1.8"/><circle cx="12" cy="17" r="1.8" fill="#D9534F"/></svg>',
     precip: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c3 4 6 7 6 10a6 6 0 1 1-12 0c0-3 3-6 6-10z" fill="#378ADD"/></svg>',
-    humidity: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c3 4 6 7 6 10a6 6 0 1 1-12 0c0-3 3-6 6-10z" fill="#1D9E75"/></svg>',
-    pressure: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15a8 8 0 1 1 16 0" stroke="#7F77DD" stroke-width="1.8" stroke-linecap="round"/><path d="M12 15l3-4" stroke="#7F77DD" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.3" fill="#7F77DD"/></svg>',
-    wind: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h11a2.5 2.5 0 1 0-2.5-2.5M3 12h15a2.5 2.5 0 1 1-2.5 2.5M3 16h9a2.5 2.5 0 1 1-2.5 2.5" stroke="#0F6E56" stroke-width="1.7" stroke-linecap="round"/></svg>',
+    humidity: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c3 4 6 7 6 10a6 6 0 1 1-12 0c0-3 3-6 6-10z" fill="#EE6C4D"/></svg>',
+    pressure: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15a8 8 0 1 1 16 0" stroke="#EE6C4D" stroke-width="1.8" stroke-linecap="round"/><path d="M12 15l3-4" stroke="#EE6C4D" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.3" fill="#EE6C4D"/></svg>',
+    wind: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h11a2.5 2.5 0 1 0-2.5-2.5M3 12h15a2.5 2.5 0 1 1-2.5 2.5M3 16h9a2.5 2.5 0 1 1-2.5 2.5" stroke="#EE6C4D" stroke-width="1.7" stroke-linecap="round"/></svg>',
     uv: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4.5" fill="#F2B33D"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="#F2B33D" stroke-width="1.8" stroke-linecap="round"/></svg>'
   };
   // Colorful version used only in the big per-hour "sky" row, where
@@ -9595,7 +9653,7 @@
     dataHtml += dataRow(indices.map((i, pos) => {
       const wind = sportWeatherDetailData.wind_speed_10m ? sportWeatherDetailData.wind_speed_10m[i] : null;
       const winddir = sportWeatherDetailData.wind_direction_10m ? sportWeatherDetailData.wind_direction_10m[i] : 0;
-      return cell('<span style="display:inline-flex; flex-direction:column; align-items:center; gap:2px; color:#0F6E56;">'+sportWindArrowSvg(winddir)+'<span style="font-family:var(--data); font-size:11px; color:var(--ink-soft);">'+(wind!=null?Math.round(wind):'—')+'</span></span>', pos);
+      return cell('<span style="display:inline-flex; flex-direction:column; align-items:center; gap:2px; color:#EE6C4D;">'+sportWindArrowSvg(winddir)+'<span style="font-family:var(--data); font-size:11px; color:var(--ink-soft);">'+(wind!=null?Math.round(wind):'—')+'</span></span>', pos);
     }).join(''));
     dataHtml += dataRow(indices.map((i, pos) => {
       const uv = sportWeatherDetailData.uv_index ? sportWeatherDetailData.uv_index[i] : null;
@@ -9649,6 +9707,8 @@
     if(!session){
       noCard.style.display = 'block';
       activeCard.style.display = 'none';
+      document.getElementById('sportSessionPromptCard').style.display = 'block';
+      document.getElementById('sportSessionFormDetail').style.display = 'none';
       document.getElementById('sportSpotLine').textContent = t('sp_no_spot');
       return;
     }
@@ -9667,7 +9727,7 @@
 
     const catches = load(CATCHES_KEY).filter(c => c.session_id === session.session_id);
     const list = document.getElementById('sportSessionCatchList');
-    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0F6E56"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
+    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#EE6C4D"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#EE6C4D"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet this session.</div>'
       : catches.slice().reverse().map(c =>
@@ -9682,6 +9742,10 @@
         ).join('');
   }
 
+  document.getElementById('sportRevealFormBtn').addEventListener('click', () => {
+    document.getElementById('sportSessionPromptCard').style.display = 'none';
+    document.getElementById('sportSessionFormDetail').style.display = 'block';
+  });
   document.getElementById('sportStartSessionBtn').addEventListener('click', () => {
     let spotId = document.getElementById('sportSpotSelect').value;
     if(spotId === '__new__'){
@@ -9750,11 +9814,30 @@
     document.getElementById('sportKeptBtn').classList.remove('active');
     document.getElementById('sportReleasedBtn').classList.remove('active');
     sportKeptOrReleased = null;
+    sportFightRating = null;
+    renderSportFightRatingTiles();
     resetSportCatchGps();
     sportCatchPhotoDataUrl = null;
-    resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
+    resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; }, t('sp_show_off_catch'), '<div style="color:#0F8A7E; margin-bottom:8px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>');
   }
   let sportKeptOrReleased = null;
+  let sportFightRating = null;
+  function renderSportFightRatingTiles(){
+    const wrap = document.getElementById('sportFightRatingTiles');
+    if(!wrap) return;
+    wrap.innerHTML = [1,2,3].map(n => {
+      const active = sportFightRating === n;
+      const stars = '⭐'.repeat(n);
+      return '<button type="button" class="sport-fight-tile" data-rating="'+n+'" style="flex:1; border:2px solid '+(active?'#EE6C4D':'#ECE0CD')+'; background:'+(active?'#FDECE5':'#fff')+'; border-radius:14px; padding:10px 0; text-align:center; cursor:pointer; font-size:15px;">'+stars+'</button>';
+    }).join('');
+    wrap.querySelectorAll('.sport-fight-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sportFightRating = Number(btn.dataset.rating);
+        renderSportFightRatingTiles();
+      });
+    });
+  }
+  renderSportFightRatingTiles();
   document.getElementById('sportKeptBtn').addEventListener('click', () => {
     sportKeptOrReleased = 'kept';
     document.getElementById('sportKeptBtn').classList.add('active');
@@ -9809,6 +9892,8 @@
     sportKeptOrReleased = record.kept_or_released || 'released';
     document.getElementById('sportKeptBtn').classList.toggle('active', sportKeptOrReleased === 'kept');
     document.getElementById('sportReleasedBtn').classList.toggle('active', sportKeptOrReleased === 'released');
+    sportFightRating = record.fight_rating || null;
+    renderSportFightRatingTiles();
     if(record.lat){
       sportCatchCoords = { lat: record.lat, lon: record.lon };
       const label = document.getElementById('sportCoordsLabel');
@@ -9828,7 +9913,7 @@
       box.appendChild(img);
       box.appendChild(buildSportPhotoInput('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; }));
     } else {
-      resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; });
+      resetSportPhotoBox('sportPhotoBox', (d) => { sportCatchPhotoDataUrl = d; }, t('sp_show_off_catch'), '<div style="color:#0F8A7E; margin-bottom:8px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12.5" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M9 6l1-2h4l1 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>');
     }
     const session = record.session_id ? load(SESSIONS_KEY).find(s => s.session_id === record.session_id) : null;
     document.getElementById('sportCatchSessionLine').textContent = session ? t('sp_linked_session_started') + new Date(session.started_at).toLocaleDateString() : t('sp_not_linked_session');
@@ -9851,6 +9936,7 @@
       length_cm: document.getElementById('sportCatchLength').value || '',
       lure: document.getElementById('sportLureUsed').value.trim(),
       kept_or_released: sportKeptOrReleased || 'released',
+      fight_rating: sportFightRating || null,
       notes: document.getElementById('sportCatchNotes').value.trim(),
       lat: sportCatchCoords ? sportCatchCoords.lat : '',
       lon: sportCatchCoords ? sportCatchCoords.lon : '',
@@ -9900,33 +9986,44 @@
   // Re-renders just the list + count for whatever species filter is
   // currently selected, without touching the <select> itself — used both
   // on initial render and on every filter change.
+  const SPORT_CATCH_PHOTO_GRADS = [
+    'linear-gradient(135deg,#F9B45C,#EE6C4D)',
+    'linear-gradient(135deg,#12A493,#0B6B61)',
+    'linear-gradient(135deg,#F2A65A,#EE6C4D)',
+    'linear-gradient(135deg,#85B7EB,#0F8A7E)'
+  ];
   function renderSportCatchLogList(){
     const filterSpecies = document.getElementById('sportCatchLogSpeciesFilter').value;
     const all = load(CATCHES_KEY);
     const catches = filterSpecies ? all.filter(c => c.species === filterSpecies) : all;
     const countEl = document.getElementById('sportCatchLogCountLine');
     if(countEl) countEl.textContent = catches.length + (catches.length===1?' CATCH':' CATCHES') + (filterSpecies ? ' (filtered)' : '');
-    const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0F6E56"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0F6E56"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
+    const sessions = load(SESSIONS_KEY);
+    const spots = load(SPOTS_KEY);
+    const sessionById = {}; sessions.forEach(s => { sessionById[s.session_id] = s; });
+    const spotById = {}; spots.forEach(s => { spotById[s.spot_id] = s; });
     const list = document.getElementById('sportCatchLogList');
     list.innerHTML = catches.length === 0
       ? '<div class="empty">No catches logged yet.</div>'
-      : catches.slice().reverse().map(c => {
+      : catches.slice().reverse().map((c, i) => {
           const when = new Date(c.logged_at).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-          const keptChip = c.kept_or_released === 'kept'
-            ? '<span class="chip chip-green">Kept</span>'
-            : '<span class="chip chip-blue">Released</span>';
-          return '<div class="entry entry-clickable" data-sport-catch-edit="'+c.catch_id+'">'
-            + '<div class="entry-icon">' + fishSvg + '</div>'
-            + '<div class="entry-body">'
-            + '<div class="sp">' + (c.species||'Unspecified') + '</div>'
-            + '<div class="entry-chips">'
-            + (c.weight_kg ? '<span class="chip chip-blue">'+c.weight_kg+' kg</span>' : '')
-            + (c.length_cm ? '<span class="chip chip-blue">'+c.length_cm+' cm</span>' : '')
-            + keptChip
-            + (c.lat ? '<span class="chip chip-grey">📍 GPS</span>' : '')
+          const sess = c.session_id ? sessionById[c.session_id] : null;
+          const spot = sess && sess.spot_id ? spotById[sess.spot_id] : null;
+          const spotName = spot ? spot.name : t('sp_open_water');
+          const photoInner = c.photo
+            ? '<img src="'+c.photo+'" alt="" style="width:100%; height:100%; object-fit:cover;">'
+            : '<div style="width:100%; height:100%; background:'+SPORT_CATCH_PHOTO_GRADS[i % SPORT_CATCH_PHOTO_GRADS.length]+'; display:flex; align-items:center; justify-content:center;"><span style="font-size:42px; filter:drop-shadow(0 3px 6px rgba(0,0,0,.25));">🐟</span></div>';
+          return '<div class="entry-clickable" data-sport-catch-edit="'+c.catch_id+'" style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid var(--line,#ECE0CD); box-shadow:0 4px 14px rgba(30,58,52,.06); margin-bottom:14px; cursor:pointer;">'
+            + '<div style="height:140px; position:relative;">' + photoInner
+            + (c.length_cm ? '<span style="position:absolute; top:8px; left:8px; background:rgba(255,255,255,.92); border-radius:999px; padding:3px 9px; font-family:var(--display); font-weight:700; font-size:11px; color:var(--ink);">'+c.length_cm+' cm</span>' : '')
+            + (c.kept_or_released === 'released' ? '<span style="position:absolute; top:8px; right:8px; background:#0F8A7E; color:#fff; border-radius:999px; padding:3px 9px; font-family:var(--data); font-size:8.5px; font-weight:600; letter-spacing:0.04em;">RELEASED ↩</span>' : '')
             + '</div>'
-            + '<div class="meta">' + when + '</div>'
-            + '</div></div>';
+            + '<div style="padding:11px 13px 13px;">'
+            + '<div style="font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink);">' + (c.species||'Unspecified') + '</div>'
+            + '<div style="display:flex; gap:10px; margin-top:6px; font-family:var(--data); font-size:10.5px; color:var(--ink-soft);">'
+            + '<span>📍 ' + spotName + '</span><span>🕐 ' + when + '</span>'
+            + (c.weight_kg ? '<span>' + c.weight_kg + ' kg</span>' : '')
+            + '</div></div></div>';
         }).join('');
     list.querySelectorAll('[data-sport-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openSportCatchEdit(el.dataset.sportCatchEdit));
@@ -9972,26 +10069,43 @@
     sportSpotCoords = null;
     document.getElementById('sportSpotCoordsLabel').textContent = t('rec_not_captured');
     document.getElementById('sportSpotGpsBox').classList.remove('locked');
+    document.getElementById('sportAddSpotCard').style.display = 'none';
     showSportToast(t('msg_spot_saved'));
     renderSportSpots();
+  });
+  document.getElementById('sportAddSpotToggleBtn').addEventListener('click', () => {
+    const card = document.getElementById('sportAddSpotCard');
+    card.style.display = card.style.display === 'none' ? 'block' : 'none';
   });
   function renderSportSpots(){
     const spots = load(SPOTS_KEY);
     const catches = load(CATCHES_KEY);
+    const sessions = load(SESSIONS_KEY);
+    // Catches don't carry spot_id directly — they link to a session,
+    // and the session carries spot_id. Build that lookup once instead
+    // of comparing catch.spot_id (which is never set — was a bug that
+    // made every spot always show 0 catches).
+    const sessionSpotMap = {};
+    sessions.forEach(sess => { sessionSpotMap[sess.session_id] = sess.spot_id; });
+    const SPOT_ICON_COLORS = ['#EE6C4D', '#0F8A7E', '#F2A65A', '#85B7EB'];
     const list = document.getElementById('sportSpotsList');
     list.innerHTML = spots.length === 0
       ? '<div class="empty">No spots saved yet.</div>'
-      : spots.slice().reverse().map(s => {
-          const catchCount = catches.filter(c => c.spot_id === s.spot_id).length;          const pinSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#0F6E56"/><circle cx="12" cy="9" r="2" fill="white"/></svg>`;
-          return '<div class="entry">'
-            + '<div class="entry-icon">' + pinSvg + '</div>'
-            + '<div class="entry-body">'
-            + '<div class="sp" style="font-style:normal;">' + s.name + '</div>'
-            + (s.note ? '<div class="meta" style="margin-bottom:4px;">' + s.note + '</div>' : '')
-            + '<div class="entry-chips">'
-            + (catchCount > 0 ? '<span class="chip chip-blue">📍 ' + catchCount + ' catch' + (catchCount===1?'':'es') + ' here</span>' : '')
-            + (s.lat ? '<span class="chip chip-grey">' + Number(s.lat).toFixed(3) + ', ' + Number(s.lon).toFixed(3) + '</span>' : '')
-            + '</div></div></div>';
+      : spots.slice().reverse().map((s, i) => {
+          const spotCatches = catches.filter(c => c.session_id && sessionSpotMap[c.session_id] === s.spot_id);
+          const catchCount = spotCatches.length;
+          const best = spotCatches.filter(c => c.length_cm).sort((a,b) => Number(b.length_cm) - Number(a.length_cm))[0];
+          const color = SPOT_ICON_COLORS[i % SPOT_ICON_COLORS.length];
+          const pinSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="#fff"/></svg>`;
+          return '<div style="background:#fff; border-radius:18px; padding:13px; display:flex; align-items:center; gap:13px; border:1px solid var(--line, #ECE0CD); margin-bottom:10px;">'
+            + '<div style="width:44px; height:44px; border-radius:13px; background:'+color+'; display:flex; align-items:center; justify-content:center; flex-shrink:0;">' + pinSvg + '</div>'
+            + '<div style="flex:1; min-width:0;">'
+            + '<div style="font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink);">' + s.name + '</div>'
+            + (best ? '<div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:2px;">' + t('sp_best_catch') + ': ' + (best.species||'—') + ' ' + best.length_cm + 'cm</div>'
+                    : (s.note ? '<div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:2px;">' + s.note + '</div>' : ''))
+            + '</div>'
+            + (catchCount > 0 ? '<span style="background:var(--blue-mist,#DDEFE7); color:var(--blue-deep,#0F8A7E); font-family:var(--display); font-weight:700; font-size:12px; padding:5px 10px; border-radius:999px; flex-shrink:0;">' + catchCount + '</span>' : '')
+            + '</div>';
         }).join('');
   }
 
@@ -10000,7 +10114,7 @@
   // shared by Field Research and Fishing Operations.
   function sportSpotPinIcon(){
     const svg = '<svg width="28" height="38" viewBox="0 0 28 38" xmlns="http://www.w3.org/2000/svg">'
-      + '<path d="M14 0C6.3 0 0 6.3 0 14c0 9.8 14 24 14 24s14-14.2 14-24C28 6.3 21.7 0 14 0z" fill="#2f7a52" stroke="#fff" stroke-width="1.5"/>'
+      + '<path d="M14 0C6.3 0 0 6.3 0 14c0 9.8 14 24 14 24s14-14.2 14-24C28 6.3 21.7 0 14 0z" fill="#EE6C4D" stroke="#fff" stroke-width="1.5"/>'
       + '<circle cx="14" cy="14" r="5.5" fill="#fff"/>'
       + '</svg>';
     return L.divIcon({ html: svg, className: 'map-pin-balloon', iconSize: [28,38], iconAnchor: [14,38], popupAnchor: [0,-34] });
@@ -10122,11 +10236,33 @@
   });
 
   // ===== Stats (placeholder) =====
+  let sportStatsScope = 'all';
+  function sportStatsScopeSessionId(){
+    const active = getActiveSession();
+    if(active) return active.session_id;
+    const sessions = load(SESSIONS_KEY).slice().sort((a,b) => new Date(b.started_at) - new Date(a.started_at));
+    return sessions.length ? sessions[0].session_id : null;
+  }
   function renderSportStats(){
-    const catches = load(CATCHES_KEY);
-    const sessions = load(SESSIONS_KEY);
+    document.querySelectorAll('.sport-stats-scope-btn').forEach(btn => {
+      const active = btn.dataset.scope === sportStatsScope;
+      btn.style.background = active ? 'var(--sport-coral, #EE6C4D)' : '#EEF3F0';
+      btn.style.color = active ? '#fff' : 'var(--ink-soft)';
+    });
+    const allCatches = load(CATCHES_KEY);
+    const allSessions = load(SESSIONS_KEY);
+    let catches = allCatches;
+    let sessions = allSessions;
+    if(sportStatsScope === 'session'){
+      const sid = sportStatsScopeSessionId();
+      catches = sid ? allCatches.filter(c => c.session_id === sid) : [];
+      sessions = sid ? allSessions.filter(s => s.session_id === sid) : [];
+    }
     const body = document.getElementById('sportStatsBody');
-    if(catches.length === 0){ body.innerHTML = '<div class="empty">Log a few catches to see your personal stats.</div>'; return; }
+    if(catches.length === 0){
+      body.innerHTML = '<div class="empty">' + (sportStatsScope === 'session' ? t('sp_stats_no_session_catches') : 'Log a few catches to see your personal stats.') + '</div>';
+      return;
+    }
 
     // ── compute ──
     const released = catches.filter(c => c.kept_or_released === 'released').length;
@@ -10154,15 +10290,21 @@
     const maxHour = Math.max(...hourCounts, 1);
     const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
 
-    // Lure effectiveness
+    // Lure effectiveness — field is `lure`, not `lure_used` (bug fix:
+    // this section always rendered empty before since it was filtering
+    // on a field name that's never actually saved on the catch record).
     const byLure = {};
-    catches.filter(c=>c.lure_used).forEach(c => { const l=c.lure_used.trim(); byLure[l]=(byLure[l]||0)+1; });
+    catches.filter(c=>c.lure).forEach(c => { const l=c.lure.trim(); if(l) byLure[l]=(byLure[l]||0)+1; });
     const sortedLure = Object.entries(byLure).sort((a,b)=>b[1]-a[1]).slice(0,5);
     const maxLure = sortedLure.length ? sortedLure[0][1] : 1;
 
-    // Best spot
+    // Best spot — catches link to a session, and the session carries
+    // spot_id; catches never carry spot_id directly (bug fix: same join
+    // issue as the old Spots screen catch-count).
+    const sessionSpotMap = {};
+    allSessions.forEach(s => { sessionSpotMap[s.session_id] = s.spot_id; });
     const byCatch = {};
-    catches.filter(c=>c.spot_id).forEach(c=>{ byCatch[c.spot_id]=(byCatch[c.spot_id]||0)+1; });
+    catches.forEach(c=>{ const sid = c.session_id && sessionSpotMap[c.session_id]; if(sid) byCatch[sid]=(byCatch[sid]||0)+1; });
     const spots = load(SPOTS_KEY);
     const sortedSpots = Object.entries(byCatch).sort((a,b)=>b[1]-a[1]).slice(0,3);
 
@@ -10171,7 +10313,7 @@
     // KPI grid
     html += '<div class="kpi-grid" style="margin-bottom:10px;">'
       + '<div class="kpi-cell"><div class="kn">'+catches.length+'</div><div class="kl">Catches</div></div>'
-      + '<div class="kpi-cell"><div class="kn accent">'+releaseRate+'%</div><div class="kl">Released</div></div>'
+      + '<div class="kpi-cell"><div class="kn" style="color:var(--sport-coral,#EE6C4D);">'+releaseRate+'%</div><div class="kl">Released</div></div>'
       + '<div class="kpi-cell"><div class="kn">'+avgWeight+'</div><div class="kl">Avg kg</div></div>'
       + '<div class="kpi-cell"><div class="kn">'+sessions.length+'</div><div class="kl">Sessions</div></div>'
       + '</div>';
@@ -10191,7 +10333,7 @@
       const bH = Math.round((cnt/maxHour)*55);
       const x = i*(bW+1);
       const isPeak = i === peakHour;
-      bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#5fc7ee':'#0F6E56'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
+      bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#F2A65A':'#EE6C4D'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
       if(i%6===0) xLabels += `<text x="${x+bW/2}" y="${svgH}" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${i===0?'0h':i+'h'}</text>`;
     });
     html += `<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Best fishing hours · Peak ${peakHour}:00–${peakHour+1}:00</div><svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${bars}${xLabels}</svg></div>`;
@@ -10231,6 +10373,12 @@
 
     body.innerHTML = html;
   }
+  document.querySelectorAll('.sport-stats-scope-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sportStatsScope = btn.dataset.scope;
+      renderSportStats();
+    });
+  });
 
   window.renderSportSession = renderSportSession;
   window.renderSportCatchLog = renderSportCatchLog;
