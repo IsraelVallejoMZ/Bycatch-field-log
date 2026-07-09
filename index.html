@@ -56,10 +56,27 @@
   body.mode-sport{
     --ink:        #04342C;
     --ink-panel:  #04342C;
-    --paper:      #EAF4F3;
+    --paper:      #FCEFE2;
     --blue:       #0F6E56;
     --blue-deep:  #085041;
     --blue-mist:  #E1F5EE;
+    /* Tokens lifted directly from Israel's Claude-Design HTML/JS reference
+       (Fish_Pulse_-_HTML_JS_Puro.html) — exact values, not approximated. */
+    --sport-coral: #EE6C4D;
+    --sport-gold:  #F2A65A;
+    --sport-sunrise: linear-gradient(135deg,#F9B45C 0%,#EE6C4D 58%,#E0556A 100%);
+    --sport-sea-grad: linear-gradient(135deg,#12A493 0%,#0F8A7E 60%,#0B6B61 100%);
+    /* Air-temperature forecast-strip bands — same 4 thresholds already
+       confirmed and in production (<20 / 20-26.9 / 27-31.9 / 32+), just
+       repainted in the reference file's pastel family. "Mild" isn't in
+       the reference (it only ships cold/warm/hot) — interpolated to fit
+       the same pastel-bg + deep-text pattern. These are AIR bands only;
+       the water-temperature 5-band scale (advice/species card) is a
+       separate system and is untouched. */
+    --sport-temp-cold-bg: #BFE0EF; --sport-temp-cold-fg: #123B53;
+    --sport-temp-mild-bg: #C9E3A0; --sport-temp-mild-fg: #33481A;
+    --sport-temp-warm-bg: #F7D28A; --sport-temp-warm-fg: #6B4412;
+    --sport-temp-hot-bg:  #F3A281; --sport-temp-hot-fg:  #6B2412;
   }
   body.mode-sport .action-tile.primary{ background: #D4537E; }
   body.mode-sport .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.2); }
@@ -134,7 +151,7 @@
      rounded-all-corners + in-flow placement, not the sticky full-bleed
      behavior every other topbar uses. */
   .sport-greeting-hero{
-    background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 100%);
+    background: var(--sport-sunrise, linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%));
     border-radius: 16px; padding: 16px 18px 18px; color: #ffffff;
     margin-bottom: 16px; position: relative; overflow: hidden;
   }
@@ -875,7 +892,8 @@
     border:none;
   }
   .segment-card:nth-child(2){ background: linear-gradient(135deg, #0e6fa5 0%, #0a5c8c 100%); }
-  .segment-card:nth-child(3){ background: linear-gradient(135deg, #0a5c8c 0%, #163040 100%); }
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%); }
+  .segment-card:nth-child(3) .mode-card-sub{ color: rgba(255,255,255,0.85); }
   .segment-card:nth-child(4){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
   .segment-card .mode-card-title{ color:white; font-size:16px; }
   .segment-card .mode-card-sub{ color:#9fc8de; }
@@ -2868,15 +2886,8 @@
       </div>
     </div>
     <div class="site-line" id="sportSpotLine" style="display:none;" data-i18n="sp_no_spot">No Spot Selected</div>
-    <div class="card" style="border-left:4px solid #1D9E75;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-        <div style="width:34px; height:34px; border-radius:10px; background:#E1F5EE; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="#0F6E56"/></svg>
-        </div>
-        <div class="insight-card-label" style="margin-bottom:0; color:var(--ink-soft);" data-i18n="sp_solunar_today">Solunar Forecast · Today</div>
-      </div>
-      <div id="sportSolunarBox"></div>
-    </div>
+    <div id="sportSolunarBox"></div>
+
 
     <div class="insight-card-label" style="margin:4px 0 8px;" data-i18n="sp_forecast_label">Forecast</div>
     <div id="sportDailyForecastStrip" style="display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;"></div>
@@ -3496,6 +3507,9 @@
       sp_water_label: 'water', sp_tap_add_name: 'tap to add your name', sp_name_prompt: 'What should we call you?',
       sp_wx_clear: 'Sunny', sp_wx_partly_cloudy: 'Partly cloudy', sp_wx_cloudy: 'Cloudy', sp_wx_foggy: 'Foggy', sp_wx_rainy: 'Rainy', sp_wx_stormy: 'Stormy',
       sp_tide_rising: 'Rising tide', sp_tide_falling: 'Falling tide', sp_tide_unavailable: 'Tide data unavailable',
+      sp_great_day: 'Great day to fish', sp_good_day: 'Good day to fish', sp_slow_day: 'Slow day to fish',
+      sp_score_caption: 'Based on pressure, moon, weather, tide, and wind',
+      sp_uv_legend: 'UV Index (WHO/EPA): 0-2 low · 3-5 moderate · 6-7 high · 8-10 very high · 11+ extreme',
       sp_strength_strong: 'Strong', sp_strength_moderate: 'Moderate', sp_strength_mild: 'Mild', sp_illuminated: '% illuminated', sp_activity: ' activity',
       sp_major_peaks: 'Major peaks', sp_90min_window: '90 min window', sp_minor_peaks: 'Minor peaks', sp_45min_window: '45 min window',
       sp_estimated_periods: 'Estimated periods — not a precision ephemeris.',
@@ -3792,6 +3806,9 @@
       sp_water_label: 'agua', sp_tap_add_name: 'toca para agregar tu nombre', sp_name_prompt: '¿Cómo te llamamos?',
       sp_wx_clear: 'Despejado', sp_wx_partly_cloudy: 'Parcialmente nublado', sp_wx_cloudy: 'Nublado', sp_wx_foggy: 'Neblina', sp_wx_rainy: 'Lluvioso', sp_wx_stormy: 'Tormentoso',
       sp_tide_rising: 'Marea creciente', sp_tide_falling: 'Marea menguante', sp_tide_unavailable: 'Sin datos de marea',
+      sp_great_day: 'Buen día para pescar', sp_good_day: 'Día decente para pescar', sp_slow_day: 'Día flojo para pescar',
+      sp_score_caption: 'Basado en presión, luna, clima, marea y viento',
+      sp_uv_legend: 'Índice UV (OMS/EPA): 0-2 bajo · 3-5 moderado · 6-7 alto · 8-10 muy alto · 11+ extremo',
       sp_strength_strong: 'Fuerte', sp_strength_moderate: 'Moderada', sp_strength_mild: 'Leve', sp_illuminated: '% iluminada', sp_activity: ' de actividad',
       sp_major_peaks: 'Picos mayores', sp_90min_window: 'Ventana de 90 min', sp_minor_peaks: 'Picos menores', sp_45min_window: 'Ventana de 45 min',
       sp_estimated_periods: 'Periodos estimados — no es una efeméride de precisión.',
@@ -4088,6 +4105,9 @@
       sp_water_label: 'acqua', sp_tap_add_name: 'tocca per aggiungere il tuo nome', sp_name_prompt: 'Come ti chiamiamo?',
       sp_wx_clear: 'Sereno', sp_wx_partly_cloudy: 'Parzialmente nuvoloso', sp_wx_cloudy: 'Nuvoloso', sp_wx_foggy: 'Nebbia', sp_wx_rainy: 'Piovoso', sp_wx_stormy: 'Temporalesco',
       sp_tide_rising: 'Marea in crescita', sp_tide_falling: 'Marea in calo', sp_tide_unavailable: 'Dati marea non disponibili',
+      sp_great_day: 'Ottimo giorno per pescare', sp_good_day: 'Buon giorno per pescare', sp_slow_day: 'Giorno fiacco per pescare',
+      sp_score_caption: 'Basato su pressione, luna, meteo, marea e vento',
+      sp_uv_legend: 'Indice UV (OMS/EPA): 0-2 basso · 3-5 moderato · 6-7 alto · 8-10 molto alto · 11+ estremo',
       sp_strength_strong: 'Forte', sp_strength_moderate: 'Moderata', sp_strength_mild: 'Lieve', sp_illuminated: '% illuminata', sp_activity: ' di attività',
       sp_major_peaks: 'Picchi maggiori', sp_90min_window: 'Finestra di 90 min', sp_minor_peaks: 'Picchi minori', sp_45min_window: 'Finestra di 45 min',
       sp_estimated_periods: 'Periodi stimati — non è un\'effemeride di precisione.',
@@ -4384,6 +4404,9 @@
       sp_water_label: 'น้ำ', sp_tap_add_name: 'แตะเพื่อเพิ่มชื่อของคุณ', sp_name_prompt: 'เรียกคุณว่าอะไรดี',
       sp_wx_clear: 'แจ่มใส', sp_wx_partly_cloudy: 'เมฆบางส่วน', sp_wx_cloudy: 'มีเมฆมาก', sp_wx_foggy: 'มีหมอก', sp_wx_rainy: 'ฝนตก', sp_wx_stormy: 'พายุฝนฟ้าคะนอง',
       sp_tide_rising: 'น้ำขึ้น', sp_tide_falling: 'น้ำลง', sp_tide_unavailable: 'ไม่มีข้อมูลน้ำขึ้นน้ำลง',
+      sp_great_day: 'วันที่ดีมากสำหรับตกปลา', sp_good_day: 'วันที่ดีสำหรับตกปลา', sp_slow_day: 'วันที่ปลากัดน้อย',
+      sp_score_caption: 'คำนวณจากความกดอากาศ ดวงจันทร์ สภาพอากาศ น้ำขึ้นน้ำลง และลม',
+      sp_uv_legend: 'ดัชนี UV (WHO/EPA): 0-2 ต่ำ · 3-5 ปานกลาง · 6-7 สูง · 8-10 สูงมาก · 11+ รุนแรง',
       sp_strength_strong: 'แรง', sp_strength_moderate: 'ปานกลาง', sp_strength_mild: 'อ่อน', sp_illuminated: '% สว่าง', sp_activity: ' กิจกรรม',
       sp_major_peaks: 'ช่วงพีคหลัก', sp_90min_window: 'ช่วงเวลา 90 นาที', sp_minor_peaks: 'ช่วงพีครอง', sp_45min_window: 'ช่วงเวลา 45 นาที',
       sp_estimated_periods: 'ช่วงเวลาโดยประมาณ — ไม่ใช่ปฏิทินดาราศาสตร์ที่แม่นยำ',
@@ -8809,18 +8832,19 @@
   // flagged by Open-Meteo itself as approximate (8km model resolution) —
   // shown here as a reference for trip planning, not for navigation.
   //
-  // Temperature color bands (confirmed with Israel): cold < 20°C (blue),
-  // mild 20–26.9°C (teal/green), warm 27–31.9°C (amber), hot 32°C+
-  // (coral). Sport-only — Field Research/Fishing Operations weather
-  // stays plain text, no color coding, since that's a deliberate part of
-  // keeping those two modules more "at work" and Sport more "at a
-  // glance". Bg/text pairs use the same ramp stop for both so text stays
-  // readable against the fill in both light and dark contexts.
+  // Temperature color bands (confirmed with Israel — thresholds
+  // untouched since day one, only the palette changed to match his
+  // Claude-Design HTML/JS reference): cold < 20°C, mild 20–26.9°C, warm
+  // 27–31.9°C, hot 32°C+. Sport-only — Field Research/Fishing Operations
+  // weather stays plain text, no color coding, since that's a deliberate
+  // part of keeping those two modules more "at work" and Sport more "at
+  // a glance". Bg/text pairs use the same ramp stop for both so text
+  // stays readable against the fill in both light and dark contexts.
   function sportTempBandColor(tempC){
-    if(tempC < 20) return { bg: '#B5D4F4', text: '#042C53' };
-    if(tempC < 27) return { bg: '#C0DD97', text: '#173404' };
-    if(tempC < 32) return { bg: '#FAC775', text: '#412402' };
-    return { bg: '#F0997B', text: '#4A1B0C' };
+    if(tempC < 20) return { bg: '#BFE0EF', text: '#123B53', band: 'cold' };
+    if(tempC < 27) return { bg: '#C9E3A0', text: '#33481A', band: 'mild' };
+    if(tempC < 32) return { bg: '#F7D28A', text: '#6B4412', band: 'warm' };
+    return { bg: '#F3A281', text: '#6B2412', band: 'hot' };
   }
   async function fetchSportWeather(lat, lon){
     const box = document.getElementById('sportWeatherBox');
@@ -8949,6 +8973,16 @@
     if(code >= 95) return t('sp_wx_stormy');
     return t('sp_wx_cloudy');
   }
+  // Shared inputs for the fishing-quality score shown on the Solunar
+  // card. Populated by fetchSportGreetingConditions once its
+  // best-effort geolocation fetch resolves; renderSportSolunar reads
+  // whatever is here at render time (solunar strength is always
+  // available synchronously, the rest degrades to neutral defaults
+  // until the fetch lands, then the Solunar card re-renders itself).
+  let sportScoreInputs = { weatherCode: null, windSpeed: null, pressureTrend: null, tideKey: null };
+  function sportSolunarStrengthKey(moon){
+    return (moon.illumination > 0.85 || moon.illumination < 0.15) ? 'strong' : ((moon.illumination > 0.6 || moon.illumination < 0.4) ? 'moderate' : 'mild');
+  }
   function renderSportGreetingName(){
     const name = getUserName();
     const time = sportGreetingTimeText();
@@ -8970,7 +9004,7 @@
   async function fetchSportGreetingConditions(lat, lon, moonLabel){
     try{
       const [wxRes, marineRes] = await Promise.all([
-        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=weathercode&timezone=auto'),
+        fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=weathercode,wind_speed_10m&hourly=surface_pressure&forecast_days=1&timezone=auto'),
         fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lon+'&current=sea_surface_temperature&hourly=sea_level_height_msl&timezone=auto&forecast_days=1')
       ]);
       const wx = await wxRes.json();
@@ -8980,6 +9014,7 @@
       if(code != null) parts.push(sportWeatherCodeLabel(code));
       parts.push(moonLabel);
       let tideText = t('sp_tide_unavailable');
+      let tideKey = null;
       const levels = marine && marine.hourly ? marine.hourly.sea_level_height_msl : null;
       if(levels && levels.length > 1){
         const times = marine.hourly.time;
@@ -8987,7 +9022,9 @@
         let idx = times.findIndex(tt => tt.slice(0,13) === nowIso);
         if(idx === -1) idx = 0;
         if(idx < levels.length - 1 && levels[idx] != null && levels[idx+1] != null){
-          tideText = levels[idx+1] > levels[idx] ? t('sp_tide_rising') : t('sp_tide_falling');
+          const rising = levels[idx+1] > levels[idx];
+          tideText = rising ? t('sp_tide_rising') : t('sp_tide_falling');
+          tideKey = rising ? 'rising' : 'falling';
         }
       }
       parts.push(tideText);
@@ -8997,6 +9034,28 @@
         document.getElementById('sportGreetingWaterTemp').textContent = Math.round(waterTemp) + '°';
         document.getElementById('sportGreetingWaterBox').style.display = 'block';
       }
+      // Pressure trend: current hour vs 3h earlier in the same day's
+      // hourly series (falls back to comparing against the series start
+      // if the current hour is within the first 3h of data).
+      let pressureTrend = null;
+      const pressures = wx && wx.hourly ? wx.hourly.surface_pressure : null;
+      if(pressures && wx.hourly.time){
+        const nowIso2 = new Date().toISOString().slice(0,13);
+        let pIdx = wx.hourly.time.findIndex(tt => tt.slice(0,13) === nowIso2);
+        if(pIdx === -1) pIdx = pressures.length - 1;
+        const priorIdx = Math.max(0, pIdx - 3);
+        if(pressures[pIdx] != null && pressures[priorIdx] != null && priorIdx !== pIdx){
+          const delta = pressures[pIdx] - pressures[priorIdx];
+          pressureTrend = delta < -0.5 ? 'falling' : (delta > 0.5 ? 'rising' : 'stable');
+        }
+      }
+      sportScoreInputs = {
+        weatherCode: code,
+        windSpeed: wx && wx.current ? wx.current.wind_speed_10m : null,
+        pressureTrend: pressureTrend,
+        tideKey: tideKey
+      };
+      renderSportSolunar(); // refresh the score badge now that real conditions are in
     } catch(err){
       // subline already shows moon phase alone from the sync render — fine as a fallback
     }
@@ -9009,33 +9068,104 @@
     renderSportGreetingName();
   });
 
+  // ===== Fishing quality score (0-10) =====
+  // No single official algorithm exists for this (researched — every
+  // major fishing app uses its own proprietary blend). What IS
+  // consistent across them: pressure trend is the heaviest-weighted
+  // factor, solunar theory (Knight, 1926) is the most historically
+  // grounded input. Weights below follow that industry pattern rather
+  // than an arbitrary guess. Score is intentionally shown next to a
+  // plain-language caption ("based on pressure, moon, weather, tide,
+  // wind") rather than presented as an authoritative scientific number.
+  function sportFishingStrengthScore(key){
+    return key === 'strong' ? 10 : key === 'moderate' ? 6 : 3;
+  }
+  function sportFishingWeatherScore(code){
+    if(code == null) return 6;
+    if(code === 0 || code === 1 || code === 2) return 10;
+    if(code === 3 || code === 45 || code === 48) return 6;
+    if(code >= 95) return 0;
+    return 3;
+  }
+  function sportFishingWindScore(speed){
+    if(speed == null) return 6;
+    if(speed >= 8 && speed <= 20) return 10;
+    if(speed < 8) return 5;
+    return 4;
+  }
+  function sportFishingPressureScore(trend){
+    if(trend === 'falling') return 10;
+    if(trend === 'stable') return 6;
+    if(trend === 'rising') return 3;
+    return 6; // not loaded yet — neutral until the fetch lands
+  }
+  function sportFishingTideScore(tideKey){
+    return (tideKey === 'rising' || tideKey === 'falling') ? 8 : 5;
+  }
+  function computeSportFishingScore(strengthKey){
+    const solunar = sportFishingStrengthScore(strengthKey);
+    const weather = sportFishingWeatherScore(sportScoreInputs.weatherCode);
+    const wind = sportFishingWindScore(sportScoreInputs.windSpeed);
+    const pressure = sportFishingPressureScore(sportScoreInputs.pressureTrend);
+    const tide = sportFishingTideScore(sportScoreInputs.tideKey);
+    const score = pressure*0.30 + solunar*0.25 + weather*0.20 + tide*0.15 + wind*0.10;
+    return Math.round(score*10)/10;
+  }
+
   function renderSportSolunar(){
     const box = document.getElementById('sportSolunarBox');
     const now = new Date();
     const moon = getMoonPhase(now);
     const lunarDayMin = 24 * 60 + 50;
     const cycleOffset = (moon.age / 29.53058867) * lunarDayMin;
-    const majorOffsets = [cycleOffset % lunarDayMin, (cycleOffset + lunarDayMin/2) % lunarDayMin];
-    const minorOffsets = [(cycleOffset + lunarDayMin/4) % lunarDayMin, (cycleOffset + 3*lunarDayMin/4) % lunarDayMin];
+    const majorOffsets = [cycleOffset % lunarDayMin, (cycleOffset + lunarDayMin/2) % lunarDayMin].map(m => m % 1440);
+    const minorOffsets = [(cycleOffset + lunarDayMin/4) % lunarDayMin, (cycleOffset + 3*lunarDayMin/4) % lunarDayMin].map(m => m % 1440);
     const majorTimes = majorOffsets.map(o => formatHM(o)).sort();
     const minorTimes = minorOffsets.map(o => formatHM(o)).sort();
-    const strength = moon.illumination > 0.85 || moon.illumination < 0.15 ? t('sp_strength_strong') : (moon.illumination > 0.6 || moon.illumination < 0.4 ? t('sp_strength_moderate') : t('sp_strength_mild'));
+    const strengthKey = sportSolunarStrengthKey(moon);
+    const strength = t('sp_strength_' + strengthKey);
+
+    // 16 buckets across the day (~90 min each), leveled 1-3 by proximity
+    // to the nearest major (level 3, ~2h window) or minor (level 2,
+    // ~70min window) peak — same simple 3-level bar language as
+    // Israel's Claude-Design reference file, but driven by the real
+    // solunar math above instead of illustrative placeholder data.
+    const circDist = (a, b) => { const d = Math.abs(a - b) % 1440; return Math.min(d, 1440 - d); };
+    const bucketMin = 1440 / 16;
+    let barsHtml = '';
+    for(let i = 0; i < 16; i++){
+      const center = i * bucketMin + bucketMin / 2;
+      const nearMajor = majorOffsets.some(o => circDist(center, o) <= 60);
+      const nearMinor = !nearMajor && minorOffsets.some(o => circDist(center, o) <= 35);
+      const level = nearMajor ? 3 : (nearMinor ? 2 : 1);
+      const bg = level === 3 ? 'var(--sport-gold, #F2A65A)' : 'rgba(255,255,255,.5)';
+      barsHtml += '<div style="flex:1;height:' + (level * 30) + '%;border-radius:3px;background:' + bg + ';"></div>';
+    }
+
+    const score = computeSportFishingScore(strengthKey);
+    const headline = score >= 7 ? t('sp_great_day') : (score >= 5 ? t('sp_good_day') : t('sp_slow_day'));
+
     box.innerHTML =
-      '<div style="font-family:var(--data);font-size:10px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">'
-      + moon.label + ' · ' + Math.round(moon.illumination*100) + t('sp_illuminated') + ' · ' + strength + t('sp_activity') + '</div>'
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
-      + '<div style="background:#E1F5EE;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌑 '+t('sp_major_peaks')+'</div>'
-      + majorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#04342C;line-height:1.2;">'+t2+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;margin-top:4px;">'+t('sp_90min_window')+'</div>'
+      '<div style="background:var(--sport-sea-grad, linear-gradient(135deg,#12A493,#0F8A7E,#0B6B61)); border-radius:22px; padding:16px 18px 14px; color:#fff;">'
+      + '<div style="display:flex; align-items:center;">'
+      + '<div style="display:flex; align-items:center; gap:10px;">'
+      + '<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+      + '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="#fff"/></svg></div>'
+      + '<div><div style="font-family:var(--data);font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;">' + t('sp_solunar_today') + '</div>'
+      + '<div style="font-family:var(--display);font-weight:700;font-size:18px;">' + headline + '</div></div>'
       + '</div>'
-      + '<div style="background:#E1F5EE;border-radius:8px;padding:12px;">'
-      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🌔 '+t('sp_minor_peaks')+'</div>'
-      + minorTimes.map(t2 => '<div style="font-family:var(--display);font-weight:700;font-size:18px;color:#085041;line-height:1.2;">'+t2+'</div>').join('')
-      + '<div style="font-family:var(--data);font-size:9px;color:#0F6E56;margin-top:4px;">'+t('sp_45min_window')+'</div>'
+      + '<span style="margin-left:auto;background:var(--sport-gold,#F2A65A);color:#6B4412;font-family:var(--display);font-weight:700;font-size:13px;padding:5px 11px;border-radius:999px;flex-shrink:0;">' + score.toFixed(1) + ' / 10</span>'
       + '</div>'
+      + '<div style="display:flex;align-items:flex-end;gap:3px;height:44px;margin-top:14px;">' + barsHtml + '</div>'
+      + '<div style="display:flex;justify-content:space-between;font-family:var(--data);font-size:9px;opacity:.8;margin-top:6px;">'
+      + '<span>12a</span><span>▲ ' + majorTimes.join(' · ') + '</span><span>12a</span>'
       + '</div>'
-      + '<div style="font-family:var(--data);font-size:10px;color:var(--text-secondary,#5a7a70);margin-top:8px;line-height:1.5;">'+t('sp_estimated_periods')+'</div>';
+      + '<div style="font-family:var(--data);font-size:9.5px;opacity:.8;margin-top:10px;line-height:1.5;">'
+      + moon.label + ' · ' + Math.round(moon.illumination*100) + t('sp_illuminated') + ' · ' + strength + t('sp_activity')
+      + '<br>' + t('sp_minor_peaks') + ': ' + minorTimes.join(' · ')
+      + '</div>'
+      + '<div style="font-family:var(--data);font-size:9px;opacity:.6;margin-top:8px;">' + t('sp_score_caption') + '</div>'
+      + '</div>';
   }
 
   // ===== Method & Spot as tap tiles =====
@@ -9128,19 +9258,17 @@
       const data = await res.json();
       const daily = data.daily;
       if(!daily || !daily.time){ strip.innerHTML = ''; return; }
-      const todayStr = sportLocalDateStr(new Date());
       strip.innerHTML = daily.time.map((dateStr, i) => {
         const temp = daily.temperature_2m_max[i];
-        const code = daily.weathercode[i];
         const band = sportTempBandColor(temp);
         const d = new Date(dateStr + 'T12:00:00');
-        const isToday = dateStr === todayStr;
-        const border = isToday ? 'border:1.5px solid #04342C;' : '';
-        return '<button type="button" class="sport-daily-tile" data-date="'+dateStr+'" style="flex:0 0 auto; width:54px; text-align:center; background:'+band.bg+'; border-radius:12px; padding:8px 0; cursor:pointer; '+border+'">'
-          + '<div style="font-size:10px; color:'+band.text+'; font-weight:500;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
-          + '<div style="font-size:13px; font-weight:500; color:'+band.text+';">'+d.getDate()+'</div>'
-          + '<div style="margin-top:2px; color:'+band.text+';">'+sportWeatherIconSvg(code)+'</div>'
-          + '<div style="font-size:11px; font-weight:500; color:'+band.text+'; margin-top:2px;">'+Math.round(temp)+'°</div></button>';
+        const warm = band.band === 'warm' || band.band === 'hot';
+        const border = warm ? 'border:2px solid var(--sport-coral, #EE6C4D);' : 'border:2px solid transparent;';
+        const emoji = warm ? '🎣' : '🌊';
+        return '<button type="button" class="sport-daily-tile" data-date="'+dateStr+'" style="flex:0 0 60px; text-align:center; background:'+band.bg+'; border-radius:16px; padding:10px 8px; cursor:pointer; '+border+'">'
+          + '<div style="font-family:var(--data); font-size:10px; text-transform:uppercase; color:'+band.text+'; opacity:0.8;">'+t(SPORT_DAY_ABBR[d.getDay()])+'</div>'
+          + '<div style="font-size:20px; margin:3px 0;">'+emoji+'</div>'
+          + '<div style="font-family:var(--display); font-weight:700; font-size:14px; color:'+band.text+';">'+Math.round(temp)+'°</div></button>';
       }).join('');
       strip.querySelectorAll('.sport-daily-tile').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -9379,6 +9507,17 @@
     if(code >= 51 && code <= 82) return '<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M6 12a4.5 4.5 0 0 1-.5-8.97A5.5 5.5 0 0 1 16 5.5a4 4 0 0 1 .5 7.98" fill="#3A3F3D"/><path d="M8 16l-1.2 3M13 16l-1.2 3M18 16l-1.2 3" stroke="#378ADD" stroke-width="2" stroke-linecap="round"/></svg>';
     return '<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M6 15a4.5 4.5 0 0 1-.5-8.97A5.5 5.5 0 0 1 16 8.5a4 4 0 0 1 .5 7.98" fill="#9AA6A6"/></svg>';
   }
+  // Official WHO/EPA UV Index scale (established 1994, reaffirmed by
+  // WHO 2002) — not an in-house scale, this is the recognized standard:
+  // 0-2 green (low), 3-5 yellow (moderate), 6-7 orange (high),
+  // 8-10 red (very high), 11+ purple (extreme).
+  function sportUvBandColor(uv){
+    if(uv < 3) return { bg: '#C0DD97', text: '#173404' };
+    if(uv < 6) return { bg: '#FAC775', text: '#412402' };
+    if(uv < 8) return { bg: '#F0997B', text: '#4A1B0C' };
+    if(uv < 11) return { bg: '#F09595', text: '#501313' };
+    return { bg: '#CECBF6', text: '#26215C' };
+  }
   function renderSportWeatherDetailHours(){
     if(!sportWeatherDetailData) return;
     const box = document.getElementById('sportWeatherDetailHourly');
@@ -9460,14 +9599,17 @@
     }).join(''));
     dataHtml += dataRow(indices.map((i, pos) => {
       const uv = sportWeatherDetailData.uv_index ? sportWeatherDetailData.uv_index[i] : null;
-      return cell('<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft);">'+(uv!=null?Math.round(uv*10)/10:'—')+'</span>', pos);
+      if(uv == null) return cell('<span style="font-family:var(--data); font-size:12px; color:var(--ink-soft);">—</span>', pos);
+      const band = sportUvBandColor(uv);
+      return cell('<span style="background:'+band.bg+'; color:'+band.text+'; border-radius:8px; padding:4px 0; font-family:var(--data); font-weight:600; font-size:11.5px; display:inline-block; width:32px;">'+(Math.round(uv*10)/10)+'</span>', pos);
     }).join(''), true);
     dataHtml += '</div>';
 
     const html = '<div class="card" style="padding:16px 14px; display:flex; gap:8px;">'
       + '<div style="flex-shrink:0; width:26px;">' + labelHtml + '</div>'
       + '<div style="flex:1; min-width:0; overflow-x:auto;">' + dataHtml + '</div>'
-      + '</div>';
+      + '</div>'
+      + '<div style="font-family:var(--data); font-size:9.5px; color:var(--ink-soft); margin-top:6px; padding:0 4px; line-height:1.6;">' + t('sp_uv_legend') + '</div>';
 
     box.innerHTML = sportWaterCardHtml(indices) + html;
     const waterCard = document.getElementById('sportWaterCard');
