@@ -27,6 +27,7 @@
     --coral-soft: #f3e2d8;
     --released:   #2f7a52;
     --amber:      #b8893a;
+    --gold:       #e0a868;
 
     --display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
     --body: 'Inter', 'Noto Sans Thai', -apple-system, sans-serif;
@@ -53,17 +54,32 @@
   body.mode-sport{
     --ink:        #04342C;
     --ink-panel:  #04342C;
-    --paper:      #EAF4F3;
+    --paper:      #FBF6EE;
     --blue:       #0F6E56;
     --blue-deep:  #085041;
     --blue-mist:  #E1F5EE;
+    /* Sunrise identity — this is the part that makes Sport actually feel
+       different from Research/Operations, not just recolored interiors. */
+    --sport-sunrise:  linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%);
+    --sport-sea-grad: linear-gradient(135deg, #12A493 0%, #0F8A7E 60%, #0B6B61 100%);
+    --sport-coral:    #EE6C4D;
+    --sport-gold:     #F2A65A;
   }
-  body.mode-sport .action-tile.primary{ background: #D4537E; }
+  body.mode-sport .topbar{
+    background: var(--sport-sunrise); border-bottom: none;
+    border-radius: 0 0 22px 22px; position: relative; overflow: hidden;
+  }
+  body.mode-sport .topbar::after{
+    content:''; position:absolute; right:-30px; top:-40px; width:130px; height:130px;
+    border-radius:50%; background:rgba(255,255,255,0.16); pointer-events:none;
+  }
+  body.mode-sport .action-tile.primary{ background: var(--sport-coral); box-shadow: 0 8px 20px rgba(238,108,77,0.32); }
   body.mode-sport .action-tile.primary .at-icon-box{ background: rgba(255,255,255,0.2); }
   body.mode-sport .tabbar{ background: #ffffff; border-top: 0.5px solid #9FE1CB; }
   body.mode-sport .tab{ color: #6b8f85; }
-  body.mode-sport .tab.active{ color: #04342C; }
-  body.mode-sport .tab.active::before{ background: #1D9E75; }
+  body.mode-sport .tab.active{ color: var(--sport-coral); }
+  body.mode-sport .tab.active::before{ background: var(--sport-coral); }
+  body.mode-sport .card, body.mode-sport .home-hero{ border-radius: 20px; }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
@@ -815,8 +831,12 @@
   .mode-card:active{ transform: scale(0.98); }
   .captain-card{ background: var(--blue); }
   .ops-card{ background: #163040; border: 1.5px solid rgba(255,255,255,0.1); }
-  .mode-card-icon-lg{ width:36px; height:36px; margin-bottom:14px; }
-  .mode-card-icon-lg svg{ width:100%; height:100%; }
+  .mode-card-icon-lg{
+    width:54px; height:54px; margin-bottom:14px; border-radius:16px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    background: rgba(255,255,255,0.14);
+  }
+  .mode-card-icon-lg svg{ width:26px; height:26px; }
   .mode-card-icon{ flex-shrink:0; width: 30px; height:30px; }
   .mode-card-icon svg{ width:100%; height:100%; }
   .mode-card-title{ font-family: var(--display); font-weight:700; font-size: 20px; color: white; margin-bottom:6px; }
@@ -832,11 +852,14 @@
     background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
     border:none;
   }
-  .segment-card:nth-child(2){ background: linear-gradient(135deg, #0e6fa5 0%, #0a5c8c 100%); }
-  .segment-card:nth-child(3){ background: linear-gradient(135deg, #0a5c8c 0%, #163040 100%); }
+  .segment-card:nth-child(2){ background: linear-gradient(135deg, #3a4d57 0%, #0e1b26 100%); }
+  /* Sport is the 3rd segment card — give it the sunrise gradient right on
+     the picker, so its different identity is felt before you even enter it. */
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 100%); }
   .segment-card:nth-child(4){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
-  .segment-card .mode-card-title{ color:white; font-size:16px; }
+  .segment-card .mode-card-title{ color:white; font-size:17px; }
   .segment-card .mode-card-sub{ color:#9fc8de; }
+  .segment-card:nth-child(3) .mode-card-sub{ color:rgba(255,255,255,0.85); }
 
   .fleet-close-trip-btn{
     width:100%; background:#163040; color:#e0a868;
@@ -852,7 +875,7 @@
   }
 
   /* ===== Splash / onboarding screen ===== */
-  #screen-splash{ background:#0e1b26; }
+  #screen-splash{ background: radial-gradient(circle at 30% 0%, #123a4d 0%, #0e1b26 55%); }
   .splash-wrap{
     height:100%; display:flex; flex-direction:column;
     padding: calc(18px + env(safe-area-inset-top,0px)) 24px calc(28px + env(safe-area-inset-bottom,0px));
@@ -864,8 +887,8 @@
   .hamburger-btn span{ display:block; width:20px; height:2px; background:#9fc8de; border-radius:1px; }
   .splash-logo-wrap{ text-align:center; margin-bottom:28px; }
   .splash-logo-wrap svg{ width:72px; height:72px; }
-  .splash-title{ font-family:var(--display); font-weight:700; font-size:28px; color:white; letter-spacing:-0.01em; margin-top:14px; margin-bottom:6px; }
-  .splash-sub{ font-family:var(--data); font-size:12px; color:#7fa3b5; letter-spacing:0.06em; text-transform:uppercase; }
+  .splash-title{ font-family:var(--display); font-weight:700; font-size:32px; color:white; letter-spacing:-0.02em; margin-top:14px; margin-bottom:6px; }
+  .splash-sub{ font-family:var(--data); font-size:11.5px; color:#8fb4c9; letter-spacing:0.18em; text-transform:uppercase; white-space:nowrap; }
   .splash-slide{ background:#163040; border-radius:16px; padding:22px 20px; flex:1; display:flex; flex-direction:column; justify-content:center; }
   .splash-slide-icon{ width:38px; height:38px; border-radius:10px; background:var(--blue); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
   .splash-slide-icon svg{ width:20px; height:20px; }
@@ -874,7 +897,8 @@
   .splash-dots{ display:flex; justify-content:center; gap:6px; margin:16px 0; }
   .splash-dot{ height:4px; border-radius:2px; background:#2a4452; transition:width 0.3s,background 0.3s; width:6px; }
   .splash-dot.active{ width:20px; background:#5fc7ee; }
-  .splash-cta{ width:100%; background:#5fc7ee; color:#0e1b26; border:none; border-radius:12px; padding:16px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer; margin-bottom:12px; }
+  .splash-cta{ width:100%; background:#5fc7ee; color:#0e1b26; border:none; border-radius:14px; padding:17px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer; margin-bottom:12px; box-shadow: 0 10px 24px rgba(95,199,238,0.25); }
+  .premium-panel .splash-cta{ background: var(--gold); box-shadow: none; }
   .splash-cta:active{ transform:scale(0.98); }
   .splash-premium{ display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; padding:4px; }
   .splash-premium-label{ font-family:var(--display); font-size:13px; font-weight:600; color:#e0a868; }
@@ -913,9 +937,13 @@
   }
   .premium-panel h2{ font-family:var(--display); font-weight:700; font-size:22px; color:white; margin:0 0 6px; }
   .premium-panel .premium-sub{ font-family:var(--data); font-size:11px; color:#7fa3b5; margin-bottom:18px; }
-  .premium-feature{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; }
-  .premium-feature-dot{ width:8px; height:8px; border-radius:50%; background:#e0a868; flex-shrink:0; margin-top:4px; }
-  .premium-feature-text{ font-family:var(--display); font-size:13px; color:#cfe7f4; line-height:1.4; }
+  .premium-feature{ display:flex; gap:11px; align-items:flex-start; margin-bottom:13px; }
+  .premium-feature-dot{
+    width:20px; height:20px; border-radius:6px; background:rgba(224,168,104,0.15);
+    flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center;
+  }
+  .premium-feature-dot::after{ content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); }
+  .premium-feature-text{ font-family:var(--display); font-size:13.5px; color:#d5e6ec; line-height:1.45; }
   .premium-close{ width:100%; background:rgba(255,255,255,0.08); color:#9fc8de; border:none; border-radius:10px; padding:12px; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer; margin-top:16px; }
 
   /* Mode visibility — tab bars and chrome stay hidden unless body carries the matching mode class */
@@ -939,12 +967,26 @@
     </div>
 
     <div class="splash-logo-wrap">
-      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="36" cy="36" r="36" fill="#0a5c8c"/>
-        <path d="M12 36c9-12 22-17 32-11-2.5 5-2.5 17 0 22-10 5-23 0-32-11z" fill="#5fc7ee"/>
-        <path d="M44 27c5-2.5 10-2.5 11-2.5-1.2 4-1.2 10 0 14-1 0-6 0-11-2.5" fill="#5fc7ee"/>
-        <circle cx="20" cy="34" r="2.5" fill="#0e1b26"/>
-        <path d="M14 50h7l3-7 4 13 3-9 3 5 3-9 4 11h8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fish Pulse" style="width:78px;height:78px;">
+        <defs>
+          <linearGradient id="fp-bg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#0e6ea0"/>
+            <stop offset="1" stop-color="#06384f"/>
+          </linearGradient>
+          <linearGradient id="fp-fish" x1="12" y1="20" x2="50" y2="44" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#9fe6fb"/>
+            <stop offset="1" stop-color="#3fa8d6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="32" fill="url(#fp-bg)"/>
+        <path d="M46 32 L57 22.5 C55.3 27 55.3 37 57 41.5 Z" fill="url(#fp-fish)"/>
+        <path d="M10 32.5 C10 25.5 15.5 20 23.5 18 C31 16.1 39.5 17.6 46 22.5 C48.7 24.5 48.7 28 46.8 30.2 C48.6 30.7 49.6 31.6 49.6 32.5 C49.6 33.4 48.6 34.3 46.8 34.8 C48.7 37 48.7 39.5 46 41.5 C39.5 46.4 31 47.9 23.5 46 C15.5 44 10 39.5 10 32.5 Z" fill="url(#fp-fish)"/>
+        <path d="M24 18.6 C26.7 14.6 31 12.6 35 13.4 C32.6 16.3 30.8 19 29.7 21.6 Z" fill="url(#fp-fish)"/>
+        <path d="M25 34 C23 38.4 20.6 41.2 17.6 42.8 C18.7 39 19.9 35.9 21.4 33.4 Z" fill="#2f8fbd" opacity="0.85"/>
+        <path d="M32.5 20.5 C30.6 24 29.6 28 29.6 32 C29.6 36 30.6 40 32.5 43.5" stroke="#0d5478" stroke-width="1.1" opacity="0.55" fill="none"/>
+        <circle cx="20.3" cy="26.6" r="2.35" fill="#06384f"/>
+        <circle cx="19.6" cy="25.9" r="0.7" fill="#eaf8ff"/>
+        <path d="M4 32.5 H12 L15.5 25.5 L20 40 L23.5 30.5 L26.5 35.3 L30 30.5 L33.5 36.5 L38 32.5 H60" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
       </svg>
       <div class="splash-title">Fish Pulse</div>
       <div class="splash-sub">Field · Fleet · Sport</div>
