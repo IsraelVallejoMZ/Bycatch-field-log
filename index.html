@@ -212,6 +212,184 @@
   .quicklink-tile .ql-title{ font-family: var(--display); font-weight:600; font-size:12px; color:#e6f3f7; }
   .quicklink-tile .ql-sub{ font-family: var(--data); font-size:9.5px; color:#8fc3d3; }
 
+  /* ===== Fishing Operations palette override — "Bridge Console" =====
+     Dark instrument-panel theme, ported from Israel's Claude-Design
+     reference (Fish_Pulse_-_Fishing_Operations__Bridge_Console_.html),
+     confirmed via a standalone mockup before writing this. Captain =
+     cyan accent, Operations = amber accent. Reuses the shared token
+     names (--paper/--panel/--ink/--ink-soft/--line/--cyan/--amber/
+     --released/--coral) exactly like Research's Ocean Bright override,
+     so every shared component that already reads these vars recolors
+     automatically. --fleet-panel-2/-cyan-dim/-amber-dim are new,
+     Fleet-only additions — this module needs a second panel tone for
+     inputs/icon-chips and dimmed accent backgrounds that no shared
+     token covers. Rolling out screen by screen, starting with Role
+     Select. body.fleet-sun (toggled by the "Sol" button, independent
+     of mode) swaps this whole palette to a high-contrast light surface
+     for direct midday sun — see the JS toggle near the mode-select
+     logic below. */
+  body.mode-fleet{
+    --paper:           oklch(16% 0.02 240);
+    --panel:           oklch(21% 0.018 240);
+    --ink:             oklch(94% 0.008 210);
+    --ink-soft:        oklch(68% 0.02 220);
+    --line:            oklch(32% 0.02 240);
+    --cyan:            oklch(78% 0.13 200);
+    --amber:           oklch(78% 0.14 75);
+    --released:        oklch(68% 0.13 150);
+    --coral:           oklch(65% 0.17 28);
+    --fleet-panel-2:   oklch(25% 0.022 240);
+    --fleet-cyan-dim:  oklch(30% 0.05 200);
+    --fleet-amber-dim: oklch(32% 0.06 75);
+    /* --chrome/--blue/--blue-deep/--blue-mist are reused by shared
+       components everywhere (topbar, card-label, chips, buttons...).
+       Mapping them here — instead of leaving their light-theme
+       defaults — is what makes those shared components recolor
+       correctly for Fleet without touching each one individually. */
+    --chrome:          var(--panel);
+    --blue:            var(--cyan);
+    --blue-deep:       var(--cyan);
+    --blue-mist:       var(--fleet-cyan-dim);
+  }
+  body.mode-fleet.fleet-sun{
+    --paper:           oklch(96% 0.012 75);
+    --panel:           oklch(99% 0.006 75);
+    --ink:             oklch(19% 0.02 235);
+    --ink-soft:        oklch(42% 0.03 235);
+    --line:            oklch(83% 0.018 70);
+    --cyan:            oklch(40% 0.1 235);
+    --amber:           oklch(46% 0.11 65);
+    --released:        oklch(42% 0.11 150);
+    --coral:           oklch(48% 0.17 25);
+    --fleet-panel-2:   oklch(92% 0.016 75);
+    --fleet-cyan-dim:  oklch(90% 0.02 235);
+    --fleet-amber-dim: oklch(90% 0.04 65);
+  }
+  /* .switch-mode-btn's default rule (further down) sets color:var(--paper)
+     — a hack that reads as "light neutral text" everywhere else in the
+     app because --paper is always light there. Fleet's --paper is dark,
+     so that rule would go invisible; override text/bg here instead. */
+  body.mode-fleet .switch-mode-btn{
+    color: var(--ink); background: var(--fleet-panel-2); border: 1px solid var(--line);
+  }
+  /* Same reuse issue as .switch-mode-btn — .topbar's default rule sets
+     color:var(--paper) assuming a light "text on dark chrome" value.
+     Border also swaps from the default's thick color accent to a
+     hairline, matching Bridge Console's quieter instrument-panel look. */
+  body.mode-fleet .topbar{ color: var(--ink); border-bottom: 1px solid var(--line); }
+  body.mode-fleet .topbar-switch-mode-link{
+    font-family: var(--data); font-size: 9.5px; color: var(--ink-soft); background: none; border: none;
+    text-decoration: underline; text-underline-offset: 2px; margin-top: 8px; padding: 0; cursor: pointer; display: inline-block;
+  }
+  body.mode-fleet input[type=text], body.mode-fleet input[type=number],
+  body.mode-fleet select, body.mode-fleet textarea{ background: var(--fleet-panel-2); }
+  body.mode-fleet .chip-grey{ background: var(--fleet-panel-2); color: var(--ink-soft); }
+  body.mode-fleet .btn-save{ color: var(--paper); }
+  body.mode-fleet .back-btn{ color: var(--ink); }
+  body.mode-fleet .gps-btn{ color: var(--ink); }
+  /* Icon glyphs inside .sc-icon-box are hardcoded white in the markup
+     (shared across Research/Sport where the box is a solid saturated
+     color). Fleet's box is the same solid --cyan/--amber, but a dark
+     glyph reads cleaner against that brightness — confirmed via mockup.
+     Attribute selectors (not a blanket fill/stroke override) so icons
+     using fill="none" for line strokes aren't accidentally filled in. */
+  body.mode-fleet .sc-icon-box svg [stroke="white"]{ stroke: var(--paper); }
+  body.mode-fleet .sc-icon-box svg [fill="white"]{ fill: var(--paper); }
+  body.mode-fleet .kpi-cell{ background: var(--panel); border: 1px solid var(--line); }
+  body.mode-fleet .kpi-cell .kn{ color: var(--ink); }
+  body.mode-fleet .kpi-cell .kn.accent{ color: var(--cyan); }
+  body.mode-fleet .kpi-cell .kl{ color: var(--ink-soft); }
+
+  .fleet-sun-toggle{
+    display:flex; align-items:center; gap:6px; cursor:pointer;
+    background: var(--fleet-panel-2); border:1px solid var(--line); border-radius:14px;
+    padding:6px 11px; font-family:var(--data); font-size:10.5px; font-weight:600;
+    letter-spacing:0.03em; color:var(--ink-soft); flex-shrink:0;
+  }
+  .fleet-sun-toggle svg{ width:14px; height:14px; }
+  .fleet-sun-toggle.active{ background:var(--fleet-amber-dim); color:var(--amber); border-color:var(--amber); }
+  .fleet-sun-toggle.icon-only{ padding:0; width:28px; height:28px; justify-content:center; }
+  .fleet-sun-toggle.icon-only span{ display:none; }
+
+  /* ----- Rocker switch (Captain/Ops) — shared across Fleet topbars ----- */
+  body.mode-fleet .topbar-actions{ display:flex; align-items:center; gap:6px; }
+  body.mode-fleet .rocker{
+    display:flex; align-items:center; gap:4px; background:var(--fleet-panel-2);
+    border:1px solid var(--line); border-radius:999px; padding:3px;
+  }
+  body.mode-fleet .rocker button{
+    border:none; border-radius:999px; padding:5px 9px; display:flex; align-items:center; gap:5px;
+    font-family:var(--data); font-size:9px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--ink-soft); background:transparent; cursor:pointer;
+  }
+  body.mode-fleet .rocker button .dot{ width:5px; height:5px; border-radius:50%; background:var(--line); flex-shrink:0; }
+  body.mode-fleet .rocker button.active[data-role="captain"]{ background:var(--fleet-cyan-dim); color:var(--cyan); }
+  body.mode-fleet .rocker button.active[data-role="captain"] .dot{ background:var(--cyan); }
+  body.mode-fleet .rocker button.active[data-role="operations"]{ background:var(--fleet-amber-dim); color:var(--amber); }
+  body.mode-fleet .rocker button.active[data-role="operations"] .dot{ background:var(--amber); }
+
+  /* ----- Trip start form additions ----- */
+  .charts-check{
+    display:flex; align-items:flex-start; gap:10px; margin-top:14px; padding:12px;
+    background: var(--fleet-panel-2); border:1px solid var(--line); border-radius:10px; cursor:pointer;
+  }
+  .charts-check input{ width:auto; margin-top:2px; accent-color:var(--cyan); }
+  .charts-check .cc-title{ font-family:var(--display); font-weight:600; font-size:12.5px; color:var(--ink); }
+  .charts-check .cc-sub{ font-family:var(--body); font-size:11px; color:var(--ink-soft); margin-top:2px; line-height:1.4; }
+
+  /* ----- Captain Trip home: gauge panel + action dock ----- */
+  body.mode-fleet .fleet-gauge-panel{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .fleet-gauge-row{ display:flex; align-items:center; gap:18px; margin-top:10px; }
+  .fleet-gauge{ width:84px; height:84px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .fleet-gauge-inner{ width:64px; height:64px; border-radius:50%; background:var(--panel); display:flex; align-items:center; justify-content:center; }
+  .fleet-gauge-inner span{ font-family:var(--data); font-size:8.5px; color:var(--cyan); letter-spacing:0.06em; }
+  .fleet-gauge-value{ font-family:var(--display); font-weight:700; font-size:30px; line-height:1; color:var(--ink); }
+  .fleet-gauge-meta{ font-family:var(--data); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px; }
+
+  .fleet-dock{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin: 0 0 16px; }
+  .fleet-dock-item{
+    background:var(--fleet-panel-2); border:1px solid var(--line); border-radius:12px; cursor:pointer;
+    padding:10px 4px; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--cyan);
+  }
+  .fleet-dock-item:active{ transform:scale(0.96); }
+  .fleet-dock-item svg{ width:18px; height:18px; }
+  .fleet-dock-item span{ font-family:var(--data); font-size:8.5px; letter-spacing:0.02em; text-transform:uppercase; color:var(--ink-soft); text-align:center; }
+
+  body.mode-fleet .fleet-close-trip-btn{
+    background:var(--fleet-amber-dim); color:var(--amber); border:1px solid var(--line);
+  }
+
+  /* ----- Role select screen (Bridge Console) ----- */
+  #screen-fleet-role-select{ background: var(--paper); }
+  #screen-fleet-role-select .mode-select-wrap{ background: var(--paper); }
+  #screen-fleet-role-select .mode-select-eyebrow{ color: var(--ink-soft); }
+  #screen-fleet-role-select .mode-select-title{ color: var(--ink); }
+  #screen-fleet-role-select .fleet-header-actions{
+    display:flex; justify-content:center; align-items:center; gap:8px; margin-top:14px;
+  }
+  #screen-fleet-role-select .mode-card{ background: var(--panel); border: 1px solid var(--line); }
+  #screen-fleet-role-select .mode-card::before{ display:none; }
+  #screen-fleet-role-select .captain-card{
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--cyan) 25%, transparent),
+                0 8px 24px -8px color-mix(in oklch, var(--cyan) 30%, transparent);
+  }
+  #screen-fleet-role-select .ops-card{
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--amber) 25%, transparent),
+                0 8px 24px -8px color-mix(in oklch, var(--amber) 30%, transparent);
+  }
+  #screen-fleet-role-select .mode-card-icon-lg{
+    width:44px; height:44px; border-radius:11px; margin-bottom:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #screen-fleet-role-select .mode-card-icon-lg svg{ width:22px; height:22px; }
+  #screen-fleet-role-select .fleet-icon-captain{ background:var(--fleet-cyan-dim); color:var(--cyan); }
+  #screen-fleet-role-select .fleet-icon-ops{ background:var(--fleet-amber-dim); color:var(--amber); }
+  #screen-fleet-role-select .mode-card-title{ color: var(--ink); }
+  #screen-fleet-role-select .mode-card-sub,
+  #screen-fleet-role-select .ops-sub{ color: var(--ink-soft); }
+  #screen-fleet-role-select .mode-card-context-chip{ background: var(--fleet-cyan-dim); color: var(--cyan); }
+  #screen-fleet-role-select .ops-chip{ background: var(--fleet-amber-dim); color: var(--amber); }
+
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
   body{
@@ -1964,15 +2142,21 @@
     <div class="mode-select-header">
       <div class="mode-select-eyebrow" data-i18n="mode_fleet_title">Fishing Operations</div>
       <div class="mode-select-title" data-i18n-html="flrole_title">Who's using<br>this session?</div>
-      <button class="switch-mode-btn" id="switchModeFromRoleSelect" style="margin-top:14px;" data-i18n="flrole_switch_mode">← Switch Mode</button>
+      <div class="fleet-header-actions">
+        <button class="switch-mode-btn" id="switchModeFromRoleSelect" data-i18n="flrole_switch_mode">← Switch Mode</button>
+        <button class="fleet-sun-toggle" id="fleetSunToggle" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
 
     <div class="mode-card captain-card" data-fleet-role="captain">
-      <div class="mode-card-icon-lg">
+      <div class="mode-card-icon-lg fleet-icon-captain">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 8v22M16 16l8-5 8 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="24" cy="13" r="2.3" fill="white"/>
+          <path d="M24 8v22M16 16l8-5 8 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="13" r="2.3" fill="currentColor"/>
         </svg>
       </div>
       <div class="mode-card-title" data-i18n="flrole_captain">Captain</div>
@@ -1981,11 +2165,11 @@
     </div>
 
     <div class="mode-card ops-card" data-fleet-role="operations">
-      <div class="mode-card-icon-lg">
+      <div class="mode-card-icon-lg fleet-icon-ops">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="20" width="9" height="18" stroke="#5fc7ee" stroke-width="2.2"/>
-          <rect x="20.5" y="12" width="9" height="26" stroke="#5fc7ee" stroke-width="2.2"/>
-          <rect x="31" y="24" width="9" height="14" stroke="#5fc7ee" stroke-width="2.2"/>
+          <rect x="10" y="20" width="9" height="18" stroke="currentColor" stroke-width="2.2"/>
+          <rect x="20.5" y="12" width="9" height="26" stroke="currentColor" stroke-width="2.2"/>
+          <rect x="31" y="24" width="9" height="14" stroke="currentColor" stroke-width="2.2"/>
         </svg>
       </div>
       <div class="mode-card-title" data-i18n="flrole_operations">Operations</div>
@@ -2000,13 +2184,20 @@
   <div class="topbar">
     <div class="topbar-row">
       <span class="brand" data-i18n="fltrip_brand">Fish Pulse · Captain</span>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
-        <button class="switch-mode-btn" id="switchModeBtnFleet" data-i18n="fltrip_switch_mode">Switch Mode</button>
+      <div class="topbar-actions">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
       </div>
     </div>
     <h1 data-i18n="fltrip_active_trip">Active Trip</h1>
     <div class="site-line" id="fleetVesselLine" data-i18n="fltrip_no_vessel">No Vessel Selected</div>
+    <button class="topbar-switch-mode-link" id="switchModeBtnFleet" data-i18n="fltrip_switch_mode">← Switch Mode</button>
   </div>
   <main>
     <div id="fleetNoTripCard">
@@ -2060,46 +2251,54 @@
           </div>
         </div>
 
+        <label for="fleetGoalKg" data-i18n="fltrip_goal_kg">Catch Goal (kg) <span class="optional-tag" data-i18n="fltrip_goal_kg_optional">— optional</span></label>
+        <input type="number" id="fleetGoalKg" inputmode="decimal" placeholder="e.g. 5000">
+
+        <label class="charts-check" for="fleetNauticalCharts">
+          <input type="checkbox" id="fleetNauticalCharts" checked>
+          <div>
+            <div class="cc-title" data-i18n="fltrip_nautical_charts">Nautical charts available</div>
+            <div class="cc-sub" data-i18n="fltrip_nautical_charts_sub">Confirms the vessel has up-to-date nautical charts for this area before departure.</div>
+          </div>
+        </label>
+
         <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;" data-i18n="fltrip_start_trip">Start Trip</button>
       </div>
     </div>
 
     <div id="fleetActiveTripCard" style="display:none;">
-      <div class="home-hero">
-        <div class="hh-icon">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24 6v20M16 14l8 6 8-6M14 22c0 8 4 14 10 18 6-4 10-10 10-18" stroke="#5fc7ee" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="24" cy="10" r="3" fill="#5fc7ee"/>
-          </svg>
-        </div>
-        <div>
-          <div class="num" id="fleetTripDuration">0h 00m</div>
-          <div class="hh-meta"><span data-i18n="fltrip_duration_label">Trip duration</span> · <span id="fleetTripVesselTag" data-i18n="fltrip_vessel">Vessel</span></div>
+      <div class="fleet-gauge-panel">
+        <div class="insight-card-label" style="margin:0;" id="fleetTripEyebrow">Trip</div>
+        <div class="fleet-gauge-row">
+          <div class="fleet-gauge" id="fleetGaugeRing">
+            <div class="fleet-gauge-inner"><span>KG</span></div>
+          </div>
+          <div>
+            <div class="fleet-gauge-value" id="fleetGaugeValue">0 kg</div>
+            <div class="fleet-gauge-meta" id="fleetGaugeMeta"></div>
+          </div>
         </div>
       </div>
 
-      <div class="quick-actions">
-        <div class="action-tile primary" id="fleetLogHaulBtn">
-          <div class="at-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4v9M8 8l4-4 4 4" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="at-title" data-i18n="fltrip_log_haul">Log Haul</div>
+      <div class="insight-card-label" style="margin:16px 0 10px;" data-i18n="fltrip_quick_log">Quick log</div>
+      <div class="fleet-dock">
+        <div class="fleet-dock-item" id="fleetLogHaulBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9M8 8l4-4 4 4"/><path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9"/></svg>
+          <span data-i18n="fltrip_log_haul">Haul</span>
         </div>
-        <div class="action-tile" id="fleetLogCatchBtn">
-          <div class="at-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/>
-              <path d="M16.5 9.5c2-1 4-1 4.5-1-0.5 1.5-0.5 4 0 5.5-0.5 0-2.5 0-4.5-1" fill="#0a5c8c"/>
-            </svg>
-          </div>
-          <div class="at-title" data-i18n="fltrip_log_catch">Log Catch</div>
+        <div class="fleet-dock-item" id="fleetLogCatchBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1"/></svg>
+          <span data-i18n="fltrip_log_catch">Catch</span>
+        </div>
+        <div class="fleet-dock-item" id="fleetLogFuelDockBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="3" width="10" height="16" rx="2"/><path d="M10 7h4M10 10h4"/></svg>
+          <span data-i18n="fltab_fuel">Fuel</span>
+        </div>
+        <div class="fleet-dock-item" id="fleetLogPositionDockBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21c4-5 7-8.5 7-12a7 7 0 10-14 0c0 3.5 3 7 7 12z"/></svg>
+          <span data-i18n="fltrip_position">Position</span>
         </div>
       </div>
-
-      <button class="fleet-close-trip-btn" id="fleetCloseTripBtn" data-i18n="fltrip_close_trip">Close Trip</button>
 
       <div class="hist-meta-row" style="margin-top:6px;">
         <span class="insight-card-label" style="margin:0;" data-i18n="fltrip_catches_this_trip">Catches this trip</span>
@@ -2111,6 +2310,8 @@
         <button class="exportbtn" id="fleetViewMapBtn" data-i18n="fltrip_view_map">View Map</button>
       </div>
       <div id="fleetTripHaulList"></div>
+
+      <button class="fleet-close-trip-btn" id="fleetCloseTripBtn" data-i18n="fltrip_close_trip" style="margin-top:16px;">Close Trip</button>
     </div>
   </main>
 </section>
@@ -2121,6 +2322,16 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip">←</button>
       <span class="brand" data-i18n="flhaul_brand">Log Haul</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flhaul_title">Haul Details</h1>
     <div class="site-line" id="fleetHaulVesselLine">&nbsp;</div>
@@ -2297,6 +2508,16 @@
     <div class="back-row">
       <button class="back-btn" id="fleetCatchBackBtn" data-go="fleet-trip">←</button>
       <span class="brand" id="fleetCatchBrand" data-i18n="flcatch_brand">Log Catch</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flcatch_title">Catch Entry</h1>
     <div class="site-line" id="fleetCatchHaulLine" data-i18n="flcatch_not_linked">Not Linked To A Haul</div>
@@ -2392,6 +2613,16 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip">←</button>
       <span class="brand" data-i18n="flclose_brand">Close Trip</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flclose_h1">Trip Summary & Costs</h1>
     <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
@@ -2403,6 +2634,14 @@
       <div class="kpi-cell"><div class="kn" id="fleetCloseTotalKg">—</div><div class="kl" data-i18n="flclose_total_kg">Total kg</div></div>
       <div class="kpi-cell"><div class="kn accent" id="fleetCloseEstValue">—</div><div class="kl" data-i18n="flclose_est_value">Est. value</div></div>
     </div>
+
+    <label class="charts-check" for="fleetCloseNauticalCharts">
+      <input type="checkbox" id="fleetCloseNauticalCharts">
+      <div>
+        <div class="cc-title" data-i18n="fltrip_nautical_charts">Nautical charts available</div>
+        <div class="cc-sub" data-i18n="fltrip_nautical_charts_sub">Confirms the vessel has up-to-date nautical charts for this area before departure.</div>
+      </div>
+    </label>
 
     <div class="card">
       <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flclose_fuel">Fuel</div>
@@ -3630,7 +3869,7 @@
       adv_records: 'records', adv_species_lc: 'species',
       adv_accumulation_footnote: 'Cumulative distinct species vs. records added, ordered by timestamp. Observed order only, not a randomized rarefaction curve — a flattening curve suggests sampling effort is nearing saturation for this scope.',
       adv_size_histogram: 'Size histogram by species', adv_histogram_empty: 'No length measurements recorded yet.', adv_histogram_single: 'Only 1 measurement for this species — need 2+ to show a distribution.',
-      flrole_title: "Who's using<br>this session?", flrole_switch_mode: '← Switch Mode',
+      flrole_title: "Who's using<br>this session?", flrole_switch_mode: '← Switch Mode', fleet_sun_toggle: 'Sun',
       flrole_captain: 'Captain', flrole_captain_sub: 'Log trips · hauls · catch<br>GPS positions · fuel', flrole_at_sea: 'At sea →',
       flrole_operations: 'Operations', flrole_operations_sub: 'Fleet dashboard · reconciliation<br>documents · settlement', flrole_on_land: 'On land →',
       fltrip_brand: 'Fish Pulse · Captain', fltrip_switch_role: 'Switch Role', fltrip_switch_mode: 'Switch Mode',
@@ -3639,7 +3878,7 @@
       fltrip_vessel: 'Vessel', fltrip_select_vessel: '— Select Vessel —', fltrip_new_vessel: '+ New Vessel', fltrip_vessel_name: 'Vessel Name',
       fltrip_default_currency: 'Default Currency', fltrip_crew_count: 'Crew Count', fltrip_fuel_loaded: 'Fuel Loaded (L)', fltrip_start_trip: 'Start Trip',
       fltrip_new_vessel_country_hint: 'This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.',
-      fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_close_trip: 'Close Trip',
+      fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_close_trip: 'Close Trip', fltrip_quick_log: 'Quick log', fltrip_position: 'Position', fltrip_goal_kg: 'Catch Goal (kg)', fltrip_goal_kg_optional: '— optional', fltrip_nautical_charts: 'Nautical charts available', fltrip_nautical_charts_sub: 'Confirms the vessel has up-to-date nautical charts for this area before departure.', fltrip_day_label: 'Day {n}', fltrip_goal_meta: 'of goal · {goal} kg', fltrip_no_goal_set: 'No goal set for this trip', flrole_captain_short: 'Capt.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
       flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear & effort',
       flhaul_start: 'Haul Start', flhaul_end: 'Haul End', flhaul_notes: 'Notes',
@@ -3935,7 +4174,7 @@
       adv_records: 'registros', adv_species_lc: 'especies',
       adv_accumulation_footnote: 'Especies distintas acumuladas vs. registros agregados, ordenados por fecha/hora. Solo el orden observado, no es una curva de rarefacción aleatorizada — una curva que se aplana sugiere que el esfuerzo de muestreo se acerca a la saturación en este alcance.',
       adv_size_histogram: 'Histograma de tallas por especie', adv_histogram_empty: 'Aún no hay mediciones de longitud registradas.', adv_histogram_single: 'Solo hay 1 medición para esta especie — se necesitan 2+ para mostrar una distribución.',
-      flrole_title: '¿Quién está usando<br>esta sesión?', flrole_switch_mode: '← Cambiar Modo',
+      flrole_title: '¿Quién está usando<br>esta sesión?', flrole_switch_mode: '← Cambiar Modo', fleet_sun_toggle: 'Sol',
       flrole_captain: 'Capitán', flrole_captain_sub: 'Registra viajes · lances · capturas<br>posiciones GPS · combustible', flrole_at_sea: 'En el mar →',
       flrole_operations: 'Operaciones', flrole_operations_sub: 'Panel de flota · reconciliación<br>documentos · liquidación', flrole_on_land: 'En tierra →',
       fltrip_brand: 'Fish Pulse · Capitán', fltrip_switch_role: 'Cambiar Rol', fltrip_switch_mode: 'Cambiar Modo',
@@ -3944,7 +4183,7 @@
       fltrip_vessel: 'Embarcación', fltrip_select_vessel: '— Seleccionar Embarcación —', fltrip_new_vessel: '+ Nueva Embarcación', fltrip_vessel_name: 'Nombre de la Embarcación',
       fltrip_default_currency: 'Moneda Predeterminada', fltrip_crew_count: 'Número de Tripulantes', fltrip_fuel_loaded: 'Combustible Cargado (L)', fltrip_start_trip: 'Iniciar Viaje',
       fltrip_new_vessel_country_hint: 'Esto decide qué campos específicos de país aparecen para este barco — lo puedes cambiar cuando quieras desde Vessels → Compliance.',
-      fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_close_trip: 'Cerrar Viaje',
+      fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_close_trip: 'Cerrar Viaje', fltrip_quick_log: 'Registro rápido', fltrip_position: 'Posición', fltrip_goal_kg: 'Meta de Captura (kg)', fltrip_goal_kg_optional: '— opcional', fltrip_nautical_charts: 'Cartas náuticas disponibles', fltrip_nautical_charts_sub: 'Confirma si la embarcación cuenta con cartas náuticas actualizadas para esta zona antes de zarpar.', fltrip_day_label: 'Día {n}', fltrip_goal_meta: 'de meta · {goal} kg', fltrip_no_goal_set: 'Sin meta definida para este viaje', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Capturas de este viaje', fltrip_hauls_this_trip: 'Lances de este viaje', fltrip_view_map: 'Ver Mapa',
       flhaul_brand: 'Registrar Lance', flhaul_title: 'Detalles del Lance', flhaul_gear_effort: 'Arte y esfuerzo',
       flhaul_start: 'Inicio del Lance', flhaul_end: 'Fin del Lance', flhaul_notes: 'Notas',
@@ -4240,7 +4479,7 @@
       adv_records: 'record', adv_species_lc: 'specie',
       adv_accumulation_footnote: 'Specie distinte cumulative vs. record aggiunti, ordinati per data/ora. Solo ordine osservato, non una curva di rarefazione randomizzata — una curva che si appiattisce suggerisce che lo sforzo di campionamento si sta avvicinando alla saturazione in questo ambito.',
       adv_size_histogram: 'Istogramma delle taglie per specie', adv_histogram_empty: 'Nessuna misurazione di lunghezza ancora registrata.', adv_histogram_single: 'Solo 1 misurazione per questa specie — servono 2+ per mostrare una distribuzione.',
-      flrole_title: 'Chi sta usando<br>questa sessione?', flrole_switch_mode: '← Cambia Modalità',
+      flrole_title: 'Chi sta usando<br>questa sessione?', flrole_switch_mode: '← Cambia Modalità', fleet_sun_toggle: 'Sole',
       flrole_captain: 'Capitano', flrole_captain_sub: 'Registra viaggi · cale · catture<br>posizioni GPS · carburante', flrole_at_sea: 'In mare →',
       flrole_operations: 'Operazioni', flrole_operations_sub: 'Pannello flotta · riconciliazione<br>documenti · liquidazione', flrole_on_land: 'A terra →',
       fltrip_brand: 'Fish Pulse · Capitano', fltrip_switch_role: 'Cambia Ruolo', fltrip_switch_mode: 'Cambia Modalità',
@@ -4249,7 +4488,7 @@
       fltrip_vessel: 'Imbarcazione', fltrip_select_vessel: '— Seleziona Imbarcazione —', fltrip_new_vessel: '+ Nuova Imbarcazione', fltrip_vessel_name: 'Nome Imbarcazione',
       fltrip_default_currency: 'Valuta Predefinita', fltrip_crew_count: "Numero dell'Equipaggio", fltrip_fuel_loaded: 'Carburante Caricato (L)', fltrip_start_trip: 'Avvia Viaggio',
       fltrip_new_vessel_country_hint: 'Questo decide quali campi specifici del paese appaiono per questa imbarcazione — puoi cambiarlo in qualsiasi momento da Vessels → Compliance.',
-      fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_close_trip: 'Chiudi Viaggio',
+      fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_close_trip: 'Chiudi Viaggio', fltrip_quick_log: 'Registro rapido', fltrip_position: 'Posizione', fltrip_goal_kg: 'Obiettivo di Cattura (kg)', fltrip_goal_kg_optional: '— opzionale', fltrip_nautical_charts: 'Carte nautiche disponibili', fltrip_nautical_charts_sub: 'Conferma se la barca dispone di carte nautiche aggiornate per questa zona prima della partenza.', fltrip_day_label: 'Giorno {n}', fltrip_goal_meta: "dell'obiettivo · {goal} kg", fltrip_no_goal_set: 'Nessun obiettivo impostato per questo viaggio', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catture di questo viaggio', fltrip_hauls_this_trip: 'Calate di questo viaggio', fltrip_view_map: 'Vedi Mappa',
       flhaul_brand: 'Registra Calata', flhaul_title: 'Dettagli Calata', flhaul_gear_effort: 'Attrezzo e sforzo',
       flhaul_start: 'Inizio Calata', flhaul_end: 'Fine Calata', flhaul_notes: 'Note',
@@ -4545,7 +4784,7 @@
       adv_records: 'บันทึก', adv_species_lc: 'ชนิดพันธุ์',
       adv_accumulation_footnote: 'จำนวนชนิดพันธุ์ที่แตกต่างกันสะสม เทียบกับบันทึกที่เพิ่มเข้ามา เรียงตามวันที่/เวลา เป็นลำดับที่สังเกตได้เท่านั้น ไม่ใช่เส้นโค้งการสุ่มตัวอย่างแบบสุ่ม — เส้นโค้งที่แบนราบแสดงว่าความพยายามในการสุ่มตัวอย่างใกล้ถึงจุดอิ่มตัวในขอบเขตนี้',
       adv_size_histogram: 'ฮิสโตแกรมขนาดตามชนิดพันธุ์', adv_histogram_empty: 'ยังไม่มีการวัดความยาวที่บันทึกไว้', adv_histogram_single: 'มีการวัดเพียง 1 รายการสำหรับชนิดพันธุ์นี้ — ต้องการอย่างน้อย 2 รายการเพื่อแสดงการกระจาย',
-      flrole_title: 'ใครกำลังใช้<br>เซสชันนี้?', flrole_switch_mode: '← เปลี่ยนโหมด',
+      flrole_title: 'ใครกำลังใช้<br>เซสชันนี้?', flrole_switch_mode: '← เปลี่ยนโหมด', fleet_sun_toggle: 'โหมดแดด',
       flrole_captain: 'กัปตัน', flrole_captain_sub: 'บันทึกทริป · การลากอวน · การจับปลา<br>ตำแหน่งจีพีเอส · เชื้อเพลิง', flrole_at_sea: 'กลางทะเล →',
       flrole_operations: 'ฝ่ายปฏิบัติการ', flrole_operations_sub: 'แดชบอร์ดกองเรือ · กระทบยอด<br>เอกสาร · การคิดบัญชี', flrole_on_land: 'บนฝั่ง →',
       fltrip_brand: 'Fish Pulse · กัปตัน', fltrip_switch_role: 'เปลี่ยนบทบาท', fltrip_switch_mode: 'เปลี่ยนโหมด',
@@ -4554,7 +4793,7 @@
       fltrip_vessel: 'เรือ', fltrip_select_vessel: '— เลือกเรือ —', fltrip_new_vessel: '+ เรือใหม่', fltrip_vessel_name: 'ชื่อเรือ',
       fltrip_default_currency: 'สกุลเงินเริ่มต้น', fltrip_crew_count: 'จำนวนลูกเรือ', fltrip_fuel_loaded: 'เชื้อเพลิงที่เติม (ลิตร)', fltrip_start_trip: 'เริ่มทริป',
       fltrip_new_vessel_country_hint: 'สิ่งนี้กำหนดว่าฟิลด์เฉพาะประเทศใดจะปรากฏสำหรับเรือลำนี้ — คุณสามารถเปลี่ยนได้ทุกเมื่อจาก Vessels → Compliance',
-      fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_close_trip: 'ปิดทริป',
+      fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_close_trip: 'ปิดทริป', fltrip_quick_log: 'บันทึกด่วน', fltrip_position: 'ตำแหน่ง', fltrip_goal_kg: 'เป้าหมายการจับ (กก.)', fltrip_goal_kg_optional: '— ไม่บังคับ', fltrip_nautical_charts: 'มีแผนที่เดินเรือพร้อมใช้งาน', fltrip_nautical_charts_sub: 'ยืนยันว่าเรือมีแผนที่เดินเรือที่อัปเดตสำหรับพื้นที่นี้ก่อนออกเดินทาง', fltrip_day_label: 'วันที่ {n}', fltrip_goal_meta: 'ของเป้าหมาย · {goal} กก.', fltrip_no_goal_set: 'ยังไม่ได้ตั้งเป้าหมายสำหรับทริปนี้', flrole_captain_short: 'กัปตัน', flrole_ops_short: 'ฝ่ายปฏิบัติการ',
       fltrip_catches_this_trip: 'การจับปลาในทริปนี้', fltrip_hauls_this_trip: 'การลากอวนในทริปนี้', fltrip_view_map: 'ดูแผนที่',
       flhaul_brand: 'บันทึกการลากอวน', flhaul_title: 'รายละเอียดการลากอวน', flhaul_gear_effort: 'เครื่องมือประมงและความพยายาม',
       flhaul_start: 'เริ่มลากอวน', flhaul_end: 'สิ้นสุดลากอวน', flhaul_notes: 'บันทึกย่อ',
@@ -5042,6 +5281,7 @@
   window.fishPulseGoToModeSelect = showModeSelect;
   window.fishPulseGoToSplash = showSplash;
   window.fishPulseGoToFleetRoleSelect = showFleetRoleSelect;
+  window.fishPulseSetFleetRole = setFleetRole;
   window.fishPulseGetActiveMode = getStoredMode;
   window.fishPulseGetActiveFleetRole = getStoredFleetRole;
   window.fishPulseReapplyIfActive = function(mode, renderFn){
@@ -5099,6 +5339,49 @@
     document.body.classList.add('mode-research');
     if(window.goTo) window.goTo(short);
   });
+})();
+
+// ===== Fishing Operations — "Modo Sol" (Bridge Console light theme) =====
+// Independent of mode/role state so the preference survives switching
+// away to Research/Sport and back. Only visually matters while
+// body.mode-fleet is also present (see the body.mode-fleet.fleet-sun
+// CSS override), so toggling it elsewhere in the app is harmless.
+(function(){
+  const SUN_KEY = 'fishpulse_fleet_sun_mode';
+  function applyFleetSun(on){
+    document.body.classList.toggle('fleet-sun', !!on);
+    document.querySelectorAll('.fleet-sun-toggle').forEach(btn => btn.classList.toggle('active', !!on));
+  }
+  document.addEventListener('click', (e) => {
+    if(e.target.closest('.fleet-sun-toggle')){
+      const on = !document.body.classList.contains('fleet-sun');
+      localStorage.setItem(SUN_KEY, on ? '1' : '0');
+      applyFleetSun(on);
+    }
+  });
+  applyFleetSun(localStorage.getItem(SUN_KEY) === '1');
+})();
+
+// ===== Fishing Operations — topbar rocker switch (Captain/Ops) =====
+// One or more .rocker widgets can be present at once (each screen's
+// topbar has its own); this keeps all of them in sync with the actual
+// active role and makes any of them clickable to switch instantly,
+// replacing the old "go back to Role Select and choose again" flow.
+(function(){
+  function syncFleetRockers(){
+    const role = document.body.classList.contains('fleet-role-operations') ? 'operations' : 'captain';
+    document.querySelectorAll('.rocker button[data-role]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.role === role);
+    });
+  }
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.rocker button[data-role]');
+    if(!btn) return;
+    if(window.fishPulseSetFleetRole) window.fishPulseSetFleetRole(btn.dataset.role);
+    syncFleetRockers();
+  });
+  window.fishPulseSyncFleetRockers = syncFleetRockers;
+  syncFleetRockers();
 })();
 </script>
 
@@ -5279,12 +5562,16 @@
       ended_at: null,
       crew_count: document.getElementById('fleetCrewCount').value || '',
       fuel_loaded_l: document.getElementById('fleetFuelLoaded').value || '',
-      fuel_consumed_l: ''
+      fuel_consumed_l: '',
+      goal_kg: document.getElementById('fleetGoalKg').value || '',
+      nautical_charts_available: document.getElementById('fleetNauticalCharts').checked
     };
     const trips = load(TRIPS_KEY); trips.push(trip); save(TRIPS_KEY, trips);
     localStorage.setItem(ACTIVE_TRIP_KEY, trip.trip_id);
     delete document.getElementById('fleetNewVesselCurrency').dataset.userTouched;
     document.getElementById('fleetNewVesselCountry').value = '';
+    document.getElementById('fleetGoalKg').value = '';
+    document.getElementById('fleetNauticalCharts').checked = true;
     showFleetToast(t('msg_trip_started'));
     renderFleetTrip();
   });
@@ -5356,16 +5643,31 @@
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
     const vesselName = vessel ? vessel.name : t('flg_unknown_vessel');
     document.getElementById('fleetVesselLine').textContent = vesselName;
-    document.getElementById('fleetTripVesselTag').textContent = vesselName;
 
     const startedMs = new Date(trip.started_at).getTime();
     const elapsed = Date.now() - startedMs;
+    const dayNum = Math.floor(elapsed / 86400000) + 1;
     const h = Math.floor(elapsed / 3600000);
     const m = Math.floor((elapsed % 3600000) / 60000);
-    document.getElementById('fleetTripDuration').textContent = h + 'h ' + String(m).padStart(2,'0') + 'm';
+    document.getElementById('fleetTripEyebrow').textContent =
+      t('fltrip_day_label').replace('{n}', dayNum) + ' · ' + vesselName + ' · ' + h + 'h ' + String(m).padStart(2,'0') + 'm';
 
     const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
     const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+
+    const totalKg = catches.reduce((s,c) => s + (parseFloat(c.kg) || 0), 0);
+    const goalKg = parseFloat(trip.goal_kg) || 0;
+    const ring = document.getElementById('fleetGaugeRing');
+    const meta = document.getElementById('fleetGaugeMeta');
+    document.getElementById('fleetGaugeValue').textContent = totalKg.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' kg';
+    if(goalKg > 0){
+      const pct = Math.min(100, (totalKg / goalKg) * 100);
+      ring.style.background = 'conic-gradient(var(--cyan) ' + (pct * 3.6) + 'deg, var(--fleet-panel-2, var(--panel-2, #223947)) ' + (pct * 3.6) + 'deg)';
+      meta.textContent = Math.round(pct) + '% ' + t('fltrip_goal_meta').replace('{goal}', goalKg.toLocaleString());
+    } else {
+      ring.style.background = 'conic-gradient(var(--fleet-panel-2, var(--panel-2, #223947)) 0deg, var(--fleet-panel-2, var(--panel-2, #223947)) 0deg)';
+      meta.textContent = t('fltrip_no_goal_set');
+    }
 
     const haulList = document.getElementById('fleetTripHaulList');
     const haulIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12v3M11 10.5V15" stroke="#0a5c8c" stroke-width="1.4" stroke-linecap="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>`;
@@ -5447,6 +5749,25 @@
   });
   document.getElementById('fleetLogCatchBtn').addEventListener('click', () => {
     enterFleetLogCatch(null);
+  });
+
+  document.getElementById('fleetLogFuelDockBtn').addEventListener('click', () => {
+    fleetGoTo('fuel-log');
+  });
+
+  // Quick position ping — captures a one-off GPS fix and surfaces it as a
+  // toast. Deliberately not persisted anywhere (no dedicated screen/data
+  // model for it yet, matching the Bridge Console reference's own
+  // placeholder behavior for this dock item) — it's a fast "where am I
+  // right now" check, not a logged position record.
+  document.getElementById('fleetLogPositionDockBtn').addEventListener('click', () => {
+    if(!navigator.geolocation){ showFleetToast(t('msg_gps_not_available'), true); return; }
+    showFleetToast(t('msg_locating'));
+    navigator.geolocation.getCurrentPosition(
+      pos => showFleetToast(pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5)),
+      () => showFleetToast(t('msg_no_gps_signal'), true),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
   });
 
   // Builds the haul picker shown on Log Catch and sets the status line.
@@ -5945,6 +6266,7 @@
     document.getElementById('fleetFuelLoadedDisplay').value = trip.fuel_loaded_l || '';
     document.getElementById('fleetFuelRemaining').value = '';
     document.getElementById('fleetFuelConsumedLine').textContent = t('msg_fuel_consumed') + ': —';
+    document.getElementById('fleetCloseNauticalCharts').checked = !!trip.nautical_charts_available;
     document.getElementById('fleetCostCrew').value = '';
     document.getElementById('fleetCostIce').value = '';
     document.getElementById('fleetCostProvisions').value = '';
@@ -5996,6 +6318,7 @@
     const remaining = parseFloat(document.getElementById('fleetFuelRemaining').value) || 0;
     trips[idx].ended_at = new Date().toISOString();
     trips[idx].fuel_consumed_l = Math.max(0, loaded - remaining);
+    trips[idx].nautical_charts_available = document.getElementById('fleetCloseNauticalCharts').checked;
     trips[idx].crew_ids = fleetCloseSelectedCrewIds.slice();
     trips[idx].closing_notes = document.getElementById('fleetCloseNotes').value.trim();
     trips[idx].landing_site = document.getElementById('fleetCloseLandingSite').value.trim();
