@@ -2848,6 +2848,16 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-trip-log">←</button>
       <span class="brand" data-i18n="fltripdet_brand">Trip Detail</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="fltripdet_h1">Landing Report & Settlement</h1>
     <div class="site-line" id="fleetTripDetailVesselLine">&nbsp;</div>
@@ -2941,7 +2951,7 @@
   <main>
     <div id="fleetDashboardSummary"></div>
     <div class="hist-meta-row" style="margin-top:6px;">
-      <span class="insight-card-label" style="margin:0;" data-i18n="fldash_efficiency">Efficiency by vessel</span>
+      <span class="insight-card-label" style="margin:0;" data-i18n="fldash_fleet_status">Fleet status</span>
     </div>
     <div id="fleetDashboardVessels"></div>
     <div class="hist-meta-row" style="margin-top:6px;">
@@ -2957,6 +2967,16 @@
     <div class="back-row">
       <button class="back-btn" id="fleetMapBackBtn">←</button>
       <span class="brand" data-i18n="flhaulmap_brand">Haul Map</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flhaulmap_title">Fishing Zones</h1>
     <div class="site-line" id="fleetMapVesselLine">&nbsp;</div>
@@ -2985,7 +3005,16 @@
   <div class="topbar">
     <div class="topbar-row">
       <span class="brand" data-i18n="fltrip_brand">Fish Pulse · Captain</span>
-      <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
+      <div class="topbar-actions">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flfuel_h1">Daily Fuel Log</h1>
     <div class="site-line" id="fleetFuelLogVesselLine">&nbsp;</div>
@@ -4053,7 +4082,7 @@
       fltripdet_view_haul_map: 'View Haul Map', fltripdet_add_cost: 'Add A Cost To This Trip', fltripdet_cost_type: 'Cost Type',
       fltripdet_maintenance: 'Maintenance', fltripdet_permits_fees: 'Permits / Fees', fltripdet_port_dues: 'Port Dues',
       fltripdet_amount: 'Amount', fltripdet_add_cost_btn: 'Add Cost', fltripdet_export: 'Export', fltripdet_share: 'Share', fltripdet_export_photos_btn: 'Export Photos From This Trip',
-      fldash_brand: 'Fish Pulse · Operations', fldash_h1: 'Fleet Overview', fldash_efficiency: 'Efficiency by vessel', fldash_needs_attention: 'Needs attention',
+      fldash_brand: 'Fish Pulse · Operations', fldash_h1: 'Fleet Overview', fldash_efficiency: 'Efficiency by vessel', fldash_fleet_status: 'Fleet status', fldash_needs_attention: 'Needs attention',
       fldash_catch: 'Catch', fldash_fuel_l: 'Fuel L', fldash_boats: 'Boats', fldash_at_sea_count: 'At sea', fldash_week_short: 'This week', fldash_revenue: 'Revenue', fldash_no_closed_trips: 'No closed trips yet', fldash_efficient: 'Efficient', fldash_review: 'Review', fldash_at_sea: 'At sea · Day {n}', fldash_in_port: 'In port',
       fldash_no_vessels: 'No vessels yet. Add one from the Vessels tab.', fldash_unknown: 'Unknown', fldash_closed_no_catch: 'Trip closed without catch',
       fldash_costs_pending: 'Costs pending', fldash_no_alerts: 'No alerts. Everything looks current.',
@@ -4358,7 +4387,7 @@
       fltripdet_view_haul_map: 'Ver Mapa de Lances', fltripdet_add_cost: 'Agregar un Costo a Este Viaje', fltripdet_cost_type: 'Tipo de Costo',
       fltripdet_maintenance: 'Mantenimiento', fltripdet_permits_fees: 'Permisos / Cuotas', fltripdet_port_dues: 'Derechos de Puerto',
       fltripdet_amount: 'Monto', fltripdet_add_cost_btn: 'Agregar Costo', fltripdet_export: 'Exportar', fltripdet_share: 'Compartir', fltripdet_export_photos_btn: 'Exportar Fotos de Este Viaje',
-      fldash_brand: 'Fish Pulse · Operaciones', fldash_h1: 'Vista General de la Flota', fldash_efficiency: 'Eficiencia por embarcación', fldash_needs_attention: 'Requiere atención',
+      fldash_brand: 'Fish Pulse · Operaciones', fldash_h1: 'Vista General de la Flota', fldash_efficiency: 'Eficiencia por embarcación', fldash_fleet_status: 'Estado de la flota', fldash_needs_attention: 'Requiere atención',
       fldash_catch: 'Captura', fldash_fuel_l: 'Combustible L', fldash_boats: 'Barcos', fldash_at_sea_count: 'En mar', fldash_week_short: 'Esta semana', fldash_revenue: 'Ingreso', fldash_no_closed_trips: 'Aún no hay viajes cerrados', fldash_efficient: 'Eficiente', fldash_review: 'Revisar', fldash_at_sea: 'En mar · Día {n}', fldash_in_port: 'En puerto',
       fldash_no_vessels: 'Aún no hay embarcaciones. Agrega una desde la pestaña Embarcaciones.', fldash_unknown: 'Desconocida', fldash_closed_no_catch: 'Viaje cerrado sin captura',
       fldash_costs_pending: 'Costos pendientes', fldash_no_alerts: 'Sin alertas. Todo está al día.',
@@ -4663,7 +4692,7 @@
       fltripdet_view_haul_map: 'Vedi Mappa Calate', fltripdet_add_cost: 'Aggiungi un Costo a Questo Viaggio', fltripdet_cost_type: 'Tipo di Costo',
       fltripdet_maintenance: 'Manutenzione', fltripdet_permits_fees: 'Permessi / Tasse', fltripdet_port_dues: 'Tasse Portuali',
       fltripdet_amount: 'Importo', fltripdet_add_cost_btn: 'Aggiungi Costo', fltripdet_export: 'Esporta', fltripdet_share: 'Condividi', fltripdet_export_photos_btn: 'Esporta Foto di Questo Viaggio',
-      fldash_brand: 'Fish Pulse · Operazioni', fldash_h1: 'Panoramica Flotta', fldash_efficiency: 'Efficienza per imbarcazione', fldash_needs_attention: 'Richiede attenzione',
+      fldash_brand: 'Fish Pulse · Operazioni', fldash_h1: 'Panoramica Flotta', fldash_efficiency: 'Efficienza per imbarcazione', fldash_fleet_status: 'Stato della flotta', fldash_needs_attention: 'Richiede attenzione',
       fldash_catch: 'Cattura', fldash_fuel_l: 'Carburante L', fldash_boats: 'Barche', fldash_at_sea_count: 'In mare', fldash_week_short: 'Questa settimana', fldash_revenue: 'Ricavo', fldash_no_closed_trips: 'Nessun viaggio chiuso ancora', fldash_efficient: 'Efficiente', fldash_review: 'Verifica', fldash_at_sea: 'In mare · Giorno {n}', fldash_in_port: 'In porto',
       fldash_no_vessels: "Nessuna imbarcazione ancora. Aggiungine una dalla scheda Imbarcazioni.", fldash_unknown: 'Sconosciuta', fldash_closed_no_catch: 'Viaggio chiuso senza cattura',
       fldash_costs_pending: 'Costi in sospeso', fldash_no_alerts: 'Nessun avviso. Tutto è aggiornato.',
@@ -4968,7 +4997,7 @@
       fltripdet_view_haul_map: 'ดูแผนที่การลากอวน', fltripdet_add_cost: 'เพิ่มค่าใช้จ่ายให้ทริปนี้', fltripdet_cost_type: 'ประเภทค่าใช้จ่าย',
       fltripdet_maintenance: 'ค่าบำรุงรักษา', fltripdet_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', fltripdet_port_dues: 'ค่าธรรมเนียมท่าเรือ',
       fltripdet_amount: 'จำนวนเงิน', fltripdet_add_cost_btn: 'เพิ่มค่าใช้จ่าย', fltripdet_export: 'ส่งออก', fltripdet_share: 'แชร์', fltripdet_export_photos_btn: 'ส่งออกรูปภาพจากทริปนี้',
-      fldash_brand: 'Fish Pulse · ฝ่ายปฏิบัติการ', fldash_h1: 'ภาพรวมกองเรือ', fldash_efficiency: 'ประสิทธิภาพตามเรือ', fldash_needs_attention: 'ต้องให้ความสนใจ',
+      fldash_brand: 'Fish Pulse · ฝ่ายปฏิบัติการ', fldash_h1: 'ภาพรวมกองเรือ', fldash_efficiency: 'ประสิทธิภาพตามเรือ', fldash_fleet_status: 'สถานะกองเรือ', fldash_needs_attention: 'ต้องให้ความสนใจ',
       fldash_catch: 'การจับปลา', fldash_fuel_l: 'เชื้อเพลิง ลิตร', fldash_boats: 'เรือ', fldash_at_sea_count: 'ออกทะเล', fldash_week_short: 'สัปดาห์นี้', fldash_revenue: 'รายได้', fldash_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว', fldash_efficient: 'มีประสิทธิภาพ', fldash_review: 'ต้องตรวจสอบ', fldash_at_sea: 'ออกทะเล · วันที่ {n}', fldash_in_port: 'อยู่ท่าเรือ',
       fldash_no_vessels: 'ยังไม่มีเรือ เพิ่มเรือได้จากแท็บเรือ', fldash_unknown: 'ไม่ทราบ', fldash_closed_no_catch: 'ปิดทริปโดยไม่มีการจับปลา',
       fldash_costs_pending: 'ค่าใช้จ่ายที่ค้างอยู่', fldash_no_alerts: 'ไม่มีการแจ้งเตือน ทุกอย่างเป็นปัจจุบัน',
@@ -5322,6 +5351,7 @@
     localStorage.setItem(ROLE_KEY, role);
     localStorage.setItem(ROLE_AT_KEY, String(Date.now()));
     applyFleetRole(role);
+    if(window.fishPulseSyncFleetRockers) window.fishPulseSyncFleetRockers();
   }
 
   // Swaps which top-level screen tree is visible: mode-select, the
