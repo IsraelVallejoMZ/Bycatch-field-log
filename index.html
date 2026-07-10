@@ -759,6 +759,28 @@
     width: 100%; height: 360px; border-radius: var(--radius);
     border: 1px solid var(--line); background: var(--panel);
   }
+  /* Fullscreen map: a CSS-only fixed overlay rather than the Fullscreen
+     API, since requestFullscreen() on an arbitrary element isn't
+     supported on iOS Safari (only <video> gets native fullscreen there)
+     — this way it works the same on every platform the PWA runs on.
+     leafletInstance.invalidateSize() gets called after the toggle
+     (see toggleMapFullscreen in the Map rendering section) because
+     Leaflet doesn't detect container resizes on its own. */
+  .map-view-wrap{ position:relative; }
+  .map-fullscreen-btn{
+    position:absolute; top:10px; right:10px; z-index:401;
+    width:34px; height:34px; border-radius:8px; border:none;
+    background:var(--panel); color:var(--ink-soft); box-shadow:0 1px 5px rgba(0,0,0,0.25);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .map-view-wrap.is-fullscreen{
+    position:fixed; inset:0; z-index:1000; background:var(--paper);
+    padding: calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px));
+    box-sizing:border-box; display:flex; flex-direction:column;
+  }
+  .map-view-wrap.is-fullscreen .map-layer-toggle{ flex-shrink:0; }
+  .map-view-wrap.is-fullscreen #leafletMap,
+  .map-view-wrap.is-fullscreen .schematic-wrap{ flex:1; height:auto; }
   .map-mode-banner{
     display:flex; align-items:center; gap:8px;
     font-family: var(--data); font-size: 10px; color: #9fc8de;
@@ -766,16 +788,16 @@
     padding: 8px 12px;
   }
   .map-mode-banner .mb-dot{ width:7px; height:7px; border-radius:50%; background:#4a6070; flex-shrink:0; }
-  .map-mode-banner.live .mb-dot{ background: #5fc7ee; }
+  .map-mode-banner.live .mb-dot{ background: var(--cyan); }
   .map-mode-banner.offline .mb-dot{ background: var(--amber); }
 
   /* Layer toggle */
   .map-layer-toggle{ display:flex; gap:6px; margin-bottom:8px; }
   .mlt-btn{
-    flex:1; padding:7px; border:none; border-radius:8px; background:#0e1b26;
+    flex:1; padding:7px; border:none; border-radius:8px; background:var(--chrome);
     font-family:var(--display); font-size:12px; font-weight:500; color:#7fa3b5; cursor:pointer;
   }
-  .mlt-btn.active{ background:#0a5c8c; color:white; font-weight:600; }
+  .mlt-btn.active{ background:var(--blue); color:white; font-weight:600; }
 
   /* Schematic offline map */
   .schematic-wrap{
@@ -802,13 +824,13 @@
   .map-legend-chip{
     display:flex; align-items:center; gap:5px;
     font-family:var(--data); font-size:10px; color:#9fc8de;
-    background:#0e1b26; padding:4px 10px; border-radius:6px;
+    background:var(--chrome); padding:4px 10px; border-radius:6px;
   }
 
   /* No-GPS chip */
   .map-no-gps-chip{
     display:flex; align-items:center; gap:8px; margin-top:10px;
-    background:#163040; border-radius:10px; padding:10px 14px;
+    background:var(--chrome); border-radius:10px; padding:10px 14px;
     font-family:var(--data); font-size:10px; color:#7fa3b5;
   }
 
@@ -828,13 +850,13 @@
   }
   .offline-progress-bar-fill{ height:100%; background: var(--blue); transition: width 0.2s ease; }
   .offline-area-entry{
-    background: #f4f6f5; border-radius: var(--radius-sm);
+    background: var(--paper); border-radius: var(--radius-sm);
     padding: 10px 12px; margin-top: 10px; display:flex; justify-content:space-between; align-items:center; gap:10px;
   }
   .offline-area-entry .oa-main{ font-family: var(--display); font-weight:600; font-size: 12.5px; }
   .offline-area-entry .oa-meta{ font-family: var(--data); font-size: 10.5px; color: var(--ink-soft); margin-top:2px; }
   .offline-area-entry .del{
-    background:none; border:none; color:#e0a868; font-size:18px; cursor:pointer; padding: 2px 6px; line-height:1;
+    background:none; border:none; color:var(--entry-del); font-size:18px; cursor:pointer; padding: 2px 6px; line-height:1;
   }
   .legend-item{ display:flex; align-items:center; gap:6px; font-family: var(--data); font-size: 11px; color: var(--ink-soft); }
   .legend-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
@@ -850,9 +872,9 @@
   /* ===== Insights screen ===== */
   /* ===== Insights view toggle ===== */
   .insights-view-toggle{ display:flex; background:rgba(255,255,255,0.08); border-radius:10px; padding:3px; gap:3px; }
-  .insights-view-toggle.on-light{ background:#0e1b26; }
+  .insights-view-toggle.on-light{ background:var(--chrome); }
   .ivt-btn{ flex:1; padding:7px; border:none; border-radius:8px; background:transparent; font-family:var(--display); font-size:12px; font-weight:500; color:#7fa3b5; cursor:pointer; }
-  .ivt-btn.active{ background:#0a5c8c; color:white; font-weight:600; }
+  .ivt-btn.active{ background:var(--blue); color:white; font-weight:600; }
   .fake-select{
     width:100%; padding: 12px 13px; font-size: 13px; font-family: var(--body);
     border: 1.5px solid var(--line); border-radius: var(--radius-sm);
@@ -864,7 +886,7 @@
   .fake-select.open .chev{ transform: rotate(180deg); }
   .site-filter-panel{
     border: 1.5px solid var(--line); border-top:none; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-    background: white; margin-top:-1.5px; max-height:220px; overflow-y:auto;
+    background: var(--panel); margin-top:-1.5px; max-height:220px; overflow-y:auto;
   }
   .site-filter-panel label{
     display:flex; align-items:center; gap:9px; padding:9px 13px; font-size:13px;
@@ -886,8 +908,8 @@
   .kpi-cell .kl{ font-family:var(--data); font-size:9px; color:#7fa3b5; margin-top:3px; text-transform:uppercase; letter-spacing:0.04em; }
 
   /* ===== Insight card wrapper ===== */
-  .insight-card{ background:white; border-radius:12px; padding:14px 16px; margin-bottom:10px; }
-  .insight-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#41545f; margin-bottom:10px; }
+  .insight-card{ background:var(--panel); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+  .insight-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:10px; }
 
   /* kept for weight stat block */
   .insight-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
@@ -911,7 +933,7 @@
 
   /* Charts: donut */
   .chart-card{ background:white; border-radius:12px; padding:14px 16px; margin-bottom:10px; }
-  .chart-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#41545f; margin-bottom:10px; }
+  .chart-card-label{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:10px; }
   .donut-row{ display:flex; align-items:center; gap:16px; }
   .donut-legend{ display:flex; flex-direction:column; gap:7px; }
   .donut-legend .dl-item{ display:flex; align-items:center; gap:7px; font-family:var(--display); font-size:12px; color:var(--ink); }
@@ -1081,10 +1103,20 @@
     background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
     border:none;
   }
-  .segment-card:nth-child(2){ background: linear-gradient(135deg, #0e6fa5 0%, #0a5c8c 100%); }
-  .segment-card:nth-child(3){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%); }
-  .segment-card:nth-child(3) .mode-card-sub{ color: rgba(255,255,255,0.85); }
-  .segment-card:nth-child(4){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
+  /* nth-child counts ALL siblings of .mode-select-wrap, and
+     .mode-select-header is sibling #1 — so the three mode cards are
+     actually nth-child(2)=research, nth-child(3)=fleet, nth-child(4)=sport,
+     not (1)/(2)/(3) as it looks at first glance. That mismatch is what
+     had Fishing Operations showing orange and Sport showing navy — fixed
+     here: Research now gets its own Ocean Bright light blue (#1aa6ce→
+     #6fe0ee, matching the rest of the Research module exactly since this
+     screen renders before body.mode-research is applied, so the literal
+     hex has to be used instead of the CSS variables); Fishing Operations
+     gets the professional dark navy; Sport keeps its sunrise gradient. */
+  .segment-card:nth-child(2){ background: linear-gradient(135deg, #1aa6ce 0%, #6fe0ee 100%); }
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
+  .segment-card:nth-child(4){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%); }
+  .segment-card:nth-child(4) .mode-card-sub{ color: rgba(255,255,255,0.85); }
   .segment-card .mode-card-title{ color:white; font-size:16px; }
   .segment-card .mode-card-sub{ color:#9fc8de; }
 
@@ -1778,18 +1810,25 @@
     </div>
   </div>
   <main>
-    <div class="map-layer-toggle" id="mapLayerToggle" style="display:none;">
-      <button class="mlt-btn active" id="mltStreet" data-i18n="map_street">Street</button>
-      <button class="mlt-btn" id="mltSatellite" data-i18n="map_satellite">Satellite</button>
+    <div class="map-view-wrap" id="mapViewWrap">
+      <div class="map-layer-toggle" id="mapLayerToggle" style="display:none;">
+        <button class="mlt-btn active" id="mltStreet" data-i18n="map_street">Street</button>
+        <button class="mlt-btn" id="mltSatellite" data-i18n="map_satellite">Satellite</button>
+        <button class="mlt-btn" id="mltDepth" data-i18n="sp_map_depth">Depth</button>
+      </div>
+
+      <div id="leafletMap"></div>
+      <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
+
+      <button type="button" class="map-fullscreen-btn" id="mapFullscreenBtn" aria-label="View fullscreen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
 
-    <div id="leafletMap"></div>
-    <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
-
     <div class="map-legend-row">
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#0a5c8c;"></span><span data-i18n="rec_cond_alive">Alive</span></span>
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#c0532f;"></span><span data-i18n="rec_cond_dead">Dead</span></span>
-      <span class="map-legend-chip"><span class="legend-dot" style="background:#2f7a52;"></span><span data-i18n="rec_cond_released">Released</span></span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:var(--blue);"></span><span data-i18n="rec_cond_alive">Alive</span></span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:var(--coral);"></span><span data-i18n="rec_cond_dead">Dead</span></span>
+      <span class="map-legend-chip"><span class="legend-dot" style="background:var(--released);"></span><span data-i18n="rec_cond_released">Released</span></span>
     </div>
 
     <div class="insight-card" style="margin-top:10px;">
@@ -1818,19 +1857,15 @@
     <div class="site-line" id="siteLineInsights">&nbsp;</div>
   </div>
   <main>
-    <div class="grid2">
-      <select id="insightsTaxonFilter" style="font-size:13px;">
-        <option value="" data-i18n="ins_all_taxon">All taxon groups</option>
-        <option value="Elasmobranchii" data-i18n="rec_taxon_elasmo">Elasmobranch</option>
-        <option value="Teleostei" data-i18n="rec_taxon_teleost">Teleost fish</option>
-        <option value="Crustacea" data-i18n="rec_taxon_crustacea">Crustacean</option>
-        <option value="Mollusca" data-i18n="rec_taxon_mollusca">Mollusc</option>
-        <option value="Other" data-i18n="rec_gear_other">Other</option>
-      </select>
-      <select id="insightsCampaignFilter" style="font-size:13px;">
-        <option value="">All campaigns</option>
-      </select>
-    </div>
+    <select id="insightsTaxonFilter" class="hist-site-select" style="margin-bottom:8px;">
+      <option value="" data-i18n="ins_all_taxon">All taxon groups</option>
+      <option value="Elasmobranchii" data-i18n="rec_taxon_elasmo">Elasmobranch</option>
+      <option value="Teleostei" data-i18n="rec_taxon_teleost">Teleost fish</option>
+      <option value="Crustacea" data-i18n="rec_taxon_crustacea">Crustacean</option>
+      <option value="Mollusca" data-i18n="rec_taxon_mollusca">Mollusc</option>
+      <option value="Other" data-i18n="rec_gear_other">Other</option>
+    </select>
+    <div class="hist-condition-chips" id="insightsCampaignTabs" style="margin:0 0 4px;"></div>
     <div id="insightsSiteFilterWrap" style="margin-top:8px;"></div>
     <div class="insights-view-toggle on-light" id="insightsViewToggle" style="display:none; margin-top:10px; margin-bottom:14px;">
       <button class="ivt-btn active" id="ivtStats">Stats</button>
@@ -10764,6 +10799,7 @@
 
   // ===== Screen navigation =====
   function goTo(screen){
+    if(typeof mapIsFullscreen !== 'undefined' && mapIsFullscreen && screen !== 'map') setMapFullscreen(false);
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + screen).classList.add('active');
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -11352,7 +11388,6 @@
   document.getElementById('searchInput').addEventListener('input', renderHistory);
   document.getElementById('filterSite').addEventListener('change', renderHistory);
   document.getElementById('insightsTaxonFilter').addEventListener('change', renderInsights);
-  document.getElementById('insightsCampaignFilter').addEventListener('change', () => { insightsSiteFilter = []; insightsSiteDropdownOpen = false; renderInsights(); });
 
 
   function expandAllRecordSteps(){
@@ -11919,6 +11954,22 @@
   let leafletInstance = null;
   let leafletReady = false;
 
+  let mapIsFullscreen = false;
+  const MAP_EXPAND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const MAP_COLLAPSE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3v3a2 2 0 0 1-2 2H4M15 3v3a2 2 0 0 0 2 2h3M21 15h-3a2 2 0 0 0-2 2v3M9 21v-3a2 2 0 0 0-2-2H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function setMapFullscreen(on){
+    mapIsFullscreen = on;
+    document.getElementById('mapViewWrap').classList.toggle('is-fullscreen', on);
+    const btn = document.getElementById('mapFullscreenBtn');
+    btn.innerHTML = on ? MAP_COLLAPSE_ICON : MAP_EXPAND_ICON;
+    btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'View fullscreen');
+    // Leaflet caches its container size on init; it doesn't notice a CSS
+    // resize on its own, so it has to be told explicitly once the
+    // fullscreen layout has actually settled.
+    setTimeout(() => { if(leafletInstance) leafletInstance.invalidateSize(); }, 160);
+  }
+  document.getElementById('mapFullscreenBtn').addEventListener('click', () => setMapFullscreen(!mapIsFullscreen));
+
   // Dot-and-ring marker: the shared professional/formal marker language
   // used by both Field Research and Fishing Operations — distinct from
   // the balloon pin used in the Sport segment. Color carries the same
@@ -11932,9 +11983,9 @@
   }
 
   function conditionColor(condition){
-    if(condition === 'dead') return '#c0532f';
-    if(condition === 'released') return '#2f7a52';
-    return '#0a5c8c'; // alive / default
+    if(condition === 'dead') return 'var(--coral)';
+    if(condition === 'released') return 'var(--released)';
+    return 'var(--blue)'; // alive / default
   }
 
   function checkTilesReachable(callback){
@@ -11976,6 +12027,82 @@
 
   document.getElementById('mltStreet').addEventListener('click', () => setMapLayer('street'));
   document.getElementById('mltSatellite').addEventListener('click', () => setMapLayer('satellite'));
+
+  // Bathymetry/depth overlay and ocean current indicator — same sources
+  // and approach as Sport's Spots map (GEBCO + EMODnet WMS layered so
+  // EMODnet's finer European coverage shows where it exists and GEBCO
+  // fills in everywhere else; Open-Meteo Marine reading at the map's
+  // current center, refreshed on moveend). Kept as separate Research-
+  // scoped variables/functions rather than reusing Sport's so each
+  // module's map stays independent (matches the existing pattern of
+  // sportGebcoLayer/sportCurrentControl vs. this module's own).
+  let mapGebcoLayer = null;
+  let mapEmodnetLayer = null;
+  let mapDepthLayerOn = false;
+  function toggleMapDepthLayer(){
+    if(!leafletInstance) return;
+    mapDepthLayerOn = !mapDepthLayerOn;
+    document.getElementById('mltDepth').classList.toggle('active', mapDepthLayerOn);
+    if(!mapGebcoLayer){
+      mapGebcoLayer = L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
+        layers: 'GEBCO_LATEST_2', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.65, attribution: 'GEBCO Compilation Group'
+      });
+    }
+    if(!mapEmodnetLayer){
+      mapEmodnetLayer = L.tileLayer.wms('https://ows.emodnet-bathymetry.eu/wms', {
+        layers: 'emodnet:mean_multicolour', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.75, attribution: 'EMODnet Bathymetry'
+      });
+    }
+    if(mapDepthLayerOn){
+      mapGebcoLayer.addTo(leafletInstance);
+      mapEmodnetLayer.addTo(leafletInstance);
+    } else {
+      leafletInstance.removeLayer(mapGebcoLayer);
+      leafletInstance.removeLayer(mapEmodnetLayer);
+    }
+  }
+  document.getElementById('mltDepth').addEventListener('click', toggleMapDepthLayer);
+
+  let mapCurrentControl = null;
+  function mapCurrentArrowSvg(directionDeg, speedMs){
+    const heading = (directionDeg + 180) % 360;
+    const intensity = speedMs > 0.5 ? 'var(--coral)' : (speedMs > 0.15 ? 'var(--amber)' : 'var(--blue)');
+    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  async function refreshMapCurrentIndicator(){
+    if(!leafletInstance) return;
+    const center = leafletInstance.getCenter();
+    try{
+      const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
+      const data = await res.json();
+      const speed = data && data.current ? data.current.ocean_current_velocity : null;
+      const dir = data && data.current ? data.current.ocean_current_direction : null;
+      if(!mapCurrentControl){
+        const Control = L.Control.extend({
+          onAdd: function(){
+            const div = L.DomUtil.create('div');
+            div.id = 'mapCurrentIndicator';
+            div.style.cssText = 'background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
+            return div;
+          }
+        });
+        mapCurrentControl = new Control({ position: 'bottomleft' });
+        mapCurrentControl.addTo(leafletInstance);
+      }
+      const el = document.getElementById('mapCurrentIndicator');
+      if(el){
+        if(speed == null || dir == null){
+          el.innerHTML = t('sp_current_unavailable');
+        } else {
+          el.innerHTML = mapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
+        }
+      }
+    } catch(err){
+      // silent — current indicator just doesn't appear this refresh
+    }
+  }
 
   function renderMap(){
     renderOfflineAreasList();
@@ -12020,6 +12147,7 @@
       mapStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
       mapSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
       mapStreetLayer.addTo(leafletInstance);
+      leafletInstance.on('moveend', refreshMapCurrentIndicator);
     }
     // clear old markers
     leafletInstance.eachLayer(layer => {
@@ -12210,16 +12338,19 @@
       return;
     }
 
-    // Campaign filter — options rebuilt each render so newly-created
+    // Campaign filter — tabs rebuilt each render so newly-created
     // campaigns show up without needing a screen change.
-    const campSel = document.getElementById('insightsCampaignFilter');
     const campaigns = loadCampaigns();
-    const curCamp = campSel.value || insightsCampaignId;
-    campSel.innerHTML = '<option value="">'+t('ins_all_campaigns')+'</option>'
-      + '<option value="__unassigned__">'+t('ins_no_campaign_unassigned')+'</option>'
-      + campaigns.map(c => '<option value="'+c.id+'">'+c.name+'</option>').join('');
-    if(curCamp && (curCamp === '__unassigned__' || campaigns.some(c=>c.id===curCamp))) campSel.value = curCamp;
-    insightsCampaignId = campSel.value;
+    if(!(campaigns.some(c => c.id === insightsCampaignId) || insightsCampaignId === '__unassigned__')) insightsCampaignId = '';
+    const campTabs = [{id:'', label:t('ins_all_campaigns')}, {id:'__unassigned__', label:t('ins_no_campaign_unassigned')}]
+      .concat(campaigns.map(c => ({id:c.id, label:c.name})));
+    document.getElementById('insightsCampaignTabs').innerHTML = campTabs.map(tb =>
+      '<button type="button" class="hist-cond-chip'+(insightsCampaignId===tb.id?' active':'')+'" data-ins-camp-tab="'+tb.id+'">'+
+        tb.label.replace(/</g,'&lt;')+'</button>'
+    ).join('');
+    document.querySelectorAll('[data-ins-camp-tab]').forEach(btn => {
+      btn.addEventListener('click', () => { insightsCampaignId = btn.dataset.insCampTab; insightsSiteFilter = []; insightsSiteDropdownOpen = false; renderInsights(); });
+    });
 
     const campaignScoped = !insightsCampaignId ? taxonScoped
       : insightsCampaignId === '__unassigned__' ? taxonScoped.filter(e => !e.campaign_id)
@@ -12282,7 +12413,7 @@
 
     const condCounts = { alive:0, dead:0, released:0, '':0 };
     list.forEach(e => { condCounts[e.condition||''] = (condCounts[e.condition||'']||0)+1; });
-    const condColors = { alive:'#0a5c8c', dead:'#c0532f', released:'#2f7a52', '':'#cdd6d6' };
+    const condColors = { alive:'var(--blue)', dead:'var(--coral)', released:'var(--released)', '':'#cdd6d6' };
     const condLabels = { alive:'Alive', dead:'Dead', released:'Released', '':'Unspecified' };
 
     const speciesCount = {};
@@ -12374,9 +12505,9 @@
         const meanPct = (meanL/scale*100).toFixed(1);
         html += `<div style="position:relative;height:36px;margin:8px 4px 18px;">
           <div style="position:absolute;top:16px;left:0;right:0;height:6px;background:#f1f3f3;border-radius:3px;"></div>
-          <div style="position:absolute;top:16px;left:${minPct}%;width:${(parseFloat(maxPct)-parseFloat(minPct)).toFixed(1)}%;height:6px;background:#0a5c8c;border-radius:3px;"></div>
-          <div style="position:absolute;top:0;left:${minPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#0a5c8c;font-weight:600;">${minL.toFixed(0)}</div>
-          <div style="position:absolute;top:0;left:${maxPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#0a5c8c;font-weight:600;">${maxL.toFixed(0)}</div>
+          <div style="position:absolute;top:16px;left:${minPct}%;width:${(parseFloat(maxPct)-parseFloat(minPct)).toFixed(1)}%;height:6px;background:var(--blue);border-radius:3px;"></div>
+          <div style="position:absolute;top:0;left:${minPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:var(--blue);font-weight:600;">${minL.toFixed(0)}</div>
+          <div style="position:absolute;top:0;left:${maxPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:var(--blue);font-weight:600;">${maxL.toFixed(0)}</div>
           <div style="position:absolute;top:0;left:${meanPct}%;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:#7fa3b5;">μ ${meanL.toFixed(0)}</div>
           <div style="position:absolute;top:26px;left:${meanPct}%;transform:translateX(-50%);width:1px;height:8px;background:#9aa6a6;"></div>
         </div>
@@ -12429,7 +12560,7 @@
       let donutOff=0; let segs='';
       condKeys.forEach(k => { const frac=condCounts[k]/list.length; const dash=frac*circ; segs+=`<circle cx="40" cy="40" r="28" fill="none" stroke="${condColors[k]}" stroke-width="14" stroke-dasharray="${dash.toFixed(1)} ${(circ-dash).toFixed(1)}" stroke-dashoffset="${(-(donutOff)+circ*0.25).toFixed(1)}" />`; donutOff+=dash; });
       html += '<div class="chart-card"><div class="chart-card-label">Condition</div><div class="donut-row">';
-      html += `<svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink:0;"><circle cx="40" cy="40" r="28" fill="none" stroke="#f1f3f3" stroke-width="14"/>${segs}<text x="40" y="44" text-anchor="middle" font-family="monospace" font-size="11" fill="#0e1b26" font-weight="700">${list.length}</text></svg>`;
+      html += `<svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink:0;"><circle cx="40" cy="40" r="28" fill="none" stroke="#f1f3f3" stroke-width="14"/>${segs}<text x="40" y="44" text-anchor="middle" font-family="monospace" font-size="11" fill="var(--chrome)" font-weight="700">${list.length}</text></svg>`;
       html += '<div class="donut-legend">';
       condKeys.forEach(k => { const pct=(condCounts[k]/list.length*100).toFixed(0); html += `<div class="dl-item"><span style="width:9px;height:9px;border-radius:50%;background:${condColors[k]};display:inline-block;flex-shrink:0;"></span>${condLabels[k]}<span class="dlc">${condCounts[k]} · ${pct}%</span></div>`; });
       html += '</div></div></div>';
@@ -12437,7 +12568,7 @@
       const topSp=sortedSpecies.slice(0,6), maxSp=topSp.length?topSp[0][1]:1;
       const bW=Math.floor(270/Math.max(topSp.length,1))-5;
       let bars='',bLabels='',bCounts='';
-      topSp.forEach(([sp,count],i) => { const bH=Math.round((count/maxSp)*65); const x=10+i*(bW+5); const y=70-bH; const op=(1-i*0.12).toFixed(2); bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="#0a5c8c" opacity="${op}"/>`; bCounts+=`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-family="monospace" font-size="9" fill="#0e1b26">${count}</text>`; const sn=sp.length>9?sp.slice(0,8)+'.':sp; bLabels+=`<text x="${x+bW/2}" y="95" text-anchor="middle" font-family="monospace" font-size="8" fill="#7fa3b5">${sn}</text>`; });
+      topSp.forEach(([sp,count],i) => { const bH=Math.round((count/maxSp)*65); const x=10+i*(bW+5); const y=70-bH; const op=(1-i*0.12).toFixed(2); bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="var(--blue)" opacity="${op}"/>`; bCounts+=`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--chrome)">${count}</text>`; const sn=sp.length>9?sp.slice(0,8)+'.':sp; bLabels+=`<text x="${x+bW/2}" y="95" text-anchor="middle" font-family="monospace" font-size="8" fill="#7fa3b5">${sn}</text>`; });
       html += `<div class="chart-card"><div class="chart-card-label">Species frequency</div><svg width="100%" height="100" viewBox="0 0 290 100">${bars}${bCounts}${bLabels}</svg></div>`;
 
       if(allLengths.length > 1){
@@ -12446,9 +12577,9 @@
         allLengths.forEach(v=>{ bins[Math.min(Math.floor((v-minL)/bSize),nBins-1)]++; });
         const maxB=Math.max(...bins)||1, hbW=Math.floor(270/nBins)-3;
         let hBars='',hXl='';
-        bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="#0a5c8c" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
+        bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="var(--blue)" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
         const mX=10+((meanL-minL)/((maxL-minL)||1))*270;
-        html += `<div class="chart-card"><div class="chart-card-label">Length distribution (cm)</div><svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="#5fc7ee" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="#5fc7ee">μ ${meanL.toFixed(0)}</text>${hXl}</svg></div>`;
+        html += `<div class="chart-card"><div class="chart-card-label">Length distribution (cm)</div><svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="var(--cyan)">μ ${meanL.toFixed(0)}</text>${hXl}</svg></div>`;
       }
 
     } else {
@@ -12471,12 +12602,12 @@
       if(dominant.length || rarest.length){
         html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
         if(dominant.length){
-          html += '<div><div class="chart-card-label" style="color:#2f7a52;">'+t('adv_dominant')+'</div>'
+          html += '<div><div class="chart-card-label" style="color:var(--released);">'+t('adv_dominant')+'</div>'
             + dominant.map(([sp,c]) => '<div style="font-size:11.5px;color:var(--ink);line-height:1.9;">'+sp+' <span style="color:#9aa6a6;">· '+(c/div.total*100).toFixed(0)+'%</span></div>').join('')
             + '</div>';
         }
         if(rarest.length){
-          html += '<div><div class="chart-card-label" style="color:#c0532f;">'+t('adv_rarest')+'</div>'
+          html += '<div><div class="chart-card-label" style="color:var(--coral);">'+t('adv_rarest')+'</div>'
             + rarest.map(([sp,c]) => '<div style="font-size:11.5px;color:var(--ink);line-height:1.9;">'+sp+' <span style="color:#9aa6a6;">· '+(c/div.total*100).toFixed(0)+'%</span></div>').join('')
             + '</div>';
         }
@@ -12625,18 +12756,18 @@
         const xPix = (Lv) => padL + ((Lv-minL)/((maxL-minL)||1))*plotW;
         const yPix = (p) => plotBottom - p*(plotBottom-plotTop);
         let dots = '';
-        bins.forEach((bn,i) => { if(bn.total === 0) return; const mid = minL+(i+0.5)*bSize; const pct = bn.mature/bn.total; dots += `<circle cx="${xPix(mid).toFixed(1)}" cy="${yPix(pct).toFixed(1)}" r="3" fill="#0a5c8c"/>`; });
+        bins.forEach((bn,i) => { if(bn.total === 0) return; const mid = minL+(i+0.5)*bSize; const pct = bn.mature/bn.total; dots += `<circle cx="${xPix(mid).toFixed(1)}" cy="${yPix(pct).toFixed(1)}" r="3" fill="var(--blue)"/>`; });
         let curvePath = '';
         if(isFinite(b1) && b1 !== 0){
           const steps = 24, pts = [];
           for(let i=0;i<=steps;i++){ const Lv = minL+(maxL-minL)*i/steps; const p = 1/(1+Math.exp(-(b0+b1*Lv))); pts.push(xPix(Lv).toFixed(1)+','+yPix(p).toFixed(1)); }
-          curvePath = '<path d="M'+pts.join(' L')+'" fill="none" stroke="#5fc7ee" stroke-width="1.8"/>';
+          curvePath = '<path d="M'+pts.join(' L')+'" fill="none" stroke="var(--cyan)" stroke-width="1.8"/>';
         }
         const L50 = (isFinite(b1) && b1 !== 0) ? (-b0/b1) : null;
         const l50Marker = (L50 !== null && L50 >= minL && L50 <= maxL)
-          ? `<line x1="${xPix(L50).toFixed(1)}" y1="4" x2="${xPix(L50).toFixed(1)}" y2="${plotBottom}" stroke="#c0532f" stroke-width="1.2" stroke-dasharray="3 2"/><text x="${(xPix(L50)+3).toFixed(1)}" y="16" font-family="monospace" font-size="8" fill="#c0532f">L50 ≈ ${L50.toFixed(0)}cm</text>`
+          ? `<line x1="${xPix(L50).toFixed(1)}" y1="4" x2="${xPix(L50).toFixed(1)}" y2="${plotBottom}" stroke="var(--coral)" stroke-width="1.2" stroke-dasharray="3 2"/><text x="${(xPix(L50)+3).toFixed(1)}" y="16" font-family="monospace" font-size="8" fill="var(--coral)">L50 ≈ ${L50.toFixed(0)}cm</text>`
           : '';
-        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="#d9e0e0"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="#d9e0e0"/>${dots}${curvePath}${l50Marker}<text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">${minL.toFixed(0)}cm</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${maxL.toFixed(0)}cm</text></svg>`;
+        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="var(--line)"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="var(--line)"/>${dots}${curvePath}${l50Marker}<text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">${minL.toFixed(0)}cm</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${maxL.toFixed(0)}cm</text></svg>`;
         html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_maturity_footnote')+'</div>';
       }
       html += '</div>';
@@ -12658,7 +12789,7 @@
         const xPix = (i) => padL + (i/((n-1)||1))*plotW;
         const yPix = (v) => plotBottom - (v/maxS)*(plotBottom-plotTop);
         const pathPts = sampled.map(p => xPix(p.idx).toFixed(1)+','+yPix(p.val).toFixed(1));
-        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="#d9e0e0"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="#d9e0e0"/><path d="M${pathPts.join(' L')}" fill="none" stroke="#0a5c8c" stroke-width="2"/><text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">1</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${n} `+t('adv_records')+`</text><text x="${padL+4}" y="16" font-family="monospace" font-size="9" fill="#06384f">${maxS} `+t('adv_species_lc')+`</text></svg>`;
+        html += `<svg width="100%" height="88" viewBox="0 0 290 88"><line x1="${padL}" y1="4" x2="${padL}" y2="${plotBottom}" stroke="var(--line)"/><line x1="${padL}" y1="${plotBottom}" x2="280" y2="${plotBottom}" stroke="var(--line)"/><path d="M${pathPts.join(' L')}" fill="none" stroke="var(--blue)" stroke-width="2"/><text x="${padL}" y="80" font-family="monospace" font-size="8" fill="#9aa6a6">1</text><text x="278" y="80" text-anchor="end" font-family="monospace" font-size="8" fill="#9aa6a6">${n} `+t('adv_records')+`</text><text x="${padL+4}" y="16" font-family="monospace" font-size="9" fill="var(--blue-deep)">${maxS} `+t('adv_species_lc')+`</text></svg>`;
         html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_accumulation_footnote')+'</div>';
       }
       html += '</div>';
@@ -12683,9 +12814,9 @@
           vals.forEach(v=>{ bins[Math.min(Math.floor((v-minL)/bSize),nBins-1)]++; });
           const maxB=Math.max(...bins)||1, hbW=Math.floor(270/nBins)-3;
           let hBars='',hXl='';
-          bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="#0a5c8c" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
+          bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="var(--blue)" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
           const mX=10+((meanL-minL)/((maxL-minL)||1))*270;
-          html += `<svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="#5fc7ee" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="#5fc7ee">μ ${meanL.toFixed(0)}</text>${hXl}</svg>`;
+          html += `<svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="var(--cyan)">μ ${meanL.toFixed(0)}</text>${hXl}</svg>`;
         }
       }
       html += '</div>';
