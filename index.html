@@ -764,8 +764,18 @@
      supported on iOS Safari (only <video> gets native fullscreen there)
      — this way it works the same on every platform the PWA runs on.
      leafletInstance.invalidateSize() gets called after the toggle
-     (see toggleMapFullscreen in the Map rendering section) because
-     Leaflet doesn't detect container resizes on its own. */
+     (see setMapFullscreen) because Leaflet doesn't detect container
+     resizes on its own. Reused as-is by Sport's map (sportMapViewWrap /
+     sportMapFullscreenBtn) — same classes, same behavior, so both
+     modules share one fix instead of drifting.
+
+     The close button's top offset uses max(), not calc(10px + inset),
+     because on a non-notched phone env(safe-area-inset-top) legitimately
+     resolves to 0 — it only covers hardware notch/rounded-corner
+     intrusions, not general status-bar height — so pure addition could
+     still land the button under the status bar clock on exactly the
+     phones that don't report a safe-area inset. max() guarantees a
+     generous floor regardless. */
   .map-view-wrap{ position:relative; }
   .map-fullscreen-btn{
     position:absolute; top:10px; right:10px; z-index:401;
@@ -775,12 +785,16 @@
   }
   .map-view-wrap.is-fullscreen{
     position:fixed; inset:0; z-index:1000; background:var(--paper);
-    padding: calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px));
+    padding: max(28px, env(safe-area-inset-top,0px) + 14px) 10px max(14px, env(safe-area-inset-bottom,0px));
     box-sizing:border-box; display:flex; flex-direction:column;
+  }
+  .map-view-wrap.is-fullscreen .map-fullscreen-btn{
+    top: max(28px, env(safe-area-inset-top,0px) + 14px);
   }
   .map-view-wrap.is-fullscreen .map-layer-toggle{ flex-shrink:0; }
   .map-view-wrap.is-fullscreen #leafletMap,
-  .map-view-wrap.is-fullscreen .schematic-wrap{ flex:1; height:auto; }
+  .map-view-wrap.is-fullscreen #sportLeafletMap,
+  .map-view-wrap.is-fullscreen .schematic-wrap{ flex:1; height:auto; margin:0; }
   .map-mode-banner{
     display:flex; align-items:center; gap:8px;
     font-family: var(--data); font-size: 10px; color: #9fc8de;
@@ -3348,12 +3362,17 @@
   </div>
   <main>
     <!-- Map: always visible with layer toggle -->
-    <div class="map-layer-toggle" id="sportMapLayerToggle">
-      <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
-      <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
-      <button class="mlt-btn" id="sportMltDepth" data-i18n="sp_map_depth">Depth</button>
+    <div class="map-view-wrap" id="sportMapViewWrap">
+      <div class="map-layer-toggle" id="sportMapLayerToggle">
+        <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
+        <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
+        <button class="mlt-btn" id="sportMltDepth" data-i18n="sp_map_depth">Depth</button>
+      </div>
+      <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
+      <button type="button" class="map-fullscreen-btn" id="sportMapFullscreenBtn" aria-label="View fullscreen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
-    <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
 
     <div class="card" id="sportAddSpotCard" style="margin-bottom:16px; display:none;">
       <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="sp_add_spot">Add a spot</div>
@@ -9005,6 +9024,7 @@
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
   function sportGoTo(screen){
+    if(typeof sportMapIsFullscreen !== 'undefined' && sportMapIsFullscreen && screen !== 'spots') setSportMapFullscreen(false);
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-sport-' + screen).classList.add('active');
     document.querySelectorAll('#tabbarSport .tab').forEach(t => t.classList.remove('active'));
@@ -10367,6 +10387,24 @@
   document.getElementById('sportMltStreet').addEventListener('click', () => setSportMapLayer('street'));
   document.getElementById('sportMltSatellite').addEventListener('click', () => setSportMapLayer('satellite'));
 
+  let sportMapIsFullscreen = false;
+  const SPORT_MAP_EXPAND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const SPORT_MAP_COLLAPSE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3v3a2 2 0 0 1-2 2H4M15 3v3a2 2 0 0 0 2 2h3M21 15h-3a2 2 0 0 0-2 2v3M9 21v-3a2 2 0 0 0-2-2H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function setSportMapFullscreen(on){
+    sportMapIsFullscreen = on;
+    document.getElementById('sportMapViewWrap').classList.toggle('is-fullscreen', on);
+    const mapEl = document.getElementById('sportLeafletMap');
+    // sportLeafletMap carries its collapsed height as an inline style,
+    // which would out-specificity the .is-fullscreen CSS rule — clear it
+    // going in, restore it coming back out.
+    mapEl.style.height = on ? '' : '220px';
+    const btn = document.getElementById('sportMapFullscreenBtn');
+    btn.innerHTML = on ? SPORT_MAP_COLLAPSE_ICON : SPORT_MAP_EXPAND_ICON;
+    btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'View fullscreen');
+    setTimeout(() => { if(sportLeafletInstance) sportLeafletInstance.invalidateSize(); }, 160);
+  }
+  document.getElementById('sportMapFullscreenBtn').addEventListener('click', () => setSportMapFullscreen(!sportMapIsFullscreen));
+
   // Bathymetry/depth overlay — GEBCO (global, ~460m, colour-coded by
   // elevation) as the base layer, with EMODnet Bathymetry (Europe only,
   // ~115m, much finer) stacked on top. EMODnet's WMS renders fully
@@ -10436,7 +10474,7 @@
             return div;
           }
         });
-        sportCurrentControl = new Control({ position: 'bottomleft' });
+        sportCurrentControl = new Control({ position: 'topleft' });
         sportCurrentControl.addTo(sportLeafletInstance);
       }
       const el = document.getElementById('sportCurrentIndicator');
@@ -12088,7 +12126,7 @@
             return div;
           }
         });
-        mapCurrentControl = new Control({ position: 'bottomleft' });
+        mapCurrentControl = new Control({ position: 'topleft' });
         mapCurrentControl.addTo(leafletInstance);
       }
       const el = document.getElementById('mapCurrentIndicator');
