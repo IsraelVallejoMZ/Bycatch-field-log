@@ -359,6 +359,24 @@
     background:var(--fleet-amber-dim); color:var(--amber); border:1px solid var(--line);
   }
 
+  /* ----- Operations: top pill tab strip (replaces the old bottom nav) -----
+     Each of the 6 Ops screens is its own <section>, not shared React state,
+     so this strip is duplicated per screen with the correct button
+     hardcoded active — no JS needed beyond the existing generic
+     [data-go^="fleet-"] click wiring, which already handles navigation. */
+  body.mode-fleet .fleet-tab-strip{
+    display:flex; gap:6px; overflow-x:auto; padding:10px 16px; border-bottom:1px solid var(--line);
+    background:var(--paper); -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.mode-fleet .fleet-tab-strip::-webkit-scrollbar{ display:none; }
+  body.mode-fleet .fleet-tab-strip button{
+    flex-shrink:0; display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:transparent;
+    color:var(--ink-soft); border-radius:999px; padding:7px 12px; font-family:var(--data); font-size:10px;
+    font-weight:600; letter-spacing:0.04em; text-transform:uppercase; cursor:pointer;
+  }
+  body.mode-fleet .fleet-tab-strip button svg{ width:13px; height:13px; flex-shrink:0; }
+  body.mode-fleet .fleet-tab-strip button.active{ border-color:var(--amber); background:var(--fleet-amber-dim); color:var(--amber); }
+
   /* ----- Role select screen (Bridge Console) ----- */
   #screen-fleet-role-select{ background: var(--paper); }
   #screen-fleet-role-select .mode-select-wrap{ background: var(--paper); }
@@ -2771,9 +2789,27 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="fltriplog_brand">Trip Log</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="fltriplog_title">Past Trips</h1>
     <div class="site-line" id="fleetTripLogVesselLine" data-i18n="fltriplog_all_vessels">All Vessels</div>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" class="active" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <div class="filter-row">
@@ -2858,13 +2894,28 @@
   <div class="topbar">
     <div class="topbar-row">
       <span class="brand" data-i18n="fldash_brand">Fish Pulse · Operations</span>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="switch-mode-btn" data-switch-fleet-role="1" data-i18n="fltrip_switch_role">Switch Role</button>
-        <button class="switch-mode-btn" id="switchModeBtnOperations" data-i18n="fltrip_switch_mode">Switch Mode</button>
+      <div class="topbar-actions">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
       </div>
     </div>
     <h1 data-i18n="fldash_h1">Fleet Overview</h1>
     <div class="site-line">&nbsp;</div>
+    <button class="topbar-switch-mode-link" id="switchModeBtnOperations" data-i18n="fltrip_switch_mode">← Switch Mode</button>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" class="active" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <div id="fleetDashboardSummary"></div>
@@ -2950,6 +3001,16 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="flrecon_brand">Reconciliation</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flrecon_h1">Scale Vs. Logbook</h1>
     <div class="site-line">&nbsp;</div>
@@ -2958,6 +3019,14 @@
         <option value="" data-i18n="flrecon_select_trip">— Select a closed trip —</option>
       </select>
     </div>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" class="active" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <div id="fleetReconBody"></div>
@@ -2970,9 +3039,27 @@
     <div class="back-row">
       <button class="back-btn" id="fleetDocumentsBackBtn">←</button>
       <span class="brand" data-i18n="fldocs_brand">Documents</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="fldocs_h1">Licenses & Certificates</h1>
     <div class="site-line">&nbsp;</div>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" class="active" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <div class="card">
@@ -3023,9 +3110,27 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="flvessels_brand">Vessels</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flvessels_h1">Vessels & Captains</h1>
     <div class="site-line">&nbsp;</div>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" class="active" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
@@ -3295,8 +3400,26 @@
     <div class="back-row">
       <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="mode_fleet_title">Fishing Operations</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" class="active" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
     </div>
     <h1 data-i18n="flstats_h1">Fleet Statistics</h1>
+  </div>
+  <div class="fleet-tab-strip">
+    <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
+    <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
+    <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
+    <button type="button" data-go="fleet-documents"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_docs">Docs</span></button>
+    <button type="button" data-go="fleet-vessels"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-i18n="fltab_vessels">Vessels</span></button>
+    <button type="button" class="active" data-go="fleet-stats"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="ins_tab_stats">Stats</span></button>
   </div>
   <main>
     <select id="fleetStatsVesselFilter" style="margin-bottom:14px;"></select>
@@ -3320,33 +3443,7 @@
   </button>
 </nav>
 
-<!-- ================= FLEET TAB BAR: OPERATIONS ================= -->
-<nav class="tabbar fleet-operations-only" id="tabbarFleetOperations">
-  <button class="tab active" data-go="fleet-dashboard">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg></span>
-    <span data-i18n="fltab_fleet">Fleet</span>
-  </button>
-  <button class="tab" data-go="fleet-trip-log">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    <span data-i18n="fltab_trips">Trips</span>
-  </button>
-  <button class="tab" data-go="fleet-reconciliation">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <span data-i18n="fltab_reconcile">Reconcile</span>
-  </button>
-  <button class="tab" data-go="fleet-documents">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    <span data-i18n="fltab_docs">Docs</span>
-  </button>
-  <button class="tab" data-go="fleet-vessels">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17l3-9 5 5 4-7 5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
-    <span data-i18n="fltab_vessels">Vessels</span>
-  </button>
-  <button class="tab" data-go="fleet-stats">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19V9M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-    <span data-i18n="ins_tab_stats">Stats</span>
-  </button>
-</nav>
+<!-- tabbarFleetOperations removed — replaced by the per-screen .fleet-tab-strip (Bridge Console top pill strip) -->
 
 <!-- ================= SPORT: SESSION ================= -->
 <section class="screen" id="screen-sport-session">
