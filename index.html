@@ -299,6 +299,15 @@
   body.mode-fleet .kpi-cell .kn{ color: var(--ink); }
   body.mode-fleet .kpi-cell .kn.accent{ color: var(--cyan); }
   body.mode-fleet .kpi-cell .kl{ color: var(--ink-soft); }
+  /* Same var(--ink)/var(--paper) reuse bug, inverted this time: this
+     header was designed with a fixed-dark-chrome assumption (background
+     var(--ink), text var(--paper)) that only holds when --ink stays dark
+     — which it doesn't in Fleet. Shows up on Trip Detail's PDF export
+     preview and the Vessels screen's compliance-document previews. */
+  body.mode-fleet .fleet-export-header{
+    background: var(--panel); color: var(--ink); border-bottom: 1px solid var(--line);
+  }
+  body.mode-fleet .photo-viewer-close{ color: var(--ink); }
 
   .fleet-sun-toggle{
     display:flex; align-items:center; gap:6px; cursor:pointer;
@@ -4033,7 +4042,7 @@
       fltripdet_maintenance: 'Maintenance', fltripdet_permits_fees: 'Permits / Fees', fltripdet_port_dues: 'Port Dues',
       fltripdet_amount: 'Amount', fltripdet_add_cost_btn: 'Add Cost', fltripdet_export: 'Export', fltripdet_share: 'Share', fltripdet_export_photos_btn: 'Export Photos From This Trip',
       fldash_brand: 'Fish Pulse · Operations', fldash_h1: 'Fleet Overview', fldash_efficiency: 'Efficiency by vessel', fldash_needs_attention: 'Needs attention',
-      fldash_catch: 'Catch', fldash_fuel_l: 'Fuel L', fldash_no_closed_trips: 'No closed trips yet', fldash_efficient: 'Efficient', fldash_review: 'Review',
+      fldash_catch: 'Catch', fldash_fuel_l: 'Fuel L', fldash_no_closed_trips: 'No closed trips yet', fldash_efficient: 'Efficient', fldash_review: 'Review', fldash_at_sea: 'At sea · Day {n}', fldash_in_port: 'In port',
       fldash_no_vessels: 'No vessels yet. Add one from the Vessels tab.', fldash_unknown: 'Unknown', fldash_closed_no_catch: 'Trip closed without catch',
       fldash_costs_pending: 'Costs pending', fldash_no_alerts: 'No alerts. Everything looks current.',
       flhaulmap_brand: 'Haul Map', flhaulmap_title: 'Fishing Zones', flhaulmap_no_gps: 'Hauls Without GPS',
@@ -4083,7 +4092,7 @@
       flstats_cost_composition: 'Cost composition · all trips', flstats_cost_empty: 'No closed trips with costs logged for this vessel yet.', flstats_cost_empty2: "No costs logged for this vessel's trips yet.",
       flstats_cost_fuel: 'Fuel', flstats_cost_crew: 'Crew', flstats_cost_ice: 'Ice', flstats_cost_provisions: 'Provisions', flstats_cost_maintenance: 'Maintenance', flstats_cost_permits_fees: 'Permits / Fees', flstats_cost_port_dues: 'Port Dues', flstats_cost_other: 'Other',
       flstats_cpue: 'Commercial CPUE · kg / hour', flstats_cpue_empty: 'No hauls with both a duration and logged catch yet.', flstats_cpue_footnote: "All vessels, all trips — not affected by the vessel filter above, since kg/hr isn't a currency figure.",
-      flstats_vessel_comparison: 'Vessel comparison', flstats_no_closed_trips_short: 'No closed trips yet.', flstats_trips_header: 'Trips', flstats_margin: 'Margin',
+      flstats_vessel_comparison: 'Vessel comparison', flstats_no_closed_trips_short: 'No closed trips yet.', flstats_trips_header: 'Trips', flstats_margin: 'Margin', flstats_compare_needs_two: 'Needs at least 2 vessels with closed trips to compare.', flstats_compare_no_data: 'No data yet for', flstats_compare_fuel_per_kg: 'Fuel efficiency', flstats_compare_kg_per_hr: 'Catch rate',
       flstats_margin_footnote: 'Margin shown as % of income (net ÷ income), not absolute currency — safe to compare even when vessels use different default currencies.',
       fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
       sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
@@ -4338,7 +4347,7 @@
       fltripdet_maintenance: 'Mantenimiento', fltripdet_permits_fees: 'Permisos / Cuotas', fltripdet_port_dues: 'Derechos de Puerto',
       fltripdet_amount: 'Monto', fltripdet_add_cost_btn: 'Agregar Costo', fltripdet_export: 'Exportar', fltripdet_share: 'Compartir', fltripdet_export_photos_btn: 'Exportar Fotos de Este Viaje',
       fldash_brand: 'Fish Pulse · Operaciones', fldash_h1: 'Vista General de la Flota', fldash_efficiency: 'Eficiencia por embarcación', fldash_needs_attention: 'Requiere atención',
-      fldash_catch: 'Captura', fldash_fuel_l: 'Combustible L', fldash_no_closed_trips: 'Aún no hay viajes cerrados', fldash_efficient: 'Eficiente', fldash_review: 'Revisar',
+      fldash_catch: 'Captura', fldash_fuel_l: 'Combustible L', fldash_no_closed_trips: 'Aún no hay viajes cerrados', fldash_efficient: 'Eficiente', fldash_review: 'Revisar', fldash_at_sea: 'En mar · Día {n}', fldash_in_port: 'En puerto',
       fldash_no_vessels: 'Aún no hay embarcaciones. Agrega una desde la pestaña Embarcaciones.', fldash_unknown: 'Desconocida', fldash_closed_no_catch: 'Viaje cerrado sin captura',
       fldash_costs_pending: 'Costos pendientes', fldash_no_alerts: 'Sin alertas. Todo está al día.',
       flhaulmap_brand: 'Mapa de Lances', flhaulmap_title: 'Zonas de Pesca', flhaulmap_no_gps: 'Lances Sin GPS',
@@ -4388,7 +4397,7 @@
       flstats_cost_composition: 'Composición de costos · todos los viajes', flstats_cost_empty: 'Aún no hay viajes cerrados con costos registrados para esta embarcación.', flstats_cost_empty2: 'Aún no hay costos registrados para los viajes de esta embarcación.',
       flstats_cost_fuel: 'Combustible', flstats_cost_crew: 'Tripulación', flstats_cost_ice: 'Hielo', flstats_cost_provisions: 'Víveres', flstats_cost_maintenance: 'Mantenimiento', flstats_cost_permits_fees: 'Permisos / Cuotas', flstats_cost_port_dues: 'Derechos de Puerto', flstats_cost_other: 'Otro',
       flstats_cpue: 'CPUE Comercial · kg / hora', flstats_cpue_empty: 'Aún no hay lances con duración y captura registradas.', flstats_cpue_footnote: 'Todas las embarcaciones, todos los viajes — no afectado por el filtro de embarcación de arriba, ya que kg/hr no es una cifra monetaria.',
-      flstats_vessel_comparison: 'Comparativa entre embarcaciones', flstats_no_closed_trips_short: 'Aún no hay viajes cerrados.', flstats_trips_header: 'Viajes', flstats_margin: 'Margen',
+      flstats_vessel_comparison: 'Comparativa entre embarcaciones', flstats_no_closed_trips_short: 'Aún no hay viajes cerrados.', flstats_trips_header: 'Viajes', flstats_margin: 'Margen', flstats_compare_needs_two: 'Se necesitan al menos 2 embarcaciones con viajes cerrados para comparar.', flstats_compare_no_data: 'Aún sin datos para', flstats_compare_fuel_per_kg: 'Eficiencia de combustible', flstats_compare_kg_per_hr: 'Tasa de captura',
       flstats_margin_footnote: 'Margen mostrado como % del ingreso (neto ÷ ingreso), no en moneda absoluta — seguro de comparar aunque las embarcaciones usen monedas predeterminadas distintas.',
       fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
       sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
@@ -4643,7 +4652,7 @@
       fltripdet_maintenance: 'Manutenzione', fltripdet_permits_fees: 'Permessi / Tasse', fltripdet_port_dues: 'Tasse Portuali',
       fltripdet_amount: 'Importo', fltripdet_add_cost_btn: 'Aggiungi Costo', fltripdet_export: 'Esporta', fltripdet_share: 'Condividi', fltripdet_export_photos_btn: 'Esporta Foto di Questo Viaggio',
       fldash_brand: 'Fish Pulse · Operazioni', fldash_h1: 'Panoramica Flotta', fldash_efficiency: 'Efficienza per imbarcazione', fldash_needs_attention: 'Richiede attenzione',
-      fldash_catch: 'Cattura', fldash_fuel_l: 'Carburante L', fldash_no_closed_trips: 'Nessun viaggio chiuso ancora', fldash_efficient: 'Efficiente', fldash_review: 'Verifica',
+      fldash_catch: 'Cattura', fldash_fuel_l: 'Carburante L', fldash_no_closed_trips: 'Nessun viaggio chiuso ancora', fldash_efficient: 'Efficiente', fldash_review: 'Verifica', fldash_at_sea: 'In mare · Giorno {n}', fldash_in_port: 'In porto',
       fldash_no_vessels: "Nessuna imbarcazione ancora. Aggiungine una dalla scheda Imbarcazioni.", fldash_unknown: 'Sconosciuta', fldash_closed_no_catch: 'Viaggio chiuso senza cattura',
       fldash_costs_pending: 'Costi in sospeso', fldash_no_alerts: 'Nessun avviso. Tutto è aggiornato.',
       flhaulmap_brand: 'Mappa Calate', flhaulmap_title: 'Zone di Pesca', flhaulmap_no_gps: 'Calate Senza GPS',
@@ -4693,7 +4702,7 @@
       flstats_cost_composition: 'Composizione dei costi · tutti i viaggi', flstats_cost_empty: 'Nessun viaggio chiuso con costi registrati per questa imbarcazione ancora.', flstats_cost_empty2: 'Nessun costo registrato ancora per i viaggi di questa imbarcazione.',
       flstats_cost_fuel: 'Carburante', flstats_cost_crew: 'Equipaggio', flstats_cost_ice: 'Ghiaccio', flstats_cost_provisions: 'Provviste', flstats_cost_maintenance: 'Manutenzione', flstats_cost_permits_fees: 'Permessi / Tasse', flstats_cost_port_dues: 'Tasse Portuali', flstats_cost_other: 'Altro',
       flstats_cpue: 'CPUE Commerciale · kg / ora', flstats_cpue_empty: 'Nessuna calata con sia durata che cattura registrate ancora.', flstats_cpue_footnote: "Tutte le imbarcazioni, tutti i viaggi — non influenzato dal filtro imbarcazione sopra, poiché kg/hr non è una cifra monetaria.",
-      flstats_vessel_comparison: 'Confronto tra imbarcazioni', flstats_no_closed_trips_short: 'Nessun viaggio chiuso ancora.', flstats_trips_header: 'Viaggi', flstats_margin: 'Margine',
+      flstats_vessel_comparison: 'Confronto tra imbarcazioni', flstats_no_closed_trips_short: 'Nessun viaggio chiuso ancora.', flstats_trips_header: 'Viaggi', flstats_margin: 'Margine', flstats_compare_needs_two: 'Servono almeno 2 imbarcazioni con viaggi chiusi per confrontare.', flstats_compare_no_data: 'Nessun dato ancora per', flstats_compare_fuel_per_kg: 'Efficienza carburante', flstats_compare_kg_per_hr: 'Tasso di cattura',
       flstats_margin_footnote: 'Margine mostrato come % del reddito (netto ÷ reddito), non valuta assoluta — sicuro da confrontare anche quando le imbarcazioni usano valute predefinite diverse.',
       fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
       sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
@@ -4948,7 +4957,7 @@
       fltripdet_maintenance: 'ค่าบำรุงรักษา', fltripdet_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', fltripdet_port_dues: 'ค่าธรรมเนียมท่าเรือ',
       fltripdet_amount: 'จำนวนเงิน', fltripdet_add_cost_btn: 'เพิ่มค่าใช้จ่าย', fltripdet_export: 'ส่งออก', fltripdet_share: 'แชร์', fltripdet_export_photos_btn: 'ส่งออกรูปภาพจากทริปนี้',
       fldash_brand: 'Fish Pulse · ฝ่ายปฏิบัติการ', fldash_h1: 'ภาพรวมกองเรือ', fldash_efficiency: 'ประสิทธิภาพตามเรือ', fldash_needs_attention: 'ต้องให้ความสนใจ',
-      fldash_catch: 'การจับปลา', fldash_fuel_l: 'เชื้อเพลิง ลิตร', fldash_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว', fldash_efficient: 'มีประสิทธิภาพ', fldash_review: 'ต้องตรวจสอบ',
+      fldash_catch: 'การจับปลา', fldash_fuel_l: 'เชื้อเพลิง ลิตร', fldash_no_closed_trips: 'ยังไม่มีทริปที่ปิดแล้ว', fldash_efficient: 'มีประสิทธิภาพ', fldash_review: 'ต้องตรวจสอบ', fldash_at_sea: 'ออกทะเล · วันที่ {n}', fldash_in_port: 'อยู่ท่าเรือ',
       fldash_no_vessels: 'ยังไม่มีเรือ เพิ่มเรือได้จากแท็บเรือ', fldash_unknown: 'ไม่ทราบ', fldash_closed_no_catch: 'ปิดทริปโดยไม่มีการจับปลา',
       fldash_costs_pending: 'ค่าใช้จ่ายที่ค้างอยู่', fldash_no_alerts: 'ไม่มีการแจ้งเตือน ทุกอย่างเป็นปัจจุบัน',
       flhaulmap_brand: 'แผนที่การลากอวน', flhaulmap_title: 'พื้นที่ทำการประมง', flhaulmap_no_gps: 'การลากอวนที่ไม่มีจีพีเอส',
@@ -4998,7 +5007,7 @@
       flstats_cost_composition: 'องค์ประกอบค่าใช้จ่าย · ทุกทริป', flstats_cost_empty: 'ยังไม่มีทริปที่ปิดแล้วพร้อมค่าใช้จ่ายที่บันทึกสำหรับเรือนี้', flstats_cost_empty2: 'ยังไม่มีค่าใช้จ่ายที่บันทึกสำหรับทริปของเรือนี้',
       flstats_cost_fuel: 'เชื้อเพลิง', flstats_cost_crew: 'ลูกเรือ', flstats_cost_ice: 'น้ำแข็ง', flstats_cost_provisions: 'เสบียง', flstats_cost_maintenance: 'ค่าบำรุงรักษา', flstats_cost_permits_fees: 'ใบอนุญาต / ค่าธรรมเนียม', flstats_cost_port_dues: 'ค่าธรรมเนียมท่าเรือ', flstats_cost_other: 'อื่นๆ',
       flstats_cpue: 'CPUE เชิงพาณิชย์ · กก. / ชั่วโมง', flstats_cpue_empty: 'ยังไม่มีการลากอวนที่มีทั้งระยะเวลาและการจับปลาที่บันทึกไว้', flstats_cpue_footnote: 'เรือทั้งหมด ทริปทั้งหมด — ไม่ได้รับผลกระทบจากตัวกรองเรือด้านบน เนื่องจาก กก./ชม. ไม่ใช่ตัวเลขทางการเงิน',
-      flstats_vessel_comparison: 'การเปรียบเทียบเรือ', flstats_no_closed_trips_short: 'ยังไม่มีทริปที่ปิดแล้ว', flstats_trips_header: 'ทริป', flstats_margin: 'กำไรขั้นต้น',
+      flstats_vessel_comparison: 'การเปรียบเทียบเรือ', flstats_no_closed_trips_short: 'ยังไม่มีทริปที่ปิดแล้ว', flstats_trips_header: 'ทริป', flstats_margin: 'กำไรขั้นต้น', flstats_compare_needs_two: 'ต้องมีอย่างน้อย 2 ลำที่มีทริปปิดแล้วจึงจะเปรียบเทียบได้', flstats_compare_no_data: 'ยังไม่มีข้อมูลสำหรับ', flstats_compare_fuel_per_kg: 'ประสิทธิภาพเชื้อเพลิง', flstats_compare_kg_per_hr: 'อัตราการจับ',
       flstats_margin_footnote: 'กำไรขั้นต้นแสดงเป็น % ของรายได้ (สุทธิ ÷ รายได้) ไม่ใช่สกุลเงินสัมบูรณ์ — สามารถเปรียบเทียบได้อย่างปลอดภัยแม้เรือจะใช้สกุลเงินเริ่มต้นต่างกัน',
       fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
       sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
@@ -8334,7 +8343,8 @@
   // ===== Fleet dashboard =====
   function renderFleetDashboard(){
     const vessels = load(VESSELS_KEY);
-    const trips = load(TRIPS_KEY).filter(t => t.ended_at);
+    const allTrips = load(TRIPS_KEY);
+    const trips = allTrips.filter(t => t.ended_at);
     const catches = load(CATCHES_KEY);
     const costs = load(COSTS_KEY);
 
@@ -8350,8 +8360,17 @@
       + '</div>';
 
     const vesselsHtml = vessels.map(v => {
+      const activeTrip = allTrips.find(t => t.vessel_id === v.vessel_id && !t.ended_at);
+      let statusLine;
+      if(activeTrip){
+        const dayNum = Math.floor((Date.now() - new Date(activeTrip.started_at).getTime()) / 86400000) + 1;
+        statusLine = '<div style="font-family:var(--data);font-size:10.5px;color:var(--released);margin-top:2px;">'
+          + t('fldash_at_sea').replace('{n}', dayNum) + '</div>';
+      } else {
+        statusLine = '<div style="font-family:var(--data);font-size:10.5px;color:var(--ink-soft);margin-top:2px;">' + t('fldash_in_port') + '</div>';
+      }
       const vTrips = trips.filter(t => t.vessel_id === v.vessel_id);
-      if(vTrips.length === 0) return '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div><div class="meta" style="margin-top:4px;">'+t('fldash_no_closed_trips')+'</div></div>';
+      if(vTrips.length === 0) return '<div class="insight-card" style="margin-bottom:8px;"><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div>'+statusLine+'<div class="meta" style="margin-top:4px;">'+t('fldash_no_closed_trips')+'</div></div>';
       const vCatchesKg = vTrips.reduce((s,t)=> s + catches.filter(c=>c.trip_id===t.trip_id).reduce((a,c)=>a+(parseFloat(c.kg)||0),0), 0);
       const vFuel = vTrips.reduce((s,t)=> s + (parseFloat(t.fuel_consumed_l)||0), 0);
       const totalHours = vTrips.reduce((s,t)=> s + (new Date(t.ended_at)-new Date(t.started_at))/3600000, 0);
@@ -8360,25 +8379,25 @@
       const margins = vTrips.map(t => computeTripMargin(t));
       const avgMargin = margins.reduce((s,m)=>s+m.minMargin,0) / margins.length;
       let statusChip = '';
-      let marginColor = '#0e1b26';
+      let marginColor = 'var(--ink)';
       if(v.margin_target){
         const target = parseFloat(v.margin_target);
         if(avgMargin >= target){
           statusChip = '<span class="ce-status-chip active">'+t('fldash_efficient')+'</span>';
-          marginColor = '#6fc99a';
+          marginColor = 'var(--released)';
         } else {
           statusChip = '<span class="ce-status-chip" style="color:#c0532f;background:#fdeaea;">'+t('fldash_review')+'</span>';
-          marginColor = '#c0532f';
+          marginColor = 'var(--coral)';
         }
       }
       const marginDisplay = isNaN(avgMargin) ? '—' : fmtMoney(avgMargin, v.default_currency);
       return '<div class="insight-card" style="margin-bottom:8px;">'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
-        + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div>'+statusChip+'</div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">'
+        + '<div><div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">'+v.name+'</div>'+statusLine+'</div>'+statusChip+'</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'
-        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+fuelPerKg+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">L/kg</div></div>'
-        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+kgPerHour+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">kg/hr</div></div>'
-        + '<div style="background:#f4f6f5;border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:'+marginColor+';">'+marginDisplay+'</div><div style="font-family:var(--data);font-size:9px;color:#7fa3b5;margin-top:2px;text-transform:uppercase;">'+t('flstats_margin')+'</div></div>'
+        + '<div style="background:var(--fleet-panel-2,#f4f6f5);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+fuelPerKg+'</div><div style="font-family:var(--data);font-size:9px;color:var(--ink-soft);margin-top:2px;text-transform:uppercase;">L/kg</div></div>'
+        + '<div style="background:var(--fleet-panel-2,#f4f6f5);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);">'+kgPerHour+'</div><div style="font-family:var(--data);font-size:9px;color:var(--ink-soft);margin-top:2px;text-transform:uppercase;">kg/hr</div></div>'
+        + '<div style="background:var(--fleet-panel-2,#f4f6f5);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--display);font-weight:700;font-size:16px;color:'+marginColor+';">'+marginDisplay+'</div><div style="font-family:var(--data);font-size:9px;color:var(--ink-soft);margin-top:2px;text-transform:uppercase;">'+t('flstats_margin')+'</div></div>'
         + '</div></div>';
     }).join('');
     document.getElementById('fleetDashboardVessels').innerHTML = vesselsHtml || '<div class="empty">'+t('fldash_no_vessels')+'</div>';
@@ -9342,31 +9361,49 @@
     }
     html += '</div>';
 
-    // --- Vessel comparison ---
+    // --- Vessel comparison: L/kg, kg/hr, margin side by side ---
     html += '<div class="insight-card"><div class="insight-card-label">'+t('flstats_vessel_comparison')+'</div>';
     const vesselRows = vessels.map(v => {
       const trips = closedTrips.filter(t => t.vessel_id === v.vessel_id);
-      if(trips.length === 0) return { v, trips:0, kg:0, hours:0, marginSum:0, marginN:0 };
-      let kg=0, hours=0, marginSum=0, marginN=0;
+      if(trips.length === 0) return { v, trips:0, kg:0, hours:0, fuel:0, marginSum:0, marginN:0 };
+      let kg=0, hours=0, fuel=0, marginSum=0, marginN=0;
       trips.forEach(t => {
         const f = computeTripFinancials(t);
         kg += f.kg;
+        fuel += parseFloat(t.fuel_consumed_l) || 0;
         if(f.margin !== null){ marginSum += f.margin; marginN++; }
       });
       load(HAULS_KEY).filter(h => trips.some(t=>t.trip_id===h.trip_id)).forEach(h => { const dur=parseFloat(h.duration_min); if(dur>0) hours += dur/60; });
-      return { v, trips: trips.length, kg, hours, marginSum, marginN };
+      return { v, trips: trips.length, kg, hours, fuel, marginSum, marginN };
     }).filter(r => r.trips > 0);
     if(vesselRows.length === 0){
       html += '<div class="insight-empty">'+t('flstats_no_closed_trips_short')+'</div>';
+    } else if(vesselRows.length === 1){
+      html += '<div class="insight-empty">'+t('flstats_compare_needs_two')+'</div>';
     } else {
-      html += '<table class="stat-table"><thead><tr><th>'+t('flvessels_brand')+'</th><th>'+t('flstats_trips_header')+'</th><th>kg/hr</th><th>'+t('flstats_margin')+'</th></tr></thead><tbody>';
-      vesselRows.forEach(r => {
-        const rate = r.hours>0 ? (r.kg/r.hours) : null;
-        const avgMargin = r.marginN>0 ? (r.marginSum/r.marginN) : null;
-        const marginChip = avgMargin===null ? '—' : '<span class="chip '+(avgMargin>=0?'chip-green':'chip-red')+'">'+(avgMargin>=0?'+':'')+avgMargin.toFixed(0)+'%</span>';
-        html += '<tr><td class="sp-name" style="font-style:normal;">'+r.v.name+'</td><td class="num">'+r.trips+'</td><td class="num">'+(rate!==null?rate.toFixed(1):'—')+'</td><td class="num">'+marginChip+'</td></tr>';
-      });
-      html += '</tbody></table>';
+      const compareRows = vesselRows.map(r => ({
+        name: r.v.name,
+        fuelPerKg: r.kg > 0 ? (r.fuel / r.kg) : null,
+        kgPerHr: r.hours > 0 ? (r.kg / r.hours) : null,
+        margin: r.marginN > 0 ? (r.marginSum / r.marginN) : null
+      }));
+      // One horizontal-bar group per metric, sharing a consistent
+      // vessel-name label column so the three groups scan as one table.
+      const barGroup = (label, unit, rows, getVal, higherIsBetter) => {
+        const withVals = rows.filter(r => getVal(r) !== null);
+        if(withVals.length === 0) return '<div class="insight-empty" style="margin-top:8px;">'+t('flstats_compare_no_data')+' '+label+'</div>';
+        const maxAbs = Math.max(...withVals.map(r => Math.abs(getVal(r)))) || 1;
+        let out = '<div style="font-family:var(--data);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 8px;">'+label+'</div>';
+        withVals.slice().sort((a,b) => higherIsBetter ? getVal(b)-getVal(a) : getVal(a)-getVal(b)).forEach(r => {
+          const val = getVal(r);
+          const pct = Math.max(4, Math.abs(val) / maxAbs * 100).toFixed(0);
+          out += '<div class="bar-row"><div class="bar-row-top"><span>'+r.name+'</span><span>'+val.toFixed(val < 10 ? 2 : 1)+' '+unit+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+        });
+        return out;
+      };
+      html += barGroup(t('flstats_compare_fuel_per_kg'), 'L/kg', compareRows, r => r.fuelPerKg, false);
+      html += barGroup(t('flstats_compare_kg_per_hr'), 'kg/hr', compareRows, r => r.kgPerHr, true);
+      html += barGroup(t('flstats_margin'), '%', compareRows, r => r.margin, true);
       html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('flstats_margin_footnote')+'</div>';
     }
     html += '</div>';
