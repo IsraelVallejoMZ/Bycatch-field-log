@@ -27,6 +27,16 @@
     --coral-soft: #f3e2d8;
     --released:   #2f7a52;
     --amber:      #b8893a;
+    /* Chrome/accent tokens — split out of --ink so a module (e.g. Research's
+       Ocean Bright override below) can recolor its header/tabbar/export-pill
+       surfaces without touching the shared --ink text color everywhere else.
+       Defaults here match the previous hardcoded hex exactly, so nothing
+       changes for Fishing Operations or any screen that doesn't override them. */
+    --chrome:       var(--ink);
+    --cyan:         #5fc7ee;
+    --chip-red-bg:  #fdeaea;
+    --chip-green-bg:#dff0e8;
+    --entry-del:    #e0a868;
 
     --display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
     --body: 'Inter', 'Noto Sans Thai', -apple-system, sans-serif;
@@ -38,12 +48,13 @@
   }
 
   /* ===== Sport/Recreational palette override =====
-     Field Research and Fishing Operations keep the original navy/blue
-     system (professional, built for someone at work). Sport gets its
-     own warmer, more vivid identity — confirmed with Israel over several
-     mockup rounds. Because almost every shared component (.topbar,
-     .home-hero, .action-tile.primary, .card-label, .btn-save, etc.)
-     already reads its colors from these custom properties instead of
+     Fishing Operations keeps the original navy/blue system (professional,
+     built for someone at work). Sport gets its own warmer, more vivid
+     identity — confirmed with Israel over several mockup rounds. Field
+     Research now has its own override too (see body.mode-research below,
+     the "Ocean Bright" palette). Because almost every shared component
+     (.topbar, .home-hero, .action-tile.primary, .card-label, .btn-save,
+     etc.) already reads its colors from these custom properties instead of
      hardcoded hex, redefining them scoped to body.mode-sport is enough
      to recolor the whole module consistently — no need to touch every
      card individually. Only .action-tile.primary gets its own extra
@@ -97,6 +108,110 @@
   body.mode-sport #sportKeptBtn.active{ box-shadow: inset 0 0 0 2px #6B2412; }
   body.mode-sport #sportReleasedBtn.active{ box-shadow: inset 0 0 0 2px #0F8A7E; }
 
+  /* ===== Field Research palette override — "Ocean Bright" =====
+     Exact token values ported from Israel's Claude-Design reference
+     (Fish_Pulse_-_Field_Research__Ocean_Bright_.html), not approximated.
+     Rolling out screen by screen, starting with History — confirmed with
+     Israel before writing any of this. Design/colors only: every existing
+     function (CSV/GeoJSON/Photos export, search, site+campaign filters,
+     advanced Insights charts, i18n, GPS capture, etc.) stays untouched;
+     this block and the small set of research-only rules below it only
+     change what things look like. --chrome is the dark header/tabbar
+     surface (was folded into --ink elsewhere in the app); --cyan is the
+     bright accent used for the "logged" tally dot and active tab state.
+     --released and --coral already existed and are reused for the
+     released/dead condition chips, matching --green/--coral in the
+     reference 1:1. */
+  body.mode-research{
+    --chrome:       #093c50;
+    --ink:          #0b2530;
+    --ink-soft:     #57727c;
+    --ink-panel:    #0d4258;
+    --paper:        #eff8fa;
+    --panel:        #ffffff;
+    --line:         #d5e7ec;
+    --blue:         #1aa6ce;
+    --blue-deep:    #0b5c78;
+    --blue-mist:    #dcf0f5;
+    --cyan:         #6fe0ee;
+    --coral:        #d9694c;
+    --chip-red-bg:  #fbe3da;
+    --released:     #159871;
+    --chip-green-bg:#dcf1e7;
+    --amber:        #d69a3c;
+    --entry-del:    #d69a3c;
+  }
+  /* Home hero: gradient card replacing the old flat --blue-deep block,
+     ported from the reference's homeHtml(). Everything inside (stats
+     row, streak, mini-map) is new markup added specifically for this
+     — confirmed with Israel, "days active" instead of the reference's
+     "days left" since campaigns here don't have a planned end date. */
+  body.mode-research .home-hero{
+    background: linear-gradient(135deg, var(--blue), var(--cyan) 130%);
+    flex-direction: column; align-items: stretch; gap: 0; position: relative; overflow: hidden;
+    border-radius: 16px; padding: 18px;
+  }
+  body.mode-research .home-hero::before{
+    content:''; position:absolute; right:-30px; top:-30px; width:130px; height:130px;
+    border-radius:50%; background: rgba(255,255,255,0.16);
+  }
+  .hero-top-row{ display:flex; align-items:center; gap:14px; position:relative; }
+  .hero-active-campaign{ cursor:pointer; }
+  .hero-cb-label{ font-family: var(--data); font-size: 10px; text-transform:uppercase; letter-spacing:0.1em; color: rgba(255,255,255,0.8); }
+  .hero-cb-name{ font-family: var(--display); font-weight:700; font-size: 18px; color:#fff; margin-top:2px; }
+  .hero-stats-row{ display:flex; margin-top:16px; position:relative; }
+  .hero-stat{ flex:1; }
+  .hero-stat + .hero-stat{ padding-left:16px; border-left:1px solid rgba(255,255,255,0.25); }
+  .hero-stat .hs-num{ font-family: var(--display); font-weight:700; font-size:26px; color:#fff; line-height:1; }
+  .hero-stat .hs-lbl{ font-family: var(--data); font-size:9.5px; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:0.04em; margin-top:3px; }
+  .hero-streak{
+    display:flex; align-items:center; gap:7px; margin-top:14px; padding-top:12px;
+    border-top:1px solid rgba(255,255,255,0.22); font-family:var(--data); font-size:10.5px;
+    color:rgba(255,255,255,0.92); position:relative;
+  }
+  .hero-streak-dot{ width:6px; height:6px; border-radius:50%; background:#fff; flex-shrink:0; }
+  .hero-minimap{
+    margin-top:14px; border-radius:12px; overflow:hidden; position:relative; height:56px; cursor:pointer;
+    background:
+      linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
+    background-size: 18px 18px; background-color: rgba(255,255,255,0.06);
+  }
+  .hero-minimap-pin{ position:absolute; width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.95); box-shadow:0 0 0 3px rgba(255,255,255,0.22); }
+  .hero-minimap-cta{
+    position:absolute; right:8px; bottom:6px; font-family:var(--data); font-size:9px;
+    letter-spacing:0.04em; text-transform:uppercase; color:rgba(255,255,255,0.85);
+    background:rgba(0,0,0,0.18); padding:3px 7px; border-radius:6px;
+  }
+  /* Full-width "New record" button, replacing the two-tile .quick-actions
+     row — History/Export is now reached via the quick-link row below
+     instead of its own tile, matching the reference's single primary CTA. */
+  .btn-new-record-full{
+    width:100%; background: var(--blue); border:none; border-radius:14px; padding:16px;
+    color:#fff; font-family: var(--display); font-weight:700; font-size:15px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:16px;
+    box-shadow: 0 8px 20px -6px var(--blue);
+  }
+  .btn-new-record-full:active{ transform: scale(0.98); }
+  /* Quick-link tiles: square-ish cards (icon, title, sub), matching the
+     reference's quickLink() component 1:1 — ink-panel background, small
+     gradient icon box. Reference lays these out in a single row of 3;
+     a 4th tile (Track) didn't exist there, so a 2x2 grid keeps them
+     square instead of squeezing 4 across one row on a 360px screen. */
+  .quicklink-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .quicklink-tile{
+    background: var(--ink-panel); border:none; border-radius:14px; padding:14px 10px;
+    display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; text-align:center;
+  }
+  .quicklink-tile:active{ transform: scale(0.97); }
+  .quicklink-tile .ql-icon{
+    width:34px; height:34px; border-radius:10px; flex-shrink:0;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .quicklink-tile .ql-title{ font-family: var(--display); font-weight:600; font-size:12px; color:#e6f3f7; }
+  .quicklink-tile .ql-sub{ font-family: var(--data); font-size:9.5px; color:#8fc3d3; }
+
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
   body{
@@ -120,7 +235,7 @@
   /* ===== Top bar (shared) ===== */
   .topbar{
     position: sticky; top:0; z-index: 20;
-    background: var(--ink); color: var(--paper);
+    background: var(--chrome); color: var(--paper);
     padding: calc(16px + env(safe-area-inset-top, 0px)) 18px 14px;
     border-bottom: 3px solid var(--blue);
   }
@@ -136,7 +251,7 @@
     transition: transform 0.18s ease;
   }
   .tally.bump{ transform: scale(1.12); }
-  .tally-dot{ width:6px; height:6px; border-radius:50%; background: #5fc7ee; }
+  .tally-dot{ width:6px; height:6px; border-radius:50%; background: var(--cyan); }
   .tally-dot.off{ background:#666; }
   .topbar h1{
     font-family: var(--display); font-weight: 600; font-size: 21px;
@@ -406,7 +521,7 @@
   /* ===== Step progress bar (long forms) ===== */
   .step-progress{ display:flex; gap:4px; margin-top:12px; }
   .step-progress .seg{ flex:1; height:4px; border-radius:2px; background: rgba(255,255,255,0.12); }
-  .step-progress .seg.done{ background: #5fc7ee; }
+  .step-progress .seg.done{ background: var(--cyan); }
   .step-progress-label{ font-family: var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; letter-spacing:0.02em; text-transform:uppercase; }
 
   /* ===== Step card header (icon box + title, collapsible) ===== */
@@ -474,7 +589,7 @@
   .coords.pending{ color: #9aa6a6; font-style: italic; font-weight: 400; }
   .gps-btn{
     font-family: var(--data); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em;
-    padding: 8px 13px; background: var(--ink); color: var(--paper);
+    padding: 8px 13px; background: var(--chrome); color: var(--paper);
     border:none; border-radius: var(--radius-sm); cursor:pointer; flex-shrink:0;
   }
   .gps-btn:active{ transform: scale(0.96); }
@@ -490,7 +605,7 @@
   .photobox input{ display:none; }
 
   .savebar{
-    padding: 14px 16px; background: var(--ink); display:flex; gap:10px;
+    padding: 14px 16px; background: var(--chrome); display:flex; gap:10px;
   }
   .btn{
     font-family: var(--display); font-size: 14px; font-weight: 600;
@@ -527,6 +642,44 @@
     border:1px solid rgba(255,255,255,0.12); border-radius:8px;
     padding:7px 10px; font-family:var(--data); font-size:11px;
   }
+  /* Site filter now lives in the light main area (not the dark topbar),
+     so it gets its own look instead of inheriting the dark-topbar select
+     style above: a bordered pill button with a trailing chevron, matching
+     the campaign tabs / condition chips visual language. Still a native
+     <select> — same filterSite id, same change listener, same behavior,
+     just restyled. appearance:none lets the custom chevron background-image
+     replace the native arrow. */
+  .hist-site-select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    width:100%; background:var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2357727c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+    color:var(--ink-soft); border:1px solid var(--line); border-radius:10px;
+    padding:9px 32px 9px 12px; font-family:var(--data); font-size:11px; cursor:pointer;
+  }
+  /* Campaign tabs: equal-width segmented control, JS-rendered into
+     #historyCampaignTabs by renderHistoryCampaignTabs() — replaces the old
+     filterCampaign <select>. Same filtering capability (site+campaign+
+     search+condition all still combine in renderHistory()), just a
+     different, more scannable control for a short, bounded list. */
+  .hist-campaign-tabs{ display:flex; gap:8px; margin-top:8px; overflow-x:auto; padding-bottom:2px; }
+  .hist-campaign-tab{
+    flex-shrink:0; font-family:var(--data); font-size:11px; padding:9px 14px; white-space:nowrap;
+    border-radius:10px; cursor:pointer; border:1px solid rgba(255,255,255,0.3);
+    background:transparent; color:rgba(255,255,255,0.85); transition:all 0.18s ease;
+  }
+  .hist-campaign-tab.active{ border:none; background:var(--blue); color:#fff; }
+  /* Condition chips: All / Alive / Dead / Released, with live counts.
+     New filter dimension added on top of site+campaign+search, agreed
+     with Israel alongside the visual redesign — reads e.condition, the
+     same field already written by the capture form and already used by
+     entryRowHtml()'s chip-blue/chip-red/chip-green classes and the map's
+     conditionColor() helper. */
+  .hist-condition-chips{ display:flex; gap:6px; margin:10px 0 4px; overflow-x:auto; }
+  .hist-cond-chip{
+    flex-shrink:0; font-family:var(--data); font-size:10.5px; padding:6px 12px;
+    border-radius:999px; cursor:pointer; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink-soft); transition:all 0.18s ease;
+  }
+  .hist-cond-chip.active{ border:none; background:var(--blue); color:#fff; }
   .hist-meta-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
   .csv-header-toggle-row{ display:flex; align-items:center; justify-content:flex-end; gap:7px; margin: -6px 0 12px; }
   .csv-header-toggle-label{ font-family: var(--data); font-size: 10px; color: var(--ink-soft); }
@@ -540,7 +693,7 @@
 
   /* Export buttons: dark style */
   .exportbtn{
-    background:#0e1b26; color:#5fc7ee; border:none; border-radius:7px;
+    background:var(--chrome); color:var(--cyan); border:none; border-radius:7px;
     padding:6px 10px; font-family:var(--data); font-size:10px; font-weight:600; cursor:pointer;
   }
   .exportbtn:active{ opacity:0.8; }
@@ -570,12 +723,12 @@
     font-family:var(--data); font-size:10px; padding:2px 7px; border-radius:5px;
   }
   .chip-blue{ background:var(--blue-mist); color:var(--blue-deep); }
-  .chip-red{ background:#fdeaea; color:var(--coral); }
-  .chip-green{ background:#dff0e8; color:#2f7a52; }
+  .chip-red{ background:var(--chip-red-bg); color:var(--coral); }
+  .chip-green{ background:var(--chip-green-bg); color:var(--released); }
   .chip-grey{ background:#f1f3f3; color:#41545f; }
   .entry .meta{ font-family: var(--data); font-size: 10px; color: #9aa6a6; }
   .entry .del{
-    background:none; border:none; color:#e0a868; font-size:18px; cursor:pointer;
+    background:none; border:none; color:var(--entry-del); font-size:18px; cursor:pointer;
     padding: 2px 4px; line-height:1; flex-shrink:0;
   }
   .empty{
@@ -585,7 +738,7 @@
 
   /* ===== Tab bar ===== */
   .tabbar{
-    display:flex; background: #0e1b26; border-top: 1px solid rgba(255,255,255,0.08);
+    display:flex; background: var(--chrome); border-top: 1px solid rgba(255,255,255,0.08);
     padding-bottom: env(safe-area-inset-bottom); flex-shrink:0; z-index: 50;
   }
   .tab{
@@ -594,10 +747,10 @@
     color: #4a6070; font-family: var(--data); font-size: 10px; letter-spacing: 0.04em;
     text-transform:uppercase; position:relative;
   }
-  .tab.active{ color: #5fc7ee; }
+  .tab.active{ color: var(--cyan); }
   .tab.active::before{
     content:''; position:absolute; top:0; left:25%; right:25%; height:2px;
-    background:#5fc7ee; border-radius:0 0 2px 2px;
+    background:var(--cyan); border-radius:0 0 2px 2px;
   }
   .tab-icon{ font-size: 18px; line-height:1; }
 
@@ -1068,7 +1221,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#e0a868"/></svg>
         <span class="splash-premium-label" data-i18n="splash_premium">Fish Pulse Premium</span>
       </div>
-      <div class="splash-premium-sub" data-i18n="splash_unlock_sub">Unlock advanced stats, multi-device sync &amp; export</div>
+      <div class="splash-premium-sub" data-i18n="splash_unlock_sub">Unlock advanced stats, multi-device sync & export</div>
     </div>
   </div>
 </section>
@@ -1099,7 +1252,7 @@
     </div>
     <div class="hamburger-item" id="menuPremium">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#e0a868"/></svg>
-      <div><div class="hamburger-item-title gold" data-i18n="menu_premium">Fish Pulse Premium</div><div class="hamburger-item-sub" data-i18n="menu_premium_sub">Plans &amp; subscriptions</div></div>
+      <div><div class="hamburger-item-title gold" data-i18n="menu_premium">Fish Pulse Premium</div><div class="hamburger-item-sub" data-i18n="menu_premium_sub">Plans & subscriptions</div></div>
     </div>
   </div>
 </div>
@@ -1116,7 +1269,7 @@
     <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f2">Advanced statistics — species diversity indices, CPUE trends, solunar correlation</div></div>
     <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f3">Bulk export — CSV, GeoJSON, PDF landing reports in one tap</div></div>
     <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f4">Institutional accounts — share campaigns across your research team</div></div>
-    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f5">Priority support &amp; early access to new features</div></div>
+    <div class="premium-feature"><div class="premium-feature-dot"></div><div class="premium-feature-text" data-i18n="premium_f5">Priority support & early access to new features</div></div>
     <button class="splash-cta" style="margin-top:18px;margin-bottom:0;" id="premiumContactBtn" data-i18n="premium_contact">Get in touch to subscribe</button>
     <button class="premium-close" id="premiumCloseBtn" data-i18n="premium_close">Close</button>
   </div>
@@ -1197,17 +1350,89 @@
   </div>
   <main>
     <div class="home-hero">
-      <div class="hh-icon">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 24c7-9 18-13 27-9-2 4-2 14 0 18-9 4-20 0-27-9z" fill="#5fc7ee"/>
-          <path d="M33 19c4-2 8-2 9-2-1 3-1 8 0 11-1 0-5 0-9-2" fill="#5fc7ee"/>
-          <circle cx="14" cy="22" r="1.6" fill="#06384f"/>
-        </svg>
+      <div class="hero-top-row">
+        <div class="hh-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 24c7-9 18-13 27-9-2 4-2 14 0 18-9 4-20 0-27-9z" fill="#5fc7ee"/>
+            <path d="M33 19c4-2 8-2 9-2-1 3-1 8 0 11-1 0-5 0-9-2" fill="#5fc7ee"/>
+            <circle cx="14" cy="22" r="1.6" fill="#06384f"/>
+          </svg>
+        </div>
+        <div class="hero-active-campaign" id="campaignBanner" data-go="campaigns">
+          <div class="hero-cb-label" data-i18n="camp_active">Active campaign</div>
+          <div class="hero-cb-name" id="campaignBannerName" data-i18n="camp_none">None — records will be unassigned</div>
+        </div>
       </div>
-      <div>
-        <div class="num" id="homeCount">0</div>
-        <div class="hh-meta"><span data-i18n="home_specimens">Specimens</span> · <span id="homeSiteTag" data-i18n="home_no_site">No site selected</span></div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="hs-num" id="homeCount">0</div>
+          <div class="hs-lbl"><span data-i18n="home_specimens">Specimens</span></div>
+        </div>
+        <div class="hero-stat">
+          <div class="hs-num" id="homeReleasedCount">0</div>
+          <div class="hs-lbl" data-i18n="rec_cond_released">Released</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hs-num" id="homeDaysActive">0</div>
+          <div class="hs-lbl" data-i18n="home_days_active">Days active</div>
+        </div>
       </div>
+      <div class="hero-streak" id="homeStreakRow">
+        <span class="hero-streak-dot"></span>
+        <span id="homeStreakText">—</span>
+      </div>
+      <div class="hero-minimap" id="homeMiniMap" data-go="map">
+        <span class="hero-minimap-cta" data-i18n="home_open_map">Open map →</span>
+      </div>
+    </div>
+
+    <button type="button" class="btn-new-record-full" data-go="record">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5v14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span data-i18n="home_new_record">New Record</span>
+    </button>
+
+    <div class="quicklink-grid">
+      <button class="quicklink-tile" data-go="map">
+        <span class="ql-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" stroke="#04303e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18M12 3c2.5 2.5 4 5.8 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.8-4-9s1.5-6.5 4-9z"/>
+          </svg>
+        </span>
+        <span class="ql-title" data-i18n="home_map">Map</span>
+        <span class="ql-sub" id="homeMapSub">NO GPS YET</span>
+      </button>
+      <button class="quicklink-tile" data-go="insights">
+        <span class="ql-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+            <rect x="4" y="13" width="3.5" height="7" rx="0.8" fill="#04303e"/>
+            <rect x="10.2" y="8" width="3.5" height="12" rx="0.8" fill="#04303e"/>
+            <rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8" fill="#04303e"/>
+          </svg>
+        </span>
+        <span class="ql-title" data-i18n="home_insights">Survey insights</span>
+        <span class="ql-sub" id="homeInsightsSub">0 SPECIES</span>
+      </button>
+      <button class="quicklink-tile" data-go="history">
+        <span class="ql-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+            <path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="#04303e" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M7 8h10M7 11h10M7 14h6" stroke="#04303e" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="ql-title" data-i18n="hist_title">History</span>
+        <span class="ql-sub" data-i18n="home_export_sub">CSV/GeoJSON</span>
+      </button>
+      <button class="quicklink-tile" data-go="track">
+        <span class="ql-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+            <path d="M3 17c2.5-5 4.5 2 7-3s4 3 6.5-4" stroke="#04303e" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.5 3"/>
+            <circle cx="3" cy="17" r="1.8" fill="#04303e"/>
+          </svg>
+        </span>
+        <span class="ql-title" data-i18n="home_track">Vessel track</span>
+        <span class="ql-sub" id="homeTrackSub">0 SAVED</span>
+      </button>
     </div>
 
     <div class="backup-banner" id="backupBanner">
@@ -1216,73 +1441,6 @@
         <div class="bb-sub" id="backupSub" data-i18n="home_not_backed_up">Not backed up yet</div>
       </div>
       <button class="bb-btn" id="backupBtn" data-i18n="home_backup_now">Back up now</button>
-    </div>
-
-    <div class="campaign-banner" id="campaignBanner" data-go="campaigns" style="cursor:pointer;">
-      <div class="cb-label" data-i18n="camp_active">Active campaign</div>
-      <div class="cb-name" id="campaignBannerName" data-i18n="camp_none">None — records will be unassigned</div>
-    </div>
-
-    <div class="quick-actions">
-      <div class="action-tile primary" data-go="record">
-        <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12h14M12 5v14" stroke="#0a5c8c" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="at-title" data-i18n="home_new_record">New Record</div>
-      </div>
-      <div class="action-tile" data-go="history">
-        <div class="at-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="5" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
-            <rect x="4" y="10.5" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
-            <rect x="4" y="16" width="16" height="3.5" rx="1" fill="#0a5c8c"/>
-          </svg>
-        </div>
-        <div class="at-title" data-i18n="home_history">History</div>
-      </div>
-    </div>
-
-    <div class="section-h" data-i18n="home_quick_links">Quick links</div>
-    <div class="info-row-group">
-      <button class="info-row" data-go="map">
-        <div class="ir-left">
-          <div class="ir-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" fill="#5fc7ee"/>
-              <circle cx="12" cy="9" r="2" fill="#06384f"/>
-            </svg>
-          </div>
-          <div class="ir-title" data-i18n="home_map">Survey map</div>
-        </div>
-        <div class="ir-metric" id="homeMapSub">NO GPS YET</div>
-      </button>
-      <button class="info-row" data-go="track">
-        <div class="ir-left">
-          <div class="ir-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 17c2.5-5 4.5 2 7-3s4 3 6.5-4" stroke="#5fc7ee" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.5 3"/>
-              <circle cx="3" cy="17" r="1.8" fill="#2f7a52"/>
-            </svg>
-          </div>
-          <div class="ir-title" data-i18n="home_track">Vessel track</div>
-        </div>
-        <div class="ir-metric" id="homeTrackSub">0 SAVED</div>
-      </button>
-      <button class="info-row" data-go="insights">
-        <div class="ir-left">
-          <div class="ir-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="13" width="3.5" height="7" rx="0.8" fill="#5fc7ee"/>
-              <rect x="10.2" y="8" width="3.5" height="12" rx="0.8" fill="#5fc7ee"/>
-              <rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8" fill="#5fc7ee"/>
-            </svg>
-          </div>
-          <div class="ir-title" data-i18n="home_insights">Survey insights</div>
-        </div>
-        <div class="ir-metric" id="homeInsightsSub">0 SPECIES</div>
-      </button>
     </div>
 
     <div class="section-h" data-i18n="home_most_recent">Most recent</div>
@@ -1330,7 +1488,7 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12v3M11 10.5V15" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="3" cy="8" r="1.5" fill="white"/></svg>
         </div>
-        <span class="sc-title" data-i18n="rec_card_site_gear">Site &amp; gear</span>
+        <span class="sc-title" data-i18n="rec_card_site_gear">Site & gear</span>
         <span class="collapse-chevron" id="stepChevron2">▾</span>
       </div>
       <div class="collapsible-body step-card-body" id="stepBody2" style="display:none;">
@@ -1578,12 +1736,13 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#7fa3b5" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#7fa3b5" stroke-width="2" stroke-linecap="round"/></svg>
       <input type="text" id="searchInput" placeholder="Search species…" class="hist-search-input" data-i18n-placeholder="hist_search_placeholder">
     </div>
-    <div class="hist-filter-row">
-      <select id="filterSite"><option value="" data-i18n="hist_all_sites">All sites</option></select>
-      <select id="filterCampaign"><option value="" data-i18n="ins_all_campaigns">All campaigns</option></select>
-    </div>
+    <div class="hist-campaign-tabs" id="historyCampaignTabs"></div>
   </div>
   <main>
+    <div class="hist-site-filter-row">
+      <select id="filterSite" class="hist-site-select"><option value="" data-i18n="hist_all_sites">All sites</option></select>
+    </div>
+    <div class="hist-condition-chips" id="historyConditionChips"></div>
     <div class="hist-meta-row">
       <span class="count" id="historyCount">0 records</span>
       <div class="export-btn-row">
@@ -1604,6 +1763,7 @@
 </section>
 
 <!-- ================= MAP ================= -->
+
 <section class="screen" id="screen-map">
   <div class="topbar">
     <div class="back-row">
@@ -1727,7 +1887,7 @@
       <button class="back-btn" data-go="home">←</button>
       <span class="brand" data-i18n="camp_title">Campaigns</span>
     </div>
-    <h1 data-i18n="camp_h1">Campaigns &amp; Projects</h1>
+    <h1 data-i18n="camp_h1">Campaigns & Projects</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
@@ -1922,7 +2082,7 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="white"/></svg>
         </div>
-        <span class="sc-title" data-i18n="flhaul_gear_effort">Gear &amp; effort</span>
+        <span class="sc-title" data-i18n="flhaul_gear_effort">Gear & effort</span>
       </div>
       <label for="fleetGearType" data-i18n="rec_gear_label">Gear Type</label>
       <select id="fleetGearType">
@@ -2022,7 +2182,7 @@
 
     <div id="fleetHaulUsFields">
     <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flhaul_us_section">Statistical Area &amp; Set Details</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
+      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flhaul_us_section">Statistical Area & Set Details</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
       <div id="fleetHaulTargetSpeciesWrap">
         <label for="fleetTargetSpecies" data-i18n="flhaul_target_species">Target Species (declared before gear set)</label>
         <input type="text" id="fleetTargetSpecies" list="fleet-target-species-list" placeholder="e.g. Sablefish">
@@ -2109,7 +2269,7 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
         </div>
-        <span class="sc-title" data-i18n="flcatch_species_weight">Species &amp; weight</span>
+        <span class="sc-title" data-i18n="flcatch_species_weight">Species & weight</span>
       </div>
       <label for="fleetSpecies" data-i18n="flcatch_species_label">Species / Commercial Category</label>
       <input type="text" id="fleetSpecies" placeholder="e.g. Pomadasys kaakan, or 'mixed reef fish'" list="fleet-species-list">
@@ -2173,7 +2333,7 @@
   </main>
   <div class="savebar">
     <button class="btn btn-clear" id="fleetCatchAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
-    <button class="btn btn-save" id="fleetCatchSaveBtn" data-i18n="flcatch_save_return">Save &amp; Return To Trip</button>
+    <button class="btn btn-save" id="fleetCatchSaveBtn" data-i18n="flcatch_save_return">Save & Return To Trip</button>
   </div>
 </section>
 
@@ -2184,7 +2344,7 @@
       <button class="back-btn" data-go="fleet-trip">←</button>
       <span class="brand" data-i18n="flclose_brand">Close Trip</span>
     </div>
-    <h1 data-i18n="flclose_h1">Trip Summary &amp; Costs</h1>
+    <h1 data-i18n="flclose_h1">Trip Summary & Costs</h1>
     <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
   </div>
   <main>
@@ -2344,7 +2504,7 @@
       <button class="back-btn" data-go="fleet-trip-log">←</button>
       <span class="brand" data-i18n="fltripdet_brand">Trip Detail</span>
     </div>
-    <h1 data-i18n="fltripdet_h1">Landing Report &amp; Settlement</h1>
+    <h1 data-i18n="fltripdet_h1">Landing Report & Settlement</h1>
     <div class="site-line" id="fleetTripDetailVesselLine">&nbsp;</div>
   </div>
   <main>
@@ -2523,7 +2683,7 @@
       <button class="back-btn" id="fleetDocumentsBackBtn">←</button>
       <span class="brand" data-i18n="fldocs_brand">Documents</span>
     </div>
-    <h1 data-i18n="fldocs_h1">Licenses &amp; Certificates</h1>
+    <h1 data-i18n="fldocs_h1">Licenses & Certificates</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
@@ -2576,7 +2736,7 @@
       <button class="back-btn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="flvessels_brand">Vessels</span>
     </div>
-    <h1 data-i18n="flvessels_h1">Vessels &amp; Captains</h1>
+    <h1 data-i18n="flvessels_h1">Vessels & Captains</h1>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
@@ -2666,7 +2826,7 @@
 <div id="vesselComplianceOverlay" class="fleet-export-overlay" style="display:none; position:fixed;">
   <div class="fleet-export-panel">
     <div class="fleet-export-header">
-      <span class="brand" data-i18n="flcompliance_title">Vessel Compliance &amp; Registration</span>
+      <span class="brand" data-i18n="flcompliance_title">Vessel Compliance & Registration</span>
       <button class="back-btn" id="vesselComplianceCloseBtn">✕</button>
     </div>
     <div class="fleet-export-text" style="white-space:normal;">
@@ -2733,9 +2893,9 @@
         </div>
         <label for="complianceMxMeshBag" data-i18n="flcompliance_mx_mesh_bag">Mesh — Bag/Cod-end (cm)</label>
         <input type="number" inputmode="decimal" id="complianceMxMeshBag">
-        <label for="complianceMxTed" data-i18n="flcompliance_mx_ted">Turtle Excluder Device (qty &amp; model)</label>
+        <label for="complianceMxTed" data-i18n="flcompliance_mx_ted">Turtle Excluder Device (qty & model)</label>
         <input type="text" id="complianceMxTed">
-        <label for="complianceMxFed" data-i18n="flcompliance_mx_fed">Fish Excluder Device (qty &amp; model)</label>
+        <label for="complianceMxFed" data-i18n="flcompliance_mx_fed">Fish Excluder Device (qty & model)</label>
         <input type="text" id="complianceMxFed">
         <label for="complianceMxEngineNhp" data-i18n="flcompliance_mx_engine_nhp">Main Engine (NHP)</label>
         <input type="number" inputmode="decimal" id="complianceMxEngineNhp">
@@ -2757,7 +2917,7 @@
             <input type="number" inputmode="decimal" id="complianceMxMainlineLength">
           </div>
         </div>
-        <label for="complianceMxHooks" data-i18n="flcompliance_mx_hooks">Hooks (No., type &amp; size)</label>
+        <label for="complianceMxHooks" data-i18n="flcompliance_mx_hooks">Hooks (No., type & size)</label>
         <input type="text" id="complianceMxHooks" placeholder="e.g. 800, garra de águila, no. 8">
         <label for="complianceMxLonglineCount" data-i18n="flcompliance_mx_longline_count">No. of Longlines</label>
         <input type="number" inputmode="decimal" id="complianceMxLonglineCount">
@@ -2976,7 +3136,7 @@
           <div class="sc-icon-box" style="background:#EE6C4D;">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 14c2-3 4 2 6-1s4 2 6-1 2-3 2-3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2v4M4.9 4.9l2.8 2.8M19.1 4.9l-2.8 2.8" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/></svg>
           </div>
-          <span class="sc-title"><span data-i18n="sp_weather_tide">Weather &amp; Tide</span> <span class="optional-tag" data-i18n="sp_current_location">at your current location</span></span>
+          <span class="sc-title"><span data-i18n="sp_weather_tide">Weather & Tide</span> <span class="optional-tag" data-i18n="sp_current_location">at your current location</span></span>
         </div>
         <button type="button" class="btn btn-clear" id="sportFetchWeatherBtn" style="width:100%;" data-i18n="sp_get_conditions">Get Conditions</button>
         <div id="sportWeatherBox" style="display:none; margin-top:10px;"></div>
@@ -3067,7 +3227,7 @@
         <div class="sc-icon-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#EE6C4D"/></svg>
         </div>
-        <span class="sc-title" data-i18n="sp_species_size">Species &amp; size</span>
+        <span class="sc-title" data-i18n="sp_species_size">Species & size</span>
       </div>
       <label for="sportSpecies" data-i18n="rec_species_label">Species</label>
       <input type="text" id="sportSpecies" placeholder="e.g. Largemouth bass" list="sport-species-list">
@@ -3109,7 +3269,7 @@
   </main>
   <div class="savebar">
     <button class="btn btn-clear" id="sportCatchAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
-    <button class="btn btn-save" id="sportCatchSaveBtn" data-i18n="sp_save_return">Save &amp; Return</button>
+    <button class="btn btn-save" id="sportCatchSaveBtn" data-i18n="sp_save_return">Save & Return</button>
   </div>
 </section>
 
@@ -3187,7 +3347,7 @@
     <div class="sst-row">
       <div>
         <div class="sst-brand" data-i18n="fldocs_brand">Documents</div>
-        <h1 data-i18n="sp_licenses_permits">Licenses &amp; Permits</h1>
+        <h1 data-i18n="sp_licenses_permits">Licenses & Permits</h1>
         <div class="sst-sub" data-i18n="sp_keep_license">Keep your license handy for inspection</div>
       </div>
     </div>
@@ -3250,17 +3410,17 @@
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1H15v-5h-6v5H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
     <span data-i18n="tab_home">Home</span>
   </button>
-  <button class="tab" data-go="record">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-    <span data-i18n="tab_new">New</span>
+  <button class="tab" data-go="history">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
+    <span data-i18n="tab_history">History</span>
+  </button>
+  <button class="tab" data-go="insights">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="3" width="4" height="17" rx="1" fill="currentColor"/></svg></span>
+    <span data-i18n="tab_insights">Insights</span>
   </button>
   <button class="tab" data-go="map">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.3 0-6 2.7-6 6 0 4.5 6 11 6 11s6-6.5 6-11c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2" fill="currentColor"/></svg></span>
     <span data-i18n="tab_map">Map</span>
-  </button>
-  <button class="tab" data-go="history">
-    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
-    <span data-i18n="tab_history">History</span>
   </button>
 </nav>
 
@@ -3349,7 +3509,7 @@
       home_specimens: 'Specimens', home_backup_status: 'Backup status', home_not_backed_up: 'Not backed up yet',
       home_backup_now: 'Back up now', home_quick_links: 'Quick links', home_most_recent: 'Most recent', home_active_site: 'Active site: ',
       home_history: 'History', home_history_sub: 'Past records',
-      home_map: 'Survey Map', home_map_sub: 'GPS locations',
+      home_map: 'Map', home_map_sub: 'GPS locations', home_days_active: 'Days active', home_open_map: 'Open map →', home_export_sub: 'CSV/GeoJSON', home_streak_suffix: 'day logging streak — keep it going',
       home_track: 'Vessel Track', home_track_sub: 'Record a route',
       home_insights: 'Survey Insights', home_insights_sub: 'Stats & charts',
       home_campaigns: 'Campaigns', home_campaigns_sub: 'Organize surveys',
@@ -3374,7 +3534,7 @@
       rec_step8_title: 'Position', rec_capture_gps: 'Capture',
       rec_step9_title: 'Photo & Notes', rec_notes_label: 'Notes', rec_optional: 'optional',
       rec_h1: 'Incidental Catch Entry', rec_survey_date_label: 'Survey date',
-      rec_card_session: 'Session', rec_card_site_gear: 'Site &amp; gear', rec_vessel_id_label: 'Vessel ID',
+      rec_card_session: 'Session', rec_card_site_gear: 'Site & gear', rec_vessel_id_label: 'Vessel ID',
       rec_select_placeholder: '— select —', rec_gear_demersal_trawl: 'Demersal trawl', rec_gear_otter_trawl: 'Otter trawl',
       rec_gear_gillnet: 'Gillnet', rec_gear_longline: 'Longline', rec_gear_purse_seine: 'Purse seine', rec_gear_other: 'Other',
       rec_card_effort: 'Fishing effort', rec_card_specimen: 'Specimen',
@@ -3388,7 +3548,7 @@
       rec_card_evidence: 'Evidence', rec_photo_label: 'Photo', rec_photo_hint: 'tap to take or attach a photo',
       rec_card_notes: 'Notes', rec_observations: 'Observations',
       rec_save: 'Save record', rec_clear: 'Clear form',
-      hist_title: 'History', hist_all_records: 'All Records', hist_search_placeholder: 'Search species…', hist_empty: 'No records yet.', hist_all_sites: 'All sites', hist_photos: 'Photos',
+      hist_title: 'History', hist_all_records: 'All Records', hist_search_placeholder: 'Search species…', hist_empty: 'No records yet.', hist_all_sites: 'All sites', hist_photos: 'Photos', hist_all: 'All',
       map_title: 'Survey Locations', map_brand: 'Map', map_checking: 'Checking connection…', map_street: 'Street', map_satellite: 'Satellite',
       map_offline_areas: 'Offline map areas', map_pan_zoom: 'Pan and zoom to your survey area, then download for offline use.', map_download_area: 'Download this area',
       rec_cond_alive: 'Alive', rec_cond_dead: 'Dead', rec_cond_released: 'Released',
@@ -3396,7 +3556,7 @@
       track_note_full: 'One GPS point every ~20 sec. You can move to other Fish Pulse screens while recording — it keeps running in the background of the app. The screen is kept awake automatically while tracking; locking the phone or switching to a different app still pauses recording (an OS limit no web app can override) — stop and save before doing either.',
       track_points: 'Points', track_duration: 'Duration', track_km: 'km approx',
       track_saved_tracks: 'Saved tracks', track_export: 'Export GeoJSON',
-      camp_title: 'Campaigns', camp_h1: 'Campaigns &amp; Projects', camp_start_new: 'Start a new campaign', camp_name_label: 'Campaign name',
+      camp_title: 'Campaigns', camp_h1: 'Campaigns & Projects', camp_start_new: 'Start a new campaign', camp_name_label: 'Campaign name',
       camp_name_placeholder: 'e.g. Aleta 1, Survey March 2026', camp_all: 'All campaigns', camp_new_name: 'New campaign name', camp_start: 'Start Campaign',
       camp_active: 'Active campaign', camp_none: 'None — records will be unassigned', camp_end: 'End Campaign',
       camp_past: 'Past campaigns',
@@ -3427,7 +3587,7 @@
       fltrip_new_vessel_country_hint: 'This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.',
       fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_close_trip: 'Close Trip',
       fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
-      flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear &amp; effort',
+      flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear & effort',
       flhaul_start: 'Haul Start', flhaul_end: 'Haul End', flhaul_notes: 'Notes',
       flhaul_bycatch_section: 'Fauna de Acompañamiento (Mexico)', flhaul_bycatch_hint: 'Only needed for Mexican shrimp/finfish trawl bitácoras — estimated kg of non-target species caught in this haul, kept or discarded.',
       flhaul_bycatch_kept: 'Kept On Board (kg)', flhaul_bycatch_discarded: 'Discarded At Sea (kg)',
@@ -3442,10 +3602,10 @@
       flhaul_log_catch_now: 'Log catch for this haul now', flhaul_log_catch_hint: 'Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.',
       flhaul_cancel: 'Cancel', flhaul_save: 'Save Haul',
       flcatch_brand: 'Log Catch', flcatch_title: 'Catch Entry', flcatch_not_linked: 'Not Linked To A Haul',
-      flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species &amp; weight', flcatch_species_label: 'Species / Commercial Category',
-      flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save &amp; Return To Trip', flcatch_no_haul: 'No haul (loose catch)',
+      flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species & weight', flcatch_species_label: 'Species / Commercial Category',
+      flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save & Return To Trip', flcatch_no_haul: 'No haul (loose catch)',
       hist_unassigned_records: 'Unassigned records', ins_no_campaign_unassigned: 'No campaign (unassigned)',
-      flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary &amp; Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value',
+      flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary & Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value',
       flclose_fuel: 'Fuel', flclose_loaded_l: 'Loaded (L)', flclose_remaining_l: 'Remaining (L)', flclose_costs_now: 'Costs you can log now',
       flclose_crew_payment: 'Crew Payment', flclose_per_trip: 'per trip', flclose_ice: 'Ice / Preservation', flclose_provisions: 'Provisions', flclose_per_day: 'per day at sea',
       flclose_maintenance_hint: 'Maintenance, permits, and port dues are usually added by the office afterward.',
@@ -3458,7 +3618,7 @@
       flclose_eu_sales_note: 'Sales Note Number (EU)',
       flclose_th_pi_no: 'PI No. — Port-In Notification Number (Thailand)', flclose_th_province: 'Arrival Province (Thailand)', flclose_th_zone: 'Coastal Sea Zone (Thailand)', flclose_th_total_kg: 'Total Aquatic Animal Quantity — kg (Thailand)', flclose_th_egg_crabs: 'Egg-Bearing Crabs Released — units (Thailand)',
       fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
-      fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report &amp; Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
+      fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report & Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
       fltripdet_landing_report_label: 'Landing Report', fltripdet_vessel_label: 'Vessel', fltripdet_captain_label: 'Captain', fltripdet_trip_notes_label: 'Trip notes:', fltripdet_fish_ticket_no: 'Fish Ticket Number (US)', fltripdet_dealer_name: 'Dealer Name (US)', fltripdet_dealer_permit: 'Dealer Permit Number (US)',
       fltripdet_scale_label: 'Scale:', fltripdet_estimated_not_scaled: 'Estimated, not yet scaled', fltripdet_kg_est: 'kg Est.', fltripdet_total_label: 'Total:',
       fltripdet_kg_estimated: 'kg Estimated', fltripdet_kg_scaled: 'kg Scaled', fltripdet_report_disclaimer: 'This report supports a landing declaration or capture certificate application — it is not itself an official certificate.',
@@ -3490,15 +3650,15 @@
       flfuel_h1: 'Daily Fuel Log', flfuel_no_trip: 'Start a trip from the Trip tab to begin logging daily fuel readings.',
       flfuel_todays_reading: "Today's reading", flfuel_remaining: 'Fuel Remaining (L)', flfuel_save_reading: 'Save Reading', flfuel_readings_this_trip: 'Readings this trip',
       flrecon_brand: 'Reconciliation', flrecon_h1: 'Scale Vs. Logbook', flrecon_select_trip: '— Select a closed trip —',
-      fldocs_brand: 'Documents', fldocs_h1: 'Licenses &amp; Certificates',
+      fldocs_brand: 'Documents', fldocs_h1: 'Licenses & Certificates',
       fldocs_add: 'Add document', fldocs_type: 'Document Type', fldocs_fishing_license: 'Fishing License', fldocs_safety_certificate: 'Safety Certificate', fldocs_seaman_book: "Seaman's Book",
       fldocs_label: 'Label', fldocs_label_hint: 'e.g. captain name', fldocs_expiry: 'Expiry Date', fldocs_photo_scan: 'Photo / Scan', fldocs_add_btn: 'Add Document',
       fldocs_maintenance: 'Maintenance', fldocs_all: 'All documents',
-      flvessels_brand: 'Vessels', flvessels_h1: 'Vessels &amp; Captains', flvessels_add: 'Add vessel',
+      flvessels_brand: 'Vessels', flvessels_h1: 'Vessels & Captains', flvessels_add: 'Add vessel',
       flvessels_target: 'Efficiency Target — Margin Per Trip', flvessels_expected_fuel: 'Expected Daily Fuel Use (L/day)', flvessels_expected_fuel_hint: 'optional — overrides auto average',
       flvessels_maintenance_interval: 'Maintenance Interval (hours at sea)', flvessels_hours_since_service: 'Hours at sea since last service', flvessels_hours_since_service_hint: 'optional, today',
       flvessels_add_btn: 'Add Vessel', flvessels_all_vessels: 'All vessels', flvessels_all_captains: 'All captains', flvessels_all_crew: 'All crew',
-      flcompliance_title: 'Vessel Compliance &amp; Registration', flcompliance_hint: 'These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
+      flcompliance_title: 'Vessel Compliance & Registration', flcompliance_hint: 'These are optional and only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.',
       flcompliance_reporting_country: 'Reporting Authority', flcompliance_reporting_country_none: 'None (generic Fish Pulse report)',
       flcompliance_mx_section_short: 'Mexico — CONAPESCA', flcompliance_us_section_short: 'United States — NOAA', flcompliance_eu_section_short: 'European Union — e-Logbook', flcompliance_th_section_short: 'Thailand — DOF / PIPO',
       flcompliance_mx_hint: 'The Aviso de Arribo applies automatically to any Mexican vessel. If you also fish a specific target species, select the matching Bitácora below — both will be available to export.',
@@ -3543,15 +3703,15 @@
       sp_day_sun: 'Sun', sp_day_mon: 'Mon', sp_day_tue: 'Tue', sp_day_wed: 'Wed', sp_day_thu: 'Thu', sp_day_fri: 'Fri', sp_day_sat: 'Sat',
       sp_start_new_session: 'Start a new session', sp_spot: 'Spot', sp_no_spot_open_water: '— No Spot / Open Water —', sp_new_spot: '+ New Spot', sp_spot_name: 'Spot Name',
       sp_method: 'Method', sp_method_shore: 'Shore', sp_method_boat: 'Boat', sp_method_kayak: 'Kayak', sp_method_fly: 'Fly Fishing', sp_method_ice: 'Ice Fishing',
-      sp_weather_tide: 'Weather &amp; Tide', sp_current_location: 'at your current location', sp_get_conditions: 'Get Conditions',
+      sp_weather_tide: 'Weather & Tide', sp_current_location: 'at your current location', sp_get_conditions: 'Get Conditions',
       sp_conditions: 'Conditions', sp_conditions_hint: 'optional — water, notes', sp_start_session: 'Start Session',
       sp_session_duration: 'Session duration', sp_open_water: 'Open Water', sp_end_session: 'End Session', sp_catches_this_session: 'Catches this session',
-      sp_not_linked_session: 'Not Linked To A Session', sp_species_size: 'Species &amp; size', sp_weight_kg: 'Weight (kg)', sp_opt: 'opt.', sp_length_cm: 'Length (cm)',
-      sp_lure_bait: 'Lure / Bait', sp_outcome: 'Outcome', sp_kept: 'Kept', sp_save_return: 'Save &amp; Return', sp_gps: 'GPS',
+      sp_not_linked_session: 'Not Linked To A Session', sp_species_size: 'Species & size', sp_weight_kg: 'Weight (kg)', sp_opt: 'opt.', sp_length_cm: 'Length (cm)',
+      sp_lure_bait: 'Lure / Bait', sp_outcome: 'Outcome', sp_kept: 'Kept', sp_save_return: 'Save & Return', sp_gps: 'GPS',
       sp_catch_log: 'Catch Log', sp_catches_tab: 'Catches', sp_all_catches: 'All Catches', sp_all_species: 'All species',
       sp_spots: 'Spots', sp_saved_spots: 'Saved Spots', sp_private_device: 'Private — stored only on this device', sp_add_spot: 'Add a spot', sp_name: 'Name',
       sp_note: 'Note', sp_save_spot: 'Save Spot', sp_your_spots: 'Your spots',
-      sp_licenses_permits: 'Licenses &amp; Permits', sp_keep_license: 'Keep your license handy for inspection', sp_add_document: 'Add a document',
+      sp_licenses_permits: 'Licenses & Permits', sp_keep_license: 'Keep your license handy for inspection', sp_add_document: 'Add a document',
       sp_boat_permit: 'Boat Permit', sp_species_tag: 'Species Tag / Stamp', sp_folio_hint: 'optional — e.g. folio number', sp_your_documents: 'Your documents',
       sp_personal_stats: 'Personal Stats', sp_from_logged_catches: 'From your logged catches',
       sp_moon_new: 'New Moon', sp_moon_waxing_crescent: 'Waxing Crescent', sp_moon_first_quarter: 'First Quarter', sp_moon_waxing_gibbous: 'Waxing Gibbous',
@@ -3654,7 +3814,7 @@
       home_specimens: 'Especímenes', home_backup_status: 'Estado de respaldo', home_not_backed_up: 'Aún no respaldado',
       home_backup_now: 'Respaldar ahora', home_quick_links: 'Accesos rápidos', home_most_recent: 'Más reciente', home_active_site: 'Sitio activo: ',
       home_history: 'Historial', home_history_sub: 'Registros anteriores',
-      home_map: 'Mapa de Muestreo', home_map_sub: 'Ubicaciones GPS',
+      home_map: 'Mapa', home_map_sub: 'Ubicaciones GPS', home_days_active: 'Días activos', home_open_map: 'Abrir mapa →', home_export_sub: 'CSV/GeoJSON', home_streak_suffix: 'días seguidos registrando — sigue así',
       home_track: 'Ruta del Barco', home_track_sub: 'Grabar una ruta',
       home_insights: 'Estadísticas de Muestreo', home_insights_sub: 'Estadísticos y gráficas',
       home_campaigns: 'Campañas', home_campaigns_sub: 'Organiza tus muestreos',
@@ -3693,7 +3853,7 @@
       rec_card_evidence: 'Evidencia', rec_photo_label: 'Foto', rec_photo_hint: 'toca para tomar o adjuntar una foto',
       rec_card_notes: 'Notas', rec_observations: 'Observaciones',
       rec_save: 'Guardar registro', rec_clear: 'Limpiar formulario',
-      hist_title: 'Historial', hist_all_records: 'Todos los Registros', hist_search_placeholder: 'Buscar especie…', hist_empty: 'Aún no hay registros.', hist_all_sites: 'Todos los sitios', hist_photos: 'Fotos',
+      hist_title: 'Historial', hist_all_records: 'Todos los Registros', hist_search_placeholder: 'Buscar especie…', hist_empty: 'Aún no hay registros.', hist_all_sites: 'Todos los sitios', hist_photos: 'Fotos', hist_all: 'Todos',
       map_title: 'Ubicaciones de Muestreo', map_brand: 'Mapa', map_checking: 'Verificando conexión…', map_street: 'Calle', map_satellite: 'Satélite',
       map_offline_areas: 'Áreas de mapa sin conexión', map_pan_zoom: 'Desplaza y haz zoom a tu área de muestreo, luego descarga para uso sin conexión.', map_download_area: 'Descargar esta área',
       rec_cond_alive: 'Vivo', rec_cond_dead: 'Muerto', rec_cond_released: 'Liberado',
@@ -3959,7 +4119,7 @@
       home_specimens: 'Esemplari', home_backup_status: 'Stato del backup', home_not_backed_up: 'Non ancora salvato',
       home_backup_now: 'Salva backup ora', home_quick_links: 'Collegamenti rapidi', home_most_recent: 'Più recenti', home_active_site: 'Sito attivo: ',
       home_history: 'Cronologia', home_history_sub: 'Schede precedenti',
-      home_map: 'Mappa di Rilevamento', home_map_sub: 'Posizioni GPS',
+      home_map: 'Mappa', home_map_sub: 'Posizioni GPS', home_days_active: 'Giorni attivi', home_open_map: 'Apri mappa →', home_export_sub: 'CSV/GeoJSON', home_streak_suffix: 'giorni consecutivi di registrazione — continua così',
       home_track: 'Rotta dell\'Imbarcazione', home_track_sub: 'Registra un percorso',
       home_insights: 'Statistiche di Rilevamento', home_insights_sub: 'Statistiche e grafici',
       home_campaigns: 'Campagne', home_campaigns_sub: 'Organizza i tuoi rilevamenti',
@@ -3998,7 +4158,7 @@
       rec_card_evidence: 'Prove', rec_photo_label: 'Foto', rec_photo_hint: 'tocca per scattare o allegare una foto',
       rec_card_notes: 'Note', rec_observations: 'Osservazioni',
       rec_save: 'Salva scheda', rec_clear: 'Svuota modulo',
-      hist_title: 'Cronologia', hist_all_records: 'Tutte le Schede', hist_search_placeholder: 'Cerca specie…', hist_empty: 'Nessuna scheda ancora.', hist_all_sites: 'Tutti i siti', hist_photos: 'Foto',
+      hist_title: 'Cronologia', hist_all_records: 'Tutte le Schede', hist_search_placeholder: 'Cerca specie…', hist_empty: 'Nessuna scheda ancora.', hist_all_sites: 'Tutti i siti', hist_photos: 'Foto', hist_all: 'Tutte',
       map_title: 'Posizioni di Rilevamento', map_brand: 'Mappa', map_checking: 'Verifica connessione…', map_street: 'Strada', map_satellite: 'Satellite',
       map_offline_areas: 'Aree mappa offline', map_pan_zoom: 'Sposta e ingrandisci sulla tua area di rilevamento, poi scarica per l\'uso offline.', map_download_area: 'Scarica quest\'area',
       rec_cond_alive: 'Vivo', rec_cond_dead: 'Morto', rec_cond_released: 'Rilasciato',
@@ -4264,7 +4424,7 @@
       home_specimens: 'ตัวอย่างสิ่งมีชีวิต', home_backup_status: 'สถานะการสำรองข้อมูล', home_not_backed_up: 'ยังไม่ได้สำรองข้อมูล',
       home_backup_now: 'สำรองข้อมูลตอนนี้', home_quick_links: 'ลิงก์ด่วน', home_most_recent: 'ล่าสุด', home_active_site: 'สถานที่ที่ใช้งานอยู่: ',
       home_history: 'ประวัติ', home_history_sub: 'บันทึกก่อนหน้า',
-      home_map: 'แผนที่การสำรวจ', home_map_sub: 'ตำแหน่งจีพีเอส',
+      home_map: 'แผนที่', home_map_sub: 'ตำแหน่งจีพีเอส', home_days_active: 'วันที่ใช้งาน', home_open_map: 'เปิดแผนที่ →', home_export_sub: 'CSV/GeoJSON', home_streak_suffix: 'วันติดต่อกันในการบันทึก — ทำต่อไป',
       home_track: 'เส้นทางเรือ', home_track_sub: 'บันทึกเส้นทาง',
       home_insights: 'สถิติการสำรวจ', home_insights_sub: 'สถิติและกราฟ',
       home_campaigns: 'แคมเปญ', home_campaigns_sub: 'จัดระเบียบการสำรวจของคุณ',
@@ -4303,7 +4463,7 @@
       rec_card_evidence: 'หลักฐาน', rec_photo_label: 'รูปภาพ', rec_photo_hint: 'แตะเพื่อถ่ายหรือแนบรูปภาพ',
       rec_card_notes: 'บันทึกย่อ', rec_observations: 'ข้อสังเกต',
       rec_save: 'บันทึกข้อมูล', rec_clear: 'ล้างแบบฟอร์ม',
-      hist_title: 'ประวัติ', hist_all_records: 'บันทึกทั้งหมด', hist_search_placeholder: 'ค้นหาชนิดพันธุ์…', hist_empty: 'ยังไม่มีบันทึก', hist_all_sites: 'ทุกสถานที่', hist_photos: 'รูปภาพ',
+      hist_title: 'ประวัติ', hist_all_records: 'บันทึกทั้งหมด', hist_search_placeholder: 'ค้นหาชนิดพันธุ์…', hist_empty: 'ยังไม่มีบันทึก', hist_all_sites: 'ทุกสถานที่', hist_photos: 'รูปภาพ', hist_all: 'ทั้งหมด',
       map_title: 'ตำแหน่งการสำรวจ', map_brand: 'แผนที่', map_checking: 'กำลังตรวจสอบการเชื่อมต่อ…', map_street: 'ถนน', map_satellite: 'ดาวเทียม',
       map_offline_areas: 'พื้นที่แผนที่ออฟไลน์', map_pan_zoom: 'เลื่อนและซูมไปยังพื้นที่สำรวจของคุณ แล้วดาวน์โหลดเพื่อใช้งานแบบออฟไลน์', map_download_area: 'ดาวน์โหลดพื้นที่นี้',
       rec_cond_alive: 'มีชีวิต', rec_cond_dead: 'ตาย', rec_cond_released: 'ปล่อยคืน',
@@ -10664,7 +10824,6 @@
     document.getElementById('siteLineHome').classList.toggle('active', !!value);
     document.getElementById('siteLineRecord').textContent = homeLabel;
     document.getElementById('siteLineRecord').classList.toggle('active', !!value);
-    document.getElementById('homeSiteTag').textContent = value ? value : t('home_no_site');
   }
   document.getElementById('site').addEventListener('input', (e)=> setSiteDisplay(e.target.value.trim()));
 
@@ -10993,6 +11152,15 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
+  const TRACKS_KEY = 'bycatch_tracks_v1';
+  function loadTracks(){
+    try{ return JSON.parse(localStorage.getItem(TRACKS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveTracks(list){
+    localStorage.setItem(TRACKS_KEY, JSON.stringify(list));
+  }
+
   function showToast(msg, isError){
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -11039,6 +11207,29 @@
   }
 
   // ===== Home rendering =====
+  function computeLoggingStreak(list){
+    const days = new Set(list.filter(e => e.timestamp).map(e => e.timestamp.slice(0,10)));
+    if(days.size === 0) return 0;
+    let streak = 0;
+    const cursor = new Date();
+    for(;;){
+      const key = cursor.toISOString().slice(0,10);
+      if(days.has(key)){ streak++; cursor.setDate(cursor.getDate() - 1); }
+      else break;
+    }
+    return streak;
+  }
+
+  function renderHomeMiniMap(list){
+    const box = document.getElementById('homeMiniMap');
+    const pins = list.slice(-5).map(function(e, i){
+      const left = 10 + (i * 17) % 80;
+      const top = 20 + (i * 29) % 60;
+      return '<span class="hero-minimap-pin" style="left:'+left+'%; top:'+top+'%;"></span>';
+    }).join('');
+    box.innerHTML = pins + '<span class="hero-minimap-cta">'+t('home_open_map')+'</span>';
+  }
+
   function renderHome(){
     const list = loadEntries();
     document.getElementById('tallyCount').textContent = list.length + ' ' + (list.length===1 ? t('msg_record_lc') : t('msg_records_lc'));
@@ -11046,12 +11237,26 @@
     renderBackupStatus();
     updateCampaignBanner();
 
+    const releasedCount = list.filter(e => e.condition === 'released').length;
+    document.getElementById('homeReleasedCount').textContent = releasedCount;
+
+    const active = getActiveCampaign();
+    const sinceDate = active ? new Date(active.started_at) : (list.length ? new Date(list.reduce((min,e) => (e.timestamp && e.timestamp < min) ? e.timestamp : min, list[0].timestamp || new Date().toISOString())) : null);
+    const daysActive = sinceDate ? Math.max(1, Math.floor((Date.now() - sinceDate.getTime()) / 86400000) + 1) : 0;
+    document.getElementById('homeDaysActive').textContent = daysActive;
+
+    const streak = computeLoggingStreak(list);
+    document.getElementById('homeStreakText').textContent = streak > 0
+      ? streak + ' ' + t('home_streak_suffix')
+      : t('msg_no_records_start');
+    renderHomeMiniMap(list);
+
     const withGps = list.filter(e => e.lat !== '' && e.lat != null).length;
     document.getElementById('homeMapSub').textContent = withGps > 0
       ? withGps + ' ' + t('msg_pts')
       : t('msg_no_gps_yet');
 
-    const trackCount = (function(){ try{ return JSON.parse(localStorage.getItem('bycatch_tracks_v1'))||[]; }catch(e){ return []; } })().length;
+    const trackCount = loadTracks().length;
     document.getElementById('homeTrackSub').textContent = trackCount + ' ' + t('msg_saved_uc');
 
     const speciesSeen = new Set(list.map(e => (e.species || '').trim()).filter(Boolean)).size;
@@ -11067,6 +11272,12 @@
   }
 
   // ===== History rendering =====
+  // historyCampaignFilter / historyConditionFilter mirror what the old
+  // filterCampaign <select>.value held — just plain state now that
+  // campaign is buttons instead of a native select. '' means "All".
+  let historyCampaignFilter = '';
+  let historyConditionFilter = '';
+
   function populateSiteFilter(){
     const select = document.getElementById('filterSite');
     const current = select.value;
@@ -11076,33 +11287,58 @@
     if(sites.includes(current)) select.value = current;
   }
 
-  function populateCampaignFilter(){
-    const select = document.getElementById('filterCampaign');
-    const current = select.value;
+  function renderHistoryCampaignTabs(){
     const campaigns = loadCampaigns();
-    select.innerHTML = '<option value="">'+t('ins_all_campaigns')+'</option>'
-      + '<option value="__unassigned__">'+t('hist_unassigned_records')+'</option>'
-      + campaigns.map(c => '<option value="'+c.id+'">'+c.name.replace(/</g,'&lt;')+'</option>').join('');
-    if(campaigns.some(c => c.id === current) || current === '__unassigned__') select.value = current;
+    if(!(campaigns.some(c => c.id === historyCampaignFilter) || historyCampaignFilter === '__unassigned__')) historyCampaignFilter = '';
+    const tabs = [{id:'', label:t('hist_all')}, {id:'__unassigned__', label:t('hist_unassigned_records')}]
+      .concat(campaigns.map(c => ({id:c.id, label:c.name})));
+    document.getElementById('historyCampaignTabs').innerHTML = tabs.map(tb =>
+      '<button type="button" class="hist-campaign-tab'+(historyCampaignFilter===tb.id?' active':'')+'" data-campaign-tab="'+tb.id+'">'+
+        tb.label.replace(/</g,'&lt;')+'</button>'
+    ).join('');
+    document.querySelectorAll('[data-campaign-tab]').forEach(btn => {
+      btn.addEventListener('click', () => { historyCampaignFilter = btn.dataset.campaignTab; renderHistory(); });
+    });
+  }
+
+  function renderHistoryConditionChips(countedList){
+    const counts = {'':countedList.length, alive:0, dead:0, released:0};
+    countedList.forEach(e => { if(counts[e.condition] !== undefined) counts[e.condition]++; });
+    const chips = [
+      {id:'', label:t('hist_all')},
+      {id:'alive', label:t('rec_cond_alive')},
+      {id:'dead', label:t('rec_cond_dead')},
+      {id:'released', label:t('rec_cond_released')}
+    ];
+    document.getElementById('historyConditionChips').innerHTML = chips.map(c =>
+      '<button type="button" class="hist-cond-chip'+(historyConditionFilter===c.id?' active':'')+'" data-cond-chip="'+c.id+'">'+
+        c.label+' '+counts[c.id]+'</button>'
+    ).join('');
+    document.querySelectorAll('[data-cond-chip]').forEach(btn => {
+      btn.addEventListener('click', () => { historyConditionFilter = btn.dataset.condChip; renderHistory(); });
+    });
   }
 
   function renderHistory(){
     populateSiteFilter();
-    populateCampaignFilter();
     const list = loadEntries();
     const search = (document.getElementById('searchInput').value || '').toLowerCase();
     const siteFilter = document.getElementById('filterSite').value;
-    const campaignFilter = document.getElementById('filterCampaign').value;
 
-    const filtered = list
+    const preCondition = list
       .map((e, i) => ({...e, _idx: i}))
       .filter(e => !search || (e.species||'').toLowerCase().includes(search) || (e.common_name||'').toLowerCase().includes(search))
       .filter(e => !siteFilter || e.site === siteFilter)
       .filter(e => {
-        if(!campaignFilter) return true;
-        if(campaignFilter === '__unassigned__') return !e.campaign_id;
-        return e.campaign_id === campaignFilter;
+        if(!historyCampaignFilter) return true;
+        if(historyCampaignFilter === '__unassigned__') return !e.campaign_id;
+        return e.campaign_id === historyCampaignFilter;
       });
+
+    renderHistoryCampaignTabs();
+    renderHistoryConditionChips(preCondition);
+
+    const filtered = preCondition.filter(e => !historyConditionFilter || e.condition === historyConditionFilter);
 
     document.getElementById('historyCount').textContent = filtered.length + (filtered.length===1 ? ' RECORD' : ' RECORDS') + (list.length !== filtered.length ? ' OF ' + list.length : '');
 
@@ -11115,9 +11351,9 @@
   }
   document.getElementById('searchInput').addEventListener('input', renderHistory);
   document.getElementById('filterSite').addEventListener('change', renderHistory);
-  document.getElementById('filterCampaign').addEventListener('change', renderHistory);
   document.getElementById('insightsTaxonFilter').addEventListener('change', renderInsights);
   document.getElementById('insightsCampaignFilter').addEventListener('change', () => { insightsSiteFilter = []; insightsSiteDropdownOpen = false; renderInsights(); });
+
 
   function expandAllRecordSteps(){
     for(let i = 1; i <= 9; i++) setStepOpen(i, true);
