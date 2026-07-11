@@ -1369,20 +1369,28 @@
 
   .mode-select-wrap{
     height:100%; display:flex; flex-direction:column;
-    padding: calc(32px + env(safe-area-inset-top, 0px)) 20px calc(32px + env(safe-area-inset-bottom, 0px));
-    max-width: 420px; margin: 0 auto; background: #0e1b26;
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 20px calc(28px + env(safe-area-inset-bottom, 0px));
+    max-width: 420px; margin: 0 auto; background: #0e1b26; gap:18px;
   }
-  .mode-select-header{ text-align:center; margin-bottom: 28px; }
+  .mode-select-head-row{ display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+  .mode-select-header{ text-align:left; margin-bottom:0; }
   .mode-select-eyebrow{
-    font-family: var(--data); font-size: 9.5px; letter-spacing: 0.18em;
-    text-transform: uppercase; color: #8fb4c9; margin-bottom: 10px;
+    font-family: var(--data); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: oklch(72% 0.1 205); margin-bottom: 2px;
   }
+  .mode-select-title-row{ display:flex; align-items:center; gap:12px; margin-top:2px; }
   .mode-select-title{
-    font-family: var(--display); font-size: 24px; font-weight: 700;
-    color: white; line-height: 1.2;
+    font-family: var(--display); font-size: 27px; font-weight: 700;
+    color: white; line-height: 1.2; letter-spacing:-0.01em;
+  }
+  .mode-select-squiggle{ width:44px; height:16px; flex-shrink:0; }
+  .mode-select-squiggle path{ stroke:oklch(78% 0.12 205); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .mode-select-back{
+    background:none; border:none; font-family:var(--data); font-size:10.5px;
+    color:oklch(48% 0.02 220); cursor:pointer; letter-spacing:0.03em;
   }
   .mode-card{
-    border-radius: 16px; padding: 22px 20px; margin-bottom: 12px;
+    border-radius: 20px; padding: 22px; margin-bottom: 14px;
     cursor:pointer; text-align:left; position:relative; overflow:hidden;
   }
   .mode-card::before{
@@ -1405,26 +1413,38 @@
     font-family: var(--display); font-size:12px; font-weight:600; color:white;
   }
   .segment-card{
-    display:flex; align-items:center; gap:16px;
+    display:flex; flex-direction:column; gap:14px;
     background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
-    border:none;
+    border:none; position:relative;
   }
+  .mode-card-num{
+    position:absolute; right:14px; top:2px; font-family:var(--display); font-weight:700;
+    font-size:56px; color:rgba(255,255,255,0.14); line-height:1; pointer-events:none;
+  }
+  .segment-card .mode-card-row1{ display:flex; align-items:center; gap:14px; position:relative; z-index:1; }
+  .segment-card .mode-card-icon-box{
+    width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,0.16);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .segment-card .mode-card-icon-box svg{ width:26px; height:26px; }
+  .segment-card .mode-card-chevron-row{ display:flex; justify-content:flex-end; position:relative; z-index:1; }
+  .segment-card .mode-card-chevron{ width:20px; height:20px; transform:rotate(-90deg); }
   /* nth-child counts ALL siblings of .mode-select-wrap, and
-     .mode-select-header is sibling #1 — so the three mode cards are
+     .mode-select-head-row is sibling #1 — so the three mode cards are
      actually nth-child(2)=research, nth-child(3)=fleet, nth-child(4)=sport,
-     not (1)/(2)/(3) as it looks at first glance. That mismatch is what
-     had Fishing Operations showing orange and Sport showing navy — fixed
-     here: Research now gets its own Ocean Bright light blue (#1aa6ce→
-     #6fe0ee, matching the rest of the Research module exactly since this
-     screen renders before body.mode-research is applied, so the literal
-     hex has to be used instead of the CSS variables); Fishing Operations
-     gets the professional dark navy; Sport keeps its sunrise gradient. */
-  .segment-card:nth-child(2){ background: linear-gradient(135deg, #1aa6ce 0%, #6fe0ee 100%); }
-  .segment-card:nth-child(3){ background: linear-gradient(135deg, #06384f 0%, #0e1b26 100%); }
-  .segment-card:nth-child(4){ background: linear-gradient(135deg, #F9B45C 0%, #EE6C4D 58%, #E0556A 100%); }
+     not (1)/(2)/(3) as it looks at first glance. Gradients ported exactly
+     from Israel's "Live Signal" reference design. */
+  .segment-card:nth-child(2){ background: linear-gradient(135deg, oklch(55% 0.12 230), oklch(28% 0.07 225)); }
+  .segment-card:nth-child(3){ background: linear-gradient(135deg, oklch(34% 0.03 235), oklch(17% 0.02 240) 55%, oklch(48% 0.08 75)); }
+  .segment-card:nth-child(4){ background: linear-gradient(135deg, oklch(78% 0.12 75), oklch(66% 0.16 40) 55%, oklch(58% 0.19 25)); }
   .segment-card:nth-child(4) .mode-card-sub{ color: rgba(255,255,255,0.85); }
-  .segment-card .mode-card-title{ color:white; font-size:16px; }
-  .segment-card .mode-card-sub{ color:#9fc8de; }
+  .segment-card .mode-card-title{ color:white; font-size:18px; }
+  .segment-card .mode-card-sub{ color:rgba(255,255,255,0.78); font-family:var(--body); font-size:12.5px; }
+  .mode-select-clear-btn{
+    background:rgba(255,255,255,0.06); border:none; border-radius:10px; padding:10px 14px;
+    font-family:var(--data); font-size:10.5px; color:oklch(58% 0.02 220); cursor:pointer;
+    letter-spacing:0.03em; align-self:flex-start; margin-top:auto;
+  }
 
   .fleet-close-trip-btn{
     width:100%; background:#163040; color:#e0a868;
@@ -1439,34 +1459,81 @@
     padding: 6px 11px; border-radius: 14px; cursor:pointer; flex-shrink:0;
   }
 
-  /* ===== Splash / onboarding screen ===== */
-  #screen-splash{ background:#0e1b26; }
+  /* ===== Splash / onboarding screen — "Live Signal" redesign =====
+     Tokens scoped to #screen-splash/#screen-mode-select with an --sp-
+     prefix rather than overriding the shared --ink/--cyan/etc: this
+     screen wants near-white ink and a light cyan on a near-black bg,
+     which conflicts with what those shared tokens mean everywhere
+     else (dark ink on a light page). Ported from Israel's reference
+     (Fish_Pulse_-_Welcome___Choose_Mode__Live_Signal__-_standalone),
+     values kept as-is since he confirmed the colors were correct
+     there — only the standalone .phone/.stage preview frame is
+     dropped, since real screens are already full-viewport. */
+  #screen-splash{
+    --sp-bg: oklch(15% 0.025 240);
+    --sp-ink: oklch(97% 0.006 210);
+    --sp-ink-soft: oklch(74% 0.02 215);
+    --sp-ink-dim: oklch(48% 0.02 220);
+    --sp-cyan: oklch(80% 0.12 205);
+    --sp-field: oklch(62% 0.13 235);
+    --sp-fleet: oklch(72% 0.12 75);
+    --sp-sport: oklch(66% 0.18 32);
+    background: var(--sp-bg); position: relative; overflow: hidden;
+  }
+  .splash-blob{ position:absolute; border-radius:50%; filter:blur(50px); opacity:0.55; pointer-events:none; }
+  .splash-blob.b1{ width:220px; height:220px; background:var(--sp-field); top:-60px; left:-60px; }
+  .splash-blob.b2{ width:200px; height:200px; background:var(--sp-fleet); top:-40px; right:-70px; }
+  .splash-blob.b3{ width:240px; height:240px; background:var(--sp-sport); bottom:-90px; left:30%; }
+
   .splash-wrap{
     height:100%; display:flex; flex-direction:column;
-    padding: calc(18px + env(safe-area-inset-top,0px)) 24px calc(28px + env(safe-area-inset-bottom,0px));
-    max-width:420px; margin:0 auto;
+    padding: calc(20px + env(safe-area-inset-top,0px)) 24px calc(28px + env(safe-area-inset-bottom,0px));
+    max-width:420px; margin:0 auto; position:relative; z-index:2;
   }
-  .splash-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
-  .splash-version{ font-family:var(--data); font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:#8fb4c9; }
-  .hamburger-btn{ background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:4px; }
-  .hamburger-btn span{ display:block; width:20px; height:2px; background:#9fc8de; border-radius:1px; }
-  .splash-logo-wrap{ text-align:center; margin-bottom:28px; }
-  .splash-logo-wrap svg{ width:72px; height:72px; }
-  .splash-title{ font-family:var(--display); font-weight:700; font-size:28px; color:white; letter-spacing:-0.01em; margin-top:14px; margin-bottom:6px; }
-  .splash-sub{ font-family:var(--data); font-size:12px; color:#7fa3b5; letter-spacing:0.06em; text-transform:uppercase; }
-  .splash-slide{ background:#163040; border-radius:16px; padding:22px 20px; flex:1; display:flex; flex-direction:column; justify-content:center; }
-  .splash-slide-icon{ width:38px; height:38px; border-radius:10px; background:var(--blue); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
-  .splash-slide-icon svg{ width:20px; height:20px; }
-  .splash-slide-title{ font-family:var(--display); font-weight:700; font-size:18px; color:white; margin-bottom:8px; }
-  .splash-slide-body{ font-family:var(--data); font-size:11px; color:#7fa3b5; line-height:1.6; }
-  .splash-dots{ display:flex; justify-content:center; gap:6px; margin:16px 0; }
-  .splash-dot{ height:4px; border-radius:2px; background:#2a4452; transition:width 0.3s,background 0.3s; width:6px; }
-  .splash-dot.active{ width:20px; background:#5fc7ee; }
-  .splash-cta{ width:100%; background:#5fc7ee; color:#0e1b26; border:none; border-radius:12px; padding:16px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer; margin-bottom:12px; }
-  .splash-cta:active{ transform:scale(0.98); }
-  .splash-premium{ display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; padding:4px; }
-  .splash-premium-label{ font-family:var(--display); font-size:13px; font-weight:600; color:#e0a868; }
-  .splash-premium-sub{ font-family:var(--data); font-size:10px; color:#4a6070; text-align:center; margin-top:4px; }
+  .splash-topbar{ display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+  .splash-version{ font-family:var(--data); font-size:10.5px; letter-spacing:0.04em; color:var(--sp-ink-dim); }
+  .hamburger-btn{
+    background:oklch(100% 0 0 / 0.08); border:none; width:36px; height:36px; border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3.5px; cursor:pointer;
+  }
+  .hamburger-btn span{ width:15px; height:1.6px; background:var(--sp-ink-soft); border-radius:1px; }
+
+  .splash-hero{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; min-height:0; }
+  .splash-logo-wrap{ position:relative; width:96px; height:96px; flex-shrink:0; }
+  .splash-logo-wrap svg{ display:block; width:100%; height:100%; }
+  .splash-pulse-path{ stroke-dasharray:70; stroke-dashoffset:70; animation:splashDraw 1.3s 0.2s ease forwards; }
+  @keyframes splashDraw{ to{ stroke-dashoffset:0; } }
+  .splash-ring{ position:absolute; inset:-10px; border-radius:50%; border:1.4px solid oklch(85% 0.1 205 / 0.4); animation:splashRingAnim 3.2s ease-out infinite; }
+  .splash-ring.r2{ animation-delay:1.6s; }
+  @keyframes splashRingAnim{ 0%{ transform:scale(0.85); opacity:0.8; } 100%{ transform:scale(1.35); opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .splash-ring{ animation:none; display:none; } .splash-pulse-path{ animation:none; stroke-dashoffset:0; } }
+
+  .splash-title{ font-family:var(--display); font-weight:700; font-size:33px; color:var(--sp-ink); margin-top:18px; letter-spacing:-0.02em; }
+  .splash-segpills{ display:flex; gap:8px; margin-top:8px; }
+  .splash-segpill{ display:flex; align-items:center; gap:6px; background:oklch(100% 0 0 / 0.06); border:1px solid oklch(100% 0 0 / 0.1); border-radius:999px; padding:6px 12px; }
+  .splash-segpill .d{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .splash-segpill span{ font-family:var(--data); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--sp-ink-soft); white-space:nowrap; }
+
+  .splash-slide{ margin-top:30px; min-height:118px; display:flex; flex-direction:column; align-items:center; gap:12px; max-width:300px; cursor:pointer; }
+  .splash-slide-icon{ width:50px; height:50px; border-radius:15px; display:flex; align-items:center; justify-content:center; transition:background 0.4s ease, opacity 0.3s ease; }
+  .splash-slide-icon svg{ width:24px; height:24px; }
+  .splash-slide-title{ font-family:var(--display); font-weight:700; font-size:18px; color:var(--sp-ink); transition:opacity 0.3s ease; }
+  .splash-slide-body{ font-family:var(--body); font-size:13px; color:var(--sp-ink-soft); line-height:1.5; transition:opacity 0.3s ease; }
+  .splash-slide.fading .splash-slide-icon, .splash-slide.fading .splash-slide-title, .splash-slide.fading .splash-slide-body{ opacity:0; }
+
+  .splash-dots{ display:flex; justify-content:center; gap:6px; margin:18px 0 0; }
+  .splash-dot{ width:6px; height:6px; border-radius:3px; background:oklch(100% 0 0 / 0.16); transition:all 0.25s ease; }
+  .splash-dot.active{ width:18px; }
+
+  .splash-cta{
+    width:100%; background:var(--sp-cyan); color:oklch(15% 0.02 235); border:none; border-radius:999px;
+    padding:17px; font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer;
+    box-shadow:0 14px 30px oklch(70% 0.12 205 / 0.35); transition:transform 0.15s ease;
+  }
+  .splash-cta:active{ transform:scale(0.97); }
+  .splash-premium{ display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 4px 0; cursor:pointer; }
+  .splash-premium-label{ font-family:var(--display); font-weight:600; font-size:13px; color:oklch(78% 0.12 78); }
+  .splash-premium-sub{ font-family:var(--data); font-size:10px; color:var(--sp-ink-dim); text-align:center; margin-top:6px; }
 
   /* ===== Hamburger drawer ===== */
   .hamburger-drawer{
@@ -1518,6 +1585,7 @@
 
 <!-- ================= SPLASH / ONBOARDING ================= -->
 <section class="screen active" id="screen-splash">
+  <div class="splash-blob b1"></div><div class="splash-blob b2"></div><div class="splash-blob b3"></div>
   <div class="splash-wrap">
     <div class="splash-topbar">
       <span class="splash-version">v1.0</span>
@@ -1526,31 +1594,44 @@
       </button>
     </div>
 
-    <div class="splash-logo-wrap">
-      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="36" cy="36" r="36" fill="#0a5c8c"/>
-        <path d="M12 36c9-12 22-17 32-11-2.5 5-2.5 17 0 22-10 5-23 0-32-11z" fill="#5fc7ee"/>
-        <path d="M44 27c5-2.5 10-2.5 11-2.5-1.2 4-1.2 10 0 14-1 0-6 0-11-2.5" fill="#5fc7ee"/>
-        <circle cx="20" cy="34" r="2.5" fill="#0e1b26"/>
-        <path d="M14 50h7l3-7 4 13 3-9 3 5 3-9 4 11h8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
-      </svg>
-      <div class="splash-title">Fish Pulse</div>
-      <div class="splash-sub">Field · Fleet · Sport</div>
-    </div>
-
-    <div class="splash-slide" id="splashSlide">
-      <div class="splash-slide-icon" id="splashSlideIcon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
+    <div class="splash-hero">
+      <div class="splash-logo-wrap">
+        <div class="splash-ring"></div><div class="splash-ring r2"></div>
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="splashBg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="oklch(50% 0.11 225)"/><stop offset="1" stop-color="oklch(24% 0.06 222)"/></linearGradient>
+            <linearGradient id="splashFish" x1="12" y1="20" x2="50" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="oklch(90% 0.06 205)"/><stop offset="1" stop-color="oklch(66% 0.1 210)"/></linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="32" fill="url(#splashBg)"/>
+          <path d="M46 32 L57 22.5 C55.3 27 55.3 37 57 41.5 Z" fill="url(#splashFish)"/>
+          <path d="M10 32.5 C10 25.5 15.5 20 23.5 18 C31 16.1 39.5 17.6 46 22.5 C48.7 24.5 48.7 28 46.8 30.2 C48.6 30.7 49.6 31.6 49.6 32.5 C49.6 33.4 48.6 34.3 46.8 34.8 C48.7 37 48.7 39.5 46 41.5 C39.5 46.4 31 47.9 23.5 46 C15.5 44 10 39.5 10 32.5 Z" fill="url(#splashFish)"/>
+          <path d="M24 18.6 C26.7 14.6 31 12.6 35 13.4 C32.6 16.3 30.8 19 29.7 21.6 Z" fill="url(#splashFish)"/>
+          <path d="M25 34 C23 38.4 20.6 41.2 17.6 42.8 C18.7 39 19.9 35.9 21.4 33.4 Z" fill="oklch(55% 0.09 210)" opacity="0.85"/>
+          <circle cx="20.3" cy="26.6" r="2.35" fill="oklch(22% 0.05 222)"/>
+          <circle cx="19.6" cy="25.9" r="0.7" fill="oklch(97% 0.01 205)"/>
+          <path class="splash-pulse-path" d="M4 32.5 H12 L15.5 25.5 L20 40 L23.5 30.5 L26.5 35.3 L30 30.5 L33.5 36.5 L38 32.5 H60" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+        </svg>
       </div>
-      <div class="splash-slide-title" id="splashSlideTitle">Capture data at sea</div>
-      <div class="splash-slide-body" id="splashSlideBody">Species, biology, bycatch, GPS — all offline. No signal needed in the field.</div>
-    </div>
+      <div class="splash-title">Fish Pulse</div>
+      <div class="splash-segpills">
+        <div class="splash-segpill"><span class="d" style="background:var(--sp-field)"></span><span data-i18n="splash_seg_field">Field</span></div>
+        <div class="splash-segpill"><span class="d" style="background:var(--sp-fleet)"></span><span data-i18n="splash_seg_fleet">Fleet</span></div>
+        <div class="splash-segpill"><span class="d" style="background:var(--sp-sport)"></span><span data-i18n="splash_seg_sport">Sport</span></div>
+      </div>
 
-    <div class="splash-dots" id="splashDots">
-      <div class="splash-dot active"></div>
-      <div class="splash-dot"></div>
-      <div class="splash-dot"></div>
-      <div class="splash-dot"></div>
+      <div class="splash-slide" id="splashSlide">
+        <div class="splash-slide-icon" id="splashSlideIcon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>
+        </div>
+        <div class="splash-slide-title" id="splashSlideTitle">Capture data at sea</div>
+        <div class="splash-slide-body" id="splashSlideBody">Species, biology, bycatch, GPS — all offline. No signal needed in the field.</div>
+      </div>
+      <div class="splash-dots" id="splashDots">
+        <div class="splash-dot active"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+      </div>
     </div>
 
     <div>
@@ -1616,57 +1697,69 @@
 <!-- ================= MODE SELECT ================= -->
 <section class="screen" id="screen-mode-select">
   <div class="mode-select-wrap">
-    <div class="mode-select-header">
-      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px;">
+    <div class="mode-select-head-row">
+      <div class="mode-select-header">
         <div class="mode-select-eyebrow" data-i18n="mode_select_eyebrow">Fish Pulse</div>
-        <button id="backToSplashBtn" style="background:none;border:none;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;letter-spacing:0.04em;padding:4px 0;" data-i18n="mode_select_welcome">← Welcome</button>
+        <div class="mode-select-title-row">
+          <div class="mode-select-title" data-i18n="mode_select_title">Choose a mode</div>
+          <svg class="mode-select-squiggle" viewBox="0 0 44 16"><path d="M0 8h6l3-6 4 12 3-9 2 5 2-5 3 9 3-6h18"/></svg>
+        </div>
       </div>
-      <div class="mode-select-title" data-i18n="mode_select_title">Choose a mode</div>
-      <button id="clearSessionBtn" style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 12px;font-family:var(--data);font-size:10px;color:#4a6070;cursor:pointer;margin-top:10px;letter-spacing:0.04em;" data-i18n="mode_select_clear_session">Clear saved session</button>
+      <button class="mode-select-back" id="backToSplashBtn" data-i18n="mode_select_welcome">← Welcome</button>
     </div>
 
     <div class="mode-card segment-card" data-mode="research">
-      <div class="mode-card-icon-lg">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="24" cy="20" r="10" stroke="white" stroke-width="2.4"/>
-          <line x1="31.5" y1="27.5" x2="40" y2="36" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-          <line x1="24" y1="13" x2="24" y2="9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <span class="mode-card-num">01</span>
+      <div class="mode-card-row1">
+        <div class="mode-card-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/>
+            <path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <div class="mode-card-title" data-i18n="mode_research_title">Field Research</div>
+          <div class="mode-card-sub" data-i18n="mode_research_sub">Species, biology, bycatch, survey data</div>
+        </div>
       </div>
-      <div>
-        <div class="mode-card-title" data-i18n="mode_research_title">Field Research</div>
-        <div class="mode-card-sub" data-i18n="mode_research_sub">Species, biology, bycatch, survey data</div>
-      </div>
+      <div class="mode-card-chevron-row"><svg class="mode-card-chevron" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
     </div>
 
     <div class="mode-card segment-card" data-mode="fleet">
-      <div class="mode-card-icon-lg">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 8v22M16 16l8-5 8 5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 30c2 6 7 10 14 10s12-4 14-10" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="24" cy="13" r="2.3" fill="white"/>
-        </svg>
+      <span class="mode-card-num">02</span>
+      <div class="mode-card-row1">
+        <div class="mode-card-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4v9M8 8l4-4 4 4"/>
+            <path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="mode-card-title" data-i18n="mode_fleet_title">Fishing Operations</div>
+          <div class="mode-card-sub" data-i18n="mode_fleet_sub">Trips, costs, fleet efficiency, traceability</div>
+        </div>
       </div>
-      <div>
-        <div class="mode-card-title" data-i18n="mode_fleet_title">Fishing Operations</div>
-        <div class="mode-card-sub" data-i18n="mode_fleet_sub">Trips, costs, fleet efficiency, traceability</div>
-      </div>
+      <div class="mode-card-chevron-row"><svg class="mode-card-chevron" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
     </div>
 
     <div class="mode-card segment-card" data-mode="sport">
-      <div class="mode-card-icon-lg">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 38c6-14 12-24 24-30" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-          <path d="M34 8c2 3 2 7-1 11" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="16" cy="30" r="3.2" stroke="white" stroke-width="2.2"/>
-          <path d="M13.2 30h-4.5M16 26.8v-4.3" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
+      <span class="mode-card-num">03</span>
+      <div class="mode-card-row1">
+        <div class="mode-card-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 4a3 3 0 0 1 3 3v6a5.5 5.5 0 1 1-9-4.2"/>
+            <circle cx="18" cy="4" r="1.4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="mode-card-title" data-i18n="mode_sport_title">Sport / Recreational Fishing</div>
+          <div class="mode-card-sub" data-i18n="mode_sport_sub">Sessions, catches, personal log</div>
+        </div>
       </div>
-      <div>
-        <div class="mode-card-title" data-i18n="mode_sport_title">Sport / Recreational Fishing</div>
-        <div class="mode-card-sub" data-i18n="mode_sport_sub">Sessions, catches, personal log</div>
-      </div>
+      <div class="mode-card-chevron-row"><svg class="mode-card-chevron" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
     </div>
+
+    <button class="mode-select-clear-btn" id="clearSessionBtn" data-i18n="mode_select_clear_session">Clear saved session</button>
   </div>
 </section>
 
@@ -4045,7 +4138,7 @@
       splash_slide2_title: 'Run your fleet', splash_slide2_body: 'Log trips, hauls, and costs at sea. Settlement, reconciliation, and reports on land.',
       splash_slide3_title: 'Log every catch', splash_slide3_body: 'Session tracking, solunar table, spot map with satellite view. Your personal fishing log.',
       splash_slide4_title: 'Works without signal', splash_slide4_body: 'All data stays on your device. Export CSV, GeoJSON, and PDFs anytime — even offline.',
-      splash_get_started: 'Get started — it\'s free', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Unlock advanced stats, multi-device sync & export',
+      splash_get_started: 'Get started — it\'s free', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Unlock advanced stats, multi-device sync & export', splash_seg_field: 'Field', splash_seg_fleet: 'Fleet', splash_seg_sport: 'Sport',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Choose a mode', mode_select_welcome: '← Welcome', mode_select_clear_session: 'Clear saved session',
       mode_research_title: 'Field Research', mode_research_sub: 'Species, biology, bycatch, survey data',
       mode_fleet_title: 'Fishing Operations', mode_fleet_sub: 'Trips, costs, fleet efficiency, traceability',
@@ -4350,7 +4443,7 @@
       splash_slide2_title: 'Administra tu flota', splash_slide2_body: 'Registra viajes, lances y costos en el mar. Liquidación, reconciliación y reportes en tierra.',
       splash_slide3_title: 'Registra cada captura', splash_slide3_body: 'Seguimiento de sesión, tabla solunar, mapa de spots con vista satelital. Tu bitácora de pesca personal.',
       splash_slide4_title: 'Funciona sin señal', splash_slide4_body: 'Todos los datos se quedan en tu dispositivo. Exporta CSV, GeoJSON y PDFs en cualquier momento — incluso sin conexión.',
-      splash_get_started: 'Comenzar — es gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Desbloquea estadísticos avanzados, sincronización y exportación',
+      splash_get_started: 'Comenzar — es gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Desbloquea estadísticos avanzados, sincronización y exportación', splash_seg_field: 'Campo', splash_seg_fleet: 'Flota', splash_seg_sport: 'Deportiva',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Elige un modo', mode_select_welcome: '← Bienvenida', mode_select_clear_session: 'Borrar sesión guardada',
       mode_research_title: 'Investigación de Campo', mode_research_sub: 'Especies, biología, bycatch, datos de muestreo',
       mode_fleet_title: 'Operaciones Pesqueras', mode_fleet_sub: 'Viajes, costos, eficiencia de flota, trazabilidad',
@@ -4655,7 +4748,7 @@
       splash_slide2_title: 'Gestisci la tua flotta', splash_slide2_body: 'Registra viaggi, cale e costi in mare. Liquidazione, riconciliazione e rapporti a terra.',
       splash_slide3_title: 'Registra ogni cattura', splash_slide3_body: 'Monitoraggio sessione, tabella lunare, mappa spot con vista satellitare. Il tuo diario di pesca personale.',
       splash_slide4_title: 'Funziona senza segnale', splash_slide4_body: 'Tutti i dati restano sul tuo dispositivo. Esporta CSV, GeoJSON e PDF in qualsiasi momento — anche offline.',
-      splash_get_started: 'Inizia — è gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Sblocca statistiche avanzate, sincronizzazione ed esportazione',
+      splash_get_started: 'Inizia — è gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Sblocca statistiche avanzate, sincronizzazione ed esportazione', splash_seg_field: 'Campo', splash_seg_fleet: 'Flotta', splash_seg_sport: 'Sportiva',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Scegli una modalità', mode_select_welcome: '← Benvenuto', mode_select_clear_session: 'Cancella sessione salvata',
       mode_research_title: 'Ricerca sul Campo', mode_research_sub: 'Specie, biologia, catture accessorie, dati di rilevamento',
       mode_fleet_title: 'Operazioni di Pesca', mode_fleet_sub: 'Viaggi, costi, efficienza della flotta, tracciabilità',
@@ -4960,7 +5053,7 @@
       splash_slide2_title: 'บริหารกองเรือของคุณ', splash_slide2_body: 'บันทึกทริป การลากอวน และค่าใช้จ่ายกลางทะเล คิดบัญชี กระทบยอด และรายงานบนฝั่ง',
       splash_slide3_title: 'บันทึกทุกการจับปลา', splash_slide3_body: 'ติดตามเซสชัน ตารางสุริยะจันทรคติ แผนที่จุดตกปลาพร้อมมุมมองดาวเทียม สมุดบันทึกการตกปลาส่วนตัวของคุณ',
       splash_slide4_title: 'ใช้งานได้แม้ไม่มีสัญญาณ', splash_slide4_body: 'ข้อมูลทั้งหมดอยู่ในอุปกรณ์ของคุณ ส่งออก CSV, GeoJSON และ PDF ได้ทุกเมื่อ — แม้ออฟไลน์',
-      splash_get_started: 'เริ่มต้นใช้งาน — ฟรี', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'ปลดล็อกสถิติขั้นสูง การซิงค์หลายอุปกรณ์ และการส่งออก',
+      splash_get_started: 'เริ่มต้นใช้งาน — ฟรี', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'ปลดล็อกสถิติขั้นสูง การซิงค์หลายอุปกรณ์ และการส่งออก', splash_seg_field: 'ภาคสนาม', splash_seg_fleet: 'กองเรือ', splash_seg_sport: 'กีฬา',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'เลือกโหมด', mode_select_welcome: '← หน้าต้อนรับ', mode_select_clear_session: 'ล้างเซสชันที่บันทึกไว้',
       mode_research_title: 'งานวิจัยภาคสนาม', mode_research_sub: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ ข้อมูลสำรวจ',
       mode_fleet_title: 'ปฏิบัติการประมง', mode_fleet_sub: 'ทริป ค่าใช้จ่าย ประสิทธิภาพกองเรือ การตรวจสอบย้อนกลับ',
@@ -5310,21 +5403,25 @@
 (function(){
   const slides = [
     {
+      color: 'oklch(50% 0.13 235)',
       title: t('splash_slide1_title'),
       body: t('splash_slide1_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="white"/><circle cx="6.5" cy="11" r="1" fill="#0a5c8c"/></svg>'
     },
     {
+      color: 'oklch(55% 0.1 75)',
       title: t('splash_slide2_title'),
       body: t('splash_slide2_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4v12M8 10l4-6 4 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 16c0 3 2 5 6 6 4-1 6-3 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>'
     },
     {
+      color: 'oklch(55% 0.16 30)',
       title: t('splash_slide3_title'),
       body: t('splash_slide3_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4c0 5-1 6-1 10a4 4 0 1 0 5 0c-2-2-4-5-4-10z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     },
     {
+      color: 'oklch(58% 0.1 205)',
       title: t('splash_slide4_title'),
       body: t('splash_slide4_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 16v5M9 19h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M5 12.5A9.5 9.5 0 0 1 12 10a9.5 9.5 0 0 1 7 2.5M8 15.5A5.5 5.5 0 0 1 12 14a5.5 5.5 0 0 1 4 1.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>'
@@ -5332,27 +5429,41 @@
   ];
   let currentSlide = 0;
   let autoTimer = null;
+  const slideEl = document.getElementById('splashSlide');
 
   function goToSlide(i){
     currentSlide = i;
     const s = slides[i];
     document.getElementById('splashSlideIcon').innerHTML = s.iconSvg;
+    document.getElementById('splashSlideIcon').style.background = s.color;
     document.getElementById('splashSlideTitle').textContent = s.title;
     document.getElementById('splashSlideBody').textContent = s.body;
-    document.querySelectorAll('.splash-dot').forEach((d,idx) => d.classList.toggle('active', idx === i));
+    document.querySelectorAll('.splash-dot').forEach((d,idx) => {
+      d.classList.toggle('active', idx === i);
+      d.style.background = idx === i ? s.color : '';
+    });
+  }
+  // Cross-fades the slide content instead of swapping it instantly,
+  // matching the "Live Signal" reference — used for every transition
+  // (auto-advance, dot tap, slide tap) so the feel is consistent.
+  function changeSlideTo(i){
+    slideEl.classList.add('fading');
+    setTimeout(() => { goToSlide(i); slideEl.classList.remove('fading'); }, 220);
   }
 
-  function nextSlide(){ goToSlide((currentSlide + 1) % slides.length); }
+  function nextSlide(){ changeSlideTo((currentSlide + 1) % slides.length); }
 
-  function startAuto(){ autoTimer = setInterval(nextSlide, 3500); }
+  function startAuto(){ autoTimer = setInterval(nextSlide, 3600); }
   function stopAuto(){ clearInterval(autoTimer); }
+
+  goToSlide(0);
 
   // Tap on slide advances manually
   document.getElementById('splashSlide').addEventListener('click', () => { stopAuto(); nextSlide(); startAuto(); });
 
   // Dot tap
   document.querySelectorAll('.splash-dot').forEach((d,i) => {
-    d.addEventListener('click', () => { stopAuto(); goToSlide(i); startAuto(); });
+    d.addEventListener('click', () => { stopAuto(); changeSlideTo(i); startAuto(); });
   });
 
   // Get started
