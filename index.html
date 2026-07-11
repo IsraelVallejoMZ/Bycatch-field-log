@@ -380,6 +380,81 @@
     background:var(--fleet-amber-dim); color:var(--amber); border:1px solid var(--line);
   }
 
+  /* ----- Start Trip redesign: repeat-last hero, vessel buttons, progressive reveal ----- */
+  .fleet-hero{
+    background: linear-gradient(135deg, var(--fleet-cyan-dim,#1c4552), var(--fleet-panel-2,#223947));
+    border-radius: var(--radius); padding: 18px; position: relative; overflow: hidden;
+  }
+  .fleet-hero::after{ content:''; position:absolute; right:-30px; top:-30px; width:130px; height:130px; border-radius:50%; background:rgba(255,255,255,0.04); }
+  .fleet-hero-row{ display:flex; align-items:center; gap:12px; position:relative; }
+  .fleet-hero-eyebrow{ font-family:var(--data); font-size:10px; color:var(--cyan); text-transform:uppercase; letter-spacing:0.06em; }
+  .fleet-hero-title{ font-family:var(--display); font-weight:600; font-size:14px; color:var(--ink); margin-top:2px; }
+  .fleet-use-btn{
+    background:var(--cyan); color:var(--paper); border:none; border-radius:999px; padding:9px 14px;
+    font-family:var(--display); font-weight:700; font-size:12.5px; flex-shrink:0; cursor:pointer;
+  }
+  .fleet-divider-row{ display:flex; align-items:center; gap:10px; color:var(--ink-soft); margin: 4px 0; }
+  .fleet-divider-line{ flex:1; height:1px; background:var(--line); }
+  .fleet-divider-text{ font-family:var(--data); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; }
+
+  .fleet-vessel-btn{
+    display:flex; align-items:center; gap:12px; text-align:left; width:100%; cursor:pointer;
+    background:var(--panel); border:1.5px solid var(--line); border-radius:var(--radius);
+    padding:13px 14px; margin-bottom:8px; transition: background .15s ease, border-color .15s ease;
+  }
+  .fleet-vessel-btn.active{ background:var(--fleet-cyan-dim,#1c4552); border-color:var(--cyan); }
+  .fleet-vessel-icon{
+    width:38px; height:38px; border-radius:10px; background:var(--fleet-cyan-dim,#1c4552); color:var(--cyan);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .fleet-vessel-btn.active .fleet-vessel-icon{ background:var(--cyan); color:var(--paper); }
+  .fleet-vessel-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
+  .fleet-vessel-sub{ font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:2px; }
+  .fleet-add-tile{
+    display:flex; align-items:center; gap:12px; width:100%; cursor:pointer; text-align:left;
+    background:transparent; border:1.5px dashed var(--line); border-radius:var(--radius);
+    padding:13px 14px; margin-bottom:8px; color:var(--ink-soft);
+  }
+  .fleet-add-tile .fleet-vessel-icon{ background:transparent; border:1.5px dashed var(--line); }
+  .fleet-add-tile-label{ font-family:var(--display); font-weight:600; font-size:13px; }
+
+  .pill.add-pill{ background:transparent; border:1.5px dashed var(--line); color:var(--ink-soft); }
+
+  .fleet-reveal-card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; animation: fleetReveal .25s ease; }
+  @keyframes fleetReveal{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+  .fleet-reveal-card-label-row{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .fleet-reveal-card-label-row svg{ flex-shrink:0; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  /* ----- Close Trip redesign: jump-nav + sticky settlement bar ----- */
+  body.mode-fleet .fleet-jump-nav{
+    display:flex; gap:8px; overflow-x:auto; padding:10px 16px; border-bottom:1px solid var(--line);
+    background:var(--panel); -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.mode-fleet .fleet-jump-nav::-webkit-scrollbar{ display:none; }
+  .fleet-jump-chip{
+    flex-shrink:0; background:var(--fleet-cyan-dim,#1c4552); color:var(--cyan); border:none;
+    border-radius:999px; padding:7px 13px; font-family:var(--data); font-size:11px; font-weight:600; cursor:pointer;
+  }
+  .fleet-settlement-bar{
+    position:sticky; bottom:0; background:var(--panel); border-top:1px solid var(--line);
+    padding:14px 16px; box-shadow:0 -4px 14px rgba(0,0,0,0.3);
+  }
+  .fleet-settlement-row{
+    display:flex; justify-content:space-between; font-family:var(--data); font-size:10.5px;
+    color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;
+  }
+  .fleet-settlement-track{ height:8px; border-radius:999px; background:var(--fleet-panel-2,#223947); overflow:hidden; display:flex; }
+  .fleet-settlement-fill-income{ background:var(--cyan); transition:width .3s ease; }
+  .fleet-settlement-fill-cost{ background:var(--coral); transition:width .3s ease; }
+  .fleet-settlement-bottom{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
+  .fleet-settlement-net-label{ font-family:var(--data); font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; }
+  .fleet-settlement-net-value{ font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink); }
+  .fleet-confirm-btn{
+    background:var(--cyan); color:var(--paper); border:none; border-radius:12px; padding:12px 20px;
+    font-family:var(--display); font-weight:700; font-size:13px; cursor:pointer; flex-shrink:0;
+  }
+
   /* ----- Operations: top pill tab strip (replaces the old bottom nav) -----
      Each of the 6 Ops screens is its own <section>, not shared React state,
      so this strip is duplicated per screen with the correct button
@@ -2240,52 +2315,72 @@
   </div>
   <main>
     <div id="fleetNoTripCard">
-      <div class="card">
-        <div class="insight-card-label" style="margin-bottom:14px;" data-i18n="fltrip_start_new">Start a new trip</div>
-        <label for="fleetCaptainSelect" data-i18n="fltrip_captain">Captain</label>
-        <select id="fleetCaptainSelect">
-          <option value="" data-i18n="fltrip_select_captain">— Select Captain —</option>
-          <option value="__new__" data-i18n="fltrip_new_captain">+ New Captain</option>
+      <div class="insight-card-label" style="margin-bottom:14px;" data-i18n="fltrip_start_new">Start a new trip</div>
+
+      <div class="fleet-hero" id="fleetRepeatLastHero" style="display:none;">
+        <div class="fleet-hero-row">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.2V21M6 13c0 5 2.5 7.5 6 8 3.5-0.5 6-3 6-8"/><path d="M4 13h4M16 13h4"/></svg>
+          <div style="flex:1; min-width:0;">
+            <div class="fleet-hero-eyebrow" data-i18n="fltrip_repeat_last">Repeat last setup</div>
+            <div class="fleet-hero-title" id="fleetRepeatLastText">—</div>
+          </div>
+          <button type="button" class="fleet-use-btn" id="fleetUseLastBtn" data-i18n="fltrip_use_this">Use this →</button>
+        </div>
+      </div>
+      <div class="fleet-divider-row" id="fleetManualDivider" style="display:none;">
+        <div class="fleet-divider-line"></div>
+        <div class="fleet-divider-text" data-i18n="fltrip_manual_setup">or set up manually</div>
+        <div class="fleet-divider-line"></div>
+      </div>
+
+      <label style="margin-top:0;" data-i18n="fltrip_vessel">Vessel</label>
+      <div id="fleetVesselButtonList"></div>
+      <div id="fleetNewVesselBox" class="fleet-reveal-card" style="display:none; margin-bottom:8px;">
+        <label for="fleetNewVesselName" style="margin-top:0;" data-i18n="fltrip_vessel_name">Vessel Name</label>
+        <input type="text" id="fleetNewVesselName" placeholder="e.g. Vessel 04">
+        <label for="fleetNewVesselCurrency" data-i18n="fltrip_default_currency">Default Currency</label>
+        <select id="fleetNewVesselCurrency" class="currency-select">
+          <option value="THB">THB</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="MXN">MXN</option>
+          <option value="VND">VND</option>
         </select>
-        <div id="fleetNewCaptainBox" style="display:none; margin-top:10px;">
-          <label for="fleetNewCaptainName" data-i18n="fltrip_captain_name">Captain Name</label>
+        <label for="fleetNewVesselCountry" data-i18n="flcompliance_reporting_country">Reporting Authority</label>
+        <select id="fleetNewVesselCountry">
+          <option value="" data-i18n="flcompliance_reporting_country_none">None (generic Fish Pulse report)</option>
+          <option value="mx" data-i18n="flcompliance_mx_section_short">Mexico — CONAPESCA</option>
+          <option value="us" data-i18n="flcompliance_us_section_short">United States — NOAA</option>
+          <option value="eu" data-i18n="flcompliance_eu_section_short">European Union — e-Logbook</option>
+          <option value="th" data-i18n="flcompliance_th_section_short">Thailand — DOF / PIPO</option>
+        </select>
+        <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:6px; line-height:1.5;" data-i18n="fltrip_new_vessel_country_hint">This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.</div>
+      </div>
+
+      <div id="fleetCaptainCard" class="fleet-reveal-card" style="display:none; margin-bottom:14px;">
+        <div class="fleet-reveal-card-label-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4-6 7-6s5.5 2 7 6"/></svg>
+          <span class="card-label" data-i18n="fltrip_captain">Captain</span>
+        </div>
+        <div id="fleetCaptainPillList" class="pillrow"></div>
+        <div id="fleetNewCaptainBox" style="display:none; margin-top:12px;">
+          <label for="fleetNewCaptainName" style="margin-top:0;" data-i18n="fltrip_captain_name">Captain Name</label>
           <input type="text" id="fleetNewCaptainName" placeholder="e.g. J. Sombrero">
         </div>
+      </div>
 
-        <label for="fleetVesselSelect" data-i18n="fltrip_vessel">Vessel</label>
-        <select id="fleetVesselSelect">
-          <option value="" data-i18n="fltrip_select_vessel">— Select Vessel —</option>
-          <option value="__new__" data-i18n="fltrip_new_vessel">+ New Vessel</option>
-        </select>
-        <div id="fleetNewVesselBox" style="display:none; margin-top:10px;">
-          <label for="fleetNewVesselName" data-i18n="fltrip_vessel_name">Vessel Name</label>
-          <input type="text" id="fleetNewVesselName" placeholder="e.g. Vessel 04">
-          <label for="fleetNewVesselCurrency" data-i18n="fltrip_default_currency">Default Currency</label>
-          <select id="fleetNewVesselCurrency" class="currency-select">
-            <option value="THB">THB</option>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="MXN">MXN</option>
-            <option value="VND">VND</option>
-          </select>
-          <label for="fleetNewVesselCountry" data-i18n="flcompliance_reporting_country">Reporting Authority</label>
-          <select id="fleetNewVesselCountry">
-            <option value="" data-i18n="flcompliance_reporting_country_none">None (generic Fish Pulse report)</option>
-            <option value="mx" data-i18n="flcompliance_mx_section_short">Mexico — CONAPESCA</option>
-            <option value="us" data-i18n="flcompliance_us_section_short">United States — NOAA</option>
-            <option value="eu" data-i18n="flcompliance_eu_section_short">European Union — e-Logbook</option>
-            <option value="th" data-i18n="flcompliance_th_section_short">Thailand — DOF / PIPO</option>
-          </select>
-          <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:6px; line-height:1.5;" data-i18n="fltrip_new_vessel_country_hint">This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.</div>
+      <div id="fleetCrewFuelCard" class="fleet-reveal-card" style="display:none; margin-bottom:14px;">
+        <div class="fleet-reveal-card-label-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8"><rect x="7" y="3" width="10" height="16" rx="2"/><path d="M10 7h4M10 10h4"/></svg>
+          <span class="card-label" data-i18n="fltrip_crew_fuel">Crew &amp; fuel</span>
         </div>
-
         <div class="grid2">
           <div>
-            <label for="fleetCrewCount" data-i18n="fltrip_crew_count">Crew Count</label>
+            <label for="fleetCrewCount" style="margin-top:0;" data-i18n="fltrip_crew_count">Crew Count</label>
             <input type="number" id="fleetCrewCount" inputmode="numeric" placeholder="e.g. 4">
           </div>
           <div>
-            <label for="fleetFuelLoaded" data-i18n="fltrip_fuel_loaded">Fuel Loaded (L)</label>
+            <label for="fleetFuelLoaded" style="margin-top:0;" data-i18n="fltrip_fuel_loaded">Fuel Loaded (L)</label>
             <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
           </div>
         </div>
@@ -2300,9 +2395,9 @@
             <div class="cc-sub" data-i18n="fltrip_nautical_charts_sub">Confirms the vessel has up-to-date nautical charts for this area before departure.</div>
           </div>
         </label>
-
-        <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%; margin-top:16px;" data-i18n="fltrip_start_trip">Start Trip</button>
       </div>
+
+      <button class="btn btn-save" id="fleetStartTripBtn" style="width:100%;" disabled data-i18n="fltrip_start_trip">Start Trip</button>
     </div>
 
     <div id="fleetActiveTripCard" style="display:none;">
@@ -2666,7 +2761,15 @@
     <h1 data-i18n="flclose_h1">Trip Summary & Costs</h1>
     <div class="site-line" id="fleetCloseVesselLine">&nbsp;</div>
   </div>
-  <main>
+  <div class="fleet-jump-nav">
+    <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecSummary" data-i18n="flclose_nav_summary">Summary</button>
+    <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecFuel" data-i18n="flclose_fuel">Fuel</button>
+    <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecCosts" data-i18n="flclose_nav_costs">Costs</button>
+    <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecCrew" data-i18n="flclose_nav_crew">Crew</button>
+    <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecCompliance" data-i18n="flclose_nav_compliance">Compliance</button>
+  </div>
+  <main id="fleetCloseScroller" style="padding-bottom:140px;">
+    <div id="fleetCloseSecSummary">
     <div class="kpi-grid" style="margin-bottom:10px;">
       <div class="kpi-cell"><div class="kn" id="fleetCloseDuration">—</div><div class="kl" data-i18n="track_duration">Duration</div></div>
       <div class="kpi-cell"><div class="kn" id="fleetCloseHauls">—</div><div class="kl" data-i18n="flclose_hauls">Hauls</div></div>
@@ -2681,8 +2784,9 @@
         <div class="cc-sub" data-i18n="fltrip_nautical_charts_sub">Confirms the vessel has up-to-date nautical charts for this area before departure.</div>
       </div>
     </label>
+    </div>
 
-    <div class="card">
+    <div id="fleetCloseSecFuel" class="card">
       <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flclose_fuel">Fuel</div>
       <div class="grid2">
         <div>
@@ -2697,7 +2801,7 @@
       <div class="duration-line" id="fleetFuelConsumedLine">Fuel Consumed: —</div>
     </div>
 
-    <div class="card">
+    <div id="fleetCloseSecCosts" class="card">
       <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flclose_costs_now">Costs you can log now</div>
 
       <label for="fleetCostCrew"><span data-i18n="flclose_crew_payment">Crew Payment</span> <span class="optional-tag" data-i18n="flclose_per_trip">per trip</span></label>
@@ -2723,7 +2827,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div id="fleetCloseSecCrew" class="card">
       <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flclose_crew_on_trip">Crew On This Trip</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
       <div id="fleetCloseCrewChecklist" class="pillrow" style="margin-bottom:10px;"></div>
       <div class="grid2">
@@ -2733,10 +2837,11 @@
       <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5;" data-i18n="flclose_crew_hint">Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.</div>
     </div>
 
-    <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flclose_compliance_section">Trip Compliance Details</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
+    <div id="fleetCloseSecCompliance" class="card" style="padding:0;">
+      <div class="card-label collapsible" id="fleetCloseComplianceToggle" style="padding:16px;"><span data-i18n="flclose_compliance_section">Trip Compliance Details</span> <span class="optional-tag" data-i18n="rec_optional">optional</span> <span id="fleetCloseComplianceChevron" style="float:right;">▾</span></div>
+      <div class="collapsible-body" id="fleetCloseComplianceBody" style="display:none; padding:0 16px 16px;">
       <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flclose_compliance_hint">Only needed if you plan to generate compliance-ready reports for a specific country. Fill in only what applies to you.</div>
-      <label for="fleetCloseLandingSite" data-i18n="flclose_landing_site">Landing Site / Port</label>
+      <label for="fleetCloseLandingSite" style="margin-top:0;" data-i18n="flclose_landing_site">Landing Site / Port</label>
       <input type="text" id="fleetCloseLandingSite" placeholder="e.g. Puerto San Carlos">
       <label for="fleetCloseDeparturePort" data-i18n="flclose_departure_port">Departure Port</label>
       <input type="text" id="fleetCloseDeparturePort" placeholder="e.g. Puerto San Carlos">
@@ -2787,6 +2892,7 @@
         <label for="fleetCloseThEggCrabs"><span data-i18n="flclose_th_egg_crabs">Egg-Bearing Crabs Released — units (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
         <input type="number" inputmode="numeric" id="fleetCloseThEggCrabs" placeholder="ปล่อยปูไข่">
       </div>
+      </div>
     </div>
 
     <div class="card">
@@ -2798,9 +2904,21 @@
       Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.
     </div>
   </main>
-  <div class="savebar">
-    <button class="btn btn-clear" id="fleetCloseCancelBtn" data-i18n="flhaul_cancel">Cancel</button>
-    <button class="btn btn-save" id="fleetCloseConfirmBtn" style="background:var(--coral);" data-i18n="fltrip_close_trip">Close Trip</button>
+  <div class="fleet-settlement-bar">
+    <div class="fleet-settlement-row">
+      <span id="fleetSettlementIncomeLabel">Income —</span><span id="fleetSettlementCostsLabel">Costs —</span>
+    </div>
+    <div class="fleet-settlement-track">
+      <div class="fleet-settlement-fill-income" id="fleetSettlementFillIncome" style="width:100%;"></div>
+      <div class="fleet-settlement-fill-cost" id="fleetSettlementFillCost" style="width:0%;"></div>
+    </div>
+    <div class="fleet-settlement-bottom">
+      <div>
+        <div class="fleet-settlement-net-label" data-i18n="flclose_net_estimate">Net estimate</div>
+        <div class="fleet-settlement-net-value" id="fleetSettlementNetValue">—</div>
+      </div>
+      <button class="fleet-confirm-btn" id="fleetCloseConfirmBtn" data-i18n="flclose_confirm_close">Confirm &amp; close</button>
+    </div>
   </div>
 </section>
 
@@ -4020,7 +4138,7 @@
       flrole_captain: 'Captain', flrole_captain_sub: 'Log trips · hauls · catch<br>GPS positions · fuel', flrole_at_sea: 'At sea →',
       flrole_operations: 'Operations', flrole_operations_sub: 'Fleet dashboard · reconciliation<br>documents · settlement', flrole_on_land: 'On land →',
       fltrip_brand: 'Fish Pulse · Captain', fltrip_switch_role: 'Switch Role', fltrip_switch_mode: 'Switch Mode',
-      fltrip_active_trip: 'Active Trip', fltrip_no_vessel: 'No Vessel Selected', fltrip_start_new: 'Start a new trip',
+      fltrip_active_trip: 'Active Trip', fltrip_no_vessel: 'No Vessel Selected', fltrip_start_new: 'Start a new trip', fltrip_repeat_last: 'Repeat last setup', fltrip_use_this: 'Use this →', fltrip_manual_setup: 'or set up manually', fltrip_vessel_has_history: 'Has trip history', fltrip_vessel_no_history: 'No trips yet', fltrip_crew_fuel: 'Crew &amp; fuel',
       fltrip_captain: 'Captain', fltrip_select_captain: '— Select Captain —', fltrip_new_captain: '+ New Captain', fltrip_captain_name: 'Captain Name',
       fltrip_vessel: 'Vessel', fltrip_select_vessel: '— Select Vessel —', fltrip_new_vessel: '+ New Vessel', fltrip_vessel_name: 'Vessel Name',
       fltrip_default_currency: 'Default Currency', fltrip_crew_count: 'Crew Count', fltrip_fuel_loaded: 'Fuel Loaded (L)', fltrip_start_trip: 'Start Trip',
@@ -4045,7 +4163,7 @@
       flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species & weight', flcatch_species_label: 'Species / Commercial Category',
       flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save & Return To Trip', flcatch_no_haul: 'No haul (loose catch)',
       hist_unassigned_records: 'Unassigned records', ins_no_campaign_unassigned: 'No campaign (unassigned)',
-      flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary & Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value',
+      flclose_brand: 'Close Trip', flclose_h1: 'Trip Summary & Costs', flclose_hauls: 'Hauls', flclose_total_kg: 'Total kg', flclose_est_value: 'Est. value', flclose_nav_summary: 'Summary', flclose_nav_costs: 'Costs', flclose_nav_crew: 'Crew', flclose_nav_compliance: 'Compliance', flclose_net_estimate: 'Net estimate', flclose_confirm_close: 'Confirm &amp; close', flclose_income_label: 'Income', flclose_costs_label: 'Costs',
       flclose_fuel: 'Fuel', flclose_loaded_l: 'Loaded (L)', flclose_remaining_l: 'Remaining (L)', flclose_costs_now: 'Costs you can log now',
       flclose_crew_payment: 'Crew Payment', flclose_per_trip: 'per trip', flclose_ice: 'Ice / Preservation', flclose_provisions: 'Provisions', flclose_per_day: 'per day at sea',
       flclose_maintenance_hint: 'Maintenance, permits, and port dues are usually added by the office afterward.',
@@ -4325,7 +4443,7 @@
       flrole_captain: 'Capitán', flrole_captain_sub: 'Registra viajes · lances · capturas<br>posiciones GPS · combustible', flrole_at_sea: 'En el mar →',
       flrole_operations: 'Operaciones', flrole_operations_sub: 'Panel de flota · reconciliación<br>documentos · liquidación', flrole_on_land: 'En tierra →',
       fltrip_brand: 'Fish Pulse · Capitán', fltrip_switch_role: 'Cambiar Rol', fltrip_switch_mode: 'Cambiar Modo',
-      fltrip_active_trip: 'Viaje Activo', fltrip_no_vessel: 'Ninguna Embarcación Seleccionada', fltrip_start_new: 'Iniciar un nuevo viaje',
+      fltrip_active_trip: 'Viaje Activo', fltrip_no_vessel: 'Ninguna Embarcación Seleccionada', fltrip_start_new: 'Iniciar un nuevo viaje', fltrip_repeat_last: 'Repetir última configuración', fltrip_use_this: 'Usar esto →', fltrip_manual_setup: 'o configura manualmente', fltrip_vessel_has_history: 'Tiene viajes registrados', fltrip_vessel_no_history: 'Sin viajes aún', fltrip_crew_fuel: 'Tripulación y combustible',
       fltrip_captain: 'Capitán', fltrip_select_captain: '— Seleccionar Capitán —', fltrip_new_captain: '+ Nuevo Capitán', fltrip_captain_name: 'Nombre del Capitán',
       fltrip_vessel: 'Embarcación', fltrip_select_vessel: '— Seleccionar Embarcación —', fltrip_new_vessel: '+ Nueva Embarcación', fltrip_vessel_name: 'Nombre de la Embarcación',
       fltrip_default_currency: 'Moneda Predeterminada', fltrip_crew_count: 'Número de Tripulantes', fltrip_fuel_loaded: 'Combustible Cargado (L)', fltrip_start_trip: 'Iniciar Viaje',
@@ -4350,7 +4468,7 @@
       flcatch_haul: 'Lance', flcatch_haul_hint: 'a la que pertenece esta captura', flcatch_species_weight: 'Especie y peso', flcatch_species_label: 'Especie / Categoría Comercial',
       flcatch_ref_price: 'Precio de referencia', flcatch_add_another: '+ Agregar Otra', flcatch_save_return: 'Guardar y Volver al Viaje', flcatch_no_haul: 'Sin lance (captura suelta)',
       hist_unassigned_records: 'Registros sin asignar', ins_no_campaign_unassigned: 'Sin campaña (sin asignar)',
-      flclose_brand: 'Cerrar Viaje', flclose_h1: 'Resumen del Viaje y Costos', flclose_hauls: 'Lances', flclose_total_kg: 'Total kg', flclose_est_value: 'Valor est.',
+      flclose_brand: 'Cerrar Viaje', flclose_h1: 'Resumen del Viaje y Costos', flclose_hauls: 'Lances', flclose_total_kg: 'Total kg', flclose_est_value: 'Valor est.', flclose_nav_summary: 'Resumen', flclose_nav_costs: 'Costos', flclose_nav_crew: 'Tripulación', flclose_nav_compliance: 'Cumplimiento', flclose_net_estimate: 'Neto estimado', flclose_confirm_close: 'Confirmar y cerrar', flclose_income_label: 'Ingreso', flclose_costs_label: 'Costos',
       flclose_fuel: 'Combustible', flclose_loaded_l: 'Cargado (L)', flclose_remaining_l: 'Restante (L)', flclose_costs_now: 'Costos que puedes registrar ahora',
       flclose_crew_payment: 'Pago a Tripulación', flclose_per_trip: 'por viaje', flclose_ice: 'Hielo / Preservación', flclose_provisions: 'Víveres', flclose_per_day: 'por día en el mar',
       flclose_maintenance_hint: 'Mantenimiento, permisos y derechos de puerto normalmente los agrega la oficina después.',
@@ -4630,7 +4748,7 @@
       flrole_captain: 'Capitano', flrole_captain_sub: 'Registra viaggi · cale · catture<br>posizioni GPS · carburante', flrole_at_sea: 'In mare →',
       flrole_operations: 'Operazioni', flrole_operations_sub: 'Pannello flotta · riconciliazione<br>documenti · liquidazione', flrole_on_land: 'A terra →',
       fltrip_brand: 'Fish Pulse · Capitano', fltrip_switch_role: 'Cambia Ruolo', fltrip_switch_mode: 'Cambia Modalità',
-      fltrip_active_trip: 'Viaggio Attivo', fltrip_no_vessel: 'Nessuna Imbarcazione Selezionata', fltrip_start_new: 'Avvia un nuovo viaggio',
+      fltrip_active_trip: 'Viaggio Attivo', fltrip_no_vessel: 'Nessuna Imbarcazione Selezionata', fltrip_start_new: 'Avvia un nuovo viaggio', fltrip_repeat_last: 'Ripeti ultima configurazione', fltrip_use_this: 'Usa questa →', fltrip_manual_setup: 'oppure configura manualmente', fltrip_vessel_has_history: 'Ha cronologia viaggi', fltrip_vessel_no_history: 'Nessun viaggio ancora', fltrip_crew_fuel: 'Equipaggio e carburante',
       fltrip_captain: 'Capitano', fltrip_select_captain: '— Seleziona Capitano —', fltrip_new_captain: '+ Nuovo Capitano', fltrip_captain_name: 'Nome del Capitano',
       fltrip_vessel: 'Imbarcazione', fltrip_select_vessel: '— Seleziona Imbarcazione —', fltrip_new_vessel: '+ Nuova Imbarcazione', fltrip_vessel_name: 'Nome Imbarcazione',
       fltrip_default_currency: 'Valuta Predefinita', fltrip_crew_count: "Numero dell'Equipaggio", fltrip_fuel_loaded: 'Carburante Caricato (L)', fltrip_start_trip: 'Avvia Viaggio',
@@ -4655,7 +4773,7 @@
       flcatch_haul: 'Calata', flcatch_haul_hint: 'a cui appartiene questa cattura', flcatch_species_weight: 'Specie e peso', flcatch_species_label: 'Specie / Categoria Commerciale',
       flcatch_ref_price: 'Prezzo di riferimento', flcatch_add_another: '+ Aggiungi Altra', flcatch_save_return: 'Salva e Torna al Viaggio', flcatch_no_haul: 'Nessuna calata (cattura singola)',
       hist_unassigned_records: 'Schede non assegnate', ins_no_campaign_unassigned: 'Nessuna campagna (non assegnata)',
-      flclose_brand: 'Chiudi Viaggio', flclose_h1: 'Riepilogo Viaggio e Costi', flclose_hauls: 'Calate', flclose_total_kg: 'Totale kg', flclose_est_value: 'Valore stim.',
+      flclose_brand: 'Chiudi Viaggio', flclose_h1: 'Riepilogo Viaggio e Costi', flclose_hauls: 'Calate', flclose_total_kg: 'Totale kg', flclose_est_value: 'Valore stim.', flclose_nav_summary: 'Riepilogo', flclose_nav_costs: 'Costi', flclose_nav_crew: 'Equipaggio', flclose_nav_compliance: 'Conformità', flclose_net_estimate: 'Netto stimato', flclose_confirm_close: 'Conferma e chiudi', flclose_income_label: 'Reddito', flclose_costs_label: 'Costi',
       flclose_fuel: 'Carburante', flclose_loaded_l: 'Caricato (L)', flclose_remaining_l: 'Rimanente (L)', flclose_costs_now: 'Costi che puoi registrare ora',
       flclose_crew_payment: 'Pagamento Equipaggio', flclose_per_trip: 'per viaggio', flclose_ice: 'Ghiaccio / Conservazione', flclose_provisions: 'Provviste', flclose_per_day: 'al giorno in mare',
       flclose_maintenance_hint: 'Manutenzione, permessi e tasse portuali di solito vengono aggiunti dall\'ufficio in seguito.',
@@ -4935,7 +5053,7 @@
       flrole_captain: 'กัปตัน', flrole_captain_sub: 'บันทึกทริป · การลากอวน · การจับปลา<br>ตำแหน่งจีพีเอส · เชื้อเพลิง', flrole_at_sea: 'กลางทะเล →',
       flrole_operations: 'ฝ่ายปฏิบัติการ', flrole_operations_sub: 'แดชบอร์ดกองเรือ · กระทบยอด<br>เอกสาร · การคิดบัญชี', flrole_on_land: 'บนฝั่ง →',
       fltrip_brand: 'Fish Pulse · กัปตัน', fltrip_switch_role: 'เปลี่ยนบทบาท', fltrip_switch_mode: 'เปลี่ยนโหมด',
-      fltrip_active_trip: 'ทริปที่ใช้งานอยู่', fltrip_no_vessel: 'ยังไม่ได้เลือกเรือ', fltrip_start_new: 'เริ่มทริปใหม่',
+      fltrip_active_trip: 'ทริปที่ใช้งานอยู่', fltrip_no_vessel: 'ยังไม่ได้เลือกเรือ', fltrip_start_new: 'เริ่มทริปใหม่', fltrip_repeat_last: 'ทำซ้ำการตั้งค่าล่าสุด', fltrip_use_this: 'ใช้อันนี้ →', fltrip_manual_setup: 'หรือตั้งค่าด้วยตนเอง', fltrip_vessel_has_history: 'มีประวัติทริป', fltrip_vessel_no_history: 'ยังไม่มีทริป', fltrip_crew_fuel: 'ลูกเรือและเชื้อเพลิง',
       fltrip_captain: 'กัปตัน', fltrip_select_captain: '— เลือกกัปตัน —', fltrip_new_captain: '+ กัปตันใหม่', fltrip_captain_name: 'ชื่อกัปตัน',
       fltrip_vessel: 'เรือ', fltrip_select_vessel: '— เลือกเรือ —', fltrip_new_vessel: '+ เรือใหม่', fltrip_vessel_name: 'ชื่อเรือ',
       fltrip_default_currency: 'สกุลเงินเริ่มต้น', fltrip_crew_count: 'จำนวนลูกเรือ', fltrip_fuel_loaded: 'เชื้อเพลิงที่เติม (ลิตร)', fltrip_start_trip: 'เริ่มทริป',
@@ -4960,7 +5078,7 @@
       flcatch_haul: 'การลากอวน', flcatch_haul_hint: 'ที่การจับปลานี้เป็นของ', flcatch_species_weight: 'ชนิดพันธุ์และน้ำหนัก', flcatch_species_label: 'ชนิดพันธุ์ / ประเภททางการค้า',
       flcatch_ref_price: 'ราคาอ้างอิง', flcatch_add_another: '+ เพิ่มอีกรายการ', flcatch_save_return: 'บันทึกและกลับไปที่ทริป', flcatch_no_haul: 'ไม่มีการลากอวน (จับแยก)',
       hist_unassigned_records: 'บันทึกที่ไม่ได้กำหนดแคมเปญ', ins_no_campaign_unassigned: 'ไม่มีแคมเปญ (ไม่ได้กำหนด)',
-      flclose_brand: 'ปิดทริป', flclose_h1: 'สรุปทริปและค่าใช้จ่าย', flclose_hauls: 'การลากอวน', flclose_total_kg: 'น้ำหนักรวม (กก.)', flclose_est_value: 'มูลค่าประมาณ',
+      flclose_brand: 'ปิดทริป', flclose_h1: 'สรุปทริปและค่าใช้จ่าย', flclose_hauls: 'การลากอวน', flclose_total_kg: 'น้ำหนักรวม (กก.)', flclose_est_value: 'มูลค่าประมาณ', flclose_nav_summary: 'สรุป', flclose_nav_costs: 'ค่าใช้จ่าย', flclose_nav_crew: 'ลูกเรือ', flclose_nav_compliance: 'การปฏิบัติตามกฎ', flclose_net_estimate: 'ยอดสุทธิโดยประมาณ', flclose_confirm_close: 'ยืนยันและปิด', flclose_income_label: 'รายได้', flclose_costs_label: 'ค่าใช้จ่าย',
       flclose_fuel: 'เชื้อเพลิง', flclose_loaded_l: 'เติมแล้ว (ลิตร)', flclose_remaining_l: 'คงเหลือ (ลิตร)', flclose_costs_now: 'ค่าใช้จ่ายที่บันทึกได้ตอนนี้',
       flclose_crew_payment: 'ค่าจ้างลูกเรือ', flclose_per_trip: 'ต่อทริป', flclose_ice: 'น้ำแข็ง / การถนอมอาหาร', flclose_provisions: 'เสบียง', flclose_per_day: 'ต่อวันในทะเล',
       flclose_maintenance_hint: 'ค่าบำรุงรักษา ใบอนุญาต และค่าธรรมเนียมท่าเรือ ปกติจะถูกเพิ่มโดยสำนักงานในภายหลัง',
@@ -5647,14 +5765,73 @@
   });
 
   // ===== Vessels & captains =====
+  // ----- Start Trip: vessel buttons, captain pills, progressive reveal -----
+  let fleetSelectedVesselId = '';
+  let fleetSelectedCaptainId = '';
+  const vesselAnchorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.2V21M6 13c0 5 2.5 7.5 6 8 3.5-0.5 6-3 6-8"/><path d="M4 13h4M16 13h4"/></svg>';
+  const plusSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+
+  function fleetUpdateStartTripReveal(){
+    document.getElementById('fleetCaptainCard').style.display = fleetSelectedVesselId ? '' : 'none';
+    document.getElementById('fleetCrewFuelCard').style.display = (fleetSelectedVesselId && fleetSelectedCaptainId) ? '' : 'none';
+    document.getElementById('fleetStartTripBtn').disabled = !(fleetSelectedVesselId && fleetSelectedCaptainId);
+  }
+
   function renderVesselOptions(){
     const vessels = load(VESSELS_KEY);
-    const sel = document.getElementById('fleetVesselSelect');
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">'+t('fltrip_select_vessel')+'</option>'
-      + vessels.map(v => '<option value="'+v.vessel_id+'">'+v.name+'</option>').join('')
-      + '<option value="__new__">'+t('fltrip_new_vessel')+'</option>';
-    if(vessels.some(v=>v.vessel_id===cur)) sel.value = cur;
+
+    // "Repeat last setup" hero — reuses the most recent trip on record
+    // (any vessel/captain) rather than a separate stored preference, so
+    // it's always accurate with zero extra state to keep in sync.
+    const trips = load(TRIPS_KEY).slice().sort((a,b) => new Date(b.started_at) - new Date(a.started_at));
+    const lastTrip = trips[0];
+    const lastVessel = lastTrip ? vessels.find(v => v.vessel_id === lastTrip.vessel_id) : null;
+    const lastCaptain = lastTrip ? load(CAPTAINS_KEY).find(c => c.captain_id === lastTrip.captain_id) : null;
+    const heroEl = document.getElementById('fleetRepeatLastHero');
+    const dividerEl = document.getElementById('fleetManualDivider');
+    if(lastVessel && lastCaptain){
+      heroEl.style.display = '';
+      dividerEl.style.display = '';
+      document.getElementById('fleetRepeatLastText').textContent = lastVessel.name + ' · ' + lastCaptain.name;
+    } else {
+      heroEl.style.display = 'none';
+      dividerEl.style.display = 'none';
+    }
+    heroEl.dataset.vesselId = lastVessel ? lastVessel.vessel_id : '';
+    heroEl.dataset.captainId = lastCaptain ? lastCaptain.captain_id : '';
+    heroEl.dataset.crewCount = lastTrip ? (lastTrip.crew_count || '') : '';
+    heroEl.dataset.fuelLoaded = lastTrip ? (lastTrip.fuel_loaded_l || '') : '';
+
+    const list = document.getElementById('fleetVesselButtonList');
+    list.innerHTML = vessels.map(v => {
+      const active = v.vessel_id === fleetSelectedVesselId;
+      const sub = trips.find(tr => tr.vessel_id === v.vessel_id && tr.ended_at)
+        ? t('fltrip_vessel_has_history') : t('fltrip_vessel_no_history');
+      return '<button type="button" class="fleet-vessel-btn'+(active?' active':'')+'" data-vessel-id="'+v.vessel_id+'">'
+        + '<div class="fleet-vessel-icon">'+vesselAnchorSvg+'</div>'
+        + '<div style="flex:1; min-width:0;"><div class="fleet-vessel-name">'+v.name+'</div><div class="fleet-vessel-sub">'+sub+'</div></div>'
+        + '</button>';
+    }).join('')
+      + '<button type="button" class="fleet-add-tile" id="fleetAddVesselTile">'
+      + '<div class="fleet-vessel-icon">'+plusSvg+'</div>'
+      + '<span class="fleet-add-tile-label" data-i18n="fltrip_new_vessel">+ New Vessel</span>'
+      + '</button>';
+
+    document.querySelectorAll('#fleetVesselButtonList .fleet-vessel-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        fleetSelectedVesselId = btn.dataset.vesselId;
+        document.getElementById('fleetNewVesselBox').style.display = 'none';
+        renderVesselOptions();
+        fleetUpdateStartTripReveal();
+      });
+    });
+    document.getElementById('fleetAddVesselTile').addEventListener('click', () => {
+      fleetSelectedVesselId = '__new__';
+      document.getElementById('fleetNewVesselBox').style.display = '';
+      renderVesselOptions();
+      fleetUpdateStartTripReveal();
+      document.getElementById('fleetNewVesselName').focus();
+    });
 
     const filterSel = document.getElementById('fleetTripLogVesselFilter');
     if(filterSel){
@@ -5666,24 +5843,42 @@
   }
   function renderCaptainOptions(){
     const captains = load(CAPTAINS_KEY);
-    const sel = document.getElementById('fleetCaptainSelect');
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">'+t('fltrip_select_captain')+'</option>'
-      + captains.map(c => '<option value="'+c.captain_id+'">'+c.name+'</option>').join('')
-      + '<option value="__new__">'+t('fltrip_new_captain')+'</option>';
-    if(captains.some(c=>c.captain_id===cur)) sel.value = cur;
+    const list = document.getElementById('fleetCaptainPillList');
+    list.innerHTML = captains.map(c =>
+      '<span class="pill'+(c.captain_id===fleetSelectedCaptainId?' active':'')+'" data-captain-id="'+c.captain_id+'">'+c.name+'</span>'
+    ).join('') + '<span class="pill add-pill" id="fleetAddCaptainPill">'+plusSvg+'</span>';
+
+    document.querySelectorAll('#fleetCaptainPillList .pill[data-captain-id]').forEach(p => {
+      p.addEventListener('click', () => {
+        fleetSelectedCaptainId = p.dataset.captainId;
+        document.getElementById('fleetNewCaptainBox').style.display = 'none';
+        renderCaptainOptions();
+        fleetUpdateStartTripReveal();
+      });
+    });
+    document.getElementById('fleetAddCaptainPill').addEventListener('click', () => {
+      fleetSelectedCaptainId = '__new__';
+      document.getElementById('fleetNewCaptainBox').style.display = '';
+      renderCaptainOptions();
+      fleetUpdateStartTripReveal();
+      document.getElementById('fleetNewCaptainName').focus();
+    });
   }
 
-  document.getElementById('fleetVesselSelect').addEventListener('change', (e) => {
-    document.getElementById('fleetNewVesselBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
-  });
-  document.getElementById('fleetCaptainSelect').addEventListener('change', (e) => {
-    document.getElementById('fleetNewCaptainBox').style.display = e.target.value === '__new__' ? 'block' : 'none';
+  document.getElementById('fleetUseLastBtn').addEventListener('click', () => {
+    const heroEl = document.getElementById('fleetRepeatLastHero');
+    fleetSelectedVesselId = heroEl.dataset.vesselId;
+    fleetSelectedCaptainId = heroEl.dataset.captainId;
+    document.getElementById('fleetCrewCount').value = heroEl.dataset.crewCount || '';
+    document.getElementById('fleetFuelLoaded').value = heroEl.dataset.fuelLoaded || '';
+    renderVesselOptions();
+    renderCaptainOptions();
+    fleetUpdateStartTripReveal();
   });
 
   document.getElementById('fleetStartTripBtn').addEventListener('click', () => {
-    let vesselId = document.getElementById('fleetVesselSelect').value;
-    let captainId = document.getElementById('fleetCaptainSelect').value;
+    let vesselId = fleetSelectedVesselId;
+    let captainId = fleetSelectedCaptainId;
 
     if(vesselId === '__new__'){
       const name = document.getElementById('fleetNewVesselName').value.trim();
@@ -5720,6 +5915,8 @@
     document.getElementById('fleetNewVesselCountry').value = '';
     document.getElementById('fleetGoalKg').value = '';
     document.getElementById('fleetNauticalCharts').checked = true;
+    fleetSelectedVesselId = '';
+    fleetSelectedCaptainId = '';
     showFleetToast(t('msg_trip_started'));
     renderFleetTrip();
   });
@@ -5775,6 +5972,7 @@
   function renderFleetTrip(){
     renderVesselOptions();
     renderCaptainOptions();
+    fleetUpdateStartTripReveal();
     if(window.populateDatalist) window.populateDatalist('fleet-species-list', 'fleet_known_species');
     const trip = getActiveTrip();
     const noTripCard = document.getElementById('fleetNoTripCard');
@@ -6410,6 +6608,11 @@
     const vesselCurrency = vessel ? vessel.default_currency : 'THB';
     const totalEstValue = catches.reduce((s,c) => s + (parseFloat(c.estimated_value)||0), 0);
     document.getElementById('fleetCloseEstValue').textContent = fmtMoney(totalEstValue, vesselCurrency);
+    fleetCloseEstValueRaw = totalEstValue;
+    fleetCloseCurrency = vesselCurrency;
+
+    document.getElementById('fleetCloseComplianceBody').style.display = 'none';
+    document.getElementById('fleetCloseComplianceChevron').textContent = '▾';
 
     document.getElementById('fleetFuelLoadedDisplay').value = trip.fuel_loaded_l || '';
     document.getElementById('fleetFuelRemaining').value = '';
@@ -6442,6 +6645,7 @@
     document.getElementById('fleetCloseThFields').style.display = closeCountry === 'th' ? '' : 'none';
     fleetCloseSelectedCrewIds = [];
     renderFleetCloseCrewChecklist();
+    updateFleetCloseSettlementBar();
 
     fleetGoTo('close-trip');
     applyDefaultCurrencyToSelects();
@@ -6454,7 +6658,48 @@
     const line = document.getElementById('fleetFuelConsumedLine');
     line.textContent = isNaN(remaining) ? 'Fuel Consumed: —' : 'Fuel Consumed: ' + Math.max(0, loaded - remaining).toFixed(1) + ' L';
   });
-  document.getElementById('fleetCloseCancelBtn').addEventListener('click', () => fleetGoTo('trip'));
+  document.getElementById('fleetCloseComplianceToggle').addEventListener('click', () => {
+    const body = document.getElementById('fleetCloseComplianceBody');
+    const chevron = document.getElementById('fleetCloseComplianceChevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.textContent = isOpen ? '▾' : '▴';
+  });
+  document.querySelectorAll('.fleet-jump-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const el = document.getElementById(chip.dataset.jump);
+      if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Live settlement preview — mirrors the daysAtSea × provisions formula
+  // the confirm handler actually saves with (see below), using Date.now()
+  // as a stand-in for the not-yet-set ended_at. Deliberately excludes the
+  // fuel-consumed cost line the confirm handler also logs, matching the
+  // reference design's simpler income-vs-logged-costs preview rather than
+  // trying to reproduce the full settlement math here.
+  let fleetCloseEstValueRaw = 0;
+  let fleetCloseCurrency = 'THB';
+  function updateFleetCloseSettlementBar(){
+    const trip = getActiveTrip();
+    const daysAtSea = trip ? Math.max(1, Math.ceil((Date.now() - new Date(trip.started_at).getTime()) / 86400000)) : 1;
+    const crew = parseFloat(document.getElementById('fleetCostCrew').value) || 0;
+    const ice = parseFloat(document.getElementById('fleetCostIce').value) || 0;
+    const prov = parseFloat(document.getElementById('fleetCostProvisions').value) || 0;
+    const costs = crew + ice + prov * daysAtSea;
+    const income = fleetCloseEstValueRaw;
+    const net = income - costs;
+    const costPct = income > 0 ? Math.min(100, (costs / income) * 100) : (costs > 0 ? 100 : 0);
+    document.getElementById('fleetSettlementIncomeLabel').textContent = t('flclose_income_label') + ' ' + fmtMoney(income, fleetCloseCurrency);
+    document.getElementById('fleetSettlementCostsLabel').textContent = t('flclose_costs_label') + ' ' + fmtMoney(costs, fleetCloseCurrency);
+    document.getElementById('fleetSettlementFillIncome').style.width = (100 - costPct) + '%';
+    document.getElementById('fleetSettlementFillCost').style.width = costPct + '%';
+    document.getElementById('fleetSettlementNetValue').textContent = fmtMoney(net, fleetCloseCurrency);
+  }
+  ['fleetCostCrew','fleetCostIce','fleetCostProvisions'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateFleetCloseSettlementBar);
+  });
+
   document.getElementById('fleetCloseConfirmBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
     if(!trip) return;
