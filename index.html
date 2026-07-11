@@ -3039,6 +3039,7 @@
     <div class="track-note" data-i18n="flclose_before_close">
       Before you close: closing locks new hauls and catch entries for this trip. The office can still add remaining costs and run settlement from the dashboard.
     </div>
+    <button class="btn btn-save" id="fleetCloseConfirmInlineBtn" style="width:100%; margin-top:16px; margin-bottom:110px;" data-i18n="flclose_confirm_close">Confirm &amp; close</button>
   </main>
   <div class="fleet-settlement-bar">
     <div class="fleet-settlement-row">
@@ -6940,7 +6941,7 @@
     document.getElementById(id).addEventListener('input', updateFleetCloseSettlementBar);
   });
 
-  document.getElementById('fleetCloseConfirmBtn').addEventListener('click', () => {
+  function fleetCloseTripConfirmed(){
     const trip = getActiveTrip();
     if(!trip) return;
     const trips = load(TRIPS_KEY);
@@ -6989,7 +6990,14 @@
     localStorage.removeItem(ACTIVE_TRIP_KEY);
     showFleetToast(t('msg_trip_closed'));
     fleetGoTo('trip');
-  });
+  }
+  document.getElementById('fleetCloseConfirmBtn').addEventListener('click', fleetCloseTripConfirmed);
+  // Backup, always-in-flow confirm button at the bottom of the form
+  // itself — not position:fixed, so it can never be affected by a mobile
+  // browser mispositioning the sticky settlement bar. Closing a trip must
+  // never depend on a single button surviving a CSS quirk.
+  const fleetCloseConfirmInlineBtn = document.getElementById('fleetCloseConfirmInlineBtn');
+  if(fleetCloseConfirmInlineBtn) fleetCloseConfirmInlineBtn.addEventListener('click', fleetCloseTripConfirmed);
 
   // ===== Trip log =====
   function computeTripMargin(trip){
