@@ -437,8 +437,9 @@
     border-radius:999px; padding:7px 13px; font-family:var(--data); font-size:11px; font-weight:600; cursor:pointer;
   }
   .fleet-settlement-bar{
-    position:sticky; bottom:0; background:var(--panel); border-top:1px solid var(--line);
-    padding:14px 16px; box-shadow:0 -4px 14px rgba(0,0,0,0.3);
+    position:fixed; left:0; right:0; bottom:0; z-index:60; background:var(--panel); border-top:1px solid var(--line);
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px)); box-shadow:0 -4px 14px rgba(0,0,0,0.3);
+    max-width:580px; margin:0 auto;
   }
   .fleet-settlement-row{
     display:flex; justify-content:space-between; font-family:var(--data); font-size:10.5px;
@@ -1051,6 +1052,13 @@
     width: 100%; height: 360px; border-radius: var(--radius);
     border: 1px solid var(--line); background: var(--panel);
   }
+  /* fleetLeafletMap had no height rule at all before — that's why the
+     Haul Map never visibly rendered (a Leaflet map inside a zero-height
+     container paints nothing). Same 360px as Research's map. */
+  #fleetLeafletMap{
+    width: 100%; height: 360px; border-radius: var(--radius);
+    border: 1px solid var(--line); background: var(--panel);
+  }
   /* Fullscreen map: a CSS-only fixed overlay rather than the Fullscreen
      API, since requestFullscreen() on an arbitrary element isn't
      supported on iOS Safari (only <video> gets native fullscreen there)
@@ -1086,6 +1094,7 @@
   .map-view-wrap.is-fullscreen .map-layer-toggle{ flex-shrink:0; }
   .map-view-wrap.is-fullscreen #leafletMap,
   .map-view-wrap.is-fullscreen #sportLeafletMap,
+  .map-view-wrap.is-fullscreen #fleetLeafletMap,
   .map-view-wrap.is-fullscreen .schematic-wrap{ flex:1; height:auto; margin:0; }
   .map-mode-banner{
     display:flex; align-items:center; gap:8px;
@@ -2895,7 +2904,7 @@
     <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecCrew" data-i18n="flclose_nav_crew">Crew</button>
     <button type="button" class="fleet-jump-chip" data-jump="fleetCloseSecCompliance" data-i18n="flclose_nav_compliance">Compliance</button>
   </div>
-  <main id="fleetCloseScroller" style="padding-bottom:140px;">
+  <main id="fleetCloseScroller" style="padding-bottom:170px;">
     <div id="fleetCloseSecSummary">
     <div class="kpi-grid" style="margin-bottom:10px;">
       <div class="kpi-cell"><div class="kn" id="fleetCloseDuration">—</div><div class="kl" data-i18n="track_duration">Duration</div></div>
@@ -3232,13 +3241,20 @@
       <span id="fleetMapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
 
-    <div class="map-layer-toggle" id="fleetMapLayerToggle" style="display:none;">
-      <button class="mlt-btn active" id="fleetMltStreet" data-i18n="map_street">Street</button>
-      <button class="mlt-btn" id="fleetMltSatellite" data-i18n="map_satellite">Satellite</button>
-    </div>
+    <div class="map-view-wrap" id="fleetMapViewWrap">
+      <div class="map-layer-toggle" id="fleetMapLayerToggle" style="display:none;">
+        <button class="mlt-btn active" id="fleetMltStreet" data-i18n="map_street">Street</button>
+        <button class="mlt-btn" id="fleetMltSatellite" data-i18n="map_satellite">Satellite</button>
+        <button class="mlt-btn" id="fleetMltDepth" data-i18n="sp_map_depth">Depth</button>
+      </div>
 
-    <div id="fleetLeafletMap"></div>
-    <div class="schematic-wrap" id="fleetSchematicMap" style="display:none;"></div>
+      <div id="fleetLeafletMap"></div>
+      <div class="schematic-wrap" id="fleetSchematicMap" style="display:none;"></div>
+
+      <button type="button" class="map-fullscreen-btn" id="fleetMapFullscreenBtn" aria-label="View fullscreen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
 
     <div class="section-h" data-i18n="flhaulmap_no_gps">Hauls Without GPS</div>
     <div id="fleetNoGpsNote" class="empty" style="display:none;"></div>
@@ -9607,6 +9623,7 @@
       fleetStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
       fleetSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
       fleetStreetLayer.addTo(fleetLeafletInstance);
+      fleetLeafletInstance.on('moveend', refreshFleetMapCurrentIndicator);
     }
     fleetLeafletInstance.eachLayer(layer => {
       if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
@@ -9646,6 +9663,92 @@
   }
   document.getElementById('fleetMltStreet').addEventListener('click', () => setFleetMapLayer('street'));
   document.getElementById('fleetMltSatellite').addEventListener('click', () => setFleetMapLayer('satellite'));
+
+  // Fullscreen, depth overlay, and current indicator — same sources and
+  // approach as Research's Map and Sport's Spots map (GEBCO + EMODnet WMS,
+  // Open-Meteo Marine current at map center on moveend). Fleet-scoped
+  // variables/functions rather than reusing Research's, matching the
+  // existing pattern of each module owning its own map state.
+  let fleetMapIsFullscreen = false;
+  const FLEET_MAP_EXPAND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const FLEET_MAP_COLLAPSE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3v3a2 2 0 0 1-2 2H4M15 3v3a2 2 0 0 0 2 2h3M21 15h-3a2 2 0 0 0-2 2v3M9 21v-3a2 2 0 0 0-2-2H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function setFleetMapFullscreen(on){
+    fleetMapIsFullscreen = on;
+    document.getElementById('fleetMapViewWrap').classList.toggle('is-fullscreen', on);
+    const btn = document.getElementById('fleetMapFullscreenBtn');
+    btn.innerHTML = on ? FLEET_MAP_COLLAPSE_ICON : FLEET_MAP_EXPAND_ICON;
+    btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'View fullscreen');
+    setTimeout(() => { if(fleetLeafletInstance) fleetLeafletInstance.invalidateSize(); }, 160);
+  }
+  document.getElementById('fleetMapFullscreenBtn').addEventListener('click', () => setFleetMapFullscreen(!fleetMapIsFullscreen));
+
+  let fleetMapGebcoLayer = null;
+  let fleetMapEmodnetLayer = null;
+  let fleetMapDepthLayerOn = false;
+  function toggleFleetMapDepthLayer(){
+    if(!fleetLeafletInstance) return;
+    fleetMapDepthLayerOn = !fleetMapDepthLayerOn;
+    document.getElementById('fleetMltDepth').classList.toggle('active', fleetMapDepthLayerOn);
+    if(!fleetMapGebcoLayer){
+      fleetMapGebcoLayer = L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
+        layers: 'GEBCO_LATEST_2', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.65, attribution: 'GEBCO Compilation Group'
+      });
+    }
+    if(!fleetMapEmodnetLayer){
+      fleetMapEmodnetLayer = L.tileLayer.wms('https://ows.emodnet-bathymetry.eu/wms', {
+        layers: 'emodnet:mean_multicolour', format: 'image/png', transparent: true, version: '1.3.0',
+        opacity: 0.75, attribution: 'EMODnet Bathymetry'
+      });
+    }
+    if(fleetMapDepthLayerOn){
+      fleetMapGebcoLayer.addTo(fleetLeafletInstance);
+      fleetMapEmodnetLayer.addTo(fleetLeafletInstance);
+    } else {
+      fleetLeafletInstance.removeLayer(fleetMapGebcoLayer);
+      fleetLeafletInstance.removeLayer(fleetMapEmodnetLayer);
+    }
+  }
+  document.getElementById('fleetMltDepth').addEventListener('click', toggleFleetMapDepthLayer);
+
+  let fleetMapCurrentControl = null;
+  function fleetMapCurrentArrowSvg(directionDeg, speedMs){
+    const heading = (directionDeg + 180) % 360;
+    const intensity = speedMs > 0.5 ? 'var(--coral)' : (speedMs > 0.15 ? 'var(--amber)' : 'var(--blue)');
+    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  async function refreshFleetMapCurrentIndicator(){
+    if(!fleetLeafletInstance) return;
+    const center = fleetLeafletInstance.getCenter();
+    try{
+      const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
+      const data = await res.json();
+      const speed = data && data.current ? data.current.ocean_current_velocity : null;
+      const dir = data && data.current ? data.current.ocean_current_direction : null;
+      if(!fleetMapCurrentControl){
+        const Control = L.Control.extend({
+          onAdd: function(){
+            const div = L.DomUtil.create('div');
+            div.id = 'fleetMapCurrentIndicator';
+            div.style.cssText = 'background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
+            return div;
+          }
+        });
+        fleetMapCurrentControl = new Control({ position: 'topleft' });
+        fleetMapCurrentControl.addTo(fleetLeafletInstance);
+      }
+      const el = document.getElementById('fleetMapCurrentIndicator');
+      if(el){
+        if(speed == null || dir == null){
+          el.innerHTML = t('sp_current_unavailable');
+        } else {
+          el.innerHTML = fleetMapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
+        }
+      }
+    } catch(err){
+      // silent — current indicator just doesn't appear this refresh
+    }
+  }
 
   function renderFleetSchematic(hauls){
     const wrap = document.getElementById('fleetSchematicMap');
