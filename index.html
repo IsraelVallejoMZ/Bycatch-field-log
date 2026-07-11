@@ -6898,6 +6898,20 @@
     });
   });
 
+  // iOS Safari occasionally leaves position:fixed elements (like the
+  // settlement bar below) stranded outside the visible viewport after the
+  // on-screen keyboard opens/closes on a focused input — a long-documented
+  // WebKit quirk, not something specific to this bar. Forcing a scroll
+  // reset on blur makes Safari recompute the fixed layout instead of
+  // leaving the "Confirm & close" button unreachable until a manual reload.
+  document.querySelectorAll(
+    '#screen-fleet-close-trip input, #screen-fleet-close-trip select, #screen-fleet-close-trip textarea'
+  ).forEach(el => {
+    el.addEventListener('blur', () => {
+      requestAnimationFrame(() => { window.scrollTo(0, 0); });
+    });
+  });
+
   // Live settlement preview — mirrors the daysAtSea × provisions formula
   // the confirm handler actually saves with (see below), using Date.now()
   // as a stand-in for the not-yet-set ended_at. Deliberately excludes the
@@ -11135,6 +11149,7 @@
     initSportDailyForecast();
     renderSportSpotOptions();
     const session = getActiveSession();
+    if(session) sportTrackStart(); else sportTrackStop();
     const noCard = document.getElementById('sportNoSessionCard');
     const activeCard = document.getElementById('sportActiveSessionCard');
     if(!session){
@@ -11175,6 +11190,49 @@
         ).join('');
   }
 
+  // ===== Session GPS route tracking =====
+  // Records the session's actual path (not just single-point spot capture)
+  // using watchPosition, throttled to one point per ~15s so a multi-hour
+  // session doesn't balloon into thousands of points. Points live directly
+  // on the session record (route: [{lat,lon,t}, ...]) — same localStorage
+  // pattern as everything else here, no new key needed. Tracking only runs
+  // while this tab/PWA is open and foregrounded (a watchPosition
+  // limitation on mobile browsers, not something this app can work around)
+  // — resumed on reload via renderSportSession() below if a session is
+  // still active, since watchPosition itself never survives a page reload.
+  let sportTrackWatchId = null;
+  let sportTrackLastT = 0;
+  const SPORT_TRACK_MIN_INTERVAL_MS = 15000;
+  function sportTrackAddPoint(pos){
+    const now = Date.now();
+    if(now - sportTrackLastT < SPORT_TRACK_MIN_INTERVAL_MS) return;
+    sportTrackLastT = now;
+    const session = getActiveSession();
+    if(!session) return;
+    const sessions = load(SESSIONS_KEY);
+    const idx = sessions.findIndex(s => s.session_id === session.session_id);
+    if(idx === -1) return;
+    if(!Array.isArray(sessions[idx].route)) sessions[idx].route = [];
+    sessions[idx].route.push({ lat: pos.coords.latitude, lon: pos.coords.longitude, t: new Date().toISOString() });
+    save(SESSIONS_KEY, sessions);
+  }
+  function sportTrackStart(){
+    if(sportTrackWatchId !== null) return; // already tracking
+    if(!navigator.geolocation) return;
+    sportTrackLastT = 0; // let the first fix through immediately
+    sportTrackWatchId = navigator.geolocation.watchPosition(
+      sportTrackAddPoint,
+      () => {}, // silent — the session's manual GPS capture already surfaces geo errors to the user
+      { enableHighAccuracy: false, maximumAge: 10000, timeout: 20000 }
+    );
+  }
+  function sportTrackStop(){
+    if(sportTrackWatchId !== null && navigator.geolocation){
+      navigator.geolocation.clearWatch(sportTrackWatchId);
+    }
+    sportTrackWatchId = null;
+  }
+
   document.getElementById('sportRevealFormBtn').addEventListener('click', () => {
     document.getElementById('sportSessionPromptCard').style.display = 'none';
     document.getElementById('sportSessionFormDetail').style.display = 'block';
@@ -11195,13 +11253,15 @@
       method: document.getElementById('sportFishingMethod').value,
       conditions_note: document.getElementById('sportConditionsNote').value.trim(),
       started_at: new Date().toISOString(),
-      ended_at: null
+      ended_at: null,
+      route: []
     };
     const sessions = load(SESSIONS_KEY); sessions.push(session); save(SESSIONS_KEY, sessions);
     localStorage.setItem(ACTIVE_SESSION_KEY, session.session_id);
     document.getElementById('sportNewSpotName').value = '';
     document.getElementById('sportConditionsNote').value = '';
     showSportToast(t('msg_session_started'));
+    sportTrackStart();
     renderSportSession();
   });
 
@@ -11212,6 +11272,7 @@
     const idx = sessions.findIndex(s => s.session_id === session.session_id);
     if(idx !== -1){ sessions[idx].ended_at = new Date().toISOString(); save(SESSIONS_KEY, sessions); }
     localStorage.removeItem(ACTIVE_SESSION_KEY);
+    sportTrackStop();
     showSportToast(t('msg_session_ended'));
     renderSportSession();
   });
@@ -11706,9 +11767,25 @@
       sportLeafletInstance.on('moveend', refreshSportCurrentIndicator);
     }
     sportLeafletInstance.eachLayer(layer => {
-      if(layer instanceof L.Marker) sportLeafletInstance.removeLayer(layer);
+      if(layer instanceof L.Marker || layer instanceof L.Polyline) sportLeafletInstance.removeLayer(layer);
     });
+    // Live route of the active session, if any — drawn before the spot
+    // markers/fitBounds below so a session with no saved Spot yet (open
+    // water) still gets the map framed around where the angler actually
+    // went, not just left at the default view.
+    const activeSession = getActiveSession();
+    const routeBounds = [];
+    if(activeSession && Array.isArray(activeSession.route) && activeSession.route.length > 1){
+      const routePts = activeSession.route.map(p => [p.lat, p.lon]);
+      L.polyline(routePts, { color: '#EE6C4D', weight: 3, opacity: 0.85 }).addTo(sportLeafletInstance);
+      routePts.forEach(p => routeBounds.push(p));
+    }
     if(spots.length === 0){
+      if(routeBounds.length > 0){
+        sportLeafletInstance.fitBounds(routeBounds, { padding: [30,30], maxZoom: 15 });
+        setTimeout(()=>sportLeafletInstance.invalidateSize(),50);
+        return;
+      }
       // Auto-center to user's GPS location
       if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(
@@ -11721,7 +11798,7 @@
       }
       return;
     }
-    const bounds = [];
+    const bounds = routeBounds.slice();
     spots.forEach(s => {
       const lat = parseFloat(s.lat), lon = parseFloat(s.lon);
       bounds.push([lat, lon]);
