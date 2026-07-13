@@ -4024,6 +4024,11 @@
         <button class="mlt-btn" id="sportMltCompass">Compass</button>
       </div>
       <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
+      <div id="sportDepthOpacityWrap" style="display:none; align-items:center; gap:8px; margin:-10px 0 14px; padding:0 4px;">
+        <span style="font-size:11px; color:var(--ink-soft);" data-i18n="sp_map_depth">Depth</span>
+        <input type="range" id="sportDepthOpacitySlider" min="0" max="100" value="70" style="flex:1;">
+        <span style="font-size:11px; color:var(--ink-soft); min-width:32px; text-align:right;" id="sportDepthOpacityVal">70%</span>
+      </div>
       <button type="button" class="map-fullscreen-btn" id="sportMapFullscreenBtn" aria-label="View fullscreen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
@@ -12001,13 +12006,13 @@
       type:'raster', tileSize:256, attribution:'GEBCO Compilation Group',
       tiles:['https://wms.gebco.net/mapserv?service=WMS&version=1.3.0&request=GetMap&layers=GEBCO_LATEST_2&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
     });
-    sportMapInstance.addLayer({ id:'sport-gebco-layer', type:'raster', source:'sport-gebco-src', paint:{ 'raster-opacity':0.65 }, layout:{ visibility:'none' } });
+    sportMapInstance.addLayer({ id:'sport-gebco-layer', type:'raster', source:'sport-gebco-src', paint:{ 'raster-opacity':0.70 }, layout:{ visibility:'none' } });
 
     sportMapInstance.addSource('sport-emodnet-src', {
       type:'raster', tileSize:256, attribution:'EMODnet Bathymetry',
       tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
     });
-    sportMapInstance.addLayer({ id:'sport-emodnet-layer', type:'raster', source:'sport-emodnet-src', paint:{ 'raster-opacity':0.75 }, layout:{ visibility:'none' } });
+    sportMapInstance.addLayer({ id:'sport-emodnet-layer', type:'raster', source:'sport-emodnet-src', paint:{ 'raster-opacity':0.80 }, layout:{ visibility:'none' } });
 
     sportMapInstance.addSource('sport-route-src', { type:'geojson', data:{ type:'Feature', geometry:{ type:'LineString', coordinates:[] } } });
     sportMapInstance.addLayer({ id:'sport-route-layer', type:'line', source:'sport-route-src', paint:{ 'line-color':'#EE6C4D', 'line-width':3, 'line-opacity':0.85 } });
@@ -12047,15 +12052,30 @@
   // else" behaviour, same known cosmetic issue (land painted twice) —
   // untouched, as agreed, until the leaflet-velocity/backend phase.
   let sportDepthLayerOn = false;
+  let sportDepthOpacity = 0.70;
   function toggleSportDepthLayer(){
     if(!sportMapInstance || !sportMapInstance.getLayer('sport-gebco-layer')) return;
     sportDepthLayerOn = !sportDepthLayerOn;
     document.getElementById('sportMltDepth').classList.toggle('active', sportDepthLayerOn);
+    document.getElementById('sportDepthOpacityWrap').style.display = sportDepthLayerOn ? 'flex' : 'none';
     const vis = sportDepthLayerOn ? 'visible' : 'none';
     sportMapInstance.setLayoutProperty('sport-gebco-layer', 'visibility', vis);
     sportMapInstance.setLayoutProperty('sport-emodnet-layer', 'visibility', vis);
   }
   document.getElementById('sportMltDepth').addEventListener('click', toggleSportDepthLayer);
+
+  // Opacity slider — raster-opacity is a GPU paint property, so this
+  // updates every frame with no re-fetch and no flicker in either
+  // engine; the "Leaflet has to re-request tiles" claim was wrong.
+  document.getElementById('sportDepthOpacitySlider').addEventListener('input', (e) => {
+    sportDepthOpacity = Number(e.target.value) / 100;
+    document.getElementById('sportDepthOpacityVal').textContent = e.target.value + '%';
+    if(!sportMapInstance || !sportMapInstance.getLayer('sport-gebco-layer')) return;
+    // EMODnet layers on top with slightly higher relative opacity, same
+    // ratio as the original 0.65 / 0.75 pairing.
+    sportMapInstance.setPaintProperty('sport-gebco-layer', 'raster-opacity', sportDepthOpacity);
+    sportMapInstance.setPaintProperty('sport-emodnet-layer', 'raster-opacity', Math.min(1, sportDepthOpacity + 0.10));
+  });
 
   // 3D tilt — pilot toggle only, so you can see what MapLibre's pitch/
   // bearing looks like on real data. Not meant to be the default
@@ -12076,7 +12096,7 @@
   // permission request lives inside this click handler and not on load.
   let sportCompassOn = false;
   function sportOrientationHandler(e){
-    if(!sportMapInstance) return;
+    if(!sportCompassOn || !sportMapInstance) return;
     // iOS Safari exposes a pre-corrected compass heading directly.
     // Everything else: 'alpha' from a 'deviceorientationabsolute' event
     // is degrees counter-clockwise from north, so it needs flipping to
