@@ -4020,6 +4020,8 @@
         <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
         <button class="mlt-btn" id="sportMltSatellite" data-i18n="map_satellite">Satellite</button>
         <button class="mlt-btn" id="sportMltDepth" data-i18n="sp_map_depth">Depth</button>
+        <button class="mlt-btn" id="sportMlt3d">3D</button>
+        <button class="mlt-btn" id="sportMltCompass">Compass</button>
       </div>
       <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
       <button type="button" class="map-fullscreen-btn" id="sportMapFullscreenBtn" aria-label="View fullscreen">
@@ -11997,13 +11999,13 @@
 
     sportMapInstance.addSource('sport-gebco-src', {
       type:'raster', tileSize:256, attribution:'GEBCO Compilation Group',
-      tiles:['https://wms.gebco.net/mapserv?service=WMS&version=1.3.0&request=GetMap&layers=GEBCO_LATEST_2&bbox={bbox-epsg-3857}&width=256&height=256&srs=EPSG:3857&format=image/png&transparent=true']
+      tiles:['https://wms.gebco.net/mapserv?service=WMS&version=1.3.0&request=GetMap&layers=GEBCO_LATEST_2&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
     });
     sportMapInstance.addLayer({ id:'sport-gebco-layer', type:'raster', source:'sport-gebco-src', paint:{ 'raster-opacity':0.65 }, layout:{ visibility:'none' } });
 
     sportMapInstance.addSource('sport-emodnet-src', {
       type:'raster', tileSize:256, attribution:'EMODnet Bathymetry',
-      tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&srs=EPSG:3857&format=image/png&transparent=true']
+      tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
     });
     sportMapInstance.addLayer({ id:'sport-emodnet-layer', type:'raster', source:'sport-emodnet-src', paint:{ 'raster-opacity':0.75 }, layout:{ visibility:'none' } });
 
@@ -12054,6 +12056,65 @@
     sportMapInstance.setLayoutProperty('sport-emodnet-layer', 'visibility', vis);
   }
   document.getElementById('sportMltDepth').addEventListener('click', toggleSportDepthLayer);
+
+  // 3D tilt — pilot toggle only, so you can see what MapLibre's pitch/
+  // bearing looks like on real data. Not meant to be the default
+  // navigation view (harder to read heading/coords tilted), just here
+  // to test.
+  let sport3dOn = false;
+  function toggleSport3d(){
+    if(!sportMapInstance) return;
+    sport3dOn = !sport3dOn;
+    document.getElementById('sportMlt3d').classList.toggle('active', sport3dOn);
+    sportMapInstance.easeTo({ pitch: sport3dOn ? 60 : 0, bearing: sport3dOn ? -20 : 0, duration: 500 });
+  }
+  document.getElementById('sportMlt3d').addEventListener('click', toggleSport3d);
+
+  // Compass follow — rotates the map to match the phone's heading.
+  // Requires HTTPS (won't work opening the file locally) and, on iOS,
+  // an explicit permission grant triggered by a tap — that's why the
+  // permission request lives inside this click handler and not on load.
+  let sportCompassOn = false;
+  function sportOrientationHandler(e){
+    if(!sportMapInstance) return;
+    // iOS Safari exposes a pre-corrected compass heading directly.
+    // Everything else: 'alpha' from a 'deviceorientationabsolute' event
+    // is degrees counter-clockwise from north, so it needs flipping to
+    // match MapLibre's clockwise-from-north bearing.
+    let heading = null;
+    if(typeof e.webkitCompassHeading === 'number'){
+      heading = e.webkitCompassHeading;
+    } else if(e.absolute && typeof e.alpha === 'number'){
+      heading = 360 - e.alpha;
+    }
+    if(heading == null) return;
+    sportMapInstance.setBearing(heading);
+  }
+  function toggleSportCompass(){
+    sportCompassOn = !sportCompassOn;
+    document.getElementById('sportMltCompass').classList.toggle('active', sportCompassOn);
+    if(!sportCompassOn){
+      window.removeEventListener('deviceorientationabsolute', sportOrientationHandler);
+      window.removeEventListener('deviceorientation', sportOrientationHandler);
+      if(sportMapInstance) sportMapInstance.easeTo({ bearing: 0, duration: 400 });
+      return;
+    }
+    const startListening = () => {
+      window.addEventListener('deviceorientationabsolute', sportOrientationHandler, true);
+      window.addEventListener('deviceorientation', sportOrientationHandler, true);
+    };
+    // iOS 13+ requires a permission prompt, and it must be requested
+    // from inside a user gesture (this click) or it silently fails.
+    if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if(state === 'granted') startListening();
+        else { sportCompassOn = false; document.getElementById('sportMltCompass').classList.remove('active'); showSportToast('Compass permission denied', true); }
+      }).catch(() => { sportCompassOn = false; document.getElementById('sportMltCompass').classList.remove('active'); });
+    } else {
+      startListening();
+    }
+  }
+  document.getElementById('sportMltCompass').addEventListener('click', toggleSportCompass);
 
   // Ocean current indicator — same one-reading-at-map-center approach as
   // before. MapLibre has no Leaflet-style L.Control helper, so this is a
