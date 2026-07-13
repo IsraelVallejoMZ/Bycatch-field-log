@@ -1,11 +1,18 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v5';
+const CACHE_NAME = 'bycatch-log-v6';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  // MapLibre (Sport's pilot map engine) — precached explicitly instead of
+  // relying on the browser's own HTTP cache, which has no offline
+  // guarantee (iOS Safari in particular purges it under storage pressure
+  // or after ~7 days unused). Bump CACHE_NAME above if these version
+  // pins ever change, so returning clients pick up the new pin.
+  'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js',
+  'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css'
 ];
 
 self.addEventListener('install', (event) => {
@@ -33,6 +40,11 @@ self.addEventListener('activate', (event) => {
 // two are only ever connected through this string matching.
 const TILE_CACHE_NAME = 'bycatch-map-tiles-v2';
 
+// Separate cache for OpenFreeMap's vector style/glyphs/sprites/tiles —
+// see the isVectorMapAsset handler below for why it's opportunistic
+// rather than explicit-download-only like TILE_CACHE_NAME.
+const VECTOR_TILE_CACHE_NAME = 'bycatch-vector-tiles-v1';
+
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isOwnOrigin = url.origin === self.location.origin;
@@ -57,6 +69,47 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request).catch(() =>
         caches.open(TILE_CACHE_NAME).then((cache) => cache.match(event.request))
+      )
+    );
+    return;
+  }
+
+  // OpenFreeMap (Sport's MapLibre vector basemap: style JSON, glyphs,
+  // sprites, and vector tiles all come from this one host). Unlike
+  // CartoDB above, there's no "Download this area" button feeding this
+  // cache yet — it's opportunistic instead: every successful fetch while
+  // online gets stored, so whatever the person has already panned/zoomed
+  // through becomes available offline automatically. Same tradeoff as
+  // the app shell below (network-first, cache as fallback), just scoped
+  // to its own cache name so a stale-vector-tile bug can't ever wipe the
+  // app shell or the CartoDB tile cache.
+  const isVectorMapAsset = url.hostname.endsWith('tiles.openfreemap.org');
+  if (isVectorMapAsset) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const copy = response.clone();
+        caches.open(VECTOR_TILE_CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      }).catch(() =>
+        caches.open(VECTOR_TILE_CACHE_NAME).then((cache) => cache.match(event.request))
+      )
+    );
+    return;
+  }
+
+  // Esri satellite — pre-existing gap, not caused by the MapLibre switch:
+  // the "Download this area" feature only ever populated TILE_CACHE_NAME
+  // with CartoDB street tiles, never satellite. Same opportunistic
+  // pattern as OpenFreeMap above.
+  const isEsriSatellite = url.hostname.endsWith('server.arcgisonline.com');
+  if (isEsriSatellite) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const copy = response.clone();
+        caches.open(VECTOR_TILE_CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      }).catch(() =>
+        caches.open(VECTOR_TILE_CACHE_NAME).then((cache) => cache.match(event.request))
       )
     );
     return;
