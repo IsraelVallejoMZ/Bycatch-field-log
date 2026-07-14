@@ -2262,9 +2262,16 @@
         <button class="mlt-btn active" id="mltStreet" data-i18n="map_street">Street</button>
         <button class="mlt-btn" id="mltSatellite" data-i18n="map_satellite">Satellite</button>
         <button class="mlt-btn" id="mltDepth" data-i18n="sp_map_depth">Depth</button>
+        <button class="mlt-btn" id="mlt3d">3D</button>
+        <button class="mlt-btn" id="mltCompass">Compass</button>
+      </div>
+      <div id="mapDepthOpacityWrap" style="display:none; align-items:center; gap:8px; margin:6px 0 0; padding:0 4px;">
+        <span style="font-size:11px; color:var(--ink-soft);" data-i18n="sp_map_depth">Depth</span>
+        <input type="range" id="mapDepthOpacitySlider" min="0" max="100" value="65" style="flex:1;">
+        <span style="font-size:11px; color:var(--ink-soft); min-width:32px; text-align:right;" id="mapDepthOpacityVal">65%</span>
       </div>
 
-      <div id="leafletMap"></div>
+      <div id="leafletMap" style="position:relative;"></div>
       <div class="schematic-wrap" id="schematicMap" style="display:none;"></div>
 
       <button type="button" class="map-fullscreen-btn" id="mapFullscreenBtn" aria-label="View fullscreen">
@@ -14068,8 +14075,13 @@
   document.getElementById('backupBtn').addEventListener('click', performBackup);
 
   // ===== Map rendering =====
-  let leafletInstance = null;
-  let leafletReady = false;
+  // Migrated from Leaflet to MapLibre GL JS, mirroring the exact structure
+  // already proven reliable in Sport's Spots map: MapLibre is only ever
+  // touched when online; the offline fallback is plain DOM/SVG with zero
+  // library dependency (see renderSchematic below), so a device that
+  // struggles to persist MapLibre itself offline still shows something.
+  let mapInstance = null;
+  const RESEARCH_MAP_DEFAULT_CENTER = [99.5, 10.5]; // [lng, lat] — rough Thailand coast default
 
   let mapIsFullscreen = false;
   const MAP_EXPAND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -14080,270 +14092,333 @@
     const btn = document.getElementById('mapFullscreenBtn');
     btn.innerHTML = on ? MAP_COLLAPSE_ICON : MAP_EXPAND_ICON;
     btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'View fullscreen');
-    // Leaflet caches its container size on init; it doesn't notice a CSS
-    // resize on its own, so it has to be told explicitly once the
-    // fullscreen layout has actually settled.
-    setTimeout(() => { if(leafletInstance) leafletInstance.invalidateSize(); }, 160);
+    setTimeout(() => { if(mapInstance) mapInstance.resize(); }, 160);
   }
   document.getElementById('mapFullscreenBtn').addEventListener('click', () => setMapFullscreen(!mapIsFullscreen));
 
-  // Dot-and-ring marker: the shared professional/formal marker language
-  // used by both Field Research and Fishing Operations — distinct from
-  // the balloon pin used in the Sport segment. Color carries the same
-  // condition meaning conditionColor() always encoded (alive/dead/released).
+  // Dot-and-ring marker — same shared professional/formal marker language
+  // as before, just as a plain DOM element now instead of an L.divIcon.
   function researchPointIcon(color){
-    const svg = '<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">'
+    const el = document.createElement('div');
+    el.innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">'
       + '<circle cx="11" cy="11" r="9.5" fill="none" stroke="' + color + '" stroke-width="1.6" opacity="0.55"/>'
       + '<circle cx="11" cy="11" r="5.5" fill="' + color + '" stroke="#fff" stroke-width="1.8"/>'
       + '</svg>';
-    return L.divIcon({ html: svg, className: 'map-pin-research', iconSize: [22,22], iconAnchor: [11,11], popupAnchor: [0,-10] });
+    el.style.cssText = 'width:22px; height:22px; cursor:pointer;';
+    return el;
   }
 
   function conditionColor(condition){
-    if(condition === 'dead') return 'var(--coral)';
-    if(condition === 'released') return 'var(--released)';
-    return 'var(--blue)'; // alive / default
+    if(condition === 'dead') return '#EE6C4D';
+    if(condition === 'released') return '#3EA66D';
+    return '#3E8FB0'; // alive / default
   }
 
+  // iOS Safari fires 'online'/'offline' unreliably, so active polling
+  // (see below) is the primary detection mechanism, same as Sport.
+  const TILE_TEST_URL_MAP = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
   function checkTilesReachable(callback){
-    // Try to actually load a tile; if it fails quickly, treat as offline mode.
     if(!navigator.onLine){ callback(false); return; }
     const testImg = new Image();
     let settled = false;
     const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
     testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
     testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
-    testImg.src = TILE_TEST_URL + '?check=' + Date.now();
+    testImg.src = TILE_TEST_URL_MAP + '?check=' + Date.now();
   }
 
-  const ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-  const ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
-  let mapCurrentLayer = 'street'; // 'street' | 'satellite'
-  let mapStreetLayer = null;
-  let mapSatelliteLayer = null;
+  const RESEARCH_ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  const RESEARCH_ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
+
+  function ensureMapLayers(){
+    if(mapInstance.getSource('map-satellite-src')) return;
+    mapInstance.addSource('map-satellite-src', { type:'raster', tiles:[RESEARCH_ESRI_SATELLITE_URL], tileSize:256, attribution: RESEARCH_ESRI_ATTRIBUTION });
+    mapInstance.addLayer({ id:'map-satellite-layer', type:'raster', source:'map-satellite-src', layout:{ visibility:'none' } });
+
+    mapInstance.addSource('map-gebco-src', {
+      type:'raster', tileSize:256, attribution:'GEBCO Compilation Group',
+      tiles:['https://wms.gebco.net/mapserv?service=WMS&version=1.3.0&request=GetMap&layers=GEBCO_LATEST_2&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
+    });
+    mapInstance.addLayer({ id:'map-gebco-layer', type:'raster', source:'map-gebco-src', paint:{ 'raster-opacity':0.65 }, layout:{ visibility:'none' } });
+
+    mapInstance.addSource('map-emodnet-src', {
+      type:'raster', tileSize:256, attribution:'EMODnet Bathymetry',
+      tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
+    });
+    mapInstance.addLayer({ id:'map-emodnet-layer', type:'raster', source:'map-emodnet-src', paint:{ 'raster-opacity':0.75 }, layout:{ visibility:'none' } });
+  }
 
   function setMapLayer(type){
-    if(!leafletInstance) return;
-    mapCurrentLayer = type;
+    if(!mapInstance || !mapInstance.getLayer('map-satellite-layer')) return;
     document.getElementById('mltStreet').classList.toggle('active', type === 'street');
     document.getElementById('mltSatellite').classList.toggle('active', type === 'satellite');
-    if(!mapStreetLayer){
-      mapStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
-    }
-    if(!mapSatelliteLayer){
-      mapSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
-    }
-    if(type === 'satellite'){
-      if(leafletInstance.hasLayer(mapStreetLayer)) leafletInstance.removeLayer(mapStreetLayer);
-      if(!leafletInstance.hasLayer(mapSatelliteLayer)) mapSatelliteLayer.addTo(leafletInstance);
-    } else {
-      if(leafletInstance.hasLayer(mapSatelliteLayer)) leafletInstance.removeLayer(mapSatelliteLayer);
-      if(!leafletInstance.hasLayer(mapStreetLayer)) mapStreetLayer.addTo(leafletInstance);
-    }
+    mapInstance.setLayoutProperty('map-satellite-layer', 'visibility', type === 'satellite' ? 'visible' : 'none');
   }
-
   document.getElementById('mltStreet').addEventListener('click', () => setMapLayer('street'));
   document.getElementById('mltSatellite').addEventListener('click', () => setMapLayer('satellite'));
 
-  // Bathymetry/depth overlay and ocean current indicator — same sources
-  // and approach as Sport's Spots map (GEBCO + EMODnet WMS layered so
-  // EMODnet's finer European coverage shows where it exists and GEBCO
-  // fills in everywhere else; Open-Meteo Marine reading at the map's
-  // current center, refreshed on moveend). Kept as separate Research-
-  // scoped variables/functions rather than reusing Sport's so each
-  // module's map stays independent (matches the existing pattern of
-  // sportGebcoLayer/sportCurrentControl vs. this module's own).
-  let mapGebcoLayer = null;
-  let mapEmodnetLayer = null;
   let mapDepthLayerOn = false;
+  let mapDepthOpacity = 0.65;
   function toggleMapDepthLayer(){
-    if(!leafletInstance) return;
+    if(!mapInstance || !mapInstance.getLayer('map-gebco-layer')) return;
     mapDepthLayerOn = !mapDepthLayerOn;
     document.getElementById('mltDepth').classList.toggle('active', mapDepthLayerOn);
-    if(!mapGebcoLayer){
-      mapGebcoLayer = L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
-        layers: 'GEBCO_LATEST_2', format: 'image/png', transparent: true, version: '1.3.0',
-        opacity: 0.65, attribution: 'GEBCO Compilation Group'
-      });
-    }
-    if(!mapEmodnetLayer){
-      mapEmodnetLayer = L.tileLayer.wms('https://ows.emodnet-bathymetry.eu/wms', {
-        layers: 'emodnet:mean_multicolour', format: 'image/png', transparent: true, version: '1.3.0',
-        opacity: 0.75, attribution: 'EMODnet Bathymetry'
-      });
-    }
-    if(mapDepthLayerOn){
-      mapGebcoLayer.addTo(leafletInstance);
-      mapEmodnetLayer.addTo(leafletInstance);
-    } else {
-      leafletInstance.removeLayer(mapGebcoLayer);
-      leafletInstance.removeLayer(mapEmodnetLayer);
-    }
+    document.getElementById('mapDepthOpacityWrap').style.display = mapDepthLayerOn ? 'flex' : 'none';
+    const vis = mapDepthLayerOn ? 'visible' : 'none';
+    mapInstance.setLayoutProperty('map-gebco-layer', 'visibility', vis);
+    mapInstance.setLayoutProperty('map-emodnet-layer', 'visibility', vis);
   }
   document.getElementById('mltDepth').addEventListener('click', toggleMapDepthLayer);
+  document.getElementById('mapDepthOpacitySlider').addEventListener('input', (e) => {
+    mapDepthOpacity = Number(e.target.value) / 100;
+    document.getElementById('mapDepthOpacityVal').textContent = e.target.value + '%';
+    if(!mapInstance || !mapInstance.getLayer('map-gebco-layer')) return;
+    mapInstance.setPaintProperty('map-gebco-layer', 'raster-opacity', mapDepthOpacity);
+    mapInstance.setPaintProperty('map-emodnet-layer', 'raster-opacity', Math.min(1, mapDepthOpacity + 0.10));
+  });
 
-  let mapCurrentControl = null;
+  // 3D tilt and compass-follow — same as Sport's Spots map.
+  let map3dOn = false;
+  function toggleMap3d(){
+    if(!mapInstance) return;
+    map3dOn = !map3dOn;
+    document.getElementById('mlt3d').classList.toggle('active', map3dOn);
+    mapInstance.easeTo({ pitch: map3dOn ? 60 : 0, bearing: map3dOn ? -20 : 0, duration: 500 });
+  }
+  document.getElementById('mlt3d').addEventListener('click', toggleMap3d);
+
+  let mapCompassOn = false;
+  function mapOrientationHandler(e){
+    if(!mapCompassOn || !mapInstance) return;
+    let heading = null;
+    if(typeof e.webkitCompassHeading === 'number'){
+      heading = e.webkitCompassHeading;
+    } else if(e.absolute && typeof e.alpha === 'number'){
+      heading = 360 - e.alpha;
+    }
+    if(heading == null) return;
+    mapInstance.setBearing(heading);
+  }
+  function toggleMapCompass(){
+    mapCompassOn = !mapCompassOn;
+    document.getElementById('mltCompass').classList.toggle('active', mapCompassOn);
+    if(!mapCompassOn){
+      window.removeEventListener('deviceorientationabsolute', mapOrientationHandler);
+      window.removeEventListener('deviceorientation', mapOrientationHandler);
+      if(mapInstance) mapInstance.easeTo({ bearing: 0, duration: 400 });
+      return;
+    }
+    const startListening = () => {
+      window.addEventListener('deviceorientationabsolute', mapOrientationHandler, true);
+      window.addEventListener('deviceorientation', mapOrientationHandler, true);
+    };
+    if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if(state === 'granted') startListening();
+        else { mapCompassOn = false; document.getElementById('mltCompass').classList.remove('active'); showToast('Compass permission denied', true); }
+      }).catch(() => { mapCompassOn = false; document.getElementById('mltCompass').classList.remove('active'); });
+    } else {
+      startListening();
+    }
+  }
+  document.getElementById('mltCompass').addEventListener('click', toggleMapCompass);
+
+  let mapCurrentIndicatorEl = null;
   function mapCurrentArrowSvg(directionDeg, speedMs){
     const heading = (directionDeg + 180) % 360;
-    const intensity = speedMs > 0.5 ? 'var(--coral)' : (speedMs > 0.15 ? 'var(--amber)' : 'var(--blue)');
+    const intensity = speedMs > 0.5 ? '#EE6C4D' : (speedMs > 0.15 ? '#F2A65A' : '#85B7EB');
     return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   }
   async function refreshMapCurrentIndicator(){
-    if(!leafletInstance) return;
-    const center = leafletInstance.getCenter();
+    if(!mapInstance) return;
+    const center = mapInstance.getCenter();
     try{
       const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
       const data = await res.json();
       const speed = data && data.current ? data.current.ocean_current_velocity : null;
       const dir = data && data.current ? data.current.ocean_current_direction : null;
-      if(!mapCurrentControl){
-        const Control = L.Control.extend({
-          onAdd: function(){
-            const div = L.DomUtil.create('div');
-            div.id = 'mapCurrentIndicator';
-            div.style.cssText = 'background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
-            return div;
-          }
-        });
-        mapCurrentControl = new Control({ position: 'topleft' });
-        mapCurrentControl.addTo(leafletInstance);
+      if(!mapCurrentIndicatorEl){
+        mapCurrentIndicatorEl = document.createElement('div');
+        mapCurrentIndicatorEl.id = 'mapCurrentIndicator';
+        mapCurrentIndicatorEl.style.cssText = 'position:absolute; top:10px; left:10px; z-index:2; background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
+        document.getElementById('leafletMap').appendChild(mapCurrentIndicatorEl);
       }
-      const el = document.getElementById('mapCurrentIndicator');
-      if(el){
-        if(speed == null || dir == null){
-          el.innerHTML = t('sp_current_unavailable');
-        } else {
-          el.innerHTML = mapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
-        }
+      if(speed == null || dir == null){
+        mapCurrentIndicatorEl.innerHTML = t('sp_current_unavailable');
+      } else {
+        mapCurrentIndicatorEl.innerHTML = mapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
       }
     } catch(err){
       // silent — current indicator just doesn't appear this refresh
     }
   }
 
+  let mapMarkers = [];
   function renderMap(){
     renderOfflineAreasList();
-    const list = loadEntries();
-    const withGps = list.filter(e => e.lat !== '' && e.lon !== '' && e.lat != null && e.lon != null);
-    const withoutGps = list.length - withGps.length;
-
-    const noGpsChip = document.getElementById('noGpsChip');
-    const noGpsNote = document.getElementById('noGpsNote');
-    if(withoutGps > 0){
-      noGpsChip.style.display = 'flex';
-      noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' record has' : ' records have') + ' no GPS coordinates';
-    } else {
-      noGpsChip.style.display = 'none';
-    }
-
-    const banner = document.getElementById('mapModeBanner');
-    const bannerText = document.getElementById('mapModeText');
-
     checkTilesReachable((isLive) => {
-      if(isLive){
-        banner.className = 'map-mode-banner live';
-        bannerText.textContent = t('msg_online_cartodb');
-        document.getElementById('mapLayerToggle').style.display = 'flex';
-        document.getElementById('leafletMap').style.display = 'block';
-        document.getElementById('schematicMap').style.display = 'none';
-        renderLeaflet(withGps);
+      mapLastKnownOnline = isLive;
+      setMapMode(isLive);
+      const list = loadEntries();
+      const withGps = list.filter(e => e.lat !== '' && e.lon !== '' && e.lat != null && e.lon != null);
+      const withoutGps = list.length - withGps.length;
+      const noGpsChip = document.getElementById('noGpsChip');
+      const noGpsNote = document.getElementById('noGpsNote');
+      if(withoutGps > 0){
+        noGpsChip.style.display = 'flex';
+        noGpsNote.textContent = withoutGps + (withoutGps === 1 ? ' record has' : ' records have') + ' no GPS coordinates';
       } else {
-        banner.className = 'map-mode-banner offline';
-        bannerText.textContent = t('msg_offline_schematic');
-        document.getElementById('mapLayerToggle').style.display = 'none';
-        document.getElementById('leafletMap').style.display = 'none';
-        document.getElementById('schematicMap').style.display = 'block';
+        noGpsChip.style.display = 'none';
+      }
+
+      if(isLive){
+        if(!mapInstance){
+          mapInstance = new maplibregl.Map({
+            container: 'leafletMap',
+            style: 'https://tiles.openfreemap.org/styles/liberty',
+            center: RESEARCH_MAP_DEFAULT_CENTER,
+            zoom: 6,
+            attributionControl: { compact: true }
+          });
+          mapInstance.on('load', () => {
+            ensureMapLayers();
+            mapInstance.on('moveend', refreshMapCurrentIndicator);
+            renderMapContent(withGps);
+          });
+          return;
+        }
+        renderMapContent(withGps);
+      } else {
         renderSchematic(withGps);
       }
     });
   }
 
-  function renderLeaflet(points){
-    if(!leafletInstance){
-      leafletInstance = L.map('leafletMap');
-      mapStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
-      mapSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
-      mapStreetLayer.addTo(leafletInstance);
-      leafletInstance.on('moveend', refreshMapCurrentIndicator);
-    }
-    // clear old markers
-    leafletInstance.eachLayer(layer => {
-      if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
-        leafletInstance.removeLayer(layer);
-      }
-    });
-
+  function renderMapContent(points){
+    mapMarkers.forEach(m => m.remove());
+    mapMarkers = [];
     if(points.length === 0){
-      leafletInstance.setView([10.5, 99.5], 6); // rough Thailand coast default
-      setTimeout(()=> leafletInstance.invalidateSize(), 50);
+      mapInstance.jumpTo({ center: RESEARCH_MAP_DEFAULT_CENTER, zoom: 6 });
+      setTimeout(()=>mapInstance.resize(),50);
       return;
     }
-
-    const bounds = [];
+    const boundsPts = [];
     points.forEach(p => {
       const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
-      bounds.push([lat, lon]);
-      const marker = L.marker([lat, lon], { icon: researchPointIcon(conditionColor(p.condition)) }).addTo(leafletInstance);
-      marker.bindPopup('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + (p.gps_accuracy_m ? ' · ±'+Math.round(p.gps_accuracy_m)+'m' : '') + '</div>');
+      boundsPts.push([lon, lat]);
+      const marker = new maplibregl.Marker({ element: researchPointIcon(conditionColor(p.condition)), anchor: 'center' })
+        .setLngLat([lon, lat])
+        .setPopup(new maplibregl.Popup({ offset: 14 }).setHTML('<div class="map-point-popup"><b>' + (p.species||'unnamed') + '</b><br>' + (p.site||'—') + ' · ' + (p.length ? p.length+'cm' : '—') + (p.gps_accuracy_m ? ' · ±'+Math.round(p.gps_accuracy_m)+'m' : '') + '</div>'))
+        .addTo(mapInstance);
+      mapMarkers.push(marker);
     });
-    leafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
-    setTimeout(()=> leafletInstance.invalidateSize(), 50);
+    const b = boundsPts.reduce((acc,p) => acc.extend(p), new maplibregl.LngLatBounds(boundsPts[0], boundsPts[0]));
+    mapInstance.fitBounds(b, { padding: 30, maxZoom: 14 });
+    setTimeout(()=>mapInstance.resize(),50);
+  }
+
+  // ===== Offline fallback (Research) =====
+  // Plain DOM/SVG, zero library dependency — this is the pattern Sport's
+  // Spots map now copies. Falls back to the device's live GPS position
+  // when there are no georeferenced records yet, so the screen is never
+  // just an empty message if a fix is available.
+  function setMapMode(isLive){
+    const banner = document.getElementById('mapModeBanner');
+    const bannerText = document.getElementById('mapModeText');
+    banner.className = 'map-mode-banner ' + (isLive ? 'live' : 'offline');
+    bannerText.textContent = isLive ? t('msg_live_map') : t('msg_offline_mode');
+    document.getElementById('mapLayerToggle').style.display = isLive ? 'flex' : 'none';
+    document.getElementById('leafletMap').style.display = isLive ? 'block' : 'none';
+    document.getElementById('schematicMap').style.display = isLive ? 'none' : 'block';
   }
 
   function renderSchematic(points){
     const wrap = document.getElementById('schematicMap');
-    wrap.innerHTML = '';
 
-    if(points.length === 0){
-      wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
-      return;
+    function draw(allPoints){
+      wrap.innerHTML = '';
+      if(allPoints.length === 0){
+        wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
+        return;
+      }
+      const lats = allPoints.map(p => p.lat), lons = allPoints.map(p => p.lon);
+      let minLat = Math.min(...lats), maxLat = Math.max(...lats);
+      let minLon = Math.min(...lons), maxLon = Math.max(...lons);
+      const padLat = Math.max((maxLat - minLat) * 0.2, 0.25);
+      const padLon = Math.max((maxLon - minLon) * 0.2, 0.25);
+      minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+
+      allPoints.forEach(p => {
+        const x = ((p.lon - minLon) / (maxLon - minLon)) * (w - 40) + 20;
+        const y = h - (((p.lat - minLat) / (maxLat - minLat)) * (h - 40) + 20);
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', p.live ? 8 : 7);
+        circle.setAttribute('fill', p.live ? '#EE6C4D' : conditionColor(p.condition));
+        circle.setAttribute('stroke', '#fff');
+        circle.setAttribute('stroke-width', '2');
+        circle.classList.add('schem-point');
+        const title = document.createElementNS(svgNS, 'title');
+        title.textContent = p.live ? (t('sp_current_label') + ' · ' + p.lat.toFixed(4) + ', ' + p.lon.toFixed(4)) : ((p.species||'unnamed') + ' · ' + (p.site||'—') + ' · ' + p.lat.toFixed(4) + ', ' + p.lon.toFixed(4));
+        circle.appendChild(title);
+        svg.appendChild(circle);
+      });
+      wrap.appendChild(svg);
+
+      const nwLabel = document.createElement('div');
+      nwLabel.className = 'schem-axis-label';
+      nwLabel.style.top = '6px'; nwLabel.style.left = '8px';
+      nwLabel.textContent = maxLat.toFixed(3) + '°, ' + minLon.toFixed(3) + '°';
+      wrap.appendChild(nwLabel);
+
+      const seLabel = document.createElement('div');
+      seLabel.className = 'schem-axis-label';
+      seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
+      seLabel.textContent = minLat.toFixed(3) + '°, ' + maxLon.toFixed(3) + '°';
+      wrap.appendChild(seLabel);
     }
 
-    const lats = points.map(p => parseFloat(p.lat));
-    const lons = points.map(p => parseFloat(p.lon));
-    let minLat = Math.min(...lats), maxLat = Math.max(...lats);
-    let minLon = Math.min(...lons), maxLon = Math.max(...lons);
-    // pad so single points or tight clusters aren't at the very edge
-    const padLat = Math.max((maxLat - minLat) * 0.2, 0.001);
-    const padLon = Math.max((maxLon - minLon) * 0.2, 0.001);
-    minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+    const basePoints = points.map(p => ({ lat: parseFloat(p.lat), lon: parseFloat(p.lon), species: p.species, site: p.site, condition: p.condition, live: false }));
+    if(basePoints.length > 0){ draw(basePoints); return; }
 
-    const w = wrap.clientWidth, h = wrap.clientHeight;
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-
-    points.forEach(p => {
-      const lat = parseFloat(p.lat), lon = parseFloat(p.lon);
-      const x = ((lon - minLon) / (maxLon - minLon)) * (w - 40) + 20;
-      const y = h - (((lat - minLat) / (maxLat - minLat)) * (h - 40) + 20); // invert y, lat increases upward
-      const circle = document.createElementNS(svgNS, 'circle');
-      circle.setAttribute('cx', x);
-      circle.setAttribute('cy', y);
-      circle.setAttribute('r', 7);
-      circle.setAttribute('fill', conditionColor(p.condition));
-      circle.setAttribute('stroke', '#fff');
-      circle.setAttribute('stroke-width', '2');
-      circle.classList.add('schem-point');
-      const title = document.createElementNS(svgNS, 'title');
-      title.textContent = (p.species||'unnamed') + ' · ' + (p.site||'—') + ' · ' + lat.toFixed(4) + ', ' + lon.toFixed(4);
-      circle.appendChild(title);
-      svg.appendChild(circle);
-    });
-    wrap.appendChild(svg);
-
-    // corner coordinate labels for orientation
-    const nwLabel = document.createElement('div');
-    nwLabel.className = 'schem-axis-label';
-    nwLabel.style.top = '6px'; nwLabel.style.left = '8px';
-    nwLabel.textContent = maxLat.toFixed(3) + '°N';
-    wrap.appendChild(nwLabel);
-
-    const seLabel = document.createElement('div');
-    seLabel.className = 'schem-axis-label';
-    seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
-    seLabel.textContent = minLon.toFixed(3) + '°E';
-    wrap.appendChild(seLabel);
+    if(navigator.geolocation){
+      let settled = false;
+      const timer = setTimeout(() => { if(!settled){ settled = true; draw(basePoints); } }, 3500);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => { if(settled) return; settled = true; clearTimeout(timer); draw([{ lat: pos.coords.latitude, lon: pos.coords.longitude, live: true }]); },
+        () => { if(settled) return; settled = true; clearTimeout(timer); draw(basePoints); },
+        { maximumAge: 60000, timeout: 3000 }
+      );
+    } else {
+      draw(basePoints);
+    }
   }
+
+  // Active connectivity polling — iOS Safari's online/offline events are
+  // unreliable, especially for standalone home-screen apps, so this is
+  // the primary way the map notices a signal coming back (or leaving).
+  let mapLastKnownOnline = null;
+  function mapPollConnectivity(){
+    const screenEl = document.getElementById('screen-map');
+    if(!screenEl || !screenEl.classList.contains('active')) return;
+    checkTilesReachable((isLive) => {
+      if(mapLastKnownOnline === isLive) return;
+      mapLastKnownOnline = isLive;
+      renderMap();
+    });
+  }
+  setInterval(mapPollConnectivity, 15000);
+  window.addEventListener('online', mapPollConnectivity);
+  window.addEventListener('offline', mapPollConnectivity);
+  document.getElementById('mapModeBanner').addEventListener('click', () => {
+    mapLastKnownOnline = null;
+    renderMap();
+  });
 
   // ===== Insights (descriptive statistics) =====
   function num(v){
@@ -15204,17 +15279,17 @@
     btn.classList.toggle('recording', trackActive);
   }
 
-  // ===== Offline map tile downloader =====
-  // Tiles are cached via the standard Cache Storage API, in a dedicated
-  // cache separate from the app-shell cache the service worker manages —
-  // this keeps tile data alive even if the app-shell cache version bumps
-  // on a future update. TILE_URL_TEMPLATE lives at the top of this module
-  // alongside the other shared constants; bump this version string
-  // whenever the tile provider changes so old cached tiles aren't reused.
-  const TILE_CACHE_NAME = 'bycatch-map-tiles-v2';
+  // ===== Offline map area downloader =====
+  // Migrated along with the map engine: OpenFreeMap resolves its style to
+  // a TileJSON first, so there's no single {z}/{x}/{y} URL to hand-fetch
+  // the way CartoDB's raster tiles allowed. Instead this drives the real
+  // map through a grid of positions at two zoom levels and waits for
+  // MapLibre's 'idle' event at each stop — the normal tile requests along
+  // the way are exactly what sw.js's opportunistic OpenFreeMap/Esri
+  // caching already stores. Same approach as Sport's Spots map.
   const OFFLINE_AREAS_KEY = 'bycatch_offline_areas';
-  const DOWNLOAD_RADIUS_KM = 12; // fixed radius per "Download this area" tap
-  const DOWNLOAD_ZOOM_LEVELS = [11, 12, 13, 14]; // enough to recognize coastline/ports without huge storage cost
+  const DOWNLOAD_RADIUS_KM = 12;
+  const DOWNLOAD_ZOOM_LEVELS = [12, 14];
 
   function lonLatToTile(lon, lat, zoom){
     const x = Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
@@ -15222,26 +15297,27 @@
     const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1/Math.cos(latRad)) / Math.PI) / 2 * Math.pow(2, zoom));
     return { x, y };
   }
-
-  function tilesForRadius(centerLat, centerLon, radiusKm, zoom){
-    // Approximate degrees-per-km at this latitude, then find the tile range
-    // covering a bounding box of that size — simpler and reliable enough
-    // for the modest zoom levels and radius used here.
+  function tileToLonLat(x, y, zoom){
+    const n = Math.pow(2, zoom);
+    const lon = x / n * 360 - 180;
+    const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2*y/n)));
+    return { lon, lat: latRad * 180 / Math.PI };
+  }
+  function tileStopsForRadius(centerLat, centerLon, radiusKm, zoom){
     const kmPerDegLat = 111;
     const kmPerDegLon = 111 * Math.cos(centerLat * Math.PI/180);
     const dLat = radiusKm / kmPerDegLat;
     const dLon = radiusKm / kmPerDegLon;
-
     const nw = lonLatToTile(centerLon - dLon, centerLat + dLat, zoom);
     const se = lonLatToTile(centerLon + dLon, centerLat - dLat, zoom);
-
-    const tiles = [];
+    const stops = [];
     for(let x = Math.min(nw.x, se.x); x <= Math.max(nw.x, se.x); x++){
       for(let y = Math.min(nw.y, se.y); y <= Math.max(nw.y, se.y); y++){
-        tiles.push({ z: zoom, x, y });
+        const c = tileToLonLat(x + 0.5, y + 0.5, zoom);
+        stops.push({ zoom, center: [c.lon, c.lat] });
       }
     }
-    return tiles;
+    return stops;
   }
 
   function loadOfflineAreas(){
@@ -15253,58 +15329,53 @@
   }
 
   async function downloadCurrentMapArea(){
-    if(!leafletInstance){
-      showToast(t('msg_open_map_first'), true);
-      return;
-    }
-    if(!('caches' in window)){
-      showToast(t('msg_offline_storage_not_supported'), true);
-      return;
-    }
-    const center = leafletInstance.getCenter();
-    let allTiles = [];
+    if(!mapInstance){ showToast(t('msg_open_map_first'), true); return; }
+    const isLive = await new Promise(resolve => checkTilesReachable(resolve));
+    if(!isLive){ showToast(t('msg_offline_mode'), true); return; }
+
+    const center = mapInstance.getCenter();
+    const originalCenter = center; const originalZoom = mapInstance.getZoom();
+    let stops = [];
     DOWNLOAD_ZOOM_LEVELS.forEach(z => {
-      allTiles = allTiles.concat(tilesForRadius(center.lat, center.lng, DOWNLOAD_RADIUS_KM, z));
+      stops = stops.concat(tileStopsForRadius(center.lat, center.lng, DOWNLOAD_RADIUS_KM, z));
     });
 
     const progressEl = document.getElementById('offlineProgress');
     progressEl.style.display = 'block';
-    progressEl.innerHTML = t('msg_downloading') + ' 0 / ' + allTiles.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" id="offlineProgressFill" style="width:0%;"></div></div>';
+    let done = 0;
+    const updateProgress = () => {
+      const pct = Math.round(done / stops.length * 100);
+      progressEl.innerHTML = t('msg_downloading') + ' ' + done + ' / ' + stops.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
+    };
+    updateProgress();
 
-    const cache = await caches.open(TILE_CACHE_NAME);
-    let done = 0, failed = 0;
-
-    // Sequential, modest concurrency to avoid hammering the tile server —
-    // OSM's usage policy expects light, considerate request patterns.
-    const CONCURRENCY = 4;
-    let cursor = 0;
-    async function worker(){
-      while(cursor < allTiles.length){
-        const tile = allTiles[cursor++];
-        const url = TILE_URL_TEMPLATE.replace('{z}', tile.z).replace('{x}', tile.x).replace('{y}', tile.y);
-        try{
-          const resp = await fetch(url);
-          if(resp.ok) await cache.put(url, resp);
-        } catch(e){ failed++; }
-        done++;
-        const pct = Math.round(done / allTiles.length * 100);
-        progressEl.innerHTML = t('msg_downloading') + ' ' + done + ' / ' + allTiles.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
-      }
+    function waitForIdle(){
+      return new Promise(resolve => {
+        const timeout = setTimeout(resolve, 4000);
+        mapInstance.once('idle', () => { clearTimeout(timeout); resolve(); });
+      });
     }
-    await Promise.all(Array.from({length: CONCURRENCY}, worker));
+
+    for(const stop of stops){
+      mapInstance.jumpTo({ center: stop.center, zoom: stop.zoom });
+      await waitForIdle();
+      done++;
+      updateProgress();
+    }
+
+    mapInstance.jumpTo({ center: originalCenter, zoom: originalZoom });
 
     const areas = loadOfflineAreas();
     areas.push({
       id: makeRecordId(),
       lat: center.lat, lon: center.lng,
       radius_km: DOWNLOAD_RADIUS_KM,
-      tile_count: allTiles.length - failed,
       downloaded_at: new Date().toISOString()
     });
     saveOfflineAreas(areas);
 
     progressEl.style.display = 'none';
-    showToast(failed === 0 ? t('msg_area_saved') : t('msg_area_saved_partial') + ' (' + failed + ' ' + t('msg_tiles_failed') + ')');
+    showToast(t('msg_area_saved'));
     renderOfflineAreasList();
   }
 
@@ -15321,7 +15392,7 @@
       const when = new Date(a.downloaded_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
       return '<div class="offline-area-entry">'
         + '<div><div class="oa-main">' + a.lat.toFixed(3) + ', ' + a.lon.toFixed(3) + '</div>'
-        + '<div class="oa-meta">±' + a.radius_km + 'km · ' + a.tile_count + ' tiles · saved ' + when + '</div></div>'
+        + '<div class="oa-meta">±' + a.radius_km + 'km · saved ' + when + '</div></div>'
         + '<button class="del" data-area-idx="'+idx+'" title="delete">×</button>'
         + '</div>';
     }).join('');
