@@ -4015,6 +4015,10 @@
   </div>
   <main>
     <!-- Map: always visible with layer toggle -->
+    <div class="map-mode-banner" id="sportMapModeBanner" style="margin-bottom:8px;">
+      <span class="mb-dot" id="sportMapModeDot"></span>
+      <span id="sportMapModeText" data-i18n="map_checking">Checking connection…</span>
+    </div>
     <div class="map-view-wrap" id="sportMapViewWrap">
       <div class="map-layer-toggle" id="sportMapLayerToggle">
         <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
@@ -4023,7 +4027,7 @@
         <button class="mlt-btn" id="sportMlt3d">3D</button>
         <button class="mlt-btn" id="sportMltCompass">Compass</button>
       </div>
-      <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden;"></div>
+      <div id="sportLeafletMap" style="height:220px; border-radius:var(--radius-lg, 18px); margin-top:8px; margin-bottom:16px; overflow:hidden; position:relative;"></div>
       <div id="sportDepthOpacityWrap" style="display:none; align-items:center; gap:8px; margin:-10px 0 14px; padding:0 4px;">
         <span style="font-size:11px; color:var(--ink-soft);" data-i18n="sp_map_depth">Depth</span>
         <input type="range" id="sportDepthOpacitySlider" min="0" max="100" value="70" style="flex:1;">
@@ -4032,6 +4036,14 @@
       <button type="button" class="map-fullscreen-btn" id="sportMapFullscreenBtn" aria-label="View fullscreen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+    </div>
+
+    <div class="insight-card" style="margin-bottom:16px;">
+      <div class="insight-card-label" data-i18n="map_offline_areas">Offline map areas</div>
+      <div class="offline-map-text" data-i18n="map_pan_zoom">Pan and zoom to your survey area, then download for offline use.</div>
+      <button class="track-toggle-btn" id="sportDownloadAreaBtn" style="margin:0;" data-i18n="map_download_area">Download this area</button>
+      <div class="offline-progress" id="sportOfflineProgress" style="display:none;"></div>
+      <div id="sportOfflineAreasList"></div>
     </div>
 
     <div class="card" id="sportAddSpotCard" style="margin-bottom:16px; display:none;">
@@ -11993,6 +12005,271 @@
   // (OSM data, no API key). Esri satellite stays as a raster layer on
   // top, toggled visible/hidden instead of swapped, so custom layers
   // (route, depth, markers) never get wiped by a style reload.
+  // ===== Offline-friendly base style (Sport) =====
+  // Decision (July 2026, confirmed with Israel before writing this): don't
+  // mix map engines. MapLibre can render a fully local style — no network
+  // needed — just as easily as it renders OpenFreeMap's vector tiles. So
+  // "online" and "offline" are two *styles* on the same maplibregl.Map
+  // instance, swapped with setStyle(). Markers, route line, and popups are
+  // untouched by the swap since they're re-added after each style load,
+  // same as the very first 'load' handler already does below.
+  //
+  // Coastline: Natural Earth 1:110m Admin-0 Countries (public domain,
+  // naturalearthdata.com), precached by the service worker (see sw.js) so
+  // it's on the device before the captain ever loses signal.
+  const OFFLINE_COASTLINE_URL = 'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_0_countries.geojson';
+
+  // Reuses the same lightweight CartoDB test tile Research/Fleet already
+  // probe with — it's only being used to answer "is there a connection at
+  // all", not "is CartoDB specifically up", so there's no need for a
+  // second sw.js exclusion rule just for OpenFreeMap.
+  const SPORT_TILE_TEST_URL = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
+  function sportCheckTilesReachable(callback){
+    if(!navigator.onLine){ callback(false); return; }
+    const testImg = new Image();
+    let settled = false;
+    const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
+    testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
+    testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
+    testImg.src = SPORT_TILE_TEST_URL + '?check=' + Date.now();
+  }
+
+  // Builds a lat/lon grid sized to whatever's currently on screen — a
+  // fixed step would either look empty when zoomed out or like solid
+  // noise when zoomed in.
+  function sportGraticuleGeoJSON(bounds){
+    const span = Math.max(bounds.getEast()-bounds.getWest(), bounds.getNorth()-bounds.getSouth());
+    let step;
+    if(span > 40) step = 10;
+    else if(span > 15) step = 5;
+    else if(span > 6) step = 2;
+    else if(span > 2.5) step = 1;
+    else if(span > 1) step = 0.5;
+    else step = 0.25;
+
+    const west = Math.floor(bounds.getWest()/step)*step - step;
+    const east = Math.ceil(bounds.getEast()/step)*step + step;
+    const south = Math.floor(bounds.getSouth()/step)*step - step;
+    const north = Math.ceil(bounds.getNorth()/step)*step + step;
+
+    const features = [];
+    for(let lon = west; lon <= east; lon += step){
+      features.push({ type:'Feature', properties:{}, geometry:{ type:'LineString', coordinates:[[lon, south],[lon, north]] } });
+    }
+    for(let lat = south; lat <= north; lat += step){
+      features.push({ type:'Feature', properties:{}, geometry:{ type:'LineString', coordinates:[[west, lat],[east, lat]] } });
+    }
+    return { type:'FeatureCollection', features };
+  }
+
+  function sportOfflineStyle(){
+    return {
+      version: 8,
+      sources: {
+        'offline-coastline': { type:'geojson', data: OFFLINE_COASTLINE_URL },
+        'offline-graticule': { type:'geojson', data: { type:'FeatureCollection', features:[] } }
+      },
+      layers: [
+        { id:'offline-bg', type:'background', paint:{ 'background-color':'#bcdcec' } },
+        { id:'offline-land', type:'fill', source:'offline-coastline', paint:{ 'fill-color':'#e9e0c4', 'fill-opacity':0.95 } },
+        { id:'offline-land-outline', type:'line', source:'offline-coastline', paint:{ 'line-color':'#c2ae7c', 'line-width':1.1 } },
+        { id:'offline-graticule', type:'line', source:'offline-graticule', paint:{ 'line-color':'#7fa9c2', 'line-width':0.75, 'line-opacity':0.7, 'line-dasharray':[2,2] } }
+      ]
+    };
+  }
+
+  // Coordinate axis labels — plain positioned HTML, not MapLibre symbol
+  // layers, so the offline style never needs glyphs (font data) precached.
+  // Same visual role as the schem-axis-label corners on Research/Fleet's
+  // schematic fallback.
+  function sportUpdateOfflineLabels(){
+    const container = document.getElementById('sportLeafletMap');
+    if(!sportMapInstance || !container) return;
+    let nw = document.getElementById('sportOfflineLabelNW');
+    let se = document.getElementById('sportOfflineLabelSE');
+    if(!nw){
+      nw = document.createElement('div');
+      nw.id = 'sportOfflineLabelNW'; nw.className = 'schem-axis-label';
+      nw.style.cssText = 'top:6px; left:8px; background:rgba(255,255,255,0.75); padding:2px 5px; border-radius:4px;';
+      container.appendChild(nw);
+    }
+    if(!se){
+      se = document.createElement('div');
+      se.id = 'sportOfflineLabelSE'; se.className = 'schem-axis-label';
+      se.style.cssText = 'bottom:6px; right:8px; background:rgba(255,255,255,0.75); padding:2px 5px; border-radius:4px;';
+      container.appendChild(se);
+    }
+    const b = sportMapInstance.getBounds();
+    nw.textContent = b.getNorth().toFixed(2) + '°, ' + b.getWest().toFixed(2) + '°';
+    se.textContent = b.getSouth().toFixed(2) + '°, ' + b.getEast().toFixed(2) + '°';
+    nw.style.display = 'block'; se.style.display = 'block';
+  }
+  function sportHideOfflineLabels(){
+    const nw = document.getElementById('sportOfflineLabelNW');
+    const se = document.getElementById('sportOfflineLabelSE');
+    if(nw) nw.style.display = 'none';
+    if(se) se.style.display = 'none';
+  }
+
+  let sportMapIsOnline = null; // null = not checked yet
+  function sportRefreshGraticule(){
+    if(!sportMapInstance || sportMapIsOnline !== false) return;
+    const src = sportMapInstance.getSource('offline-graticule');
+    if(src) src.setData(sportGraticuleGeoJSON(sportMapInstance.getBounds()));
+    sportUpdateOfflineLabels();
+  }
+
+  function setSportMapMode(isLive){
+    const banner = document.getElementById('sportMapModeBanner');
+    const bannerText = document.getElementById('sportMapModeText');
+    const changed = sportMapIsOnline !== isLive;
+    sportMapIsOnline = isLive;
+    banner.className = 'map-mode-banner ' + (isLive ? 'live' : 'offline');
+    bannerText.textContent = isLive ? t('msg_live_map') : t('msg_offline_mode');
+    document.getElementById('sportMapLayerToggle').style.display = isLive ? 'flex' : 'none';
+
+    if(!sportMapInstance || !changed) return;
+    sportMapInstance.setStyle(isLive ? 'https://tiles.openfreemap.org/styles/liberty' : sportOfflineStyle());
+    sportMapInstance.once('styledata', () => {
+      ensureSportMapLayers();
+      if(isLive) sportHideOfflineLabels(); else sportRefreshGraticule();
+      renderSportSpotsMapContent();
+    });
+  }
+
+  // ===== Download this area (Sport) =====
+  // Vector tiles aren't a single-file-per-{z}/{x}/{y} fetch the way
+  // CartoDB's raster tiles are for Research — OpenFreeMap resolves its
+  // style to a TileJSON first, so hand-computing .pbf URLs here would
+  // duplicate (and risk drifting from) MapLibre's own resolution logic.
+  // Instead this drives the *real* map through a grid of positions at a
+  // couple of zoom levels and waits for MapLibre's 'idle' event at each
+  // stop — the normal tile requests that happen along the way are exactly
+  // what the service worker's opportunistic OpenFreeMap/Esri caching
+  // (sw.js) already stores. Two zoom levels — an overview and one working
+  // zoom — keeps this from silently downloading an unbounded amount of
+  // data onto someone's phone.
+  const SPORT_DOWNLOAD_RADIUS_KM = 12;
+  const SPORT_DOWNLOAD_ZOOM_LEVELS = [12, 14];
+  const SPORT_OFFLINE_AREAS_KEY = 'bycatch_sport_offline_areas';
+
+  function sportLonLatToTile(lon, lat, zoom){
+    const x = Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+    const latRad = lat * Math.PI / 180;
+    const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1/Math.cos(latRad)) / Math.PI) / 2 * Math.pow(2, zoom));
+    return { x, y };
+  }
+  function sportTileToLonLat(x, y, zoom){
+    const n = Math.pow(2, zoom);
+    const lon = x / n * 360 - 180;
+    const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2*y/n)));
+    return { lon, lat: latRad * 180 / Math.PI };
+  }
+  function sportTileStopsForRadius(centerLat, centerLon, radiusKm, zoom){
+    const kmPerDegLat = 111;
+    const kmPerDegLon = 111 * Math.cos(centerLat * Math.PI/180);
+    const dLat = radiusKm / kmPerDegLat;
+    const dLon = radiusKm / kmPerDegLon;
+    const nw = sportLonLatToTile(centerLon - dLon, centerLat + dLat, zoom);
+    const se = sportLonLatToTile(centerLon + dLon, centerLat - dLat, zoom);
+    const stops = [];
+    for(let x = Math.min(nw.x, se.x); x <= Math.max(nw.x, se.x); x++){
+      for(let y = Math.min(nw.y, se.y); y <= Math.max(nw.y, se.y); y++){
+        const c = sportTileToLonLat(x + 0.5, y + 0.5, zoom);
+        stops.push({ zoom, center: [c.lon, c.lat] });
+      }
+    }
+    return stops;
+  }
+
+  function sportLoadOfflineAreas(){
+    try{ return JSON.parse(localStorage.getItem(SPORT_OFFLINE_AREAS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function sportSaveOfflineAreas(list){
+    localStorage.setItem(SPORT_OFFLINE_AREAS_KEY, JSON.stringify(list));
+  }
+  function sportRenderOfflineAreasList(){
+    const areas = sportLoadOfflineAreas();
+    const listEl = document.getElementById('sportOfflineAreasList');
+    if(!listEl) return;
+    if(areas.length === 0){ listEl.innerHTML = ''; return; }
+    listEl.innerHTML = areas.map((a, idx) => {
+      const when = new Date(a.downloaded_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
+      return '<div class="offline-area-entry">'
+        + '<div><div class="oa-main">' + a.lat.toFixed(3) + ', ' + a.lon.toFixed(3) + '</div>'
+        + '<div class="oa-meta">±' + a.radius_km + 'km · saved ' + when + '</div></div>'
+        + '<button class="del" data-sport-area-idx="'+idx+'" title="delete">×</button>'
+        + '</div>';
+    }).join('');
+  }
+
+  async function sportDownloadCurrentMapArea(){
+    if(!sportMapInstance){ showSportToast(t('msg_open_map_first'), true); return; }
+    if(sportMapIsOnline === false){ showSportToast(t('msg_offline_mode'), true); return; }
+
+    const center = sportMapInstance.getCenter();
+    const originalCenter = center; const originalZoom = sportMapInstance.getZoom();
+    let stops = [];
+    SPORT_DOWNLOAD_ZOOM_LEVELS.forEach(z => {
+      stops = stops.concat(sportTileStopsForRadius(center.lat, center.lng, SPORT_DOWNLOAD_RADIUS_KM, z));
+    });
+
+    const progressEl = document.getElementById('sportOfflineProgress');
+    progressEl.style.display = 'block';
+    let done = 0;
+    const updateProgress = () => {
+      const pct = Math.round(done / stops.length * 100);
+      progressEl.innerHTML = t('msg_downloading') + ' ' + done + ' / ' + stops.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
+    };
+    updateProgress();
+
+    function waitForIdle(){
+      return new Promise(resolve => {
+        const timeout = setTimeout(resolve, 4000); // don't hang forever on a dropped connection mid-download
+        sportMapInstance.once('idle', () => { clearTimeout(timeout); resolve(); });
+      });
+    }
+
+    for(const stop of stops){
+      sportMapInstance.jumpTo({ center: stop.center, zoom: stop.zoom });
+      await waitForIdle();
+      done++;
+      updateProgress();
+    }
+
+    sportMapInstance.jumpTo({ center: originalCenter, zoom: originalZoom });
+
+    const areas = sportLoadOfflineAreas();
+    areas.push({
+      id: 'sport_area_' + Date.now(),
+      lat: center.lat, lon: center.lng,
+      radius_km: SPORT_DOWNLOAD_RADIUS_KM,
+      downloaded_at: new Date().toISOString()
+    });
+    sportSaveOfflineAreas(areas);
+
+    progressEl.style.display = 'none';
+    showSportToast(t('msg_area_saved'));
+    sportRenderOfflineAreasList();
+  }
+  document.getElementById('sportDownloadAreaBtn').addEventListener('click', sportDownloadCurrentMapArea);
+  document.getElementById('sportOfflineAreasList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.del');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.sportAreaIdx, 10);
+    const areas = sportLoadOfflineAreas();
+    areas.splice(idx, 1);
+    sportSaveOfflineAreas(areas);
+    sportRenderOfflineAreasList();
+    showSportToast(t('msg_offline_area_removed'));
+  });
+
+  // If a signal comes back mid-session (or drops), reflect it without
+  // waiting for the person to leave and re-open the Spots screen.
+  window.addEventListener('online', () => sportCheckTilesReachable(setSportMapMode));
+  window.addEventListener('offline', () => setSportMapMode(false));
+
   let sportMapInstance = null;
   let sportMarkers = [];
   const SPORT_MAP_DEFAULT_CENTER = [100.52, 13.75]; // [lng, lat]
@@ -12173,22 +12450,35 @@
   }
 
   function renderSportSpotsMap(){
-    if(!sportMapInstance){
-      sportMapInstance = new maplibregl.Map({
-        container: 'sportLeafletMap',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: SPORT_MAP_DEFAULT_CENTER,
-        zoom: 10,
-        attributionControl: { compact: true }
-      });
-      sportMapInstance.on('load', () => {
-        ensureSportMapLayers();
-        sportMapInstance.on('moveend', refreshSportCurrentIndicator);
-        renderSportSpotsMapContent();
-      });
-      return;
-    }
-    renderSportSpotsMapContent();
+    sportCheckTilesReachable((isLive) => {
+      if(!sportMapInstance){
+        sportMapIsOnline = isLive;
+        const banner = document.getElementById('sportMapModeBanner');
+        const bannerText = document.getElementById('sportMapModeText');
+        banner.className = 'map-mode-banner ' + (isLive ? 'live' : 'offline');
+        bannerText.textContent = isLive ? t('msg_live_map') : t('msg_offline_mode');
+        document.getElementById('sportMapLayerToggle').style.display = isLive ? 'flex' : 'none';
+
+        sportMapInstance = new maplibregl.Map({
+          container: 'sportLeafletMap',
+          style: isLive ? 'https://tiles.openfreemap.org/styles/liberty' : sportOfflineStyle(),
+          center: SPORT_MAP_DEFAULT_CENTER,
+          zoom: 10,
+          attributionControl: { compact: true }
+        });
+        sportMapInstance.on('load', () => {
+          ensureSportMapLayers();
+          if(!isLive) sportRefreshGraticule();
+          sportMapInstance.on('moveend', refreshSportCurrentIndicator);
+          sportMapInstance.on('moveend', sportRefreshGraticule);
+          renderSportSpotsMapContent();
+        });
+        return;
+      }
+      setSportMapMode(isLive);
+      renderSportSpotsMapContent();
+    });
+    sportRenderOfflineAreasList();
   }
 
   function renderSportSpotsMapContent(){
