@@ -12314,8 +12314,33 @@
 
   // If a signal comes back mid-session (or drops), reflect it without
   // waiting for the person to leave and re-open the Spots screen.
-  window.addEventListener('online', () => renderSportSpotsMap());
-  window.addEventListener('offline', () => { setSportMapMode(false); renderSportSchematic(); });
+  // iOS Safari is known to fire 'online'/'offline' unreliably (especially
+  // for standalone home-screen apps), so those events alone aren't a safe
+  // way to detect a signal coming back — someone could sit there with a
+  // banner stuck on "offline" long after they actually have signal again.
+  // Active polling doesn't depend on the browser telling us anything.
+  let sportLastKnownOnline = null;
+  function sportIsSpotsScreenVisible(){
+    const el = document.getElementById('sportMapModeBanner');
+    return !!(el && el.offsetParent !== null);
+  }
+  function sportPollConnectivity(){
+    if(!sportIsSpotsScreenVisible()) return; // don't bother re-checking a screen nobody's looking at
+    sportCheckTilesReachable((isLive) => {
+      if(sportLastKnownOnline === isLive) return;
+      sportLastKnownOnline = isLive;
+      renderSportSpotsMap();
+    });
+  }
+  setInterval(sportPollConnectivity, 15000);
+  window.addEventListener('online', sportPollConnectivity);
+  window.addEventListener('offline', sportPollConnectivity);
+  // Manual override — tap the banner to force an immediate re-check
+  // instead of waiting up to 15s for the next automatic poll.
+  document.getElementById('sportMapModeBanner').addEventListener('click', () => {
+    sportLastKnownOnline = null; // force renderSportSpotsMap to treat this as a state change
+    renderSportSpotsMap();
+  });
 
   let sportMapInstance = null;
   let sportMarkers = [];
@@ -12498,6 +12523,7 @@
 
   function renderSportSpotsMap(){
     sportCheckTilesReachable((isLive) => {
+      sportLastKnownOnline = isLive;
       setSportMapMode(isLive);
       if(isLive){
         if(!sportMapInstance){
