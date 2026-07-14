@@ -12062,20 +12062,51 @@
     return { type:'FeatureCollection', features };
   }
 
-  function sportOfflineStyle(){
-    return {
-      version: 8,
-      sources: {
-        'offline-coastline': { type:'geojson', data: OFFLINE_COASTLINE_URL },
-        'offline-graticule': { type:'geojson', data: { type:'FeatureCollection', features:[] } }
-      },
-      layers: [
-        { id:'offline-bg', type:'background', paint:{ 'background-color':'#bcdcec' } },
-        { id:'offline-land', type:'fill', source:'offline-coastline', paint:{ 'fill-color':'#e9e0c4', 'fill-opacity':0.95 } },
-        { id:'offline-land-outline', type:'line', source:'offline-coastline', paint:{ 'line-color':'#c2ae7c', 'line-width':1.1 } },
-        { id:'offline-graticule', type:'line', source:'offline-graticule', paint:{ 'line-color':'#7fa9c2', 'line-width':0.75, 'line-opacity':0.7, 'line-dasharray':[2,2] } }
-      ]
+  // Fetch the coastline data ourselves, with a hard timeout, instead of
+  // handing MapLibre a source URL to resolve internally. If that fetch
+  // stalls (no cache entry yet, flaky connection, whatever) a MapLibre
+  // source can leave the whole style in limbo — nothing paints, not even
+  // the background, which is what turned into a totally blank map on one
+  // iPhone during testing. This way the essential offline map (background
+  // + graticule + coordinates — exactly as reliable as Research's
+  // schematic fallback) NEVER waits on the coastline; the coastline is a
+  // bonus layered on top only when it actually shows up in time.
+  let sportCoastlineData = null;
+  let sportCoastlineFetchDone = false;
+  function sportFetchCoastline(callback){
+    if(sportCoastlineData){ callback(sportCoastlineData); return; }
+    if(sportCoastlineFetchDone){ callback(null); return; }
+    let settled = false;
+    const timer = setTimeout(() => { if(!settled){ settled = true; sportCoastlineFetchDone = true; callback(null); } }, 3000);
+    fetch(OFFLINE_COASTLINE_URL)
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('bad response')))
+      .then(data => {
+        if(settled) return;
+        settled = true; clearTimeout(timer);
+        sportCoastlineData = data; sportCoastlineFetchDone = true;
+        callback(data);
+      })
+      .catch(() => {
+        if(settled) return;
+        settled = true; clearTimeout(timer); sportCoastlineFetchDone = true;
+        callback(null);
+      });
+  }
+
+  function sportOfflineStyle(coastlineData){
+    const sources = {
+      'offline-graticule': { type:'geojson', data: { type:'FeatureCollection', features:[] } }
     };
+    const layers = [
+      { id:'offline-bg', type:'background', paint:{ 'background-color':'#bcdcec' } }
+    ];
+    if(coastlineData){
+      sources['offline-coastline'] = { type:'geojson', data: coastlineData };
+      layers.push({ id:'offline-land', type:'fill', source:'offline-coastline', paint:{ 'fill-color':'#e9e0c4', 'fill-opacity':0.95 } });
+      layers.push({ id:'offline-land-outline', type:'line', source:'offline-coastline', paint:{ 'line-color':'#c2ae7c', 'line-width':1.1 } });
+    }
+    layers.push({ id:'offline-graticule', type:'line', source:'offline-graticule', paint:{ 'line-color':'#5f8fa8', 'line-width':1, 'line-opacity':0.85 } });
+    return { version: 8, sources, layers };
   }
 
   // Coordinate axis labels — plain positioned HTML, not MapLibre symbol
@@ -12135,15 +12166,26 @@
     document.getElementById('sportMapLayerToggle').style.display = isLive ? 'flex' : 'none';
 
     if(!sportMapInstance || !changed) return;
-    sportMapInstance.setStyle(isLive ? 'https://tiles.openfreemap.org/styles/liberty' : sportOfflineStyle());
-    // 'styledata' can fire several times mid-transition, sometimes before
-    // the new style's sources are actually registered — 'idle' only fires
-    // once the style AND its sources have fully settled, which is what we
-    // actually need before pushing graticule data or re-adding layers.
-    sportMapInstance.once('idle', () => {
-      ensureSportMapLayers();
-      if(isLive) sportHideOfflineLabels(); else sportRefreshGraticule();
-      renderSportSpotsMapContent();
+    if(isLive){
+      sportMapInstance.setStyle('https://tiles.openfreemap.org/styles/liberty');
+      sportMapInstance.once('idle', () => {
+        ensureSportMapLayers();
+        sportHideOfflineLabels();
+        renderSportSpotsMapContent();
+      });
+      return;
+    }
+    sportFetchCoastline((coastlineData) => {
+      sportMapInstance.setStyle(sportOfflineStyle(coastlineData));
+      // 'styledata' can fire several times mid-transition, sometimes before
+      // the new style's sources are actually registered — 'idle' only fires
+      // once the style AND its sources have fully settled, which is what we
+      // actually need before pushing graticule data or re-adding layers.
+      sportMapInstance.once('idle', () => {
+        ensureSportMapLayers();
+        sportRefreshGraticule();
+        renderSportSpotsMapContent();
+      });
     });
   }
 
@@ -12469,23 +12511,35 @@
         bannerText.textContent = isLive ? t('msg_live_map') : t('msg_offline_mode');
         document.getElementById('sportMapLayerToggle').style.display = isLive ? 'flex' : 'none';
 
-        sportMapInstance = new maplibregl.Map({
-          container: 'sportLeafletMap',
-          style: isLive ? 'https://tiles.openfreemap.org/styles/liberty' : sportOfflineStyle(),
-          center: SPORT_MAP_DEFAULT_CENTER,
-          zoom: 10,
-          attributionControl: { compact: true }
-        });
-        sportMapInstance.on('load', () => {
-          ensureSportMapLayers();
-          if(!isLive) sportRefreshGraticule();
-          sportMapInstance.on('moveend', refreshSportCurrentIndicator);
-          sportMapInstance.on('moveend', sportRefreshGraticule);
-          renderSportSpotsMapContent();
-        });
-        // Safety net: if the very first paint raced ahead of the
-        // graticule source being ready, this catches it once things settle.
-        if(!isLive) sportMapInstance.once('idle', sportRefreshGraticule);
+        const createMap = (styleForMap) => {
+          sportMapInstance = new maplibregl.Map({
+            container: 'sportLeafletMap',
+            style: styleForMap,
+            center: SPORT_MAP_DEFAULT_CENTER,
+            zoom: 10,
+            attributionControl: { compact: true }
+          });
+          sportMapInstance.on('load', () => {
+            ensureSportMapLayers();
+            if(!isLive) sportRefreshGraticule();
+            sportMapInstance.on('moveend', refreshSportCurrentIndicator);
+            sportMapInstance.on('moveend', sportRefreshGraticule);
+            renderSportSpotsMapContent();
+          });
+          // Safety net: if the very first paint raced ahead of the
+          // graticule source being ready, this catches it once things settle.
+          if(!isLive) sportMapInstance.once('idle', sportRefreshGraticule);
+        };
+
+        if(isLive){
+          createMap('https://tiles.openfreemap.org/styles/liberty');
+        } else {
+          // Resolve (or time out on) the coastline BEFORE the map is ever
+          // constructed, so the map's very first style is already whatever
+          // we're going to show — no mid-flight setStyle needed on first
+          // load, and nothing for MapLibre to wait on internally.
+          sportFetchCoastline((coastlineData) => createMap(sportOfflineStyle(coastlineData)));
+        }
         return;
       }
       setSportMapMode(isLive);
