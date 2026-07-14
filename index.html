@@ -10154,8 +10154,18 @@
     fleetMapMarkers.forEach(m => m.remove());
     fleetMapMarkers = [];
     if(hauls.length === 0){
-      fleetMapInstance.jumpTo({ center: FLEET_MAP_DEFAULT_CENTER, zoom: 6 });
-      setTimeout(()=>fleetMapInstance.resize(),50);
+      // No hauls logged for this trip yet — center on the captain's
+      // actual position instead of a fixed fallback point, same as
+      // Sport's Spots map already does.
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(
+          pos => { fleetMapInstance.jumpTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 11 }); setTimeout(()=>fleetMapInstance.resize(),50); },
+          () => { fleetMapInstance.jumpTo({ center: FLEET_MAP_DEFAULT_CENTER, zoom: 6 }); setTimeout(()=>fleetMapInstance.resize(),50); }
+        );
+      } else {
+        fleetMapInstance.jumpTo({ center: FLEET_MAP_DEFAULT_CENTER, zoom: 6 });
+        setTimeout(()=>fleetMapInstance.resize(),50);
+      }
       return;
     }
     const boundsPts = [];
@@ -14519,8 +14529,15 @@
     mapMarkers.forEach(m => m.remove());
     mapMarkers = [];
     if(points.length === 0){
-      mapInstance.jumpTo({ center: RESEARCH_MAP_DEFAULT_CENTER, zoom: 6 });
-      setTimeout(()=>mapInstance.resize(),50);
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(
+          pos => { mapInstance.jumpTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 11 }); setTimeout(()=>mapInstance.resize(),50); },
+          () => { mapInstance.jumpTo({ center: RESEARCH_MAP_DEFAULT_CENTER, zoom: 6 }); setTimeout(()=>mapInstance.resize(),50); }
+        );
+      } else {
+        mapInstance.jumpTo({ center: RESEARCH_MAP_DEFAULT_CENTER, zoom: 6 });
+        setTimeout(()=>mapInstance.resize(),50);
+      }
       return;
     }
     const boundsPts = [];
