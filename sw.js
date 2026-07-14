@@ -1,6 +1,6 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v6';
+const CACHE_NAME = 'bycatch-log-v7';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -12,7 +12,15 @@ const APP_SHELL = [
   // or after ~7 days unused). Bump CACHE_NAME above if these version
   // pins ever change, so returning clients pick up the new pin.
   'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js',
-  'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css'
+  'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css',
+  // Offline base-map coastline (Sport's "offline style" fallback — see
+  // OFFLINE_COASTLINE_URL in index.html). Natural Earth 1:110m Admin-0
+  // Countries, public domain (naturalearthdata.com), mirrored through
+  // jsDelivr's GitHub CDN. Precached here — not left to the opportunistic
+  // OpenFreeMap/Esri handlers below — so the offline map looks right even
+  // the very first time a captain opens the app with no signal, as long
+  // as the app itself was installed/opened online at least once.
+  'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_0_countries.geojson'
 ];
 
 self.addEventListener('install', (event) => {
@@ -111,6 +119,19 @@ self.addEventListener('fetch', (event) => {
       }).catch(() =>
         caches.open(VECTOR_TILE_CACHE_NAME).then((cache) => cache.match(event.request))
       )
+    );
+    return;
+  }
+
+  // Offline coastline data (Sport's offline-style fallback). Precached in
+  // APP_SHELL above, so this is network-first-with-cache-fallback rather
+  // than opportunistic — the file basically never changes (it's a static
+  // public-domain dataset), so there's no "fetch fresh tiles" pressure
+  // like the map-tile branches above.
+  const isOfflineCoastline = url.hostname.endsWith('cdn.jsdelivr.net') && url.pathname.includes('natural-earth-vector');
+  if (isOfflineCoastline) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
     );
     return;
   }
