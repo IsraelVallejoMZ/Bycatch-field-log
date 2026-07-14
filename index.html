@@ -12115,8 +12115,14 @@
   function sportRefreshGraticule(){
     if(!sportMapInstance || sportMapIsOnline !== false) return;
     const src = sportMapInstance.getSource('offline-graticule');
-    if(src) src.setData(sportGraticuleGeoJSON(sportMapInstance.getBounds()));
-    sportUpdateOfflineLabels();
+    if(src){
+      src.setData(sportGraticuleGeoJSON(sportMapInstance.getBounds()));
+      sportUpdateOfflineLabels();
+    } else {
+      // Source not registered yet (style swap still settling) — try again
+      // shortly rather than silently leaving the grid empty forever.
+      setTimeout(sportRefreshGraticule, 200);
+    }
   }
 
   function setSportMapMode(isLive){
@@ -12130,7 +12136,11 @@
 
     if(!sportMapInstance || !changed) return;
     sportMapInstance.setStyle(isLive ? 'https://tiles.openfreemap.org/styles/liberty' : sportOfflineStyle());
-    sportMapInstance.once('styledata', () => {
+    // 'styledata' can fire several times mid-transition, sometimes before
+    // the new style's sources are actually registered — 'idle' only fires
+    // once the style AND its sources have fully settled, which is what we
+    // actually need before pushing graticule data or re-adding layers.
+    sportMapInstance.once('idle', () => {
       ensureSportMapLayers();
       if(isLive) sportHideOfflineLabels(); else sportRefreshGraticule();
       renderSportSpotsMapContent();
@@ -12473,6 +12483,9 @@
           sportMapInstance.on('moveend', sportRefreshGraticule);
           renderSportSpotsMapContent();
         });
+        // Safety net: if the very first paint raced ahead of the
+        // graticule source being ready, this catches it once things settle.
+        if(!isLive) sportMapInstance.once('idle', sportRefreshGraticule);
         return;
       }
       setSportMapMode(isLive);
