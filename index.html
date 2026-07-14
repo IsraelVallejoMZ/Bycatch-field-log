@@ -12029,17 +12029,37 @@
     testImg.src = SPORT_TILE_TEST_URL + '?check=' + Date.now();
   }
 
-  function renderSportSchematic(){
+  // Coastline is fetched independently — plain fetch(), zero library
+  // dependency, drawn as inline SVG paths using the exact same lon/lat
+  // projection as the points below. If it's slow or fails, the base
+  // schematic (grid position + coordinates) already rendered and is
+  // completely unaffected — this only ever adds on top, never blocks.
+  const OFFLINE_COASTLINE_URL = 'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_0_countries.geojson';
+  let sportCoastlineData = null;
+  let sportCoastlineFetchDone = false;
+  function sportFetchCoastline(callback){
+    if(sportCoastlineData){ callback(sportCoastlineData); return; }
+    if(sportCoastlineFetchDone){ callback(null); return; }
+    let settled = false;
+    const timer = setTimeout(() => { if(!settled){ settled = true; sportCoastlineFetchDone = true; callback(null); } }, 4000);
+    fetch(OFFLINE_COASTLINE_URL)
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('bad response')))
+      .then(data => {
+        if(settled) return;
+        settled = true; clearTimeout(timer);
+        sportCoastlineData = data; sportCoastlineFetchDone = true;
+        callback(data);
+      })
+      .catch(() => {
+        if(settled) return;
+        settled = true; clearTimeout(timer); sportCoastlineFetchDone = true;
+        callback(null);
+      });
+  }
+
+  function sportDrawSchematic(points, coastlineData){
     const wrap = document.getElementById('sportSchematicMap');
     wrap.innerHTML = '';
-
-    const spots = load(SPOTS_KEY).filter(s => s.lat !== '' && s.lat != null);
-    const activeSession = getActiveSession();
-    const liveFix = (activeSession && Array.isArray(activeSession.route) && activeSession.route.length > 0)
-      ? activeSession.route[activeSession.route.length - 1] : null;
-
-    const points = spots.map(s => ({ lat: parseFloat(s.lat), lon: parseFloat(s.lon), name: s.name, live: false }));
-    if(liveFix) points.push({ lat: liveFix.lat, lon: liveFix.lon, name: t('sp_current_label') || 'Current position', live: true });
 
     if(points.length === 0){
       wrap.innerHTML = '<div class="schem-empty">No spots or GPS position yet.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
@@ -12049,17 +12069,44 @@
     const lats = points.map(p => p.lat), lons = points.map(p => p.lon);
     let minLat = Math.min(...lats), maxLat = Math.max(...lats);
     let minLon = Math.min(...lons), maxLon = Math.max(...lons);
-    const padLat = Math.max((maxLat - minLat) * 0.2, 0.01);
-    const padLon = Math.max((maxLon - minLon) * 0.2, 0.01);
+    // A single point (just a GPS fix, no saved spots) would otherwise pad
+    // out to a near-zero span — widen that case so there's actually a
+    // chance of seeing nearby coastline, not just a blank close-up of water.
+    const padLat = Math.max((maxLat - minLat) * 0.2, 0.25);
+    const padLon = Math.max((maxLon - minLon) * 0.2, 0.25);
     minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
 
     const w = wrap.clientWidth || 300, h = wrap.clientHeight || 220;
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
+    const proj = (lon, lat) => [
+      ((lon - minLon) / (maxLon - minLon)) * (w - 40) + 20,
+      h - (((lat - minLat) / (maxLat - minLat)) * (h - 40) + 20)
+    ];
+
+    if(coastlineData){
+      const group = document.createElementNS(svgNS, 'g');
+      (coastlineData.features || []).forEach(f => {
+        const bbox = f.bbox;
+        if(bbox && (bbox[2] < minLon || bbox[0] > maxLon || bbox[3] < minLat || bbox[1] > maxLat)) return;
+        const geom = f.geometry;
+        if(!geom) return;
+        const polys = geom.type === 'Polygon' ? [geom.coordinates] : (geom.type === 'MultiPolygon' ? geom.coordinates : []);
+        polys.forEach(rings => {
+          const d = rings.map(ring => 'M ' + ring.map(([lon, lat]) => proj(lon, lat).join(',')).join(' L ') + ' Z').join(' ');
+          const path = document.createElementNS(svgNS, 'path');
+          path.setAttribute('d', d);
+          path.setAttribute('fill', '#e9e0c4');
+          path.setAttribute('stroke', '#c2ae7c');
+          path.setAttribute('stroke-width', '1');
+          group.appendChild(path);
+        });
+      });
+      svg.appendChild(group);
+    }
 
     points.forEach(p => {
-      const x = ((p.lon - minLon) / (maxLon - minLon)) * (w - 40) + 20;
-      const y = h - (((p.lat - minLat) / (maxLat - minLat)) * (h - 40) + 20);
+      const [x, y] = proj(p.lon, p.lat);
       const circle = document.createElementNS(svgNS, 'circle');
       circle.setAttribute('cx', x);
       circle.setAttribute('cy', y);
@@ -12086,6 +12133,44 @@
     seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
     seLabel.textContent = minLat.toFixed(3) + '°, ' + maxLon.toFixed(3) + '°';
     wrap.appendChild(seLabel);
+  }
+
+  function renderSportSchematic(){
+    const spots = load(SPOTS_KEY).filter(s => s.lat !== '' && s.lat != null);
+    const points = spots.map(s => ({ lat: parseFloat(s.lat), lon: parseFloat(s.lon), name: s.name, live: false }));
+
+    function finish(livePoint){
+      if(livePoint) points.push(livePoint);
+      sportDrawSchematic(points, sportCoastlineData);
+      // Coastline arrives independently and never blocks the base draw
+      // above — if it lands (or was already cached) while we're still
+      // looking at this screen, redraw once more with it layered in.
+      if(!sportCoastlineData){
+        sportFetchCoastline((data) => {
+          if(data && document.getElementById('sportSchematicMap').style.display !== 'none'){
+            sportDrawSchematic(points, data);
+          }
+        });
+      }
+    }
+
+    const activeSession = getActiveSession();
+    if(activeSession && Array.isArray(activeSession.route) && activeSession.route.length > 0){
+      const last = activeSession.route[activeSession.route.length - 1];
+      finish({ lat: last.lat, lon: last.lon, name: t('sp_current_label'), live: true });
+      return;
+    }
+    if(navigator.geolocation){
+      let settled = false;
+      const timer = setTimeout(() => { if(!settled){ settled = true; finish(null); } }, 3500);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => { if(settled) return; settled = true; clearTimeout(timer); finish({ lat: pos.coords.latitude, lon: pos.coords.longitude, name: t('sp_current_label'), live: true }); },
+        () => { if(settled) return; settled = true; clearTimeout(timer); finish(null); },
+        { maximumAge: 60000, timeout: 3000 }
+      );
+    } else {
+      finish(null);
+    }
   }
 
   function setSportMapMode(isLive){
