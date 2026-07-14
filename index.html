@@ -3259,14 +3259,29 @@
         <button class="mlt-btn active" id="fleetMltStreet" data-i18n="map_street">Street</button>
         <button class="mlt-btn" id="fleetMltSatellite" data-i18n="map_satellite">Satellite</button>
         <button class="mlt-btn" id="fleetMltDepth" data-i18n="sp_map_depth">Depth</button>
+        <button class="mlt-btn" id="fleetMlt3d">3D</button>
+        <button class="mlt-btn" id="fleetMltCompass">Compass</button>
+      </div>
+      <div id="fleetMapDepthOpacityWrap" style="display:none; align-items:center; gap:8px; margin:6px 0 0; padding:0 4px;">
+        <span style="font-size:11px; color:var(--ink-soft);" data-i18n="sp_map_depth">Depth</span>
+        <input type="range" id="fleetMapDepthOpacitySlider" min="0" max="100" value="65" style="flex:1;">
+        <span style="font-size:11px; color:var(--ink-soft); min-width:32px; text-align:right;" id="fleetMapDepthOpacityVal">65%</span>
       </div>
 
-      <div id="fleetLeafletMap"></div>
+      <div id="fleetLeafletMap" style="position:relative;"></div>
       <div class="schematic-wrap" id="fleetSchematicMap" style="display:none;"></div>
 
       <button type="button" class="map-fullscreen-btn" id="fleetMapFullscreenBtn" aria-label="View fullscreen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+    </div>
+
+    <div class="insight-card" style="margin-top:10px;">
+      <div class="insight-card-label" data-i18n="map_offline_areas">Offline map areas</div>
+      <div class="offline-map-text" data-i18n="map_pan_zoom">Pan and zoom to your survey area, then download for offline use.</div>
+      <button class="track-toggle-btn" id="fleetDownloadAreaBtn" style="margin:0;" data-i18n="map_download_area">Download this area</button>
+      <div class="offline-progress" id="fleetOfflineProgress" style="display:none;"></div>
+      <div id="fleetOfflineAreasList"></div>
     </div>
 
     <div class="section-h" data-i18n="flhaulmap_no_gps">Hauls Without GPS</div>
@@ -9912,10 +9927,8 @@
   // opened from Trip Detail for a closed trip).
   let fleetMapTripId = null;
   let fleetMapReturnScreen = 'trip';
-  let fleetLeafletInstance = null;
-  let fleetMapCurrentLayer = 'street'; // 'street' | 'satellite'
-  let fleetStreetLayer = null;
-  let fleetSatelliteLayer = null;
+  let fleetMapInstance = null;
+  const FLEET_MAP_DEFAULT_CENTER = [99.5, 10.5]; // [lng, lat] — rough Thailand coast default
 
   document.getElementById('fleetViewMapBtn').addEventListener('click', () => {
     const trip = getActiveTrip();
@@ -9931,6 +9944,9 @@
   });
   document.getElementById('fleetMapBackBtn').addEventListener('click', () => fleetGoTo(fleetMapReturnScreen));
 
+  // iOS Safari fires 'online'/'offline' unreliably — active polling
+  // (see fleetMapPollConnectivity below) is the primary detection mechanism.
+  const FLEET_TILE_TEST_URL = 'https://a.basemaps.cartocdn.com/rastertiles/voyager/0/0/0.png';
   function fleetCheckTilesReachable(callback){
     if(!navigator.onLine){ callback(false); return; }
     const testImg = new Image();
@@ -9938,9 +9954,156 @@
     const timer = setTimeout(()=>{ if(!settled){ settled = true; callback(false); } }, 2500);
     testImg.onload = () => { if(!settled){ settled = true; clearTimeout(timer); callback(true); } };
     testImg.onerror = () => { if(!settled){ settled = true; clearTimeout(timer); callback(false); } };
-    testImg.src = TILE_TEST_URL + '?check=' + Date.now();
+    testImg.src = FLEET_TILE_TEST_URL + '?check=' + Date.now();
   }
 
+  const FLEET_ESRI_SATELLITE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  const FLEET_ESRI_ATTRIBUTION = 'Tiles © Esri — Source: Esri, USGS, NOAA';
+
+  function ensureFleetMapLayers(){
+    if(fleetMapInstance.getSource('fleet-satellite-src')) return;
+    fleetMapInstance.addSource('fleet-satellite-src', { type:'raster', tiles:[FLEET_ESRI_SATELLITE_URL], tileSize:256, attribution: FLEET_ESRI_ATTRIBUTION });
+    fleetMapInstance.addLayer({ id:'fleet-satellite-layer', type:'raster', source:'fleet-satellite-src', layout:{ visibility:'none' } });
+
+    fleetMapInstance.addSource('fleet-gebco-src', {
+      type:'raster', tileSize:256, attribution:'GEBCO Compilation Group',
+      tiles:['https://wms.gebco.net/mapserv?service=WMS&version=1.3.0&request=GetMap&layers=GEBCO_LATEST_2&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
+    });
+    fleetMapInstance.addLayer({ id:'fleet-gebco-layer', type:'raster', source:'fleet-gebco-src', paint:{ 'raster-opacity':0.65 }, layout:{ visibility:'none' } });
+
+    fleetMapInstance.addSource('fleet-emodnet-src', {
+      type:'raster', tileSize:256, attribution:'EMODnet Bathymetry',
+      tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
+    });
+    fleetMapInstance.addLayer({ id:'fleet-emodnet-layer', type:'raster', source:'fleet-emodnet-src', paint:{ 'raster-opacity':0.75 }, layout:{ visibility:'none' } });
+  }
+
+  function setFleetMapLayer(type){
+    if(!fleetMapInstance || !fleetMapInstance.getLayer('fleet-satellite-layer')) return;
+    document.getElementById('fleetMltStreet').classList.toggle('active', type === 'street');
+    document.getElementById('fleetMltSatellite').classList.toggle('active', type === 'satellite');
+    fleetMapInstance.setLayoutProperty('fleet-satellite-layer', 'visibility', type === 'satellite' ? 'visible' : 'none');
+  }
+  document.getElementById('fleetMltStreet').addEventListener('click', () => setFleetMapLayer('street'));
+  document.getElementById('fleetMltSatellite').addEventListener('click', () => setFleetMapLayer('satellite'));
+
+  let fleetMapIsFullscreen = false;
+  function setFleetMapFullscreen(on){
+    fleetMapIsFullscreen = on;
+    document.getElementById('fleetMapViewWrap').classList.toggle('is-fullscreen', on);
+    setTimeout(() => { if(fleetMapInstance) fleetMapInstance.resize(); }, 160);
+  }
+  document.getElementById('fleetMapFullscreenBtn').addEventListener('click', () => setFleetMapFullscreen(!fleetMapIsFullscreen));
+
+  let fleetMapDepthLayerOn = false;
+  let fleetMapDepthOpacity = 0.65;
+  function toggleFleetMapDepthLayer(){
+    if(!fleetMapInstance || !fleetMapInstance.getLayer('fleet-gebco-layer')) return;
+    fleetMapDepthLayerOn = !fleetMapDepthLayerOn;
+    document.getElementById('fleetMltDepth').classList.toggle('active', fleetMapDepthLayerOn);
+    document.getElementById('fleetMapDepthOpacityWrap').style.display = fleetMapDepthLayerOn ? 'flex' : 'none';
+    const vis = fleetMapDepthLayerOn ? 'visible' : 'none';
+    fleetMapInstance.setLayoutProperty('fleet-gebco-layer', 'visibility', vis);
+    fleetMapInstance.setLayoutProperty('fleet-emodnet-layer', 'visibility', vis);
+  }
+  document.getElementById('fleetMltDepth').addEventListener('click', toggleFleetMapDepthLayer);
+  document.getElementById('fleetMapDepthOpacitySlider').addEventListener('input', (e) => {
+    fleetMapDepthOpacity = Number(e.target.value) / 100;
+    document.getElementById('fleetMapDepthOpacityVal').textContent = e.target.value + '%';
+    if(!fleetMapInstance || !fleetMapInstance.getLayer('fleet-gebco-layer')) return;
+    fleetMapInstance.setPaintProperty('fleet-gebco-layer', 'raster-opacity', fleetMapDepthOpacity);
+    fleetMapInstance.setPaintProperty('fleet-emodnet-layer', 'raster-opacity', Math.min(1, fleetMapDepthOpacity + 0.10));
+  });
+
+  // 3D tilt and compass-follow — same as Research/Sport's maps.
+  let fleetMap3dOn = false;
+  function toggleFleetMap3d(){
+    if(!fleetMapInstance) return;
+    fleetMap3dOn = !fleetMap3dOn;
+    document.getElementById('fleetMlt3d').classList.toggle('active', fleetMap3dOn);
+    fleetMapInstance.easeTo({ pitch: fleetMap3dOn ? 60 : 0, bearing: fleetMap3dOn ? -20 : 0, duration: 500 });
+  }
+  document.getElementById('fleetMlt3d').addEventListener('click', toggleFleetMap3d);
+
+  let fleetMapCompassOn = false;
+  function fleetMapOrientationHandler(e){
+    if(!fleetMapCompassOn || !fleetMapInstance) return;
+    let heading = null;
+    if(typeof e.webkitCompassHeading === 'number'){
+      heading = e.webkitCompassHeading;
+    } else if(e.absolute && typeof e.alpha === 'number'){
+      heading = 360 - e.alpha;
+    }
+    if(heading == null) return;
+    fleetMapInstance.setBearing(heading);
+  }
+  function toggleFleetMapCompass(){
+    fleetMapCompassOn = !fleetMapCompassOn;
+    document.getElementById('fleetMltCompass').classList.toggle('active', fleetMapCompassOn);
+    if(!fleetMapCompassOn){
+      window.removeEventListener('deviceorientationabsolute', fleetMapOrientationHandler);
+      window.removeEventListener('deviceorientation', fleetMapOrientationHandler);
+      if(fleetMapInstance) fleetMapInstance.easeTo({ bearing: 0, duration: 400 });
+      return;
+    }
+    const startListening = () => {
+      window.addEventListener('deviceorientationabsolute', fleetMapOrientationHandler, true);
+      window.addEventListener('deviceorientation', fleetMapOrientationHandler, true);
+    };
+    if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if(state === 'granted') startListening();
+        else { fleetMapCompassOn = false; document.getElementById('fleetMltCompass').classList.remove('active'); showFleetToast('Compass permission denied', true); }
+      }).catch(() => { fleetMapCompassOn = false; document.getElementById('fleetMltCompass').classList.remove('active'); });
+    } else {
+      startListening();
+    }
+  }
+  document.getElementById('fleetMltCompass').addEventListener('click', toggleFleetMapCompass);
+
+  let fleetMapCurrentIndicatorEl = null;
+  function fleetMapCurrentArrowSvg(directionDeg, speedMs){
+    const heading = (directionDeg + 180) % 360;
+    const intensity = speedMs > 0.5 ? '#EE6C4D' : (speedMs > 0.15 ? '#F2A65A' : '#85B7EB');
+    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  async function refreshFleetMapCurrentIndicator(){
+    if(!fleetMapInstance) return;
+    const center = fleetMapInstance.getCenter();
+    try{
+      const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
+      const data = await res.json();
+      const speed = data && data.current ? data.current.ocean_current_velocity : null;
+      const dir = data && data.current ? data.current.ocean_current_direction : null;
+      if(!fleetMapCurrentIndicatorEl){
+        fleetMapCurrentIndicatorEl = document.createElement('div');
+        fleetMapCurrentIndicatorEl.id = 'fleetMapCurrentIndicator';
+        fleetMapCurrentIndicatorEl.style.cssText = 'position:absolute; top:10px; left:10px; z-index:2; background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
+        document.getElementById('fleetLeafletMap').appendChild(fleetMapCurrentIndicatorEl);
+      }
+      if(speed == null || dir == null){
+        fleetMapCurrentIndicatorEl.innerHTML = t('sp_current_unavailable');
+      } else {
+        fleetMapCurrentIndicatorEl.innerHTML = fleetMapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
+      }
+    } catch(err){
+      // silent — current indicator just doesn't appear this refresh
+    }
+  }
+
+  // Teardrop "balloon" pin — the standard commercial/operational map
+  // marker shape, as a plain DOM element for MapLibre.
+  function fleetHaulPinIcon(){
+    const el = document.createElement('div');
+    el.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'
+      + '<circle cx="12" cy="12" r="10.5" fill="none" stroke="#0a5c8c" stroke-width="1.8" opacity="0.55"/>'
+      + '<circle cx="12" cy="12" r="6" fill="#0a5c8c" stroke="#fff" stroke-width="2"/>'
+      + '</svg>';
+    el.style.cssText = 'width:24px; height:24px; cursor:pointer;';
+    return el;
+  }
+
+  let fleetMapMarkers = [];
   function renderFleetHaulMap(){
     const trip = load(TRIPS_KEY).find(t => t.trip_id === fleetMapTripId);
     if(!trip){ fleetGoTo(fleetMapReturnScreen); return; }
@@ -9959,214 +10122,272 @@
       noGpsNote.style.display = 'none';
     }
 
-    const banner = document.getElementById('fleetMapModeBanner');
-    const bannerText = document.getElementById('fleetMapModeText');
+    renderFleetOfflineAreasList();
 
     fleetCheckTilesReachable((isLive) => {
+      fleetMapLastKnownOnline = isLive;
+      setFleetMapMode(isLive);
       if(isLive){
-        banner.className = 'map-mode-banner live';
-        bannerText.textContent = t('msg_live_map');
-        document.getElementById('fleetMapLayerToggle').style.display = 'flex';
-        document.getElementById('fleetLeafletMap').style.display = 'block';
-        document.getElementById('fleetSchematicMap').style.display = 'none';
-        renderFleetLeaflet(withGps);
+        if(!fleetMapInstance){
+          fleetMapInstance = new maplibregl.Map({
+            container: 'fleetLeafletMap',
+            style: 'https://tiles.openfreemap.org/styles/liberty',
+            center: FLEET_MAP_DEFAULT_CENTER,
+            zoom: 6,
+            attributionControl: { compact: true }
+          });
+          fleetMapInstance.on('load', () => {
+            ensureFleetMapLayers();
+            fleetMapInstance.on('moveend', refreshFleetMapCurrentIndicator);
+            renderFleetMapContent(withGps);
+          });
+          return;
+        }
+        renderFleetMapContent(withGps);
       } else {
-        banner.className = 'map-mode-banner offline';
-        bannerText.textContent = t('msg_offline_mode');
-        document.getElementById('fleetMapLayerToggle').style.display = 'none';
-        document.getElementById('fleetLeafletMap').style.display = 'none';
-        document.getElementById('fleetSchematicMap').style.display = 'block';
         renderFleetSchematic(withGps);
       }
     });
   }
 
-  // Teardrop "balloon" pin — anchored at its bottom point, the standard
-  // commercial/operational map marker shape. One fixed color (vessel
-  // operations don't carry a per-point status the way research catches do).
-  // Dot-and-ring marker — same professional register as the research
-  // segment's points, not a casual balloon pin. Fixed color: vessel
-  // operations don't carry a per-point status the way research catches do.
-  function fleetHaulPinIcon(){
-    const svg = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'
-      + '<circle cx="12" cy="12" r="10.5" fill="none" stroke="#0a5c8c" stroke-width="1.8" opacity="0.55"/>'
-      + '<circle cx="12" cy="12" r="6" fill="#0a5c8c" stroke="#fff" stroke-width="2"/>'
-      + '</svg>';
-    return L.divIcon({ html: svg, className: 'map-pin-research', iconSize: [24,24], iconAnchor: [12,12], popupAnchor: [0,-11] });
-  }
-
-  function renderFleetLeaflet(hauls){
-    if(!fleetLeafletInstance){
-      fleetLeafletInstance = L.map('fleetLeafletMap');
-      // CartoDB Voyager via the shared TILE_URL_TEMPLATE constant — see
-      // its definition above for why a fixed subdomain is used. ESRI
-      // satellite imagery as an alternate layer, same pattern already
-      // used on the Research and Sport maps.
-      fleetStreetLayer = L.tileLayer(TILE_URL_TEMPLATE, { attribution: TILE_ATTRIBUTION, maxZoom: 20 });
-      fleetSatelliteLayer = L.tileLayer(ESRI_SATELLITE_URL, { attribution: ESRI_ATTRIBUTION, maxZoom: 19 });
-      fleetStreetLayer.addTo(fleetLeafletInstance);
-      fleetLeafletInstance.on('moveend', refreshFleetMapCurrentIndicator);
-    }
-    fleetLeafletInstance.eachLayer(layer => {
-      if(layer instanceof L.CircleMarker || layer instanceof L.Marker){
-        fleetLeafletInstance.removeLayer(layer);
-      }
-    });
-
+  function renderFleetMapContent(hauls){
+    fleetMapMarkers.forEach(m => m.remove());
+    fleetMapMarkers = [];
     if(hauls.length === 0){
-      fleetLeafletInstance.setView([10.5, 99.5], 6);
-      setTimeout(()=> fleetLeafletInstance.invalidateSize(), 50);
+      fleetMapInstance.jumpTo({ center: FLEET_MAP_DEFAULT_CENTER, zoom: 6 });
+      setTimeout(()=>fleetMapInstance.resize(),50);
       return;
     }
-
-    const bounds = [];
+    const boundsPts = [];
     hauls.forEach(hl => {
       const lat = parseFloat(hl.lat), lon = parseFloat(hl.lon);
-      bounds.push([lat, lon]);
-      const marker = L.marker([lat, lon], { icon: fleetHaulPinIcon() }).addTo(fleetLeafletInstance);
-      marker.bindPopup('<div class="map-point-popup"><b>' + (hl.gear_type||'haul') + '</b><br>Depth: ' + (hl.depth||'—') + 'm · ' + (hl.duration_min ? hl.duration_min+' min' : '—') + '</div>');
+      boundsPts.push([lon, lat]);
+      const marker = new maplibregl.Marker({ element: fleetHaulPinIcon(), anchor: 'center' })
+        .setLngLat([lon, lat])
+        .addTo(fleetMapInstance);
+      fleetMapMarkers.push(marker);
     });
-    fleetLeafletInstance.fitBounds(bounds, { padding: [30,30], maxZoom: 14 });
-    setTimeout(()=> fleetLeafletInstance.invalidateSize(), 50);
+    const b = boundsPts.reduce((acc,p) => acc.extend(p), new maplibregl.LngLatBounds(boundsPts[0], boundsPts[0]));
+    fleetMapInstance.fitBounds(b, { padding: 30, maxZoom: 14 });
+    setTimeout(()=>fleetMapInstance.resize(),50);
   }
 
-  function setFleetMapLayer(type){
-    fleetMapCurrentLayer = type;
-    document.getElementById('fleetMltStreet').classList.toggle('active', type === 'street');
-    document.getElementById('fleetMltSatellite').classList.toggle('active', type === 'satellite');
-    if(!fleetLeafletInstance) return;
-    if(type === 'satellite'){
-      if(fleetLeafletInstance.hasLayer(fleetStreetLayer)) fleetLeafletInstance.removeLayer(fleetStreetLayer);
-      if(!fleetLeafletInstance.hasLayer(fleetSatelliteLayer)) fleetSatelliteLayer.addTo(fleetLeafletInstance);
-    } else {
-      if(fleetLeafletInstance.hasLayer(fleetSatelliteLayer)) fleetLeafletInstance.removeLayer(fleetSatelliteLayer);
-      if(!fleetLeafletInstance.hasLayer(fleetStreetLayer)) fleetStreetLayer.addTo(fleetLeafletInstance);
-    }
-  }
-  document.getElementById('fleetMltStreet').addEventListener('click', () => setFleetMapLayer('street'));
-  document.getElementById('fleetMltSatellite').addEventListener('click', () => setFleetMapLayer('satellite'));
-
-  // Fullscreen, depth overlay, and current indicator — same sources and
-  // approach as Research's Map and Sport's Spots map (GEBCO + EMODnet WMS,
-  // Open-Meteo Marine current at map center on moveend). Fleet-scoped
-  // variables/functions rather than reusing Research's, matching the
-  // existing pattern of each module owning its own map state.
-  let fleetMapIsFullscreen = false;
-  const FLEET_MAP_EXPAND_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const FLEET_MAP_COLLAPSE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3v3a2 2 0 0 1-2 2H4M15 3v3a2 2 0 0 0 2 2h3M21 15h-3a2 2 0 0 0-2 2v3M9 21v-3a2 2 0 0 0-2-2H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  function setFleetMapFullscreen(on){
-    fleetMapIsFullscreen = on;
-    document.getElementById('fleetMapViewWrap').classList.toggle('is-fullscreen', on);
-    const btn = document.getElementById('fleetMapFullscreenBtn');
-    btn.innerHTML = on ? FLEET_MAP_COLLAPSE_ICON : FLEET_MAP_EXPAND_ICON;
-    btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'View fullscreen');
-    setTimeout(() => { if(fleetLeafletInstance) fleetLeafletInstance.invalidateSize(); }, 160);
-  }
-  document.getElementById('fleetMapFullscreenBtn').addEventListener('click', () => setFleetMapFullscreen(!fleetMapIsFullscreen));
-
-  let fleetMapGebcoLayer = null;
-  let fleetMapEmodnetLayer = null;
-  let fleetMapDepthLayerOn = false;
-  function toggleFleetMapDepthLayer(){
-    if(!fleetLeafletInstance) return;
-    fleetMapDepthLayerOn = !fleetMapDepthLayerOn;
-    document.getElementById('fleetMltDepth').classList.toggle('active', fleetMapDepthLayerOn);
-    if(!fleetMapGebcoLayer){
-      fleetMapGebcoLayer = L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
-        layers: 'GEBCO_LATEST_2', format: 'image/png', transparent: true, version: '1.3.0',
-        opacity: 0.65, attribution: 'GEBCO Compilation Group'
-      });
-    }
-    if(!fleetMapEmodnetLayer){
-      fleetMapEmodnetLayer = L.tileLayer.wms('https://ows.emodnet-bathymetry.eu/wms', {
-        layers: 'emodnet:mean_multicolour', format: 'image/png', transparent: true, version: '1.3.0',
-        opacity: 0.75, attribution: 'EMODnet Bathymetry'
-      });
-    }
-    if(fleetMapDepthLayerOn){
-      fleetMapGebcoLayer.addTo(fleetLeafletInstance);
-      fleetMapEmodnetLayer.addTo(fleetLeafletInstance);
-    } else {
-      fleetLeafletInstance.removeLayer(fleetMapGebcoLayer);
-      fleetLeafletInstance.removeLayer(fleetMapEmodnetLayer);
-    }
-  }
-  document.getElementById('fleetMltDepth').addEventListener('click', toggleFleetMapDepthLayer);
-
-  let fleetMapCurrentControl = null;
-  function fleetMapCurrentArrowSvg(directionDeg, speedMs){
-    const heading = (directionDeg + 180) % 360;
-    const intensity = speedMs > 0.5 ? 'var(--coral)' : (speedMs > 0.15 ? 'var(--amber)' : 'var(--blue)');
-    return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="transform:rotate('+heading+'deg);"><path d="M12 3v16M12 19l-5-5M12 19l5-5" stroke="'+intensity+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  }
-  async function refreshFleetMapCurrentIndicator(){
-    if(!fleetLeafletInstance) return;
-    const center = fleetLeafletInstance.getCenter();
-    try{
-      const res = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+center.lat+'&longitude='+center.lng+'&current=ocean_current_velocity,ocean_current_direction&timezone=auto');
-      const data = await res.json();
-      const speed = data && data.current ? data.current.ocean_current_velocity : null;
-      const dir = data && data.current ? data.current.ocean_current_direction : null;
-      if(!fleetMapCurrentControl){
-        const Control = L.Control.extend({
-          onAdd: function(){
-            const div = L.DomUtil.create('div');
-            div.id = 'fleetMapCurrentIndicator';
-            div.style.cssText = 'background:rgba(255,255,255,0.92); border-radius:10px; padding:6px 9px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-family:var(--data); font-size:10.5px; color:var(--ink);';
-            return div;
-          }
-        });
-        fleetMapCurrentControl = new Control({ position: 'topleft' });
-        fleetMapCurrentControl.addTo(fleetLeafletInstance);
-      }
-      const el = document.getElementById('fleetMapCurrentIndicator');
-      if(el){
-        if(speed == null || dir == null){
-          el.innerHTML = t('sp_current_unavailable');
-        } else {
-          el.innerHTML = fleetMapCurrentArrowSvg(dir, speed) + '<span>' + t('sp_current_label') + ' ' + speed.toFixed(2) + ' m/s</span>';
-        }
-      }
-    } catch(err){
-      // silent — current indicator just doesn't appear this refresh
-    }
+  // ===== Offline fallback (Fleet Haul Map) =====
+  // Plain DOM/SVG, zero library dependency — same pattern as
+  // Research/Sport. Falls back to the device's live GPS position when
+  // this trip has no georeferenced hauls yet.
+  function setFleetMapMode(isLive){
+    const banner = document.getElementById('fleetMapModeBanner');
+    const bannerText = document.getElementById('fleetMapModeText');
+    banner.className = 'map-mode-banner ' + (isLive ? 'live' : 'offline');
+    bannerText.textContent = isLive ? t('msg_live_map') : t('msg_offline_mode');
+    document.getElementById('fleetMapLayerToggle').style.display = isLive ? 'flex' : 'none';
+    document.getElementById('fleetLeafletMap').style.display = isLive ? 'block' : 'none';
+    document.getElementById('fleetSchematicMap').style.display = isLive ? 'none' : 'block';
   }
 
   function renderFleetSchematic(hauls){
     const wrap = document.getElementById('fleetSchematicMap');
-    wrap.innerHTML = '';
 
-    if(hauls.length === 0){
-      wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet for this trip.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
-      return;
+    function draw(points){
+      wrap.innerHTML = '';
+      if(points.length === 0){
+        wrap.innerHTML = '<div class="schem-empty">No GPS points captured yet for this trip.<br>Points will appear here as a coordinate plot until a live map connection is available.</div>';
+        return;
+      }
+      const lats = points.map(p => p.lat), lons = points.map(p => p.lon);
+      let minLat = Math.min(...lats), maxLat = Math.max(...lats);
+      let minLon = Math.min(...lons), maxLon = Math.max(...lons);
+      const padLat = Math.max((maxLat - minLat) * 0.2, 0.25);
+      const padLon = Math.max((maxLon - minLon) * 0.2, 0.25);
+      minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+
+      const w = wrap.clientWidth || 320, h = wrap.clientHeight || 240;
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+      points.forEach(p => {
+        const x = ((p.lon - minLon) / (maxLon - minLon || 1)) * w;
+        const y = h - ((p.lat - minLat) / (maxLat - minLat || 1)) * h;
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', x); circle.setAttribute('cy', y); circle.setAttribute('r', p.live ? 8 : 6);
+        circle.setAttribute('fill', p.live ? '#EE6C4D' : '#0a5c8c'); circle.setAttribute('fill-opacity', '0.9');
+        circle.setAttribute('stroke', '#fff'); circle.setAttribute('stroke-width', '2');
+        svg.appendChild(circle);
+      });
+      wrap.appendChild(svg);
+
+      const nwLabel = document.createElement('div');
+      nwLabel.className = 'schem-axis-label';
+      nwLabel.style.top = '6px'; nwLabel.style.left = '8px';
+      nwLabel.textContent = maxLat.toFixed(3) + '°, ' + minLon.toFixed(3) + '°';
+      wrap.appendChild(nwLabel);
+
+      const seLabel = document.createElement('div');
+      seLabel.className = 'schem-axis-label';
+      seLabel.style.bottom = '6px'; seLabel.style.right = '8px';
+      seLabel.textContent = minLat.toFixed(3) + '°, ' + maxLon.toFixed(3) + '°';
+      wrap.appendChild(seLabel);
     }
 
-    const lats = hauls.map(hl => parseFloat(hl.lat));
-    const lons = hauls.map(hl => parseFloat(hl.lon));
-    let minLat = Math.min(...lats), maxLat = Math.max(...lats);
-    let minLon = Math.min(...lons), maxLon = Math.max(...lons);
-    const padLat = Math.max((maxLat - minLat) * 0.2, 0.001);
-    const padLon = Math.max((maxLon - minLon) * 0.2, 0.001);
-    minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+    const basePoints = hauls.map(hl => ({ lat: parseFloat(hl.lat), lon: parseFloat(hl.lon), live: false }));
+    if(basePoints.length > 0){ draw(basePoints); return; }
 
-    const w = wrap.clientWidth || 320, h = wrap.clientHeight || 240;
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-
-    hauls.forEach(hl => {
-      const lat = parseFloat(hl.lat), lon = parseFloat(hl.lon);
-      const x = ((lon - minLon) / (maxLon - minLon || 1)) * w;
-      const y = h - ((lat - minLat) / (maxLat - minLat || 1)) * h;
-      const circle = document.createElementNS(svgNS, 'circle');
-      circle.setAttribute('cx', x); circle.setAttribute('cy', y); circle.setAttribute('r', 6);
-      circle.setAttribute('fill', '#0a5c8c'); circle.setAttribute('fill-opacity', '0.85');
-      svg.appendChild(circle);
-    });
-    wrap.appendChild(svg);
+    if(navigator.geolocation){
+      let settled = false;
+      const timer = setTimeout(() => { if(!settled){ settled = true; draw(basePoints); } }, 3500);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => { if(settled) return; settled = true; clearTimeout(timer); draw([{ lat: pos.coords.latitude, lon: pos.coords.longitude, live: true }]); },
+        () => { if(settled) return; settled = true; clearTimeout(timer); draw(basePoints); },
+        { maximumAge: 60000, timeout: 3000 }
+      );
+    } else {
+      draw(basePoints);
+    }
   }
+
+  // Active connectivity polling — same reasoning as Research/Sport.
+  let fleetMapLastKnownOnline = null;
+  function fleetMapPollConnectivity(){
+    const screenEl = document.getElementById('screen-fleet-haul-map');
+    if(!screenEl || !screenEl.classList.contains('active')) return;
+    fleetCheckTilesReachable((isLive) => {
+      if(fleetMapLastKnownOnline === isLive) return;
+      fleetMapLastKnownOnline = isLive;
+      renderFleetHaulMap();
+    });
+  }
+  setInterval(fleetMapPollConnectivity, 15000);
+  window.addEventListener('online', fleetMapPollConnectivity);
+  window.addEventListener('offline', fleetMapPollConnectivity);
+  document.getElementById('fleetMapModeBanner').addEventListener('click', () => {
+    fleetMapLastKnownOnline = null;
+    renderFleetHaulMap();
+  });
+
+  // ===== Offline map area downloader (Fleet) =====
+  // Same pan-sweep approach as Research/Sport: drives the real map through
+  // a grid of positions at two zoom levels so the normal tile requests
+  // along the way get opportunistically cached by sw.js.
+  const FLEET_OFFLINE_AREAS_KEY = 'bycatch_fleet_offline_areas';
+  const FLEET_DOWNLOAD_RADIUS_KM = 12;
+  const FLEET_DOWNLOAD_ZOOM_LEVELS = [12, 14];
+
+  function fleetLonLatToTile(lon, lat, zoom){
+    const x = Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+    const latRad = lat * Math.PI / 180;
+    const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1/Math.cos(latRad)) / Math.PI) / 2 * Math.pow(2, zoom));
+    return { x, y };
+  }
+  function fleetTileToLonLat(x, y, zoom){
+    const n = Math.pow(2, zoom);
+    const lon = x / n * 360 - 180;
+    const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2*y/n)));
+    return { lon, lat: latRad * 180 / Math.PI };
+  }
+  function fleetTileStopsForRadius(centerLat, centerLon, radiusKm, zoom){
+    const kmPerDegLat = 111;
+    const kmPerDegLon = 111 * Math.cos(centerLat * Math.PI/180);
+    const dLat = radiusKm / kmPerDegLat;
+    const dLon = radiusKm / kmPerDegLon;
+    const nw = fleetLonLatToTile(centerLon - dLon, centerLat + dLat, zoom);
+    const se = fleetLonLatToTile(centerLon + dLon, centerLat - dLat, zoom);
+    const stops = [];
+    for(let x = Math.min(nw.x, se.x); x <= Math.max(nw.x, se.x); x++){
+      for(let y = Math.min(nw.y, se.y); y <= Math.max(nw.y, se.y); y++){
+        const c = fleetTileToLonLat(x + 0.5, y + 0.5, zoom);
+        stops.push({ zoom, center: [c.lon, c.lat] });
+      }
+    }
+    return stops;
+  }
+
+  function fleetLoadOfflineAreas(){
+    try{ return JSON.parse(localStorage.getItem(FLEET_OFFLINE_AREAS_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function fleetSaveOfflineAreas(list){
+    localStorage.setItem(FLEET_OFFLINE_AREAS_KEY, JSON.stringify(list));
+  }
+  function renderFleetOfflineAreasList(){
+    const areas = fleetLoadOfflineAreas();
+    const listEl = document.getElementById('fleetOfflineAreasList');
+    if(!listEl) return;
+    if(areas.length === 0){ listEl.innerHTML = ''; return; }
+    listEl.innerHTML = areas.map((a, idx) => {
+      const when = new Date(a.downloaded_at).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short'});
+      return '<div class="offline-area-entry">'
+        + '<div><div class="oa-main">' + a.lat.toFixed(3) + ', ' + a.lon.toFixed(3) + '</div>'
+        + '<div class="oa-meta">±' + a.radius_km + 'km · saved ' + when + '</div></div>'
+        + '<button class="del" data-fleet-area-idx="'+idx+'" title="delete">×</button>'
+        + '</div>';
+    }).join('');
+  }
+  document.getElementById('fleetOfflineAreasList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.del');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.fleetAreaIdx, 10);
+    const areas = fleetLoadOfflineAreas();
+    areas.splice(idx, 1);
+    fleetSaveOfflineAreas(areas);
+    renderFleetOfflineAreasList();
+    showFleetToast(t('msg_offline_area_removed'));
+  });
+
+  async function fleetDownloadCurrentMapArea(){
+    if(!fleetMapInstance){ showFleetToast(t('msg_open_map_first'), true); return; }
+    const isLive = await new Promise(resolve => fleetCheckTilesReachable(resolve));
+    if(!isLive){ showFleetToast(t('msg_offline_mode'), true); return; }
+
+    const center = fleetMapInstance.getCenter();
+    const originalCenter = center; const originalZoom = fleetMapInstance.getZoom();
+    let stops = [];
+    FLEET_DOWNLOAD_ZOOM_LEVELS.forEach(z => {
+      stops = stops.concat(fleetTileStopsForRadius(center.lat, center.lng, FLEET_DOWNLOAD_RADIUS_KM, z));
+    });
+
+    const progressEl = document.getElementById('fleetOfflineProgress');
+    progressEl.style.display = 'block';
+    let done = 0;
+    const updateProgress = () => {
+      const pct = Math.round(done / stops.length * 100);
+      progressEl.innerHTML = t('msg_downloading') + ' ' + done + ' / ' + stops.length + ' ' + t('msg_tiles') + '…<div class="offline-progress-bar"><div class="offline-progress-bar-fill" style="width:'+pct+'%;"></div></div>';
+    };
+    updateProgress();
+
+    function waitForIdle(){
+      return new Promise(resolve => {
+        const timeout = setTimeout(resolve, 4000);
+        fleetMapInstance.once('idle', () => { clearTimeout(timeout); resolve(); });
+      });
+    }
+
+    for(const stop of stops){
+      fleetMapInstance.jumpTo({ center: stop.center, zoom: stop.zoom });
+      await waitForIdle();
+      done++;
+      updateProgress();
+    }
+
+    fleetMapInstance.jumpTo({ center: originalCenter, zoom: originalZoom });
+
+    const areas = fleetLoadOfflineAreas();
+    areas.push({
+      id: 'fleet_area_' + Date.now(),
+      lat: center.lat, lon: center.lng,
+      radius_km: FLEET_DOWNLOAD_RADIUS_KM,
+      downloaded_at: new Date().toISOString()
+    });
+    fleetSaveOfflineAreas(areas);
+
+    progressEl.style.display = 'none';
+    showFleetToast(t('msg_area_saved'));
+    renderFleetOfflineAreasList();
+  }
+  document.getElementById('fleetDownloadAreaBtn').addEventListener('click', fleetDownloadCurrentMapArea);
 
   // Full-precision per-trip result, reusing the same precedence Trip
   // Detail's settlement uses: actual sale price over reference price,
