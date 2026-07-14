@@ -1,6 +1,6 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v7';
+const CACHE_NAME = 'bycatch-log-v8';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -25,7 +25,22 @@ const APP_SHELL = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) =>
+      // cache.addAll() is all-or-nothing — if a single URL in APP_SHELL
+      // fails (a flaky external CDN, a CORS quirk, whatever), the entire
+      // install rejects and the browser silently keeps running the old
+      // service worker, with no visible error to the user. That's exactly
+      // the kind of failure that looks like "nothing happened" from the
+      // outside. Fetching each file individually means one bad resource
+      // only costs that one resource, not the whole offline app.
+      Promise.all(
+        APP_SHELL.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn('[sw] failed to precache', url, err);
+          })
+        )
+      )
+    )
   );
   self.skipWaiting();
 });
