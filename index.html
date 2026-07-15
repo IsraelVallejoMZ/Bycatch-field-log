@@ -2550,6 +2550,7 @@
     <div class="sp-search-wrap">
       <input type="text" id="researchSpeciesSearchInput" data-i18n-placeholder="sp_search_placeholder" placeholder="Search by name...">
     </div>
+    <div class="pillrow sp-filter-row" id="researchSpeciesCountryRow"></div>
     <div class="pillrow sp-filter-row" id="researchSpeciesFilterRow"></div>
     <div class="card sp-list-card">
       <div id="researchSpeciesList"></div>
@@ -6866,6 +6867,7 @@
   window.speciesBannerInfo = speciesBannerInfo;
   window.speciesMatchesFilter = speciesMatchesFilter;
   window.speciesFilterPillsHtml = speciesFilterPillsHtml;
+  window.speciesMatchesCountry = speciesMatchesCountry;
   window.speciesSearchNames = speciesSearchNames;
   window.speciesMatchesSearch = speciesMatchesSearch;
   window.findSpeciesByFreeText = findSpeciesByFreeText;
@@ -13983,10 +13985,31 @@
   let researchSpeciesFilter = 'all';
   let researchSpeciesActiveId = null;
   let researchSpeciesDetailReturn = 'species-catalog';
+  // Research has no vessel to auto-anchor a country to (that's a Captain-
+  // only concept, tied to compliance.reporting_country) — so instead of
+  // guessing or defaulting silently, it gets its own always-visible
+  // country switcher that remembers the last choice. Reads the available
+  // countries straight from the catalog's _meta so a future EU/TH catalog
+  // shows up here automatically once it exists.
+  const RESEARCH_SPECIES_COUNTRY_KEY = 'fishpulse_research_species_country';
+  let researchSpeciesCountry = localStorage.getItem(RESEARCH_SPECIES_COUNTRY_KEY) || (window.SPECIES_CATALOG._meta.paises_disponibles || ['mx'])[0];
 
+  function renderResearchSpeciesCountryPills(){
+    const row = document.getElementById('researchSpeciesCountryRow');
+    const countries = window.SPECIES_CATALOG._meta.paises_disponibles || ['mx'];
+    row.innerHTML = countries.map(c => '<div class="pill' + (c === researchSpeciesCountry ? ' active' : '') + '" data-country="' + c + '">' + t('sp_country_' + c) + '</div>').join('');
+    row.querySelectorAll('.pill').forEach(p => {
+      p.addEventListener('click', () => {
+        researchSpeciesCountry = p.dataset.country;
+        localStorage.setItem(RESEARCH_SPECIES_COUNTRY_KEY, researchSpeciesCountry);
+        researchSpeciesFilter = 'all'; // reset — the old filter may not exist for the new country's region set
+        renderResearchSpeciesList();
+      });
+    });
+  }
   function renderResearchSpeciesFilterPills(){
     const row = document.getElementById('researchSpeciesFilterRow');
-    row.innerHTML = window.speciesFilterPillsHtml('', researchSpeciesFilter);
+    row.innerHTML = window.speciesFilterPillsHtml(researchSpeciesCountry, researchSpeciesFilter);
     row.querySelectorAll('.pill').forEach(p => {
       p.addEventListener('click', () => {
         researchSpeciesFilter = p.dataset.filter;
@@ -13997,10 +14020,11 @@
   function renderResearchSpeciesList(){
     const listEl = document.getElementById('researchSpeciesList');
     if(!listEl) return;
+    renderResearchSpeciesCountryPills();
     renderResearchSpeciesFilterPills();
     const qFold = window.foldText(researchSpeciesSearch);
     const rows = window.SPECIES_CATALOG.especies
-      .filter(sp => window.speciesMatchesFilter(sp, researchSpeciesFilter) && window.speciesMatchesSearch(sp, qFold))
+      .filter(sp => window.speciesMatchesCountry(sp, researchSpeciesCountry) && window.speciesMatchesFilter(sp, researchSpeciesFilter) && window.speciesMatchesSearch(sp, qFold))
       .sort((a, b) => window.spNombreComun(a)[0].localeCompare(window.spNombreComun(b)[0]));
     if(!rows.length){
       listEl.innerHTML = '<div class="sp-empty">' + t('sp_no_results') + '</div>';
