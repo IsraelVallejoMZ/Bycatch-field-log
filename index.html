@@ -1238,6 +1238,18 @@
   .map-mode-banner.live .mb-dot{ background: var(--cyan); }
   .map-mode-banner.offline .mb-dot{ background: var(--amber); }
 
+  /* Nautical charts disclaimer — persistent banner, shown for the entire
+     duration the layer is active, never a one-time/dismissible notice. */
+  .nautical-disclaimer{
+    display:flex; align-items:flex-start; gap:8px;
+    font-family: var(--data); font-size: 10px; color:#f6d9a8; line-height:1.45;
+    background: rgba(242,166,90,0.14); border:1px solid rgba(242,166,90,0.4); border-radius:8px;
+    padding: 8px 10px; margin: 0 0 8px;
+  }
+  .nautical-disclaimer svg{ color: var(--amber); margin-top:1px; }
+  .nautical-disclaimer #fleetNauticalAttribution{ color:#fff; font-size:10.5px; }
+  .nautical-disclaimer #fleetNauticalSafetyNote{ margin-top:2px; opacity:0.92; }
+
   /* Layer toggle */
   .map-layer-toggle{ display:flex; gap:6px; margin-bottom:8px; }
   .mlt-btn{
@@ -3566,6 +3578,7 @@
         <button class="mlt-btn active" id="fleetMltStreet" data-i18n="map_street">Street</button>
         <button class="mlt-btn" id="fleetMltSatellite" data-i18n="map_satellite">Satellite</button>
         <button class="mlt-btn" id="fleetMltDepth" data-i18n="sp_map_depth">Depth</button>
+        <button class="mlt-btn" id="fleetMltNautical" data-i18n="fl_map_nautical">Nautical charts</button>
         <button class="mlt-btn" id="fleetMlt3d">3D</button>
         <button class="mlt-btn" id="fleetMltCompass">Compass</button>
       </div>
@@ -3573,6 +3586,19 @@
         <span style="font-size:11px; color:var(--ink-soft);" data-i18n="sp_map_depth">Depth</span>
         <input type="range" id="fleetMapDepthOpacitySlider" min="0" max="100" value="65" style="flex:1;">
         <span style="font-size:11px; color:var(--ink-soft); min-width:32px; text-align:right;" id="fleetMapDepthOpacityVal">65%</span>
+      </div>
+
+      <!-- Persistent while the nautical layer is on — must stay visible the
+           entire time the layer is active, never a one-time dismissible
+           notice. Attribution + the "not a substitute for certified
+           navigation equipment" disclaimer have to be seen every single
+           time the layer is toggled on, not just the first time. -->
+      <div id="fleetNauticalDisclaimer" class="nautical-disclaimer" style="display:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.83 21h16.34a2 2 0 0 0 1.72-3l-8.18-14.14a2 2 0 0 0-3.42 0z"/></svg>
+        <div>
+          <div id="fleetNauticalAttribution" style="font-weight:600;"></div>
+          <div id="fleetNauticalSafetyNote"></div>
+        </div>
       </div>
 
       <div id="fleetLeafletMap" style="position:relative;"></div>
@@ -4704,6 +4730,7 @@
       fldash_no_vessels: 'No vessels yet. Add one from the Vessels tab.', fldash_unknown: 'Unknown', fldash_closed_no_catch: 'Trip closed without catch',
       fldash_costs_pending: 'Costs pending', fldash_no_alerts: 'No alerts. Everything looks current.',
       flhaulmap_brand: 'Haul Map', flhaulmap_title: 'Fishing Zones', flhaulmap_no_gps: 'Hauls Without GPS',
+      fl_map_nautical: 'Nautical charts', fl_map_nautical_attrib_noaa: 'Chart data: NOAA Office of Coast Survey (public domain)', fl_map_nautical_attrib_osm: 'Chart data: © OpenSeaMap contributors, ODbL/CC-BY-SA', fl_map_nautical_safety: 'Reference only — does not replace certified navigation equipment required for your vessel.', fl_map_nautical_coverage_note: 'Coverage outside the US may be incomplete for this area.',
       flfuel_h1: 'Daily Fuel Log', flfuel_no_trip: 'Start a trip from the Trip tab to begin logging daily fuel readings.',
       flfuel_todays_reading: "Today's reading", flfuel_remaining: 'Fuel Remaining (L)', flfuel_save_reading: 'Save Reading', flfuel_readings_this_trip: 'Readings this trip',
       msg_l_remaining: 'L remaining', msg_l_used: 'L used', msg_anomaly_chip: '⚠ Anomaly',
@@ -5049,6 +5076,7 @@
       fldash_no_vessels: 'Aún no hay embarcaciones. Agrega una desde la pestaña Embarcaciones.', fldash_unknown: 'Desconocida', fldash_closed_no_catch: 'Viaje cerrado sin captura',
       fldash_costs_pending: 'Costos pendientes', fldash_no_alerts: 'Sin alertas. Todo está al día.',
       flhaulmap_brand: 'Mapa de Lances', flhaulmap_title: 'Zonas de Pesca', flhaulmap_no_gps: 'Lances Sin GPS',
+      fl_map_nautical: 'Cartas náuticas', fl_map_nautical_attrib_noaa: 'Datos de carta: NOAA Office of Coast Survey (dominio público)', fl_map_nautical_attrib_osm: 'Datos de carta: © colaboradores de OpenSeaMap, ODbL/CC-BY-SA', fl_map_nautical_safety: 'Solo de referencia — no reemplaza el equipo de navegación certificado exigido para tu embarcación.', fl_map_nautical_coverage_note: 'La cobertura fuera de EUA puede ser incompleta en esta zona.',
       flfuel_h1: 'Bitácora Diaria de Combustible', flfuel_no_trip: 'Inicia un viaje desde la pestaña Viaje para comenzar a registrar lecturas diarias de combustible.',
       flfuel_todays_reading: 'Lectura de hoy', flfuel_remaining: 'Combustible Restante (L)', flfuel_save_reading: 'Guardar Lectura', flfuel_readings_this_trip: 'Lecturas de este viaje',
       msg_l_remaining: 'L restantes', msg_l_used: 'L usados', msg_anomaly_chip: '⚠ Anomalía',
@@ -5394,6 +5422,7 @@
       fldash_no_vessels: "Nessuna imbarcazione ancora. Aggiungine una dalla scheda Imbarcazioni.", fldash_unknown: 'Sconosciuta', fldash_closed_no_catch: 'Viaggio chiuso senza cattura',
       fldash_costs_pending: 'Costi in sospeso', fldash_no_alerts: 'Nessun avviso. Tutto è aggiornato.',
       flhaulmap_brand: 'Mappa Calate', flhaulmap_title: 'Zone di Pesca', flhaulmap_no_gps: 'Calate Senza GPS',
+      fl_map_nautical: 'Carte nautiche', fl_map_nautical_attrib_noaa: 'Dati carta: NOAA Office of Coast Survey (dominio pubblico)', fl_map_nautical_attrib_osm: 'Dati carta: © collaboratori OpenSeaMap, ODbL/CC-BY-SA', fl_map_nautical_safety: 'Solo di riferimento — non sostituisce la strumentazione di navigazione certificata richiesta per la tua imbarcazione.', fl_map_nautical_coverage_note: 'La copertura fuori dagli USA potrebbe essere incompleta in questa zona.',
       flfuel_h1: 'Registro Carburante Giornaliero', flfuel_no_trip: 'Avvia un viaggio dalla scheda Viaggio per iniziare a registrare le letture giornaliere di carburante.',
       flfuel_todays_reading: 'Lettura di oggi', flfuel_remaining: 'Carburante Rimanente (L)', flfuel_save_reading: 'Salva Lettura', flfuel_readings_this_trip: 'Letture di questo viaggio',
       msg_l_remaining: 'L rimanenti', msg_l_used: 'L usati', msg_anomaly_chip: '⚠ Anomalia',
@@ -5718,6 +5747,7 @@
       fldash_no_vessels: 'ยังไม่มีเรือ เพิ่มเรือได้จากแท็บเรือ', fldash_unknown: 'ไม่ทราบ', fldash_closed_no_catch: 'ปิดทริปโดยไม่มีการจับปลา',
       fldash_costs_pending: 'ค่าใช้จ่ายที่ค้างอยู่', fldash_no_alerts: 'ไม่มีการแจ้งเตือน ทุกอย่างเป็นปัจจุบัน',
       flhaulmap_brand: 'แผนที่การลากอวน', flhaulmap_title: 'พื้นที่ทำการประมง', flhaulmap_no_gps: 'การลากอวนที่ไม่มีจีพีเอส',
+      fl_map_nautical: 'แผนที่เดินเรือ', fl_map_nautical_attrib_noaa: 'ข้อมูลแผนที่: NOAA Office of Coast Survey (สาธารณสมบัติ)', fl_map_nautical_attrib_osm: 'ข้อมูลแผนที่: © ผู้ร่วมให้ข้อมูล OpenSeaMap, ODbL/CC-BY-SA', fl_map_nautical_safety: 'ใช้เพื่ออ้างอิงเท่านั้น — ไม่ทดแทนอุปกรณ์เดินเรือที่ได้รับการรับรองซึ่งจำเป็นสำหรับเรือของคุณ', fl_map_nautical_coverage_note: 'พื้นที่นอกสหรัฐฯ อาจมีข้อมูลไม่ครบถ้วนในบริเวณนี้',
       flfuel_h1: 'บันทึกเชื้อเพลิงประจำวัน', flfuel_no_trip: 'เริ่มทริปจากแท็บทริปเพื่อเริ่มบันทึกค่าเชื้อเพลิงประจำวัน',
       flfuel_todays_reading: 'ค่าที่อ่านได้วันนี้', flfuel_remaining: 'เชื้อเพลิงคงเหลือ (ลิตร)', flfuel_save_reading: 'บันทึกค่าที่อ่านได้', flfuel_readings_this_trip: 'ค่าที่อ่านได้ในทริปนี้',
       msg_l_remaining: 'ลิตรคงเหลือ', msg_l_used: 'ลิตรที่ใช้ไป', msg_anomaly_chip: '⚠ ผิดปกติ',
@@ -6612,10 +6642,10 @@
     if(!qFold) return true;
     return speciesSearchNames(sp).some(n => foldText(n).includes(qFold));
   }
-  function findSpeciesByFreeText(text){
+  function findSpeciesByFreeText(text, countryOverride){
     const qFold = foldText((text || '').trim());
     if(!qFold) return null;
-    const country = activeTripVesselCountry();
+    const country = countryOverride !== undefined ? countryOverride : activeTripVesselCountry();
     const pool = SPECIES_CATALOG.especies.filter(sp => speciesMatchesCountry(sp, country));
     let found = pool.find(sp => speciesSearchNames(sp).some(n => foldText(n) === qFold));
     if(found) return found;
@@ -10716,6 +10746,7 @@
   let fleetMapTripId = null;
   let fleetMapReturnScreen = 'trip';
   let fleetMapInstance = null;
+  let fleetMapVesselCountry = ''; // drives which nautical chart source (NOAA vs OpenSeaMap) is shown
   const FLEET_MAP_DEFAULT_CENTER = [99.5, 10.5]; // [lng, lat] — rough Thailand coast default
 
   document.getElementById('fleetViewMapBtn').addEventListener('click', () => {
@@ -10764,6 +10795,33 @@
       tiles:['https://ows.emodnet-bathymetry.eu/wms?service=WMS&version=1.3.0&request=GetMap&layers=emodnet:mean_multicolour&bbox={bbox-epsg-3857}&width=256&height=256&crs=EPSG:3857&format=image/png&transparent=true']
     });
     fleetMapInstance.addLayer({ id:'fleet-emodnet-layer', type:'raster', source:'fleet-emodnet-src', paint:{ 'raster-opacity':0.75 }, layout:{ visibility:'none' } });
+
+    // ----- Nautical charts overlay -----
+    // NOAA ENC (via the NOAA Chart Display Service / Esri REST tile
+    // endpoint): US-only coverage, CC0/public domain, no licensing
+    // restriction on commercial use. Used when the vessel's
+    // compliance.reporting_country is 'us'.
+    fleetMapInstance.addSource('fleet-nautical-noaa-src', {
+      type:'raster', tileSize:256,
+      attribution:'NOAA Office of Coast Survey',
+      tiles:['https://gis.charttools.noaa.gov/arcgis/rest/services/MarineChart_Services/NOAACharts/MapServer/tile/{z}/{y}/{x}']
+    });
+    fleetMapInstance.addLayer({ id:'fleet-nautical-noaa-layer', type:'raster', source:'fleet-nautical-noaa-src', layout:{ visibility:'none' } });
+
+    // OpenSeaMap (ODbL data / CC-BY-SA tiles): global coverage but
+    // community-sourced and uneven outside well-mapped regions. Used for
+    // every non-US country. NOTE — this points at OpenSeaMap's public
+    // tile server, which per OSM's own tile usage policy is meant for
+    // light/non-commercial load, not a paid app's production traffic.
+    // Fine for now; before real commercial launch this needs to move to
+    // self-hosted tiles rendered from the ODbL data (or a paid proxy),
+    // per the licensing review already done for this feature.
+    fleetMapInstance.addSource('fleet-nautical-osm-src', {
+      type:'raster', tileSize:256,
+      attribution:'© OpenSeaMap contributors (ODbL/CC-BY-SA)',
+      tiles:['https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png']
+    });
+    fleetMapInstance.addLayer({ id:'fleet-nautical-osm-layer', type:'raster', source:'fleet-nautical-osm-src', layout:{ visibility:'none' } });
   }
 
   function setFleetMapLayer(type){
@@ -10802,6 +10860,38 @@
     fleetMapInstance.setPaintProperty('fleet-gebco-layer', 'raster-opacity', fleetMapDepthOpacity);
     fleetMapInstance.setPaintProperty('fleet-emodnet-layer', 'raster-opacity', Math.min(1, fleetMapDepthOpacity + 0.10));
   });
+
+  // Nautical charts overlay toggle. Which source is shown (NOAA vs
+  // OpenSeaMap) depends on the active trip's vessel country
+  // (fleetMapVesselCountry, set in renderFleetHaulMap). The disclaimer
+  // banner is NOT a one-time notice — it shows/hides in lockstep with the
+  // layer itself, every time, per Israel's explicit requirement.
+  let fleetMapNauticalLayerOn = false;
+  function toggleFleetNauticalLayer(){
+    if(!fleetMapInstance || !fleetMapInstance.getLayer('fleet-nautical-noaa-layer')) return;
+    fleetMapNauticalLayerOn = !fleetMapNauticalLayerOn;
+    document.getElementById('fleetMltNautical').classList.toggle('active', fleetMapNauticalLayerOn);
+
+    const isUS = fleetMapVesselCountry === 'us';
+    const noaaVis = (fleetMapNauticalLayerOn && isUS) ? 'visible' : 'none';
+    const osmVis = (fleetMapNauticalLayerOn && !isUS) ? 'visible' : 'none';
+    fleetMapInstance.setLayoutProperty('fleet-nautical-noaa-layer', 'visibility', noaaVis);
+    fleetMapInstance.setLayoutProperty('fleet-nautical-osm-layer', 'visibility', osmVis);
+
+    const disclaimer = document.getElementById('fleetNauticalDisclaimer');
+    if(fleetMapNauticalLayerOn){
+      document.getElementById('fleetNauticalAttribution').textContent = isUS
+        ? t('fl_map_nautical_attrib_noaa')
+        : t('fl_map_nautical_attrib_osm');
+      document.getElementById('fleetNauticalSafetyNote').textContent = isUS
+        ? t('fl_map_nautical_safety')
+        : (t('fl_map_nautical_safety') + ' ' + t('fl_map_nautical_coverage_note'));
+      disclaimer.style.display = 'flex';
+    } else {
+      disclaimer.style.display = 'none';
+    }
+  }
+  document.getElementById('fleetMltNautical').addEventListener('click', toggleFleetNauticalLayer);
 
   // 3D tilt and compass-follow — same as Research/Sport's maps.
   let fleetMap3dOn = false;
@@ -10896,6 +10986,19 @@
     const trip = load(TRIPS_KEY).find(t => t.trip_id === fleetMapTripId);
     if(!trip){ fleetGoTo(fleetMapReturnScreen); return; }
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    fleetMapVesselCountry = (vessel && vessel.compliance && vessel.compliance.reporting_country) || '';
+    // Reset the nautical layer each time a (possibly different) trip's map
+    // is opened — never carry over a stale NOAA/OpenSeaMap attribution
+    // from a previously viewed vessel's country.
+    if(fleetMapNauticalLayerOn){
+      fleetMapNauticalLayerOn = false;
+      document.getElementById('fleetMltNautical').classList.remove('active');
+      document.getElementById('fleetNauticalDisclaimer').style.display = 'none';
+      if(fleetMapInstance && fleetMapInstance.getLayer('fleet-nautical-noaa-layer')){
+        fleetMapInstance.setLayoutProperty('fleet-nautical-noaa-layer', 'visibility', 'none');
+        fleetMapInstance.setLayoutProperty('fleet-nautical-osm-layer', 'visibility', 'none');
+      }
+    }
     document.getElementById('fleetMapVesselLine').textContent = (vessel?vessel.name:'—') + ' · ' + new Date(trip.started_at).toLocaleDateString(window.fishPulseLocale(),{day:'2-digit',month:'short',year:'numeric'});
 
     const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
@@ -14096,7 +14199,7 @@
     const input = document.getElementById('species');
     const badge = document.getElementById('researchSpeciesInfoBadge');
     if(!input || !badge) return;
-    researchSpeciesMatched = window.findSpeciesByFreeText(input.value) || window.findSpeciesByFreeText(document.getElementById('commonName').value);
+    researchSpeciesMatched = window.findSpeciesByFreeText(input.value, researchSpeciesCountry) || window.findSpeciesByFreeText(document.getElementById('commonName').value, researchSpeciesCountry);
     badge.classList.toggle('matched', !!researchSpeciesMatched);
   }
   function openResearchSpeciesQuickSheet(){
