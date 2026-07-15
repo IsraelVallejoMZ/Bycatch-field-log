@@ -6323,7 +6323,7 @@
   // chrome (labels/buttons/banners) is translated via I18N like the rest of the app, but the
   // 33 species fiches themselves are only in ES/EN for now (agreed with Israel — IT/TH content
   // translation is a separate future pass).
-  function speciesLang(){ return getLang() === 'en' ? 'en' : 'es'; }
+  function speciesLang(){ return window.getFishPulseLang() === 'en' ? 'en' : 'es'; }
   function foldText(s){ return (s == null ? '' : String(s)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function spField(sp, esValue, enKey){
     if(speciesLang() === 'en' && enKey && sp.en && sp.en[enKey] != null && sp.en[enKey] !== '') return sp.en[enKey];
