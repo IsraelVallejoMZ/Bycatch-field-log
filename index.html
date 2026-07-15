@@ -41,6 +41,7 @@
     --cyan:         #5fc7ee;
     --chip-red-bg:  #fdeaea;
     --chip-green-bg:#dff0e8;
+    --chip-amber-bg:#faf0da;
     --entry-del:    #e0a868;
 
     --display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
@@ -143,6 +144,7 @@
     --chip-red-bg:  #fbe3da;
     --released:     #159871;
     --chip-green-bg:#dcf1e7;
+    --chip-amber-bg:#faf1dc;
     --amber:        #d69a3c;
     --entry-del:    #d69a3c;
   }
@@ -484,6 +486,32 @@
   .sp-quick-header .name{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink); text-transform:capitalize; }
   .sp-quick-close{ margin-left:auto; background:none; border:none; color:var(--ink-soft); font-size:18px; cursor:pointer; padding:2px 6px; }
   .sp-quick-full-link{ font-family:var(--data); color:var(--cyan); font-size:11px; text-align:center; padding-top:12px; cursor:pointer; }
+
+  /* Blue card matching Research's own palette (same family as
+     .btn-new-record-full/.campaign-banner) — the amber accent used for
+     Captain's "Consultar especie" clashed with Research's all-blue Ocean
+     Bright home screen, so this reuses --blue-deep instead, per Israel's
+     note. Gradient + glow shadow + glossy highlight circle (same trick as
+     .fleet-hero's ::after) give it the same "pop" the amber version had,
+     instead of reading as flat/topbar-blue. */
+  .species-lookup-card{
+    display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left; width:100%;
+    background:linear-gradient(135deg, var(--blue), var(--blue-deep)); border:none; border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:16px; transition: transform .12s ease;
+    box-shadow: 0 8px 20px -6px var(--blue); position:relative; overflow:hidden;
+  }
+  .species-lookup-card::after{
+    content:''; position:absolute; right:-30px; top:-30px; width:130px; height:130px;
+    border-radius:50%; background:rgba(255,255,255,0.14); pointer-events:none;
+  }
+  .species-lookup-card:active{ transform: scale(0.98); }
+  .species-lookup-icon{
+    width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.18); color:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;
+  }
+  .species-lookup-eyebrow{ font-family:var(--data); font-size:10px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.06em; position:relative; }
+  .species-lookup-title{ font-family:var(--display); font-weight:600; font-size:14px; color:#fff; margin-top:2px; position:relative; }
+  .species-lookup-chev{ margin-left:auto; color:rgba(255,255,255,0.8); font-size:20px; position:relative; }
 
   .fleet-vessel-btn{
     display:flex; align-items:center; gap:12px; text-align:left; width:100%; cursor:pointer;
@@ -1111,7 +1139,7 @@
      dates change every year (shrimp, tuna...) can't be resolved to a
      simple open/closed chip, so they get their own color instead of
      being forced into red or green. */
-  .chip-amber{ background:var(--fleet-amber-dim, #4a3820); color:var(--amber, #b8893a); }
+  .chip-amber{ background:var(--chip-amber-bg, var(--fleet-amber-dim, #4a3820)); color:var(--amber, #b8893a); }
   .entry .meta{ font-family: var(--data); font-size: 10px; color: #9aa6a6; }
   .entry .del{
     background:none; border:none; color:var(--entry-del); font-size:18px; cursor:pointer;
@@ -2002,6 +2030,17 @@
       </button>
     </div>
 
+    <button type="button" class="species-lookup-card" id="researchSpeciesHeroCard">
+      <div class="species-lookup-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </div>
+      <div>
+        <div class="species-lookup-eyebrow" data-i18n="sp_hero_eyebrow">Reference</div>
+        <div class="species-lookup-title" data-i18n="sp_hero_title">Look up species</div>
+      </div>
+      <div class="species-lookup-chev">&rsaquo;</div>
+    </button>
+
     <div class="backup-banner" id="backupBanner">
       <div class="bb-text">
         <div class="bb-title" data-i18n="home_backup_status">Backup status</div>
@@ -2135,7 +2174,10 @@
       </div>
 
       <label for="species" data-i18n="rec_species_label">Species</label>
-      <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
+      <div class="fleet-species-field-row">
+        <input type="text" id="species" placeholder="e.g. Carcharhinus sorrah" list="species-list">
+        <div class="sp-info-badge" id="researchSpeciesInfoBadge">i</div>
+      </div>
       <datalist id="species-list"></datalist>
 
       <label for="commonName"><span data-i18n="rec_common_name_label">Common Name</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
@@ -2479,6 +2521,72 @@
 
     <div class="section-h" data-i18n="camp_all">All campaigns</div>
     <div id="campaignsList"></div>
+  </main>
+</section>
+
+<!-- ================= RESEARCH: SPECIES CATALOG ================= -->
+<section class="screen" id="screen-species-catalog">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" data-go="home">←</button>
+      <span class="brand" data-i18n="sp_hero_title">Look up species</span>
+    </div>
+    <h1 data-i18n="sp_catalog_title">Species</h1>
+  </div>
+  <main>
+    <div class="sp-search-wrap">
+      <input type="text" id="researchSpeciesSearchInput" data-i18n-placeholder="sp_search_placeholder" placeholder="Search by name...">
+    </div>
+    <div class="pillrow sp-filter-row" id="researchSpeciesFilterRow">
+      <div class="pill active" data-filter="all" data-i18n="sp_filter_all">All</div>
+      <div class="pill" data-filter="pacifico" data-i18n="sp_filter_pacifico">Pacific</div>
+      <div class="pill" data-filter="golfo_caribe" data-i18n="sp_filter_golfo_caribe">Gulf/Caribbean</div>
+      <div class="pill" data-filter="proteccion" data-i18n="sp_filter_proteccion">Special protection</div>
+    </div>
+    <div class="card sp-list-card">
+      <div id="researchSpeciesList"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= RESEARCH: SPECIES DETAIL ================= -->
+<section class="screen" id="screen-species-detail">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" id="researchSpeciesDetailBackBtn">←</button>
+      <span class="brand" data-i18n="sp_catalog_title">Species</span>
+    </div>
+    <h1>&nbsp;</h1>
+  </div>
+  <main>
+    <div class="sp-header">
+      <h2 id="researchSpeciesDetailName">—</h2>
+      <div class="sci" id="researchSpeciesDetailSci">—</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" data-i18n="sp_card_biology">Biology</div>
+      <div id="researchSpeciesDetailBioRows"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" data-i18n="sp_card_visual">Visual ID</div>
+      <div class="row"><span class="v" id="researchSpeciesDetailVisual" style="text-align:left;">—</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" data-i18n="sp_card_regulatory">Regulatory</div>
+      <div id="researchSpeciesDetailRegRows"></div>
+      <div class="sp-context-note" id="researchSpeciesDetailContext" style="display:none;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" data-i18n="sp_card_source">Source & update</div>
+      <div class="row"><span class="v" id="researchSpeciesDetailSources" style="text-align:left;">—</span></div>
+      <div class="row"><span class="v" id="researchSpeciesDetailUpdated" style="text-align:left;">—</span></div>
+    </div>
+
+    <div class="sp-legal" id="researchSpeciesDetailLegal"></div>
   </main>
 </section>
 
@@ -6651,6 +6759,28 @@
     if(e.target === document.getElementById('fleetSpeciesQuickSheet')) closeFleetSpeciesQuickSheet();
   });
   document.getElementById('fleetSpeciesQuickCloseBtn').addEventListener('click', closeFleetSpeciesQuickSheet);
+
+  // Research (Field Research module, a separate IIFE) reuses this same
+  // catalog and logic for its own "Look up species" screens rather than
+  // duplicating the 37-entry dataset — single source of truth, same
+  // pattern already used for window.t/window.populateDatalist/etc.
+  window.SPECIES_CATALOG = SPECIES_CATALOG;
+  window.speciesLang = speciesLang;
+  window.foldText = foldText;
+  window.spField = spField;
+  window.spNombreComun = spNombreComun;
+  window.spVedaPeriodos = spVedaPeriodos;
+  window.metaLegalNotice = metaLegalNotice;
+  window.mmddRangeLabel = mmddRangeLabel;
+  window.speciesVedaStatus = speciesVedaStatus;
+  window.speciesStatusLabel = speciesStatusLabel;
+  window.speciesStatusChipClass = speciesStatusChipClass;
+  window.speciesBannerInfo = speciesBannerInfo;
+  window.speciesMatchesFilter = speciesMatchesFilter;
+  window.speciesSearchNames = speciesSearchNames;
+  window.speciesMatchesSearch = speciesMatchesSearch;
+  window.findSpeciesByFreeText = findSpeciesByFreeText;
+  window.speciesRegulatoryRowsHtml = speciesRegulatoryRowsHtml;
 
 
   // ===== Vessels & captains =====
@@ -13733,6 +13863,8 @@
     if(screen === 'insights') renderInsights();
     if(screen === 'track') renderTrackScreen();
     if(screen === 'campaigns') renderCampaignsScreen();
+    if(screen === 'species-catalog') renderResearchSpeciesList();
+    if(screen === 'species-detail') renderResearchSpeciesDetail();
     document.querySelector('.screen.active').scrollTop = 0;
   }
   window.goTo = goTo;
@@ -13750,6 +13882,150 @@
       goTo(target);
     });
   });
+
+  // ===== Species reference catalog (Look up species — Field Research) =====
+  // Reuses SPECIES_CATALOG and the pure helper functions exposed on window
+  // by the Fleet module (a separate IIFE) — same 37-entry dataset, no
+  // duplication. Only the rendering here is Research-specific: biology
+  // expanded first, regulatory shown as a plain context card (no urgent
+  // banner — captains make real-time capture-legality calls, researchers
+  // don't), traceability expanded, per the design agreed with Israel.
+  let researchSpeciesSearch = '';
+  let researchSpeciesFilter = 'all';
+  let researchSpeciesActiveId = null;
+  let researchSpeciesDetailReturn = 'species-catalog';
+
+  function renderResearchSpeciesFilterPills(){
+    document.querySelectorAll('#researchSpeciesFilterRow .pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.filter === researchSpeciesFilter);
+    });
+  }
+  function renderResearchSpeciesList(){
+    const listEl = document.getElementById('researchSpeciesList');
+    if(!listEl) return;
+    renderResearchSpeciesFilterPills();
+    const qFold = window.foldText(researchSpeciesSearch);
+    const rows = window.SPECIES_CATALOG.especies
+      .filter(sp => window.speciesMatchesFilter(sp, researchSpeciesFilter) && window.speciesMatchesSearch(sp, qFold))
+      .sort((a, b) => window.spNombreComun(a)[0].localeCompare(window.spNombreComun(b)[0]));
+    if(!rows.length){
+      listEl.innerHTML = '<div class="sp-empty">' + t('sp_no_results') + '</div>';
+      return;
+    }
+    listEl.innerHTML = rows.map(sp => {
+      const status = window.speciesVedaStatus(sp);
+      const name = window.spNombreComun(sp)[0];
+      const sci = sp.identificacion.nombre_cientifico[0];
+      const cap = name.charAt(0).toUpperCase() + name.slice(1);
+      return '<div class="sp-row" data-species-id="' + sp.id + '">'
+        + '<div><div class="name">' + cap + '</div><div class="sci">' + sci + '</div></div>'
+        + '<span class="' + window.speciesStatusChipClass(status) + '">' + window.speciesStatusLabel(sp, status) + '</span>'
+        + '</div>';
+    }).join('');
+    listEl.querySelectorAll('.sp-row').forEach(row => {
+      row.addEventListener('click', () => {
+        researchSpeciesActiveId = row.dataset.speciesId;
+        researchSpeciesDetailReturn = 'species-catalog';
+        goTo('species-detail');
+      });
+    });
+  }
+
+  function renderResearchSpeciesDetail(){
+    const sp = window.SPECIES_CATALOG.especies.find(s => s.id === researchSpeciesActiveId);
+    if(!sp){ goTo('species-catalog'); return; }
+    const name = window.spNombreComun(sp)[0];
+    document.getElementById('researchSpeciesDetailName').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+    document.getElementById('researchSpeciesDetailSci').textContent = sp.identificacion.nombre_cientifico.join(' / ') + ' · ' + sp.identificacion.familia;
+
+    // Biology first, expanded — the priority for a researcher identifying a specimen.
+    const b = sp.biologico;
+    let bioRows = '';
+    const habitat = window.spField(sp, b.habitat, 'habitat');
+    if(habitat) bioRows += '<div class="row"><span class="k">' + t('sp_habitat') + '</span><span class="v">' + habitat + '</span></div>';
+    const depth = window.spField(sp, b.profundidad_tipica, 'profundidad_tipica');
+    if(depth) bioRows += '<div class="row"><span class="k">' + t('sp_typical_depth') + '</span><span class="v">' + depth + '</span></div>';
+    const season = window.spField(sp, b.temporada_reproductiva, 'temporada_reproductiva');
+    if(season) bioRows += '<div class="row"><span class="k">' + t('sp_reproductive_season') + '</span><span class="v">' + season + '</span></div>';
+    if(b.estatus_uicn) bioRows += '<div class="row"><span class="k">IUCN</span><span class="v warn">' + t('sp_iucn_' + b.estatus_uicn) + '</span></div>';
+    const notes = window.spField(sp, b.notas, 'notas_bio');
+    if(notes) bioRows += '<div class="row"><span class="k"></span><span class="v" style="font-size:11px;">' + notes + '</span></div>';
+    document.getElementById('researchSpeciesDetailBioRows').innerHTML = bioRows || ('<div class="row"><span class="v">' + t('sp_no_data') + '</span></div>');
+
+    document.getElementById('researchSpeciesDetailVisual').textContent = window.spField(sp, sp.identificacion_visual.descripcion_texto, 'descripcion_visual') || t('sp_no_description');
+
+    // Regulatory as a plain context card — same rows as Captain's, just
+    // without the veda status banner or the incidental-catch alert box.
+    document.getElementById('researchSpeciesDetailRegRows').innerHTML = window.speciesRegulatoryRowsHtml(sp);
+    const contextNote = window.spField(sp, sp.regulatorio.nota_regulatoria_libre, 'nota_regulatoria_libre');
+    const contextEl = document.getElementById('researchSpeciesDetailContext');
+    if(contextNote){ contextEl.style.display = ''; contextEl.textContent = contextNote; } else { contextEl.style.display = 'none'; }
+
+    // Traceability, expanded (never collapsed) per the agreed design.
+    document.getElementById('researchSpeciesDetailSources').textContent = sp.trazabilidad.fuentes.join(' · ');
+    document.getElementById('researchSpeciesDetailUpdated').textContent = t('sp_updated') + ': ' + sp.trazabilidad.fecha_actualizacion;
+    document.getElementById('researchSpeciesDetailLegal').textContent = window.metaLegalNotice();
+
+    document.getElementById('researchSpeciesDetailBackBtn').onclick = () => goTo(researchSpeciesDetailReturn);
+  }
+
+  // ----- New Record "Specimen" step: quick-info "i" badge + bottom sheet -----
+  // Reuses the same #fleetSpeciesQuickSheet overlay Fleet's Log Catch uses
+  // (a single floating DOM element, harmless to share since only one module
+  // is ever visible at a time) rather than duplicating the markup.
+  let researchSpeciesMatched = null;
+  function updateResearchSpeciesMatch(){
+    const input = document.getElementById('species');
+    const badge = document.getElementById('researchSpeciesInfoBadge');
+    if(!input || !badge) return;
+    researchSpeciesMatched = window.findSpeciesByFreeText(input.value) || window.findSpeciesByFreeText(document.getElementById('commonName').value);
+    badge.classList.toggle('matched', !!researchSpeciesMatched);
+  }
+  function openResearchSpeciesQuickSheet(){
+    if(!researchSpeciesMatched){
+      showToast(t('sp_no_match_toast'), true);
+      return;
+    }
+    const sp = researchSpeciesMatched;
+    const status = window.speciesVedaStatus(sp);
+    const info = window.speciesBannerInfo(sp, status);
+    const banner = document.getElementById('fleetSpeciesQuickBanner');
+    banner.className = 'status-banner ' + info.cls;
+    banner.innerHTML = '<div class="ic">' + (status.level === 'green' ? '✓' : '⚠') + '</div><div><strong>' + info.title + '</strong>' + (info.sub ? '<span>' + info.sub + '</span>' : '') + '</div>';
+
+    const r = sp.regulatorio;
+    let rows = '';
+    if(r.talla_minima.aplica){
+      rows += '<div class="row"><span class="k">' + t('sp_min_size') + '</span><span class="v">' + r.talla_minima.valor + ' ' + r.talla_minima.unidad + '</span></div>';
+    }
+    const periodos = window.spVedaPeriodos(sp);
+    if(periodos[0] && periodos[0].zona){
+      rows += '<div class="row"><span class="k">' + t('sp_zone') + '</span><span class="v">' + periodos[0].zona + '</span></div>';
+    }
+    document.getElementById('fleetSpeciesQuickRows').innerHTML = rows;
+    document.getElementById('fleetSpeciesQuickTitle').textContent = window.spNombreComun(sp)[0];
+    document.getElementById('fleetSpeciesQuickViewFull').onclick = () => {
+      document.getElementById('fleetSpeciesQuickSheet').classList.remove('open');
+      researchSpeciesActiveId = sp.id;
+      researchSpeciesDetailReturn = 'record';
+      goTo('species-detail');
+    };
+    document.getElementById('fleetSpeciesQuickSheet').classList.add('open');
+  }
+  document.getElementById('researchSpeciesHeroCard').addEventListener('click', () => goTo('species-catalog'));
+  document.getElementById('researchSpeciesSearchInput').addEventListener('input', (e) => {
+    researchSpeciesSearch = e.target.value;
+    renderResearchSpeciesList();
+  });
+  document.querySelectorAll('#researchSpeciesFilterRow .pill').forEach(p => {
+    p.addEventListener('click', () => {
+      researchSpeciesFilter = p.dataset.filter;
+      renderResearchSpeciesList();
+    });
+  });
+  document.getElementById('species').addEventListener('input', updateResearchSpeciesMatch);
+  document.getElementById('commonName').addEventListener('input', updateResearchSpeciesMatch);
+  document.getElementById('researchSpeciesInfoBadge').addEventListener('click', openResearchSpeciesQuickSheet);
 
   // ===== Network indicator =====
   function updateNet(){
