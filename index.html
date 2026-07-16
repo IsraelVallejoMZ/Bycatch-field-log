@@ -347,6 +347,34 @@
   .aqua-param-marker{ position:absolute; top:0; bottom:0; border-radius:9999px; width:4px; }
   .aqua-param-range-row{ display:flex; justify-content:space-between; }
   .aqua-param-range-row span{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); }
+
+  /* ===== Feeding calculator screen ===== */
+  .aqua-kpi-row{ display:flex; gap:8px; padding:16px 18px 0; }
+  .aqua-kpi-card{
+    flex:1; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 12px;
+    box-shadow:0 2px 8px rgba(14,27,38,0.06);
+  }
+  .aqua-kpi-label{ font-family:var(--data); font-size:9px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-weight:700; }
+  .aqua-kpi-val{ font-family:var(--display); font-size:17px; color:var(--ink); margin-top:3px; font-weight:600; }
+  .aqua-quick-log-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px; background:var(--blue); color:#fff;
+    font-family:var(--display); font-size:14px; font-weight:700; border-radius:9999px; padding:13px;
+    margin:16px 18px 4px; box-shadow:0 8px 18px rgba(15,118,110,0.3); cursor:pointer; border:none; width:calc(100% - 36px);
+  }
+  .aqua-ration-card{
+    display:flex; justify-content:space-between; align-items:baseline; background:var(--blue-mist);
+    border-radius:16px; padding:16px; margin:12px 0;
+  }
+  .aqua-ration-label{ font-family:var(--data); font-size:12px; color:var(--blue-deep); font-weight:600; }
+  .aqua-ration-val{ font-family:var(--display); font-size:26px; font-weight:700; color:var(--blue-deep); }
+  .aqua-feed-row{
+    display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:12px 14px; margin-bottom:8px;
+  }
+  .aqua-feed-row-date{ width:52px; flex-shrink:0; font-family:var(--data); font-size:11px; color:var(--blue); font-weight:700; }
+  .aqua-feed-row-main{ flex:1; min-width:0; }
+  .aqua-feed-row-title{ font-family:var(--display); font-size:13.5px; color:var(--ink); }
+  .aqua-feed-row-sub{ font-family:var(--data); font-size:10.5px; color:var(--ink-soft); font-weight:600; margin-top:2px; }
   .aqua-tabbar{
     display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
     justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
@@ -3164,44 +3192,73 @@
 
 <!-- ================= AQUACULTURE: FEEDING CALCULATOR (per cycle) ================= -->
 <section class="screen" id="screen-aqua-feeding">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-cycle">←</button>
-      <span class="brand" id="aquaFeedingUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_feeding_h1">Feeding calculator</div>
+        <div class="aqua-header-band-sub" id="aquaFeedingUnitName">—</div>
+      </div>
     </div>
-    <h1 data-i18n="aqua_feeding_h1">Feeding calculator</h1>
-    <div class="site-line">&nbsp;</div>
   </div>
+  <div class="aqua-kpi-row">
+    <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_feeding_kpi_today">Fed today</div><div class="aqua-kpi-val" id="aquaFeedingKpiToday">—</div></div>
+    <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_feeding_kpi_cycle">This cycle</div><div class="aqua-kpi-val" id="aquaFeedingKpiCycle">—</div></div>
+    <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_feeding_kpi_fcr">Avg FCR</div><div class="aqua-kpi-val" id="aquaFeedingKpiFcr" style="color:var(--released);">—</div></div>
+  </div>
+  <button type="button" class="aqua-quick-log-btn" id="aquaFeedingQuickLogBtn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span data-i18n="aqua_feeding_quick_log_btn">Log feed entry</span>
+  </button>
   <main>
     <button type="button" class="btn" id="aquaFeedingSyncBtn" style="width:100%;margin-bottom:12px;" data-i18n="aqua_feeding_sync_btn">Sync with last biometry</button>
     <div id="aquaFeedingStaleWarning"></div>
 
-    <div class="card">
-      <label for="aquaFeedWeight" data-i18n="aqua_feeding_weight_label">Suggested average weight (g)</label>
-      <input type="number" id="aquaFeedWeight" min="0" step="0.1" placeholder="185">
-      <label for="aquaFeedTemp" data-i18n="aqua_feeding_temp_label">Water temperature today (°C)</label>
-      <input type="number" id="aquaFeedTemp" step="0.1" placeholder="27">
-      <label for="aquaFeedMortality" data-i18n="aqua_feeding_mortality_label">Accumulated mortality</label>
-      <input type="number" id="aquaFeedMortality" min="0" step="1" placeholder="0">
-      <button type="button" class="btn btn-save" id="aquaFeedingCalcBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_feeding_calc_btn">Calculate</button>
+    <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_feeding_calc_title">Calculate ration</div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_weight_label">Suggested average weight (g)</span>
+      <input type="number" class="aqua-input" id="aquaFeedWeight" min="0" step="0.1" placeholder="185">
     </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_temp_label">Water temperature today (°C)</span>
+      <input type="number" class="aqua-input" id="aquaFeedTemp" step="0.1" placeholder="27">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_mortality_label">Accumulated mortality</span>
+      <input type="number" class="aqua-input" id="aquaFeedMortality" min="0" step="1" placeholder="0">
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaFeedingCalcBtn">
+      <span data-i18n="aqua_feeding_calc_btn">Calculate</span>
+    </button>
 
     <div id="aquaFeedingResult"></div>
 
-    <div class="card" id="aquaFeedingLogCard" style="display:none;">
-      <label for="aquaFeedKg" data-i18n="aqua_feeding_kg_label">Feed given today (kg)</label>
-      <input type="number" id="aquaFeedKg" min="0" step="0.1">
-      <label for="aquaFeedType" data-i18n="aqua_feeding_type_label">Feed type / brand (optional)</label>
-      <input type="text" id="aquaFeedType" placeholder="e.g. 32% floating pellet">
-      <label for="aquaFeedCost" data-i18n="aqua_feeding_cost_label">Cost (optional)</label>
-      <input type="number" id="aquaFeedCost" min="0" step="0.01">
-      <button type="button" class="btn btn-save" id="aquaFeedingLogBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_feeding_log_btn">Log feeding</button>
+    <div id="aquaFeedingLogCard" style="display:none;">
+      <div class="aqua-field-label" style="margin:20px 0 12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_feeding_log_title">Log feeding</div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_feeding_kg_label">Feed given today (kg)</span>
+        <input type="number" class="aqua-input" id="aquaFeedKg" min="0" step="0.1">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_feeding_type_label">Feed type / brand (optional)</span>
+        <input type="text" class="aqua-input" id="aquaFeedType" placeholder="e.g. 32% floating pellet">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_feeding_cost_label">Cost (optional)</span>
+        <input type="number" class="aqua-input" id="aquaFeedCost" min="0" step="0.01">
+      </div>
+      <button type="button" class="aqua-add-submit" id="aquaFeedingLogBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="aqua_feeding_log_btn">Log feeding</span>
+      </button>
     </div>
 
-    <div class="hist-meta-row" style="margin-top:6px;">
+    <div class="hist-meta-row" style="margin-top:24px;">
       <span class="insight-card-label" style="margin:0;" data-i18n="aqua_feeding_history_label">Recent feeding</span>
     </div>
-    <div id="aquaFeedingHistory"></div>
+    <div id="aquaFeedingHistory" style="margin-top:8px;"></div>
   </main>
 </section>
 
@@ -5295,7 +5352,7 @@
       aqua_water_do_am: 'DO (AM)', aqua_water_do_pm: 'DO (PM)', aqua_water_logged: 'Logged', aqua_water_pending: 'Pending',
       aqua_water_toxic_title: 'Ammonia is toxic at this pH', aqua_water_toxic_body: 'Turn on aerators and pause feeding', aqua_water_empty: 'No readings logged yet.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'watch', aqua_water_status_alert: 'alert',
-      aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINITY',
+      aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinity (ppt)',
       aqua_water_just_now: 'just now', aqua_water_min_ago: 'min ago', aqua_water_hr_ago: 'h ago', aqua_water_day_ago: 'd ago',
       aqua_subnav_water: 'Water', aqua_subnav_cycle: 'Cycle', aqua_cycle_h1: 'Cycle', aqua_cycle_start: 'Start a new cycle', aqua_cycle_species_label: 'Species',
@@ -5310,6 +5367,8 @@
       aqua_mortality_note_label: 'Note (optional)', aqua_mortality_save_btn: 'Save mortality', aqua_mortality_history_label: 'Recent entries', aqua_mortality_empty: 'No mortality logged yet.', aqua_mortality_saved: 'Mortality saved',
       aqua_feeding_h1: 'Feeding calculator', aqua_feeding_sync_btn: 'Sync with last biometry', aqua_feeding_weight_label: 'Suggested average weight (g)', aqua_feeding_temp_label: 'Water temperature today (°C)',
       aqua_feeding_mortality_label: 'Accumulated mortality', aqua_feeding_calc_btn: 'Calculate', aqua_feeding_result_label: 'Suggested ration today',
+      aqua_feeding_kpi_today: 'Fed today', aqua_feeding_kpi_cycle: 'This cycle', aqua_feeding_kpi_fcr: 'Avg FCR', aqua_feeding_quick_log_btn: 'Log feed entry',
+      aqua_feeding_calc_title: 'Calculate ration', aqua_feeding_log_title: 'Log feeding',
       aqua_feeding_kg_label: 'Feed given today (kg)', aqua_feeding_type_label: 'Feed type / brand (optional)', aqua_feeding_cost_label: 'Cost (optional)', aqua_feeding_log_btn: 'Log feeding',
       aqua_feeding_history_label: 'Recent feeding', aqua_feeding_empty: 'No feeding logged yet.', aqua_feeding_saved: 'Feeding saved', aqua_feeding_no_biometry: 'No biometry logged for this cycle yet.',
       aqua_feeding_stale_warning: 'Your last biometry was {days} days ago. Consider a new sample, or adjust the weight manually.',
@@ -5687,7 +5746,7 @@
       aqua_water_do_am: 'OD (AM)', aqua_water_do_pm: 'OD (PM)', aqua_water_logged: 'Registrado', aqua_water_pending: 'Pendiente',
       aqua_water_toxic_title: 'Amonio tóxico a este pH', aqua_water_toxic_body: 'Enciende aireadores y suspende alimentación', aqua_water_empty: 'Aún no hay mediciones registradas.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'atención', aqua_water_status_alert: 'alerta',
-      aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINIDAD',
+      aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinidad (ppt)',
       aqua_water_just_now: 'justo ahora', aqua_water_min_ago: 'min', aqua_water_hr_ago: 'h', aqua_water_day_ago: 'd',
       aqua_subnav_water: 'Agua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Iniciar nuevo ciclo', aqua_cycle_species_label: 'Especie',
@@ -5702,6 +5761,8 @@
       aqua_mortality_note_label: 'Nota (opcional)', aqua_mortality_save_btn: 'Guardar mortalidad', aqua_mortality_history_label: 'Registros recientes', aqua_mortality_empty: 'Aún no hay mortalidad registrada.', aqua_mortality_saved: 'Mortalidad guardada',
       aqua_feeding_h1: 'Calculadora de ración', aqua_feeding_sync_btn: 'Sincronizar con última biometría', aqua_feeding_weight_label: 'Peso promedio sugerido (g)', aqua_feeding_temp_label: 'Temperatura del agua hoy (°C)',
       aqua_feeding_mortality_label: 'Mortalidad acumulada', aqua_feeding_calc_btn: 'Calcular', aqua_feeding_result_label: 'Ración sugerida hoy',
+      aqua_feeding_kpi_today: 'Alimento hoy', aqua_feeding_kpi_cycle: 'Este ciclo', aqua_feeding_kpi_fcr: 'FCA prom.', aqua_feeding_quick_log_btn: 'Registrar alimento',
+      aqua_feeding_calc_title: 'Calcular ración', aqua_feeding_log_title: 'Registrar alimentación',
       aqua_feeding_kg_label: 'Alimento suministrado hoy (kg)', aqua_feeding_type_label: 'Tipo/marca de alimento (opcional)', aqua_feeding_cost_label: 'Costo (opcional)', aqua_feeding_log_btn: 'Registrar alimentación',
       aqua_feeding_history_label: 'Alimentación reciente', aqua_feeding_empty: 'Aún no hay alimentación registrada.', aqua_feeding_saved: 'Alimentación guardada', aqua_feeding_no_biometry: 'Aún no hay biometría registrada para este ciclo.',
       aqua_feeding_stale_warning: 'Tu última biometría fue hace {days} días. Considera un nuevo muestreo, o ajusta el peso manualmente.',
@@ -6079,7 +6140,7 @@
       aqua_water_do_am: 'OD (mattina)', aqua_water_do_pm: 'OD (sera)', aqua_water_logged: 'Registrato', aqua_water_pending: 'In sospeso',
       aqua_water_toxic_title: 'Ammoniaca tossica a questo pH', aqua_water_toxic_body: 'Accendi gli aeratori e sospendi l\'alimentazione', aqua_water_empty: 'Nessuna misurazione registrata.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'attenzione', aqua_water_status_alert: 'allarme',
-      aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINITÀ',
+      aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinità (ppt)',
       aqua_water_just_now: 'adesso', aqua_water_min_ago: 'min fa', aqua_water_hr_ago: 'h fa', aqua_water_day_ago: 'g fa',
       aqua_subnav_water: 'Acqua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Avvia un nuovo ciclo', aqua_cycle_species_label: 'Specie',
@@ -6094,6 +6155,8 @@
       aqua_mortality_note_label: 'Nota (opzionale)', aqua_mortality_save_btn: 'Salva mortalità', aqua_mortality_history_label: 'Voci recenti', aqua_mortality_empty: 'Nessuna mortalità registrata.', aqua_mortality_saved: 'Mortalità salvata',
       aqua_feeding_h1: 'Calcolatrice di razione', aqua_feeding_sync_btn: 'Sincronizza con l\'ultima biometria', aqua_feeding_weight_label: 'Peso medio suggerito (g)', aqua_feeding_temp_label: 'Temperatura dell\'acqua oggi (°C)',
       aqua_feeding_mortality_label: 'Mortalità accumulata', aqua_feeding_calc_btn: 'Calcola', aqua_feeding_result_label: 'Razione suggerita oggi',
+      aqua_feeding_kpi_today: 'Alimento oggi', aqua_feeding_kpi_cycle: 'Questo ciclo', aqua_feeding_kpi_fcr: 'FCR medio', aqua_feeding_quick_log_btn: 'Registra alimento',
+      aqua_feeding_calc_title: 'Calcola razione', aqua_feeding_log_title: 'Registra alimentazione',
       aqua_feeding_kg_label: 'Mangime dato oggi (kg)', aqua_feeding_type_label: 'Tipo/marca di mangime (opzionale)', aqua_feeding_cost_label: 'Costo (opzionale)', aqua_feeding_log_btn: 'Registra alimentazione',
       aqua_feeding_history_label: 'Alimentazione recente', aqua_feeding_empty: 'Nessuna alimentazione registrata.', aqua_feeding_saved: 'Alimentazione salvata', aqua_feeding_no_biometry: 'Nessuna biometria registrata per questo ciclo.',
       aqua_feeding_stale_warning: 'La tua ultima biometria risale a {days} giorni fa. Valuta un nuovo campionamento, o modifica il peso manualmente.',
@@ -6450,7 +6513,7 @@
       aqua_water_do_am: 'DO (เช้า)', aqua_water_do_pm: 'DO (เย็น)', aqua_water_logged: 'บันทึกแล้ว', aqua_water_pending: 'ยังไม่ได้บันทึก',
       aqua_water_toxic_title: 'แอมโมเนียเป็นพิษที่ pH นี้', aqua_water_toxic_body: 'เปิดเครื่องเติมอากาศและหยุดให้อาหารทันที', aqua_water_empty: 'ยังไม่มีค่าที่บันทึกไว้',
       aqua_water_status_ok: 'ปกติ', aqua_water_status_watch: 'เฝ้าระวัง', aqua_water_status_alert: 'แจ้งเตือน',
-      aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'ความเค็ม',
+      aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'เค็ม',
       aqua_water_salinity_label: 'ความเค็ม (ppt)',
       aqua_water_just_now: 'เมื่อสักครู่', aqua_water_min_ago: 'นาทีที่แล้ว', aqua_water_hr_ago: 'ชม. ที่แล้ว', aqua_water_day_ago: 'วันที่แล้ว',
       aqua_subnav_water: 'น้ำ', aqua_subnav_cycle: 'รอบการผลิต', aqua_cycle_h1: 'รอบการผลิต', aqua_cycle_start: 'เริ่มรอบการผลิตใหม่', aqua_cycle_species_label: 'ชนิดพันธุ์',
@@ -6465,6 +6528,8 @@
       aqua_mortality_note_label: 'บันทึกเพิ่มเติม (ไม่บังคับ)', aqua_mortality_save_btn: 'บันทึกอัตราตาย', aqua_mortality_history_label: 'รายการล่าสุด', aqua_mortality_empty: 'ยังไม่มีข้อมูลอัตราตาย', aqua_mortality_saved: 'บันทึกอัตราตายแล้ว',
       aqua_feeding_h1: 'เครื่องคำนวณอาหาร', aqua_feeding_sync_btn: 'ซิงค์กับชีวมาตรล่าสุด', aqua_feeding_weight_label: 'น้ำหนักเฉลี่ยที่แนะนำ (ก.)', aqua_feeding_temp_label: 'อุณหภูมิน้ำวันนี้ (°C)',
       aqua_feeding_mortality_label: 'อัตราตายสะสม', aqua_feeding_calc_btn: 'คำนวณ', aqua_feeding_result_label: 'ปริมาณอาหารที่แนะนำวันนี้',
+      aqua_feeding_kpi_today: 'อาหารวันนี้', aqua_feeding_kpi_cycle: 'รอบนี้', aqua_feeding_kpi_fcr: 'FCR เฉลี่ย', aqua_feeding_quick_log_btn: 'บันทึกการให้อาหาร',
+      aqua_feeding_calc_title: 'คำนวณปริมาณอาหาร', aqua_feeding_log_title: 'บันทึกการให้อาหาร',
       aqua_feeding_kg_label: 'ปริมาณอาหารที่ให้วันนี้ (กก.)', aqua_feeding_type_label: 'ชนิด/ยี่ห้ออาหาร (ไม่บังคับ)', aqua_feeding_cost_label: 'ต้นทุน (ไม่บังคับ)', aqua_feeding_log_btn: 'บันทึกการให้อาหาร',
       aqua_feeding_history_label: 'การให้อาหารล่าสุด', aqua_feeding_empty: 'ยังไม่มีข้อมูลการให้อาหาร', aqua_feeding_saved: 'บันทึกการให้อาหารแล้ว', aqua_feeding_no_biometry: 'ยังไม่มีข้อมูลชีวมาตรสำหรับรอบนี้',
       aqua_feeding_stale_warning: 'ชีวมาตรล่าสุดของคุณผ่านมาแล้ว {days} วัน ควรทำการสุ่มตัวอย่างใหม่ หรือปรับน้ำหนักด้วยตนเอง',
@@ -18244,6 +18309,7 @@
 
     const cycle = currentCycleForActiveScreen();
     const entries = cycle ? loadFeedingAqua().filter(f => f.cycle_id === cycle.cycle_id).sort((a,b) => b.ts - a.ts) : [];
+
     // Prefill accumulated mortality from the mortality log automatically —
     // still editable, same "manual-smart" default as the weight field.
     const mortEl = document.getElementById('aquaFeedMortality');
@@ -18251,17 +18317,45 @@
       const totalDead = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id).reduce((s,m) => s + (m.qty||0), 0);
       mortEl.value = totalDead || 0;
     }
+
+    // KPI row — real numbers, same FCR formula already used by Stats/Home:
+    // total feed logged / biomass gained between first and latest biometry.
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const fedTodayKg = entries.filter(e => e.ts >= todayStart).reduce((s,e) => s + (e.kg||0), 0);
+    const cycleTotalKg = entries.reduce((s,e) => s + (e.kg||0), 0);
+    document.getElementById('aquaFeedingKpiToday').textContent = entries.length ? (fedTodayKg.toFixed(1) + ' kg') : '—';
+    document.getElementById('aquaFeedingKpiCycle').textContent = cycle ? (cycleTotalKg.toFixed(0) + ' kg') : '—';
+
+    let fcrText = '—';
+    if(cycle){
+      const mortEvents = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id);
+      const totalDead = mortEvents.reduce((s,m) => s + (m.qty||0), 0);
+      const liveCount = Math.max(0, (cycle.seeded_qty||0) - totalDead);
+      const bioEvents = loadBiometryAqua().filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
+      const firstBio = bioEvents[0] || null, lastBio = bioEvents[bioEvents.length-1] || null;
+      if(firstBio && lastBio && cycleTotalKg > 0){
+        const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
+        const biomassNowKg = (liveCount * lastBio.avg_weight_g) / 1000;
+        const gainKg = biomassNowKg - biomassStartKg;
+        if(gainKg > 0) fcrText = (cycleTotalKg / gainKg).toFixed(2);
+      }
+    }
+    document.getElementById('aquaFeedingKpiFcr').textContent = fcrText;
+
     if(entries.length === 0){
       histEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_feeding_empty') + '</div>';
     } else {
       histEl.innerHTML = entries.slice(0, 20).map(e => {
         const d = new Date(e.ts);
-        let line = e.kg + ' kg';
-        if(e.type) line += ' · ' + escapeHtmlAqua(e.type);
-        if(e.cost != null) line += ' · ' + e.cost;
-        return '<div class="card" style="padding:10px 12px;">'
-          + '<div style="font-size:11px;color:var(--ink-soft);">' + d.toLocaleDateString() + '</div>'
-          + '<div style="font-size:13px;color:var(--ink);margin-top:2px;">' + line + '</div>'
+        const sub = [];
+        if(e.type) sub.push(escapeHtmlAqua(e.type));
+        if(e.cost != null) sub.push(t('aqua_feeding_cost_label') + ' ' + e.cost);
+        return '<div class="aqua-feed-row">'
+          + '<div class="aqua-feed-row-date">' + d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</div>'
+          + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + e.kg + ' kg</div>'
+            + (sub.length ? ('<div class="aqua-feed-row-sub">' + sub.join(' · ') + '</div>') : '')
+          + '</div>'
         + '</div>';
       }).join('');
     }
@@ -18296,9 +18390,9 @@
     const ratePct = feedingRatePct(weightG) * tempAdjustment(tempC);
     const rationKg = biomassKg * (ratePct / 100);
 
-    document.getElementById('aquaFeedingResult').innerHTML = '<div style="display:flex;justify-content:space-between;align-items:baseline;background:var(--panel);border-radius:var(--radius);padding:12px;margin:12px 0;">'
-      + '<span style="font-size:13px;color:var(--ink-soft);">' + t('aqua_feeding_result_label') + '</span>'
-      + '<span style="font-size:22px;font-weight:500;color:var(--ink);">' + rationKg.toFixed(1) + ' kg</span>'
+    document.getElementById('aquaFeedingResult').innerHTML = '<div class="aqua-ration-card">'
+      + '<span class="aqua-ration-label">' + t('aqua_feeding_result_label') + '</span>'
+      + '<span class="aqua-ration-val">' + rationKg.toFixed(1) + ' kg</span>'
     + '</div>';
 
     const logCard = document.getElementById('aquaFeedingLogCard');
@@ -18329,6 +18423,14 @@
     if(calcBtn) calcBtn.addEventListener('click', calculateFeeding);
     const logBtn = document.getElementById('aquaFeedingLogBtn');
     if(logBtn) logBtn.addEventListener('click', logAquaFeeding);
+    const quickLogBtn = document.getElementById('aquaFeedingQuickLogBtn');
+    if(quickLogBtn) quickLogBtn.addEventListener('click', () => {
+      const logCard = document.getElementById('aquaFeedingLogCard');
+      logCard.style.display = 'block';
+      logCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const kgEl = document.getElementById('aquaFeedKg');
+      if(kgEl) kgEl.focus();
+    });
   });
 
   // ----- Stats (derived entirely from data already captured elsewhere —
