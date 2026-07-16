@@ -441,6 +441,28 @@
   }
   .aqua-chart-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:12px; box-shadow:0 2px 8px rgba(14,27,38,0.06); }
   .aqua-goal-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; box-shadow:0 2px 8px rgba(14,27,38,0.06); }
+
+  /* ===== Cycle screen ===== */
+  .aqua-cycle-summary{
+    background:linear-gradient(120deg, #0d2b4a 0%, var(--blue-deep) 55%, var(--blue) 100%); border-radius:18px;
+    padding:18px; text-align:center; box-shadow:0 8px 18px rgba(14,27,38,0.14);
+  }
+  .aqua-cycle-summary-title{ font-family:var(--display); font-weight:700; font-size:17px; color:#fff; }
+  .aqua-cycle-summary-sub{ font-family:var(--data); font-size:10.5px; color:rgba(255,255,255,0.75); margin-top:4px; letter-spacing:0.03em; }
+  .aqua-action-row{
+    display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:8px; cursor:pointer;
+    box-shadow:0 2px 8px rgba(14,27,38,0.06); text-align:left;
+  }
+  .aqua-action-row-icon{
+    width:36px; height:36px; border-radius:11px; background:var(--blue-mist); color:var(--blue); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .aqua-action-row-title{ font-family:var(--display); font-weight:600; font-size:14px; color:var(--ink); flex:1; }
+  .aqua-mark-harvested-btn{
+    display:flex; align-items:center; gap:6px; background:var(--blue); color:#fff; border:none; border-radius:9999px;
+    font-family:var(--display); font-size:12.5px; font-weight:700; padding:9px 16px; cursor:pointer; flex-shrink:0;
+  }
   .aqua-tabbar{
     display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
     justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
@@ -3163,13 +3185,16 @@
 
 <!-- ================= AQUACULTURE: CYCLE (per unit) ================= -->
 <section class="screen" id="screen-aqua-cycle">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-units">←</button>
-      <span class="brand" id="aquaCycleUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" id="aquaCycleH1" data-i18n="aqua_cycle_h1">Cycle</div>
+        <div class="aqua-header-band-sub" id="aquaCycleUnitName">—</div>
+      </div>
     </div>
-    <h1 id="aquaCycleH1" data-i18n="aqua_cycle_h1">Cycle</h1>
-    <div class="site-line">&nbsp;</div>
   </div>
   <div class="fleet-tab-strip">
     <button type="button" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
@@ -3178,38 +3203,49 @@
     <button type="button" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
-    <div id="aquaCycleNoActive" class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="aqua_cycle_start">Start a new cycle</div>
-      <label for="aquaCycleSpecies" data-i18n="aqua_cycle_species_label">Species</label>
-      <input type="text" id="aquaCycleSpecies" placeholder="e.g. Nile tilapia">
-      <label for="aquaCycleSeeded" data-i18n="aqua_cycle_seeded_label">Seeded quantity</label>
-      <input type="number" id="aquaCycleSeeded" min="0" step="1" placeholder="12000">
-      <label for="aquaCycleGoal" data-i18n="aqua_cycle_goal_label">Harvest goal (kg, optional)</label>
-      <input type="number" id="aquaCycleGoal" min="0" step="1" placeholder="3000">
-      <button class="btn btn-save" id="aquaCycleStartBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_cycle_start_btn">Start cycle</button>
+    <div id="aquaCycleNoActive">
+      <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_cycle_start">Start a new cycle</div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_species_label">Species</span>
+        <input type="text" class="aqua-input" id="aquaCycleSpecies" placeholder="e.g. Nile tilapia">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_seeded_label">Seeded quantity</span>
+        <input type="number" class="aqua-input" id="aquaCycleSeeded" min="0" step="1" placeholder="12000">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_goal_label">Harvest goal (kg, optional)</span>
+        <input type="number" class="aqua-input" id="aquaCycleGoal" min="0" step="1" placeholder="3000">
+      </div>
+      <button type="button" class="aqua-add-submit" id="aquaCycleStartBtn">
+        <span data-i18n="aqua_cycle_start_btn">Start cycle</span>
+      </button>
     </div>
 
     <div id="aquaCycleActive" style="display:none;">
-      <div class="card" style="text-align:center;">
-        <div id="aquaCycleSpeciesDay" style="font-family:var(--display);font-weight:600;font-size:16px;color:var(--ink);"></div>
+      <div class="aqua-cycle-summary">
+        <div class="aqua-cycle-summary-title" id="aquaCycleSpeciesDay"></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;">
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;text-align:center;">
-          <div style="font-size:11px;color:var(--ink-soft);" data-i18n="aqua_cycle_seeded_short">Seeded</div>
-          <div id="aquaCycleStatSeeded" style="font-size:15px;font-weight:500;color:var(--ink);"></div>
-        </div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;text-align:center;">
-          <div style="font-size:11px;color:var(--ink-soft);" data-i18n="aqua_cycle_mortality_short">Mortality</div>
-          <div id="aquaCycleStatMortality" style="font-size:15px;font-weight:500;color:var(--ink);"></div>
-        </div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;text-align:center;">
-          <div style="font-size:11px;color:var(--ink-soft);" data-i18n="aqua_cycle_avgweight_short">Avg. weight</div>
-          <div id="aquaCycleStatWeight" style="font-size:15px;font-weight:500;color:var(--ink);"></div>
-        </div>
+      <div class="aqua-kpi-row" style="padding:12px 0;">
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_cycle_seeded_short">Seeded</div><div class="aqua-kpi-val" id="aquaCycleStatSeeded">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_cycle_mortality_short">Mortality</div><div class="aqua-kpi-val" id="aquaCycleStatMortality">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_cycle_avgweight_short">Avg. weight</div><div class="aqua-kpi-val" id="aquaCycleStatWeight">—</div></div>
       </div>
-      <button type="button" class="btn" id="aquaCycleBiometryBtn" style="width:100%;text-align:left;margin-bottom:8px;" data-i18n="aqua_cycle_log_biometry">Log biometry</button>
-      <button type="button" class="btn" id="aquaCycleMortalityBtn" style="width:100%;text-align:left;margin-bottom:8px;" data-i18n="aqua_cycle_log_mortality">Log mortality</button>
-      <button type="button" class="btn" id="aquaCycleFeedingBtn" style="width:100%;text-align:left;margin-bottom:8px;" data-i18n="aqua_cycle_log_feeding">Log feeding</button>
+      <button type="button" class="aqua-action-row" id="aquaCycleBiometryBtn">
+        <div class="aqua-action-row-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></div>
+        <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_biometry">Log biometry</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button type="button" class="aqua-action-row" id="aquaCycleMortalityBtn">
+        <div class="aqua-action-row-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17v.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_mortality">Log mortality</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button type="button" class="aqua-action-row" id="aquaCycleFeedingBtn">
+        <div class="aqua-action-row-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16a8 6 0 0 1-16 0z"/><circle cx="9" cy="8.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="7" r="0.9" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.7" r="0.9" fill="currentColor" stroke="none"/></svg></div>
+        <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_feeding">Log feeding</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </div>
   </main>
 </section>
@@ -19266,10 +19302,10 @@
     if(!qrEl) return;
     if(cycle.status !== 'harvested'){
       qrEl.innerHTML = '<div style="display:flex;align-items:center;gap:10px;">'
-        + '<div style="width:40px;height:40px;background:var(--paper);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;">▦</div>'
+        + '<div style="width:40px;height:40px;background:var(--blue-mist);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--blue);">▦</div>'
         + '<div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--ink);">' + t('aqua_reports_qr_title') + '</div>'
         + '<div style="font-size:12px;color:var(--ink-soft);">' + t('aqua_reports_qr_pending') + '</div></div>'
-        + '<button type="button" class="btn" id="aquaMarkHarvestedBtn">' + t('aqua_reports_mark_harvested') + '</button>'
+        + '<button type="button" class="aqua-mark-harvested-btn" id="aquaMarkHarvestedBtn">' + t('aqua_reports_mark_harvested') + '</button>'
       + '</div>';
       const btn = document.getElementById('aquaMarkHarvestedBtn');
       if(btn) btn.addEventListener('click', () => markCycleHarvested(cycle));
