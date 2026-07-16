@@ -185,7 +185,7 @@
   #screen-aqua-home .aqua-home-header{
     position: relative;
     background: linear-gradient(120deg, #0d2b4a 0%, var(--blue-deep) 55%, var(--blue) 100%);
-    padding: 20px 18px 40px;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 18px 40px;
     clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
   }
   #screen-aqua-home .aqua-home-toprow{ display:flex; justify-content:space-between; align-items:flex-start; }
@@ -195,16 +195,22 @@
     width:34px; height:34px; border-radius:9999px; background:rgba(255,255,255,0.15);
     display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; border:none;
   }
-  #screen-aqua-home .aqua-gauge-row{ display:flex; align-items:center; justify-content:center; gap:20px; margin-top:16px; }
-  #screen-aqua-home .aqua-ring-wrap{ position:relative; width:54px; height:54px; }
-  #screen-aqua-home .aqua-ring-wrap.lg{ width:104px; height:104px; }
-  #screen-aqua-home .aqua-ring-label{
+  /* Shared gauge-ring components — used by Home (3 rings) and Water
+     quality (4 rings), and reused by future aquaculture screens. Must
+     stay unscoped: an earlier pass had these prefixed with
+     "#screen-aqua-home", so they silently never applied outside Home
+     (this was the "ring labels render as raw overlapping text" bug on
+     Water quality — the CSS positioning simply never matched). */
+  .aqua-gauge-row{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:16px; flex-wrap:wrap; }
+  .aqua-ring-wrap{ position:relative; width:54px; height:54px; }
+  .aqua-ring-wrap.lg{ width:104px; height:104px; }
+  .aqua-ring-label{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
     font-family:var(--display); font-size:13px; color:#fff; text-align:center; line-height:1.15;
   }
-  #screen-aqua-home .aqua-ring-wrap.lg .aqua-ring-label{ font-size:20px; }
-  #screen-aqua-home .aqua-ring-sub{ font-family:var(--data); font-size:8px; letter-spacing:0.05em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-top:2px; }
-  #screen-aqua-home .aqua-units-pill{
+  .aqua-ring-wrap.lg .aqua-ring-label{ font-size:20px; }
+  .aqua-ring-sub{ font-family:var(--data); font-size:8px; letter-spacing:0.05em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-top:2px; }
+  .aqua-units-pill{
     display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border-radius:9999px;
     padding:5px 12px; font-family:var(--data); font-size:9.5px; color:#fff; font-weight:600; margin: 12px auto 0; width:fit-content;
   }
@@ -3024,6 +3030,10 @@
       <span class="aqua-field-label" data-i18n="aqua_water_tan_label">Total ammonia — TAN (mg/L)</span>
       <input type="number" class="aqua-input" id="aquaWaterTAN" step="0.01" min="0" placeholder="0.5">
     </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_water_salinity_label">Salinity (ppt)</span>
+      <input type="number" class="aqua-input" id="aquaWaterSalinity" step="0.1" min="0" placeholder="32">
+    </div>
     <button type="button" class="aqua-add-submit" id="aquaWaterAddBtn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
       <span data-i18n="aqua_water_add_btn">Save reading</span>
@@ -5285,7 +5295,8 @@
       aqua_water_do_am: 'DO (AM)', aqua_water_do_pm: 'DO (PM)', aqua_water_logged: 'Logged', aqua_water_pending: 'Pending',
       aqua_water_toxic_title: 'Ammonia is toxic at this pH', aqua_water_toxic_body: 'Turn on aerators and pause feeding', aqua_water_empty: 'No readings logged yet.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'watch', aqua_water_status_alert: 'alert',
-      aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINITY',
+      aqua_water_salinity_label: 'Salinity (ppt)',
       aqua_water_just_now: 'just now', aqua_water_min_ago: 'min ago', aqua_water_hr_ago: 'h ago', aqua_water_day_ago: 'd ago',
       aqua_subnav_water: 'Water', aqua_subnav_cycle: 'Cycle', aqua_cycle_h1: 'Cycle', aqua_cycle_start: 'Start a new cycle', aqua_cycle_species_label: 'Species',
       aqua_cycle_seeded_label: 'Seeded quantity', aqua_cycle_goal_label: 'Harvest goal (kg, optional)', aqua_cycle_start_btn: 'Start cycle', aqua_cycle_day: 'day',
@@ -5676,7 +5687,8 @@
       aqua_water_do_am: 'OD (AM)', aqua_water_do_pm: 'OD (PM)', aqua_water_logged: 'Registrado', aqua_water_pending: 'Pendiente',
       aqua_water_toxic_title: 'Amonio tóxico a este pH', aqua_water_toxic_body: 'Enciende aireadores y suspende alimentación', aqua_water_empty: 'Aún no hay mediciones registradas.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'atención', aqua_water_status_alert: 'alerta',
-      aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINIDAD',
+      aqua_water_salinity_label: 'Salinidad (ppt)',
       aqua_water_just_now: 'justo ahora', aqua_water_min_ago: 'min', aqua_water_hr_ago: 'h', aqua_water_day_ago: 'd',
       aqua_subnav_water: 'Agua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Iniciar nuevo ciclo', aqua_cycle_species_label: 'Especie',
       aqua_cycle_seeded_label: 'Cantidad sembrada', aqua_cycle_goal_label: 'Meta de cosecha (kg, opcional)', aqua_cycle_start_btn: 'Iniciar ciclo', aqua_cycle_day: 'día',
@@ -6067,7 +6079,8 @@
       aqua_water_do_am: 'OD (mattina)', aqua_water_do_pm: 'OD (sera)', aqua_water_logged: 'Registrato', aqua_water_pending: 'In sospeso',
       aqua_water_toxic_title: 'Ammoniaca tossica a questo pH', aqua_water_toxic_body: 'Accendi gli aeratori e sospendi l\'alimentazione', aqua_water_empty: 'Nessuna misurazione registrata.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'attenzione', aqua_water_status_alert: 'allarme',
-      aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SALINITÀ',
+      aqua_water_salinity_label: 'Salinità (ppt)',
       aqua_water_just_now: 'adesso', aqua_water_min_ago: 'min fa', aqua_water_hr_ago: 'h fa', aqua_water_day_ago: 'g fa',
       aqua_subnav_water: 'Acqua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Avvia un nuovo ciclo', aqua_cycle_species_label: 'Specie',
       aqua_cycle_seeded_label: 'Quantità seminata', aqua_cycle_goal_label: 'Obiettivo di raccolta (kg, opzionale)', aqua_cycle_start_btn: 'Avvia ciclo', aqua_cycle_day: 'giorno',
@@ -6437,7 +6450,8 @@
       aqua_water_do_am: 'DO (เช้า)', aqua_water_do_pm: 'DO (เย็น)', aqua_water_logged: 'บันทึกแล้ว', aqua_water_pending: 'ยังไม่ได้บันทึก',
       aqua_water_toxic_title: 'แอมโมเนียเป็นพิษที่ pH นี้', aqua_water_toxic_body: 'เปิดเครื่องเติมอากาศและหยุดให้อาหารทันที', aqua_water_empty: 'ยังไม่มีค่าที่บันทึกไว้',
       aqua_water_status_ok: 'ปกติ', aqua_water_status_watch: 'เฝ้าระวัง', aqua_water_status_alert: 'แจ้งเตือน',
-      aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'ความเค็ม',
+      aqua_water_salinity_label: 'ความเค็ม (ppt)',
       aqua_water_just_now: 'เมื่อสักครู่', aqua_water_min_ago: 'นาทีที่แล้ว', aqua_water_hr_ago: 'ชม. ที่แล้ว', aqua_water_day_ago: 'วันที่แล้ว',
       aqua_subnav_water: 'น้ำ', aqua_subnav_cycle: 'รอบการผลิต', aqua_cycle_h1: 'รอบการผลิต', aqua_cycle_start: 'เริ่มรอบการผลิตใหม่', aqua_cycle_species_label: 'ชนิดพันธุ์',
       aqua_cycle_seeded_label: 'จำนวนที่ปล่อยเลี้ยง', aqua_cycle_goal_label: 'เป้าหมายการเก็บเกี่ยว (กก., ไม่บังคับ)', aqua_cycle_start_btn: 'เริ่มรอบการผลิต', aqua_cycle_day: 'วันที่',
@@ -17834,10 +17848,14 @@
       }
       return val > 1 ? 'alert' : (val > 0.5 ? 'watch' : 'ok');
     }
+    // Salinity has no universal safe range — a freshwater tilapia pond
+    // and a marine shrimp pond are both "healthy" at wildly different
+    // ppt. Shown as a neutral reading, not judged ok/watch/alert.
+    if(param === 'salinity') return null;
     return 'ok';
   }
   function aquaParamPct(param, val){
-    const scales = { do:[0,10], temp:[15,35], ph:[5,10], tan:[0,2] };
+    const scales = { do:[0,10], temp:[15,35], ph:[5,10], tan:[0,2], salinity:[0,40] };
     const [lo,hi] = scales[param];
     return Math.max(0, Math.min(100, ((val - lo) / (hi - lo)) * 100));
   }
@@ -17851,16 +17869,18 @@
     return Math.round(hrs / 24) + ' ' + t('aqua_water_day_ago');
   }
   function aquaParamCardHtml(iconSvg, label, val, unit, rangeMin, rangeMax, status, updated, param){
-    const st = status || 'ok';
+    const st = status; // null allowed — e.g. salinity has no universal verdict
     const pct = val != null ? aquaParamPct(param, val) : 0;
+    const markerColor = st === 'ok' ? 'var(--released)' : (st === 'watch' ? 'var(--amber)' : (st === 'alert' ? 'var(--coral)' : 'var(--blue)'));
+    const chipHtml = st ? ('<span class="aqua-param-chip ' + st + '">' + t('aqua_water_status_' + st) + '</span>') : '';
     return '<div class="aqua-param-card">'
       + '<div class="aqua-param-top">'
         + '<div class="aqua-param-icon">' + iconSvg + '</div>'
         + '<div><div class="aqua-param-label">' + label + '</div><div class="aqua-param-updated">' + updated + '</div></div>'
-        + '<span class="aqua-param-chip ' + st + '">' + t('aqua_water_status_' + st) + '</span>'
+        + chipHtml
       + '</div>'
       + '<div><span class="aqua-param-val">' + (val != null ? val : '—') + '</span><span class="aqua-param-unit">' + unit + '</span></div>'
-      + '<div class="aqua-param-track"><div class="aqua-param-marker" style="left:' + pct.toFixed(1) + '%; background:' + (st === 'ok' ? 'var(--released)' : (st === 'watch' ? 'var(--amber)' : 'var(--coral)')) + ';"></div></div>'
+      + '<div class="aqua-param-track"><div class="aqua-param-marker" style="left:' + pct.toFixed(1) + '%; background:' + markerColor + ';"></div></div>'
       + '<div class="aqua-param-range-row"><span>' + rangeMin + '</span><span>' + rangeMax + '</span></div>'
     + '</div>';
   }
@@ -17908,14 +17928,15 @@
     const lastTemp = readings.find(r => r.temp != null);
     const lastPh = readings.find(r => r.ph != null);
     const lastTan = readings.find(r => r.tan != null);
+    const lastSal = readings.find(r => r.salinity != null);
 
     const doStatus = lastDo ? aquaParamStatus('do', lastDo.do) : null;
     const tempStatus = lastTemp ? aquaParamStatus('temp', lastTemp.temp) : null;
     const phStatus = lastPh ? aquaParamStatus('ph', lastPh.ph) : null;
     const tanStatus = lastTan ? aquaParamStatus('tan', lastTan.tan, combo) : null;
 
-    gaugeEl.innerHTML = ['do','temp','ph','tan'].map(p => {
-      const map = { do: [lastDo && lastDo.do, 'var(--cyan)'], temp: [lastTemp && lastTemp.temp, 'var(--cyan)'], ph: [lastPh && lastPh.ph, 'var(--released)'], tan: [lastTan && lastTan.tan, 'var(--amber)'] };
+    gaugeEl.innerHTML = ['do','temp','ph','tan','salinity'].map(p => {
+      const map = { do: [lastDo && lastDo.do, 'var(--cyan)'], temp: [lastTemp && lastTemp.temp, 'var(--cyan)'], ph: [lastPh && lastPh.ph, 'var(--released)'], tan: [lastTan && lastTan.tan, 'var(--amber)'], salinity: [lastSal && lastSal.salinity, 'rgba(255,255,255,0.85)'] };
       const [val, color] = map[p];
       const pct = val != null ? aquaParamPct(p, val) : 0;
       const dispVal = val != null ? (p === 'temp' ? val + '°' : val) : '—';
@@ -17927,12 +17948,14 @@
     const thermoIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a2 2 0 0 0-2 2v9.5a4 4 0 1 0 4 0V5a2 2 0 0 0-2-2z"/></svg>';
     const infoIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16v.5"/></svg>';
     const dropIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c4 5 6 8.5 6 11a6 6 0 1 1-12 0c0-2.5 2-6 6-11z"/></svg>';
+    const globeIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.8 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.8-4-9s1.5-6.5 4-9z"/></svg>';
 
     cardsEl.innerHTML =
       aquaParamCardHtml(waveIcon, t('aqua_water_do_label'), lastDo ? lastDo.do : null, 'mg/L', '4.0', '10.0', doStatus, lastDo ? aquaTimeAgo(lastDo.ts) : t('aqua_home_no_data_yet'), 'do')
       + aquaParamCardHtml(thermoIcon, t('aqua_water_temp_label'), lastTemp ? lastTemp.temp : null, '°C', '18°', '32°', tempStatus, lastTemp ? aquaTimeAgo(lastTemp.ts) : t('aqua_home_no_data_yet'), 'temp')
       + aquaParamCardHtml(infoIcon, t('aqua_water_ph_label'), lastPh ? lastPh.ph : null, '', '6.5', '9.0', phStatus, lastPh ? aquaTimeAgo(lastPh.ts) : t('aqua_home_no_data_yet'), 'ph')
-      + aquaParamCardHtml(dropIcon, t('aqua_water_tan_label'), lastTan ? lastTan.tan : null, 'mg/L', '0', '0.5', tanStatus, lastTan ? aquaTimeAgo(lastTan.ts) : t('aqua_home_no_data_yet'), 'tan');
+      + aquaParamCardHtml(dropIcon, t('aqua_water_tan_label'), lastTan ? lastTan.tan : null, 'mg/L', '0', '0.5', tanStatus, lastTan ? aquaTimeAgo(lastTan.ts) : t('aqua_home_no_data_yet'), 'tan')
+      + aquaParamCardHtml(globeIcon, t('aqua_water_salinity_label'), lastSal ? lastSal.salinity : null, 'ppt', '0', '40', null, lastSal ? aquaTimeAgo(lastSal.ts) : t('aqua_home_no_data_yet'), 'salinity');
 
     if(readings.length === 0){
       histEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_water_empty') + '</div>';
@@ -17944,6 +17967,7 @@
         if(r.temp != null) parts.push(r.temp + '°C');
         if(r.ph != null) parts.push('pH ' + r.ph);
         if(r.tan != null) parts.push('TAN ' + r.tan + ' mg/L');
+        if(r.salinity != null) parts.push(r.salinity + ' ppt');
         return '<div class="card" style="padding:10px 12px;">'
           + '<div style="font-size:11px;color:var(--ink-soft);">' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '</div>'
           + '<div style="font-size:13px;color:var(--ink);margin-top:2px;">' + parts.join(' · ') + '</div>'
@@ -17959,15 +17983,17 @@
     const tempEl = document.getElementById('aquaWaterTemp');
     const phEl = document.getElementById('aquaWaterPH');
     const tanEl = document.getElementById('aquaWaterTAN');
+    const salEl = document.getElementById('aquaWaterSalinity');
     const doV = doEl.value !== '' ? Number(doEl.value) : null;
     const tempV = tempEl.value !== '' ? Number(tempEl.value) : null;
     const phV = phEl.value !== '' ? Number(phEl.value) : null;
     const tanV = tanEl.value !== '' ? Number(tanEl.value) : null;
-    if(doV == null && tempV == null && phV == null && tanV == null) return;
+    const salV = salEl.value !== '' ? Number(salEl.value) : null;
+    if(doV == null && tempV == null && phV == null && tanV == null && salV == null) return;
     const readings = loadWater();
-    readings.push({ reading_id: uidAqua(), unit_id: unitId, ts: Date.now(), do: doV, temp: tempV, ph: phV, tan: tanV });
+    readings.push({ reading_id: uidAqua(), unit_id: unitId, ts: Date.now(), do: doV, temp: tempV, ph: phV, tan: tanV, salinity: salV });
     saveWater(readings);
-    doEl.value = ''; tempEl.value = ''; phEl.value = ''; tanEl.value = '';
+    doEl.value = ''; tempEl.value = ''; phEl.value = ''; tanEl.value = ''; salEl.value = '';
     renderAquaWater();
   }
 
@@ -18952,6 +18978,7 @@
   window.renderAquaCycle = renderAquaCycle;
   window.renderAquaWater = renderAquaWater;
   window.renderAquaUnits = renderAquaUnits;
+  window.renderAquaHome = renderAquaHome;
 })();
 
 
