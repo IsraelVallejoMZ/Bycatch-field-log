@@ -1926,14 +1926,19 @@
   .segment-card .mode-card-chevron-row{ display:flex; justify-content:flex-end; position:relative; z-index:1; }
   .segment-card .mode-card-chevron{ width:20px; height:20px; transform:rotate(-90deg); }
   /* nth-child counts ALL siblings of .mode-select-wrap, and
-     .mode-select-head-row is sibling #1 — so the three mode cards are
+     .mode-select-head-row is sibling #1 — so the four mode cards are
      actually nth-child(2)=research, nth-child(3)=fleet, nth-child(4)=sport,
-     not (1)/(2)/(3) as it looks at first glance. Gradients ported exactly
-     from Israel's "Live Signal" reference design. */
+     nth-child(5)=aquaculture, not (1)/(2)/(3)/(4) as it looks at first
+     glance. Gradients ported exactly from Israel's "Live Signal" reference
+     design (research/fleet/sport); aquaculture uses the same navy→teal
+     gradient as every aquaculture screen's own header band, since this
+     card had no override and was silently falling back to the base
+     .segment-card blue. */
   .segment-card:nth-child(2){ background: linear-gradient(135deg, oklch(55% 0.12 230), oklch(28% 0.07 225)); }
   .segment-card:nth-child(3){ background: linear-gradient(135deg, oklch(34% 0.03 235), oklch(17% 0.02 240) 55%, oklch(48% 0.08 75)); }
   .segment-card:nth-child(4){ background: linear-gradient(135deg, oklch(78% 0.12 75), oklch(66% 0.16 40) 55%, oklch(58% 0.19 25)); }
   .segment-card:nth-child(4) .mode-card-sub{ color: rgba(255,255,255,0.85); }
+  .segment-card:nth-child(5){ background: linear-gradient(135deg, #0d2b4a 0%, #0a4a45 55%, #0f766e 100%); }
   .segment-card .mode-card-title{ color:white; font-size:18px; }
   .segment-card .mode-card-sub{ color:rgba(255,255,255,0.78); font-family:var(--body); font-size:12.5px; }
   .mode-select-clear-btn{
