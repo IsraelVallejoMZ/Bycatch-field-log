@@ -249,7 +249,9 @@
     border:none; cursor:pointer; z-index:5;
   }
   body.aqua-tabbar-visible .aqua-tabbar{ display:flex; }
-  body.aqua-tabbar-visible #screen-aqua-units main{ padding-bottom: 96px; }
+  body.aqua-tabbar-visible #screen-aqua-units main,
+  body.aqua-tabbar-visible #screen-aqua-feeding main,
+  body.aqua-tabbar-visible #screen-aqua-reports main{ padding-bottom: 96px; }
 
   /* ===== Culture unit screen (Add + manage) — matches the "Add culture
      unit" frame from the Pulse Grid design. Same gradient-band header
@@ -463,6 +465,33 @@
     display:flex; align-items:center; gap:6px; background:var(--blue); color:#fff; border:none; border-radius:9999px;
     font-family:var(--display); font-size:12.5px; font-weight:700; padding:9px 16px; cursor:pointer; flex-shrink:0;
   }
+
+  /* ===== Species catalog ===== */
+  .aqua-species-search{
+    display:flex; align-items:center; gap:10px; background:var(--panel); border:1.5px solid var(--line);
+    border-radius:12px; padding:11px 14px; margin:16px 18px 4px;
+  }
+  .aqua-species-search input{
+    flex:1; border:none; outline:none; background:transparent; font-family:'Inter',sans-serif; font-size:14px; color:var(--ink);
+  }
+  .aqua-species-search input::placeholder{ color:var(--ink-soft); }
+  .aqua-species-row{
+    display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:12px 14px; margin-bottom:8px; cursor:pointer; box-shadow:0 2px 8px rgba(14,27,38,0.06);
+  }
+  .aqua-species-row-icon{
+    width:36px; height:36px; border-radius:10px; background:var(--blue-mist); color:var(--blue); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .aqua-species-row-name{ font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600; color:var(--ink); }
+  .aqua-species-row-sci{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink-soft); font-style:italic; margin-top:1px; }
+  .aqua-species-tag{
+    font-family:var(--data); font-size:9px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--ink-soft); background:var(--paper); border:1px solid var(--line); border-radius:9999px; padding:4px 8px; flex-shrink:0;
+  }
+  .aqua-species-stat-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; }
+  .aqua-species-stat-label{ font-family:var(--data); font-size:10px; color:var(--ink-soft); }
+  .aqua-species-stat-val{ font-family:var(--display); font-size:13.5px; font-weight:600; color:var(--ink); margin-top:2px; }
   .aqua-tabbar{
     display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
     justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
@@ -3004,15 +3033,15 @@
     </div>
 
     <div style="padding:14px 18px 0;">
-      <button type="button" class="aqua-cage-row" id="aquaSpeciesCatalogLink" style="width:100%; box-sizing:border-box; border:none; text-align:left;" data-go="aqua-species-list">
-        <div class="aqua-cage-swatch" style="border-color:var(--blue); background:var(--blue-mist); display:flex; align-items:center; justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="var(--blue)"/><circle cx="6.5" cy="11" r="1" fill="#fff"/></svg>
+      <button type="button" class="aqua-cage-row" id="aquaSpeciesCatalogLink" style="width:100%; box-sizing:border-box; border:none; text-align:left; background:linear-gradient(120deg, #0d2b4a 0%, var(--blue-deep) 55%, var(--blue) 100%); box-shadow:0 8px 18px rgba(14,27,38,0.18);" data-go="aqua-species-list">
+        <div class="aqua-cage-swatch" style="border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#fff"/><circle cx="6.5" cy="11" r="1" fill="var(--blue-deep)"/></svg>
         </div>
         <div style="flex:1;">
-          <div class="aqua-cage-name" data-i18n="aqua_species_h1">Species catalog</div>
-          <div class="aqua-cage-species" data-i18n="aqua_home_species_sub">Biology &amp; regulatory reference</div>
+          <div class="aqua-cage-name" data-i18n="aqua_species_h1" style="color:#fff;">Species catalog</div>
+          <div class="aqua-cage-species" data-i18n="aqua_home_species_sub" style="color:rgba(255,255,255,0.75);">Biology &amp; regulatory reference</div>
         </div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
       </button>
     </div>
 
@@ -3129,7 +3158,7 @@
 <section class="screen" id="screen-aqua-water">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cages" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -3142,8 +3171,6 @@
   <div class="fleet-tab-strip">
     <button type="button" class="active" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
     <button type="button" data-go="aqua-cycle" data-i18n="aqua_subnav_cycle">Cycle</button>
-    <button type="button" data-go="aqua-stats" data-i18n="aqua_subnav_stats">Stats</button>
-    <button type="button" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
     <div class="aqua-log-row" id="aquaWaterLogRow"></div>
@@ -3187,7 +3214,7 @@
 <section class="screen" id="screen-aqua-cycle">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cages" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -3199,8 +3226,6 @@
   <div class="fleet-tab-strip">
     <button type="button" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
     <button type="button" class="active" data-go="aqua-cycle" data-i18n="aqua_subnav_cycle">Cycle</button>
-    <button type="button" data-go="aqua-stats" data-i18n="aqua_subnav_stats">Stats</button>
-    <button type="button" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
     <div id="aquaCycleNoActive">
@@ -3346,7 +3371,7 @@
 <section class="screen" id="screen-aqua-feeding-log">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-feeding" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" id="aquaFeedingLogBackBtn" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -3402,7 +3427,7 @@
 <section class="screen" id="screen-aqua-stats">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cages" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -3415,6 +3440,7 @@
       </div>
     </div>
   </div>
+  <div class="aqua-chip-row" id="aquaStatsUnitChips"></div>
   <main>
     <div id="aquaStatsNoActive" class="card" style="display:none;text-align:center;color:var(--ink-soft);font-size:13px;padding:24px 12px;" data-i18n="aqua_stats_no_cycle">No active cycle for this unit.</div>
     <div id="aquaStatsBody" style="display:none;">
@@ -3439,48 +3465,64 @@
 
       <div id="aquaStatsCostNote" style="font-size:11px;color:var(--ink-soft);margin-bottom:16px;"></div>
 
-      <div class="hist-meta-row">
-        <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_weight_chart_label">Weight over time</span>
-      </div>
-      <div class="aqua-chart-card" id="aquaStatsWeightChart" style="margin:8px 0 16px;"></div>
+      <div id="aquaStatsChartsSection">
+        <div class="hist-meta-row">
+          <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_weight_chart_label">Weight over time</span>
+        </div>
+        <div class="aqua-chart-card" id="aquaStatsWeightChart" style="margin:8px 0 16px;"></div>
 
-      <div class="hist-meta-row">
-        <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_mortality_chart_label">Cumulative mortality</span>
+        <div class="hist-meta-row">
+          <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_mortality_chart_label">Cumulative mortality</span>
+        </div>
+        <div class="aqua-chart-card" id="aquaStatsMortalityChart" style="margin-top:8px;"></div>
       </div>
-      <div class="aqua-chart-card" id="aquaStatsMortalityChart" style="margin-top:8px;"></div>
+      <div id="aquaStatsChartsAllNote" style="display:none;font-size:12px;color:var(--ink-soft);text-align:center;padding:16px 12px;" data-i18n="aqua_stats_charts_all_note">Select a specific cage to see its charts over time.</div>
     </div>
   </main>
 </section>
 
 <section class="screen" id="screen-aqua-species-list">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-home">←</button>
-    <div class="site-line">&nbsp;</div>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-home" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_species_h1">Species catalog</div>
+        <div class="aqua-header-band-sub" id="aquaSpeciesSub">—</div>
+      </div>
+    </div>
   </div>
-  <main>
-    <div id="aquaSpeciesRegionChips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;"></div>
+  <div class="aqua-species-search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="text" id="aquaSpeciesSearchInput" data-i18n-placeholder="aqua_species_search_placeholder" placeholder="Search species...">
+  </div>
+  <div class="aqua-chip-row" id="aquaSpeciesRegionChips"></div>
+  <main style="padding-top:6px;">
     <div id="aquaSpeciesList"></div>
   </main>
 </section>
 
 <section class="screen" id="screen-aqua-species-detail">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-species-list">←</button>
-      <span class="brand" data-i18n="aqua_species_h1">Species catalog</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-species-list" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" id="aquaSpeciesDetailName">—</div>
+        <div class="aqua-header-band-sub" id="aquaSpeciesDetailScientific" style="font-style:italic;">—</div>
+      </div>
     </div>
-    <h1 id="aquaSpeciesDetailName">—</h1>
-    <div class="site-line" id="aquaSpeciesDetailScientific">&nbsp;</div>
   </div>
-  <main id="aquaSpeciesDetailBody"></main>
+  <main id="aquaSpeciesDetailBody" style="padding-top:16px;"></main>
 </section>
 
 <!-- ================= AQUACULTURE: REPORTS (per unit/cycle) ================= -->
 <section class="screen" id="screen-aqua-reports">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cages" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
@@ -5526,8 +5568,11 @@
       aqua_stats_fcr: 'FCR (feed conversion)', aqua_stats_cost_kg: 'Feed cost per kg', aqua_stats_survival: 'Survival', aqua_stats_biomass: 'Estimated biomass',
       aqua_stats_goal_label: 'Harvest goal', aqua_stats_goal_target: 'goal {goal} kg',
       aqua_stats_cost_note: 'Cost per kg reflects feed cost only for now — other cost lines will be added with the reports module.',
+      aqua_stats_all_units: 'All units', aqua_stats_charts_all_note: 'Select a specific cage to see its charts over time.',
+      aqua_stats_cost_note_all: 'Combined across all active cycles. FCR is a simple average per cycle, not weighted by biomass.',
       aqua_stats_weight_chart_label: 'Weight over time', aqua_stats_mortality_chart_label: 'Cumulative mortality', aqua_stats_chart_needs_more: 'Not enough data yet — log at least two entries to see the chart.',
       aqua_species_catalog_link: '📖 Species catalog', aqua_species_h1: 'Species catalog',
+      aqua_species_search_placeholder: 'Search species...', aqua_species_sub_count: 'species · tap to select', aqua_species_empty: 'No species match your search.',
       aqua_species_temp: 'Ideal temperature', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinity', aqua_species_density: 'Stocking density', aqua_species_feeding: 'Feeding', aqua_species_cycle: 'Typical cycle',
       aqua_species_growth_label: 'Growth curve', aqua_species_diseases_label: 'Common diseases', aqua_species_source_label: 'Source',
       aqua_subnav_reports: 'Reports', aqua_reports_h1: 'Reports & alerts', aqua_reports_audit_title: 'GlobalGAP/ASC audit', aqua_reports_audit_sub: 'Current cycle · PDF',
@@ -5929,8 +5974,11 @@
       aqua_stats_fcr: 'FCR (conversión alimenticia)', aqua_stats_cost_kg: 'Costo de alimento por kg', aqua_stats_survival: 'Supervivencia', aqua_stats_biomass: 'Biomasa estimada',
       aqua_stats_goal_label: 'Meta de cosecha', aqua_stats_goal_target: 'meta {goal} kg',
       aqua_stats_cost_note: 'El costo por kilo por ahora solo refleja el costo de alimento — otras líneas de costo se agregarán con el módulo de reportes.',
+      aqua_stats_all_units: 'Todas las unidades', aqua_stats_charts_all_note: 'Selecciona una jaula específica para ver sus gráficas en el tiempo.',
+      aqua_stats_cost_note_all: 'Combinado entre todos los ciclos activos. El FCA es un promedio simple por ciclo, no ponderado por biomasa.',
       aqua_stats_weight_chart_label: 'Peso a lo largo del tiempo', aqua_stats_mortality_chart_label: 'Mortalidad acumulada', aqua_stats_chart_needs_more: 'Aún no hay suficientes datos — registra al menos dos entradas para ver la gráfica.',
       aqua_species_catalog_link: '📖 Catálogo de especies', aqua_species_h1: 'Catálogo de especies',
+      aqua_species_search_placeholder: 'Buscar especie...', aqua_species_sub_count: 'especies · toca para elegir', aqua_species_empty: 'Ninguna especie coincide con tu búsqueda.',
       aqua_species_temp: 'Temperatura ideal', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinidad', aqua_species_density: 'Densidad de siembra', aqua_species_feeding: 'Alimentación', aqua_species_cycle: 'Ciclo típico',
       aqua_species_growth_label: 'Curva de crecimiento', aqua_species_diseases_label: 'Enfermedades comunes', aqua_species_source_label: 'Fuente',
       aqua_subnav_reports: 'Reportes', aqua_reports_h1: 'Reportes y alertas', aqua_reports_audit_title: 'Auditoría GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo actual · PDF',
@@ -6332,8 +6380,11 @@
       aqua_stats_fcr: 'FCR (conversione alimentare)', aqua_stats_cost_kg: 'Costo mangime per kg', aqua_stats_survival: 'Sopravvivenza', aqua_stats_biomass: 'Biomassa stimata',
       aqua_stats_goal_label: 'Obiettivo di raccolta', aqua_stats_goal_target: 'obiettivo {goal} kg',
       aqua_stats_cost_note: 'Il costo per kg riflette per ora solo il costo del mangime — altre voci di costo verranno aggiunte con il modulo report.',
+      aqua_stats_all_units: 'Tutte le unità', aqua_stats_charts_all_note: 'Seleziona un\'unità specifica per vedere i suoi grafici nel tempo.',
+      aqua_stats_cost_note_all: 'Combinato tra tutti i cicli attivi. Il FCR è una media semplice per ciclo, non ponderata per biomassa.',
       aqua_stats_weight_chart_label: 'Peso nel tempo', aqua_stats_mortality_chart_label: 'Mortalità cumulativa', aqua_stats_chart_needs_more: 'Dati non ancora sufficienti — registra almeno due voci per vedere il grafico.',
       aqua_species_catalog_link: '📖 Catalogo delle specie', aqua_species_h1: 'Catalogo delle specie',
+      aqua_species_search_placeholder: 'Cerca specie...', aqua_species_sub_count: 'specie · tocca per scegliere', aqua_species_empty: 'Nessuna specie corrisponde alla ricerca.',
       aqua_species_temp: 'Temperatura ideale', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinità', aqua_species_density: 'Densità di semina', aqua_species_feeding: 'Alimentazione', aqua_species_cycle: 'Ciclo tipico',
       aqua_species_growth_label: 'Curva di crescita', aqua_species_diseases_label: 'Malattie comuni', aqua_species_source_label: 'Fonte',
       aqua_subnav_reports: 'Report', aqua_reports_h1: 'Report e avvisi', aqua_reports_audit_title: 'Audit GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo attuale · PDF',
@@ -6714,8 +6765,11 @@
       aqua_stats_fcr: 'FCR (อัตราแลกเนื้อ)', aqua_stats_cost_kg: 'ต้นทุนอาหารต่อกิโลกรัม', aqua_stats_survival: 'อัตรารอด', aqua_stats_biomass: 'มวลชีวภาพโดยประมาณ',
       aqua_stats_goal_label: 'เป้าหมายการเก็บเกี่ยว', aqua_stats_goal_target: 'เป้าหมาย {goal} กก.',
       aqua_stats_cost_note: 'ขณะนี้ต้นทุนต่อกิโลกรัมสะท้อนเฉพาะต้นทุนอาหารเท่านั้น — ต้นทุนอื่น ๆ จะถูกเพิ่มในโมดูลรายงาน',
+      aqua_stats_all_units: 'ทุกหน่วย', aqua_stats_charts_all_note: 'เลือกหน่วยเพาะเลี้ยงหนึ่งหน่วยเพื่อดูกราฟตามช่วงเวลา',
+      aqua_stats_cost_note_all: 'รวมทุกรอบที่ใช้งานอยู่ FCR เป็นค่าเฉลี่ยแบบง่ายต่อรอบ ไม่ได้ถ่วงน้ำหนักด้วยมวลชีวภาพ',
       aqua_stats_weight_chart_label: 'น้ำหนักตามช่วงเวลา', aqua_stats_mortality_chart_label: 'อัตราตายสะสม', aqua_stats_chart_needs_more: 'ยังมีข้อมูลไม่เพียงพอ — บันทึกอย่างน้อย 2 รายการเพื่อดูกราฟ',
       aqua_species_catalog_link: '📖 คลังข้อมูลชนิดพันธุ์', aqua_species_h1: 'คลังข้อมูลชนิดพันธุ์',
+      aqua_species_search_placeholder: 'ค้นหาชนิดพันธุ์...', aqua_species_sub_count: 'ชนิดพันธุ์ · แตะเพื่อเลือก', aqua_species_empty: 'ไม่พบชนิดพันธุ์ที่ตรงกับการค้นหา',
       aqua_species_temp: 'อุณหภูมิที่เหมาะสม', aqua_species_ph: 'pH', aqua_species_salinity: 'ความเค็ม', aqua_species_density: 'ความหนาแน่นการปล่อยเลี้ยง', aqua_species_feeding: 'การให้อาหาร', aqua_species_cycle: 'รอบการผลิตทั่วไป',
       aqua_species_growth_label: 'เส้นการเจริญเติบโต', aqua_species_diseases_label: 'โรคที่พบบ่อย', aqua_species_source_label: 'แหล่งข้อมูล',
       aqua_subnav_reports: 'รายงาน', aqua_reports_h1: 'รายงานและการแจ้งเตือน', aqua_reports_audit_title: 'การตรวจสอบ GlobalGAP/ASC', aqua_reports_audit_sub: 'รอบปัจจุบัน · PDF',
@@ -15165,7 +15219,7 @@
     if(screen === 'aqua-units' && typeof renderAquaUnits === 'function') renderAquaUnits();
     if(screen === 'aqua-home' && typeof renderAquaHome === 'function') renderAquaHome();
     if(screen === 'aqua-cages' && typeof renderAquaCagesScreen === 'function') renderAquaCagesScreen();
-    document.body.classList.toggle('aqua-tabbar-visible', screen === 'aqua-home' || screen === 'aqua-units' || screen === 'aqua-cages');
+    document.body.classList.toggle('aqua-tabbar-visible', screen === 'aqua-home' || screen === 'aqua-units' || screen === 'aqua-cages' || screen === 'aqua-feeding' || screen === 'aqua-reports');
     document.querySelectorAll('.aqua-tab').forEach(tabEl => tabEl.classList.remove('active'));
     if(screen === 'aqua-home'){
       const homeTab = document.querySelector('.aqua-tab[data-go="aqua-home"]');
@@ -15173,6 +15227,12 @@
     } else if(screen === 'aqua-units' || screen === 'aqua-cages'){
       const cagesTab = document.querySelector('.aqua-tab[data-go="aqua-cages"]');
       if(cagesTab) cagesTab.classList.add('active');
+    } else if(screen === 'aqua-feeding'){
+      const feedTab = document.querySelector('.aqua-tab[data-go="aqua-feeding"]');
+      if(feedTab) feedTab.classList.add('active');
+    } else if(screen === 'aqua-reports'){
+      const reportsTab = document.querySelector('.aqua-tab[data-go="aqua-reports"]');
+      if(reportsTab) reportsTab.classList.add('active');
     }
     document.querySelector('.screen.active').scrollTop = 0;
   }
@@ -18358,7 +18418,10 @@
     const mortBtn = document.getElementById('aquaCycleMortalityBtn');
     if(mortBtn) mortBtn.addEventListener('click', () => { if(typeof goTo === 'function') goTo('aqua-mortality'); });
     const feedBtn = document.getElementById('aquaCycleFeedingBtn');
-    if(feedBtn) feedBtn.addEventListener('click', () => { if(typeof goTo === 'function') goTo('aqua-feeding'); });
+    if(feedBtn) feedBtn.addEventListener('click', () => {
+      aquaFeedingLogReturn = 'aqua-cycle';
+      if(typeof goTo === 'function') goTo('aqua-feeding-log');
+    });
   });
 
   // ----- Biometry & Mortality (per active cycle) -----
@@ -18467,6 +18530,11 @@
   // ----- Feeding calculator (two-level: manual-smart default + sync-with-
   // biometry "magic" button, per the design agreed with Israel) -----
   const AQUA_FEEDING_KEY = 'fishpulse_aqua_feeding';
+  // Tracks where "Log feed entry" was opened from — the Feed landing
+  // screen's own button, or Cycle's "Log feeding" shortcut — so the
+  // log-entry screen's back button returns to the right place instead of
+  // always landing on Feed.
+  let aquaFeedingLogReturn = 'aqua-feeding';
   const STALE_BIOMETRY_DAYS = 15;
 
   function loadFeedingAqua(){
@@ -18631,19 +18699,50 @@
     if(logBtn) logBtn.addEventListener('click', logAquaFeeding);
     const quickLogBtn = document.getElementById('aquaFeedingQuickLogBtn');
     if(quickLogBtn) quickLogBtn.addEventListener('click', () => {
+      aquaFeedingLogReturn = 'aqua-feeding';
       if(typeof goTo === 'function') goTo('aqua-feeding-log');
+    });
+    const feedingLogBackBtn = document.getElementById('aquaFeedingLogBackBtn');
+    if(feedingLogBackBtn) feedingLogBackBtn.addEventListener('click', () => {
+      if(typeof goTo === 'function') goTo(aquaFeedingLogReturn);
     });
   });
 
   // ----- Stats (derived entirely from data already captured elsewhere —
   // mortality, biometry, feeding — no new data entry on this screen) -----
+  let aquaStatsFilterUnitId = null; // null = not yet initialized this session
+
   function renderAquaStats(){
     const nameEl = document.getElementById('aquaStatsUnitName');
     const noActiveEl = document.getElementById('aquaStatsNoActive');
     const bodyEl = document.getElementById('aquaStatsBody');
+    const chipsEl = document.getElementById('aquaStatsUnitChips');
     if(!bodyEl) return;
-    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
-    const unit = loadUnits().find(u => u.unit_id === unitId);
+
+    const units = loadUnits();
+    // Defaults to whichever unit is globally selected the first time this
+    // screen renders, then remembers whatever the person picks via the
+    // chips for the rest of the session (switching screens and coming
+    // back won't reset it).
+    if(aquaStatsFilterUnitId === null){
+      aquaStatsFilterUnitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY) || 'all';
+    }
+    const chipList = [{ id: 'all', name: t('aqua_stats_all_units') }].concat(units.map(u => ({ id: u.unit_id, name: u.name })));
+    if(!chipList.some(c => c.id === aquaStatsFilterUnitId)) aquaStatsFilterUnitId = 'all';
+    chipsEl.innerHTML = chipList.map(c =>
+      '<div class="aqua-chip' + (aquaStatsFilterUnitId === c.id ? ' active' : '') + '" data-unit="' + c.id + '">' + escapeHtmlAqua(c.name) + '</div>'
+    ).join('');
+    chipsEl.querySelectorAll('[data-unit]').forEach(el => {
+      el.addEventListener('click', () => { aquaStatsFilterUnitId = el.dataset.unit; renderAquaStats(); });
+    });
+
+    if(aquaStatsFilterUnitId === 'all'){
+      renderAquaStatsAll(units);
+      return;
+    }
+
+    const unitId = aquaStatsFilterUnitId;
+    const unit = units.find(u => u.unit_id === unitId);
     if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
 
     const cycle = unitId ? activeCycleForUnit(unitId) : null;
@@ -18654,6 +18753,8 @@
     }
     noActiveEl.style.display = 'none';
     bodyEl.style.display = 'block';
+    document.getElementById('aquaStatsChartsSection').style.display = 'block';
+    document.getElementById('aquaStatsChartsAllNote').style.display = 'none';
 
     const mortalityEvents = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id);
     const totalDead = mortalityEvents.reduce((s,m) => s + (m.qty||0), 0);
@@ -18699,6 +18800,78 @@
 
     renderAquaWeightChart(cycle, biometryEvents);
     renderAquaMortalityChart(cycle, mortalityEvents);
+  }
+
+  // "All units" aggregate view — sums/weighted-averages the same metrics
+  // across every unit's active cycle. Per-cycle time-series charts don't
+  // combine cleanly across cycles with different start dates and species,
+  // so they're swapped for a note instead of being faked into one chart.
+  function renderAquaStatsAll(units){
+    document.getElementById('aquaStatsNoActive').style.display = 'none';
+    document.getElementById('aquaStatsUnitName').textContent = t('aqua_stats_all_units');
+    document.getElementById('aquaStatsChartsSection').style.display = 'none';
+    document.getElementById('aquaStatsChartsAllNote').style.display = 'block';
+
+    const cycles = loadCycles();
+    const mortality = loadMortalityAqua();
+    const biometry = loadBiometryAqua();
+    const feeding = loadFeedingAqua();
+
+    let totalSeeded = 0, totalLive = 0, totalBiomassKg = 0, fcrSum = 0, fcrCount = 0, totalFeedCost = 0;
+    let anyActiveCycle = false, hasGoal = false, goalSum = 0, goalBiomassSum = 0;
+
+    units.forEach(unit => {
+      const cycle = cycles.find(c => c.unit_id === unit.unit_id && c.status === 'active');
+      if(!cycle) return;
+      anyActiveCycle = true;
+      const mortEvents = mortality.filter(m => m.cycle_id === cycle.cycle_id);
+      const totalDead = mortEvents.reduce((s,m) => s + (m.qty||0), 0);
+      const liveCount = Math.max(0, (cycle.seeded_qty||0) - totalDead);
+      totalSeeded += (cycle.seeded_qty||0);
+      totalLive += liveCount;
+
+      const bioEvents = biometry.filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
+      const firstBio = bioEvents[0] || null, lastBio = bioEvents[bioEvents.length-1] || null;
+      let biomassNowKg = null;
+      if(lastBio){ biomassNowKg = (liveCount * lastBio.avg_weight_g) / 1000; totalBiomassKg += biomassNowKg; }
+
+      const feedEvents = feeding.filter(f => f.cycle_id === cycle.cycle_id);
+      const feedKg = feedEvents.reduce((s,f) => s + (f.kg||0), 0);
+      totalFeedCost += feedEvents.reduce((s,f) => s + (f.cost||0), 0);
+
+      if(firstBio && lastBio && feedKg > 0){
+        const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
+        const gainKg = biomassNowKg - biomassStartKg;
+        if(gainKg > 0){ fcrSum += feedKg / gainKg; fcrCount++; }
+      }
+      if(cycle.goal_kg && biomassNowKg != null){ hasGoal = true; goalSum += cycle.goal_kg; goalBiomassSum += biomassNowKg; }
+    });
+
+    if(!anyActiveCycle){
+      document.getElementById('aquaStatsNoActive').style.display = 'block';
+      document.getElementById('aquaStatsBody').style.display = 'none';
+      return;
+    }
+    document.getElementById('aquaStatsBody').style.display = 'block';
+
+    const survivalPct = totalSeeded ? ((totalLive / totalSeeded) * 100) : null;
+    const avgFcr = fcrCount ? (fcrSum / fcrCount) : null;
+    document.getElementById('aquaStatsFcr').textContent = avgFcr != null ? avgFcr.toFixed(2) : '—';
+    document.getElementById('aquaStatsSurvival').textContent = survivalPct != null ? survivalPct.toFixed(1) + '%' : '—';
+    document.getElementById('aquaStatsBiomass').textContent = totalBiomassKg ? totalBiomassKg.toFixed(1) + ' kg' : '—';
+    document.getElementById('aquaStatsCostKg').textContent = (totalBiomassKg && totalFeedCost > 0) ? (totalFeedCost / totalBiomassKg).toFixed(2) : '—';
+
+    const goalWrap = document.getElementById('aquaStatsGoalWrap');
+    if(hasGoal){
+      goalWrap.style.display = 'block';
+      const pct = Math.min(100, Math.round((goalBiomassSum / goalSum) * 100));
+      document.getElementById('aquaStatsGoalRow').innerHTML = '<span>' + goalBiomassSum.toFixed(1) + ' kg</span><span>' + t('aqua_stats_goal_target').replace('{goal}', goalSum.toFixed(0)) + '</span>';
+      document.getElementById('aquaStatsGoalBar').style.width = pct + '%';
+    } else {
+      goalWrap.style.display = 'none';
+    }
+
+    document.getElementById('aquaStatsCostNote').textContent = t('aqua_stats_cost_note_all');
   }
 
   // Simple inline-SVG line/bar charts — same no-external-library approach
@@ -19145,28 +19318,50 @@
   const AQUA_REGIONS = [ ['mx','México'], ['us','EUA'], ['eu','Unión Europea'], ['th','Tailandia'] ];
   let aquaSpeciesRegionFilter = 'mx';
   let aquaSpeciesSelectedId = null;
+  let aquaSpeciesSearchQuery = '';
 
   function renderAquaSpeciesList(){
     const chipsEl = document.getElementById('aquaSpeciesRegionChips');
     const listEl = document.getElementById('aquaSpeciesList');
+    const subEl = document.getElementById('aquaSpeciesSub');
     if(!listEl) return;
     chipsEl.innerHTML = AQUA_REGIONS.map(([code,label]) =>
-      '<button type="button" class="chip ' + (aquaSpeciesRegionFilter===code?'chip-green':'chip-grey') + '" data-region="' + code + '" style="border:none;cursor:pointer;font-size:12px;padding:5px 10px;">' + label + '</button>'
+      '<div class="aqua-chip' + (aquaSpeciesRegionFilter===code?' active':'') + '" data-region="' + code + '">' + escapeHtmlAqua(label) + '</div>'
     ).join('');
     chipsEl.querySelectorAll('[data-region]').forEach(btn => {
       btn.addEventListener('click', () => { aquaSpeciesRegionFilter = btn.dataset.region; renderAquaSpeciesList(); });
     });
-    const filtered = AQUA_SPECIES.filter(s => s.regions.includes(aquaSpeciesRegionFilter));
+
+    const q = aquaSpeciesSearchQuery.trim().toLowerCase();
+    const filtered = AQUA_SPECIES.filter(s => s.regions.includes(aquaSpeciesRegionFilter)
+      && (!q || s.common.toLowerCase().indexOf(q) !== -1 || s.sci.toLowerCase().indexOf(q) !== -1));
+
+    if(subEl) subEl.textContent = filtered.length + ' ' + t('aqua_species_sub_count');
+
+    if(filtered.length === 0){
+      listEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_species_empty') + '</div>';
+      return;
+    }
+    const fishIcon = '<svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="currentColor"/><circle cx="6.5" cy="11" r="1" fill="#fff"/></svg>';
     listEl.innerHTML = filtered.map(s =>
-      '<div class="card" style="cursor:pointer;" data-species-id="' + s.id + '">'
-        + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">' + aquaChartEscape(s.common) + '</div>'
-        + '<div style="font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:2px;">' + aquaChartEscape(s.sci) + ' · ' + s.habitat + '</div>'
+      '<div class="aqua-species-row" data-species-id="' + s.id + '">'
+        + '<div class="aqua-species-row-icon">' + fishIcon + '</div>'
+        + '<div style="flex:1;min-width:0;">'
+          + '<div class="aqua-species-row-name">' + aquaChartEscape(s.common) + '</div>'
+          + '<div class="aqua-species-row-sci">' + aquaChartEscape(s.sci) + '</div>'
+        + '</div>'
+        + '<div class="aqua-species-tag">' + aquaChartEscape(s.habitat) + '</div>'
       + '</div>'
     ).join('');
     listEl.querySelectorAll('[data-species-id]').forEach(el => {
       el.addEventListener('click', () => { aquaSpeciesSelectedId = el.dataset.speciesId; if(typeof goTo === 'function') goTo('aqua-species-detail'); renderAquaSpeciesDetail(); });
     });
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchEl = document.getElementById('aquaSpeciesSearchInput');
+    if(searchEl) searchEl.addEventListener('input', () => { aquaSpeciesSearchQuery = searchEl.value; renderAquaSpeciesList(); });
+  });
 
   function renderAquaSpeciesDetail(){
     const nameEl = document.getElementById('aquaSpeciesDetailName');
@@ -19179,20 +19374,20 @@
 
     function row(labelKey, value){
       if(!value || value === '—') return '';
-      return '<div style="background:var(--panel);border-radius:var(--radius);padding:8px;">'
-        + '<div style="font-size:11px;color:var(--ink-soft);">' + t(labelKey) + '</div>'
-        + '<div style="font-size:13px;font-weight:500;color:var(--ink);">' + aquaChartEscape(value) + '</div>'
+      return '<div class="aqua-species-stat-card">'
+        + '<div class="aqua-species-stat-label">' + t(labelKey) + '</div>'
+        + '<div class="aqua-species-stat-val">' + aquaChartEscape(value) + '</div>'
       + '</div>';
     }
 
-    bodyEl.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">'
+    bodyEl.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">'
       + row('aqua_species_temp', s.temp) + row('aqua_species_ph', s.ph) + row('aqua_species_salinity', s.salinity)
       + row('aqua_species_density', s.density) + row('aqua_species_feeding', s.feeding) + row('aqua_species_cycle', s.cycle)
       + '</div>'
       + '<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_growth_label') + '</div>'
-      + '<div style="font-size:13px;color:var(--ink);margin-bottom:12px;">' + aquaChartEscape(s.growth) + '</div>'
+      + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(s.growth) + '</div>'
       + (s.diseases && s.diseases !== '—' ? ('<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_diseases_label') + '</div>'
-        + '<div style="font-size:13px;color:var(--ink);margin-bottom:12px;">' + aquaChartEscape(s.diseases) + '</div>') : '')
+        + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(s.diseases) + '</div>') : '')
       + '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;">' + t('aqua_species_source_label') + ': ' + aquaChartEscape(s.source) + '</div>';
   }
 
