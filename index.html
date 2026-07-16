@@ -239,7 +239,11 @@
   #screen-aqua-home .aqua-cage-swatch{ width:38px; height:38px; border-radius:11px; flex-shrink:0; border:2px solid; }
   #screen-aqua-home .aqua-cage-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
   #screen-aqua-home .aqua-cage-species{ font-family:var(--data); font-size:10px; color:var(--ink-soft); font-weight:600; margin-top:1px; }
-  #screen-aqua-home .aqua-fab{
+  /* Shared FAB — used on Home and Cages (any screen with an "add unit"
+     shortcut). Must stay unscoped: same bug pattern as the ring classes
+     before it — scoping to #screen-aqua-home silently broke it on Cages,
+     rendering as a plain unstyled button. */
+  .aqua-fab{
     position:fixed; right:18px; bottom:96px; width:52px; height:52px; border-radius:9999px; background:var(--blue);
     display:flex; align-items:center; justify-content:center; box-shadow:0 10px 22px rgba(28,143,106,0.4);
     border:none; cursor:pointer; z-index:5;
@@ -375,6 +379,11 @@
   .aqua-feed-row-main{ flex:1; min-width:0; }
   .aqua-feed-row-title{ font-family:var(--display); font-size:13.5px; color:var(--ink); }
   .aqua-feed-row-sub{ font-family:var(--data); font-size:10.5px; color:var(--ink-soft); font-weight:600; margin-top:2px; }
+  .aqua-sync-btn{
+    display:block; width:100%; box-sizing:border-box; background:var(--blue-mist); color:var(--blue-deep);
+    font-family:var(--display); font-size:14px; font-weight:700; border:1.5px solid var(--blue); border-radius:12px;
+    padding:13px; margin-bottom:16px; cursor:pointer; text-align:center;
+  }
 
   /* ===== Cages screen (browse/overview grid) ===== */
   .aqua-chip-row{ display:flex; gap:8px; padding:14px 18px 6px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
@@ -398,6 +407,40 @@
   .aqua-cage-photo-species{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); font-weight:600; }
   .aqua-cage-photo-biomass{ font-family:var(--data); font-size:15px; color:var(--ink); margin-top:2px; }
   .aqua-cage-photo-note{ font-family:var(--data); font-size:9.5px; font-weight:700; }
+
+  /* ===== Reports & Stats: rocker switch between the two screens ===== */
+  .aqua-rocker{
+    display:flex; align-items:center; gap:3px; background:rgba(255,255,255,0.15); border-radius:9999px; padding:3px; flex-shrink:0;
+  }
+  .aqua-rocker button{
+    border:none; border-radius:9999px; padding:6px 12px; display:flex; align-items:center; gap:5px;
+    font-family:var(--data); font-size:10px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    color:rgba(255,255,255,0.75); background:transparent; cursor:pointer;
+  }
+  .aqua-rocker button .dot{ width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,0.4); flex-shrink:0; }
+  .aqua-rocker button.active{ background:#fff; color:var(--blue-deep); }
+  .aqua-rocker button.active .dot{ background:var(--blue); }
+
+  .aqua-alert-row{
+    display:flex; align-items:flex-start; gap:10px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:12px 14px; margin-bottom:8px; box-shadow:0 2px 8px rgba(14,27,38,0.06);
+  }
+  .aqua-alert-dot{ width:8px; height:8px; border-radius:9999px; margin-top:5px; flex-shrink:0; }
+  .aqua-alert-title{ font-family:var(--display); font-size:13.5px; color:var(--ink); }
+  .aqua-alert-meta{ font-family:var(--data); font-size:10px; color:var(--ink-soft); font-weight:600; margin-top:3px; }
+
+  .aqua-export-btn{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:10px; box-shadow:0 2px 8px rgba(14,27,38,0.06);
+  }
+  .aqua-export-btn-title{ font-family:var(--display); font-weight:600; font-size:14px; color:var(--ink); }
+  .aqua-export-btn-sub{ font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .aqua-export-btn-cta{
+    display:flex; align-items:center; gap:6px; background:transparent; border:1.5px solid var(--blue); color:var(--blue);
+    font-family:var(--display); font-size:12.5px; font-weight:700; border-radius:9999px; padding:8px 14px; cursor:pointer; flex-shrink:0;
+  }
+  .aqua-chart-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:12px; box-shadow:0 2px 8px rgba(14,27,38,0.06); }
+  .aqua-goal-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; box-shadow:0 2px 8px rgba(14,27,38,0.06); }
   .aqua-tabbar{
     display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
     justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
@@ -2971,7 +3014,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9M8 8l4-4 4 4"/><path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9"/></svg>
     <span class="aqua-tab-label" data-i18n="aqua_tab_cages">Cages</span>
   </button>
-  <button type="button" class="aqua-tab" data-go="aqua-units">
+  <button type="button" class="aqua-tab" data-go="aqua-feeding">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16a8 6 0 0 1-16 0z"/><circle cx="9" cy="8.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="7" r="0.9" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.7" r="0.9" fill="currentColor" stroke="none"/></svg>
     <span class="aqua-tab-label" data-i18n="aqua_tab_feed">Feed</span>
   </button>
@@ -3238,11 +3281,11 @@
 <section class="screen" id="screen-aqua-feeding">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
-      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cages" aria-label="Back">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div>
-        <div class="aqua-header-band-title" data-i18n="aqua_feeding_h1">Feeding calculator</div>
+        <div class="aqua-header-band-title" data-i18n="aqua_feeding_h1">Feed</div>
         <div class="aqua-header-band-sub" id="aquaFeedingUnitName">—</div>
       </div>
     </div>
@@ -3257,7 +3300,27 @@
     <span data-i18n="aqua_feeding_quick_log_btn">Log feed entry</span>
   </button>
   <main>
-    <button type="button" class="btn" id="aquaFeedingSyncBtn" style="width:100%;margin-bottom:12px;" data-i18n="aqua_feeding_sync_btn">Sync with last biometry</button>
+    <div class="hist-meta-row" style="margin-top:12px;">
+      <span class="insight-card-label" style="margin:0;" data-i18n="aqua_feeding_history_label">Recent feeding</span>
+    </div>
+    <div id="aquaFeedingHistory" style="margin-top:8px;"></div>
+  </main>
+</section>
+
+<section class="screen" id="screen-aqua-feeding-log">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-feeding" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_feeding_log_title">Log feeding</div>
+        <div class="aqua-header-band-sub" id="aquaFeedingLogUnitName">—</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <button type="button" class="aqua-sync-btn" id="aquaFeedingSyncBtn" data-i18n="aqua_feeding_sync_btn">Sync with last biometry</button>
     <div id="aquaFeedingStaleWarning"></div>
 
     <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_feeding_calc_title">Calculate ration</div>
@@ -3279,97 +3342,80 @@
 
     <div id="aquaFeedingResult"></div>
 
-    <div id="aquaFeedingLogCard" style="display:none;">
-      <div class="aqua-field-label" style="margin:20px 0 12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_feeding_log_title">Log feeding</div>
-      <div class="aqua-field-group">
-        <span class="aqua-field-label" data-i18n="aqua_feeding_kg_label">Feed given today (kg)</span>
-        <input type="number" class="aqua-input" id="aquaFeedKg" min="0" step="0.1">
-      </div>
-      <div class="aqua-field-group">
-        <span class="aqua-field-label" data-i18n="aqua_feeding_type_label">Feed type / brand (optional)</span>
-        <input type="text" class="aqua-input" id="aquaFeedType" placeholder="e.g. 32% floating pellet">
-      </div>
-      <div class="aqua-field-group">
-        <span class="aqua-field-label" data-i18n="aqua_feeding_cost_label">Cost (optional)</span>
-        <input type="number" class="aqua-input" id="aquaFeedCost" min="0" step="0.01">
-      </div>
-      <button type="button" class="aqua-add-submit" id="aquaFeedingLogBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        <span data-i18n="aqua_feeding_log_btn">Log feeding</span>
-      </button>
+    <div class="aqua-field-label" style="margin:20px 0 12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_feeding_log_title">Log feeding</div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_kg_label">Feed given today (kg)</span>
+      <input type="number" class="aqua-input" id="aquaFeedKg" min="0" step="0.1">
     </div>
-
-    <div class="hist-meta-row" style="margin-top:24px;">
-      <span class="insight-card-label" style="margin:0;" data-i18n="aqua_feeding_history_label">Recent feeding</span>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_type_label">Feed type / brand (optional)</span>
+      <input type="text" class="aqua-input" id="aquaFeedType" placeholder="e.g. 32% floating pellet">
     </div>
-    <div id="aquaFeedingHistory" style="margin-top:8px;"></div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_feeding_cost_label">Cost (optional)</span>
+      <input type="number" class="aqua-input" id="aquaFeedCost" min="0" step="0.01">
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaFeedingLogBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_feeding_log_btn">Log feeding</span>
+    </button>
   </main>
 </section>
 
 <!-- ================= AQUACULTURE: STATS (per cycle) ================= -->
 <section class="screen" id="screen-aqua-stats">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-units">←</button>
-      <span class="brand" id="aquaStatsUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_stats_h1">Statistics</div>
+        <div class="aqua-header-band-sub" id="aquaStatsUnitName">—</div>
+      </div>
+      <div class="aqua-rocker" style="margin-left:auto;">
+        <button type="button" data-go="aqua-reports"><span class="dot"></span><span data-i18n="aqua_subnav_reports">Reports</span></button>
+        <button type="button" class="active" data-go="aqua-stats"><span class="dot"></span><span data-i18n="aqua_subnav_stats">Stats</span></button>
+      </div>
     </div>
-    <h1 data-i18n="aqua_stats_h1">Statistics</h1>
-    <div class="site-line">&nbsp;</div>
-  </div>
-  <div class="fleet-tab-strip">
-    <button type="button" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
-    <button type="button" data-go="aqua-cycle" data-i18n="aqua_subnav_cycle">Cycle</button>
-    <button type="button" class="active" data-go="aqua-stats" data-i18n="aqua_subnav_stats">Stats</button>
-    <button type="button" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
     <div id="aquaStatsNoActive" class="card" style="display:none;text-align:center;color:var(--ink-soft);font-size:13px;padding:24px 12px;" data-i18n="aqua_stats_no_cycle">No active cycle for this unit.</div>
     <div id="aquaStatsBody" style="display:none;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;">
-          <div style="font-size:12px;color:var(--ink-soft);" data-i18n="aqua_stats_fcr">FCR (feed conversion)</div>
-          <div id="aquaStatsFcr" style="font-size:18px;font-weight:500;color:var(--ink);"></div>
-        </div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;">
-          <div style="font-size:12px;color:var(--ink-soft);" data-i18n="aqua_stats_cost_kg">Feed cost per kg</div>
-          <div id="aquaStatsCostKg" style="font-size:18px;font-weight:500;color:var(--ink);"></div>
-        </div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;">
-          <div style="font-size:12px;color:var(--ink-soft);" data-i18n="aqua_stats_survival">Survival</div>
-          <div id="aquaStatsSurvival" style="font-size:18px;font-weight:500;color:var(--ink);"></div>
-        </div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;">
-          <div style="font-size:12px;color:var(--ink-soft);" data-i18n="aqua_stats_biomass">Estimated biomass</div>
-          <div id="aquaStatsBiomass" style="font-size:18px;font-weight:500;color:var(--ink);"></div>
-        </div>
+      <div class="aqua-kpi-row" style="padding:0 0 12px;">
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_fcr">FCR</div><div class="aqua-kpi-val" id="aquaStatsFcr">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_survival">Survival</div><div class="aqua-kpi-val" id="aquaStatsSurvival" style="color:var(--released);">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_biomass">Biomass</div><div class="aqua-kpi-val" id="aquaStatsBiomass">—</div></div>
+      </div>
+      <div class="aqua-kpi-row" style="padding:0 0 16px;">
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_cost_kg">Feed cost/kg</div><div class="aqua-kpi-val" id="aquaStatsCostKg">—</div></div>
       </div>
 
-      <div id="aquaStatsGoalWrap" style="display:none;">
+      <div id="aquaStatsGoalWrap" style="display:none;margin-bottom:16px;">
         <div class="insight-card-label" style="margin-bottom:6px;" data-i18n="aqua_stats_goal_label">Harvest goal</div>
-        <div style="background:var(--panel);border-radius:var(--radius);padding:10px;margin-bottom:4px;">
-          <div id="aquaStatsGoalRow" style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin-bottom:4px;"></div>
+        <div class="aqua-goal-card">
+          <div id="aquaStatsGoalRow" style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin-bottom:6px;"></div>
           <div style="height:6px;background:var(--line);border-radius:4px;overflow:hidden;">
             <div id="aquaStatsGoalBar" style="height:100%;width:0%;background:var(--blue);"></div>
           </div>
         </div>
       </div>
 
-      <div id="aquaStatsCostNote" style="font-size:11px;color:var(--ink-soft);margin-top:8px;"></div>
+      <div id="aquaStatsCostNote" style="font-size:11px;color:var(--ink-soft);margin-bottom:16px;"></div>
 
-      <div class="hist-meta-row" style="margin-top:16px;">
+      <div class="hist-meta-row">
         <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_weight_chart_label">Weight over time</span>
       </div>
-      <div class="card" id="aquaStatsWeightChart"></div>
+      <div class="aqua-chart-card" id="aquaStatsWeightChart" style="margin:8px 0 16px;"></div>
 
-      <div class="hist-meta-row" style="margin-top:12px;">
+      <div class="hist-meta-row">
         <span class="insight-card-label" style="margin:0;" data-i18n="aqua_stats_mortality_chart_label">Cumulative mortality</span>
       </div>
-      <div class="card" id="aquaStatsMortalityChart"></div>
+      <div class="aqua-chart-card" id="aquaStatsMortalityChart" style="margin-top:8px;"></div>
     </div>
   </main>
 </section>
 
-<!-- ================= AQUACULTURE: SPECIES CATALOG ================= -->
 <section class="screen" id="screen-aqua-species-list">
   <div class="topbar">
     <div class="back-row">
@@ -3396,42 +3442,63 @@
 
 <!-- ================= AQUACULTURE: REPORTS (per unit/cycle) ================= -->
 <section class="screen" id="screen-aqua-reports">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-units">←</button>
-      <span class="brand" id="aquaReportsUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_reports_h1">Reports & alerts</div>
+        <div class="aqua-header-band-sub" id="aquaReportsUnitName">—</div>
+      </div>
+      <div class="aqua-rocker" style="margin-left:auto;">
+        <button type="button" class="active" data-go="aqua-reports"><span class="dot"></span><span data-i18n="aqua_subnav_reports">Reports</span></button>
+        <button type="button" data-go="aqua-stats"><span class="dot"></span><span data-i18n="aqua_subnav_stats">Stats</span></button>
+      </div>
     </div>
-    <h1 data-i18n="aqua_reports_h1">Reports</h1>
-    <div class="site-line">&nbsp;</div>
-  </div>
-  <div class="fleet-tab-strip">
-    <button type="button" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
-    <button type="button" data-go="aqua-cycle" data-i18n="aqua_subnav_cycle">Cycle</button>
-    <button type="button" data-go="aqua-stats" data-i18n="aqua_subnav_stats">Stats</button>
-    <button type="button" class="active" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
     <div id="aquaReportsNoActive" class="card" style="display:none;text-align:center;color:var(--ink-soft);font-size:13px;padding:24px 12px;" data-i18n="aqua_stats_no_cycle">No active cycle for this unit.</div>
     <div id="aquaReportsBody" style="display:none;">
-      <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);" data-i18n="aqua_reports_audit_title">GlobalGAP/ASC audit</div>
-          <div style="font-size:12px;color:var(--ink-soft);margin-top:2px;" data-i18n="aqua_reports_audit_sub">Current cycle · PDF</div>
-        </div>
-        <button type="button" class="btn" id="aquaReportsAuditBtn" data-i18n="aqua_reports_download">Download</button>
+      <div class="aqua-kpi-row" style="padding:0 0 16px;">
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_reports_kpi_biomass">Biomass</div><div class="aqua-kpi-val" id="aquaReportsKpiBiomass">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_survival">Survival</div><div class="aqua-kpi-val" id="aquaReportsKpiSurvival" style="color:var(--released);">—</div></div>
+        <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_stats_fcr">Avg FCR</div><div class="aqua-kpi-val" id="aquaReportsKpiFcr">—</div></div>
       </div>
-      <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);" data-i18n="aqua_reports_log_title">Cycle logbook</div>
-          <div style="font-size:12px;color:var(--ink-soft);margin-top:2px;" data-i18n="aqua_reports_log_sub">Biometry + mortality + feeding</div>
+
+      <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="aqua_reports_open_alerts">Open alerts</div>
+      <div id="aquaReportsAlerts"></div>
+
+      <div class="hist-meta-row" style="margin-top:16px;">
+        <span class="insight-card-label" style="margin:0;" data-i18n="aqua_reports_exports_label">Exports</span>
+      </div>
+      <div style="margin-top:8px;">
+        <div class="aqua-export-btn">
+          <div>
+            <div class="aqua-export-btn-title" data-i18n="aqua_reports_audit_title">GlobalGAP/ASC audit</div>
+            <div class="aqua-export-btn-sub" data-i18n="aqua_reports_audit_sub">Current cycle · PDF</div>
+          </div>
+          <button type="button" class="aqua-export-btn-cta" id="aquaReportsAuditBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>
+            <span data-i18n="aqua_reports_download">Download</span>
+          </button>
         </div>
-        <button type="button" class="btn" id="aquaReportsLogBtn" data-i18n="aqua_reports_download">Download</button>
+        <div class="aqua-export-btn">
+          <div>
+            <div class="aqua-export-btn-title" data-i18n="aqua_reports_log_title">Cycle logbook</div>
+            <div class="aqua-export-btn-sub" data-i18n="aqua_reports_log_sub">Biometry + mortality + feeding</div>
+          </div>
+          <button type="button" class="aqua-export-btn-cta" id="aquaReportsLogBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>
+            <span data-i18n="aqua_reports_download">Download</span>
+          </button>
+        </div>
       </div>
 
       <div class="hist-meta-row" style="margin-top:12px;">
         <span class="insight-card-label" style="margin:0;" data-i18n="aqua_reports_traceability_label">Traceability</span>
       </div>
-      <div id="aquaReportsQrArea" class="card"></div>
+      <div id="aquaReportsQrArea" class="card" style="margin-top:8px;"></div>
     </div>
   </main>
 </section>
@@ -5412,7 +5479,7 @@
       aqua_mortality_h1: 'New mortality', aqua_mortality_qty_label: 'Quantity', aqua_mortality_cause_label: 'Cause',
       aqua_mortality_cause_water: 'Water quality', aqua_mortality_cause_disease: 'Disease', aqua_mortality_cause_predation: 'Predation', aqua_mortality_cause_handling: 'Handling', aqua_mortality_cause_unknown: 'Unknown',
       aqua_mortality_note_label: 'Note (optional)', aqua_mortality_save_btn: 'Save mortality', aqua_mortality_history_label: 'Recent entries', aqua_mortality_empty: 'No mortality logged yet.', aqua_mortality_saved: 'Mortality saved',
-      aqua_feeding_h1: 'Feeding calculator', aqua_feeding_sync_btn: 'Sync with last biometry', aqua_feeding_weight_label: 'Suggested average weight (g)', aqua_feeding_temp_label: 'Water temperature today (°C)',
+      aqua_feeding_h1: 'Feed', aqua_feeding_sync_btn: 'Sync with last biometry', aqua_feeding_weight_label: 'Suggested average weight (g)', aqua_feeding_temp_label: 'Water temperature today (°C)',
       aqua_feeding_mortality_label: 'Accumulated mortality', aqua_feeding_calc_btn: 'Calculate', aqua_feeding_result_label: 'Suggested ration today',
       aqua_feeding_kpi_today: 'Fed today', aqua_feeding_kpi_cycle: 'This cycle', aqua_feeding_kpi_fcr: 'Avg FCR', aqua_feeding_quick_log_btn: 'Log feed entry',
       aqua_feeding_calc_title: 'Calculate ration', aqua_feeding_log_title: 'Log feeding',
@@ -5427,7 +5494,13 @@
       aqua_species_catalog_link: '📖 Species catalog', aqua_species_h1: 'Species catalog',
       aqua_species_temp: 'Ideal temperature', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinity', aqua_species_density: 'Stocking density', aqua_species_feeding: 'Feeding', aqua_species_cycle: 'Typical cycle',
       aqua_species_growth_label: 'Growth curve', aqua_species_diseases_label: 'Common diseases', aqua_species_source_label: 'Source',
-      aqua_subnav_reports: 'Reports', aqua_reports_h1: 'Reports', aqua_reports_audit_title: 'GlobalGAP/ASC audit', aqua_reports_audit_sub: 'Current cycle · PDF',
+      aqua_subnav_reports: 'Reports', aqua_reports_h1: 'Reports & alerts', aqua_reports_audit_title: 'GlobalGAP/ASC audit', aqua_reports_audit_sub: 'Current cycle · PDF',
+      aqua_reports_kpi_biomass: 'Biomass', aqua_reports_open_alerts: 'Open alerts', aqua_reports_exports_label: 'Exports',
+      aqua_reports_alert_mortality_title: 'Mortality spike', aqua_reports_alert_mortality_meta: '{n} lost in the last 48h · not yet acknowledged',
+      aqua_reports_alert_ammonia_title: 'Ammonia is toxic at this pH', aqua_reports_alert_ammonia_meta: 'Detected {ts}',
+      aqua_reports_alert_o2_title: 'Oxygen trending low', aqua_reports_alert_o2_meta: 'Last reading {val} mg/L',
+      aqua_reports_alert_stale_title: 'Biometry is stale', aqua_reports_alert_stale_meta: '{days} days since last weigh-in',
+      aqua_reports_alert_none_title: 'All parameters within range', aqua_reports_alert_none_meta: 'No open alerts for this cycle',
       aqua_reports_download: 'Download', aqua_reports_log_title: 'Cycle logbook', aqua_reports_log_sub: 'Biometry + mortality + feeding', aqua_reports_traceability_label: 'Traceability',
       aqua_reports_qr_title: 'Batch QR code', aqua_reports_qr_pending: 'Activates when the cycle is harvested', aqua_reports_mark_harvested: 'Mark as harvested',
       aqua_reports_qr_ready: 'Ready to share with buyers', aqua_reports_qr_lib_missing: 'QR library unavailable offline', aqua_reports_harvested_saved: 'Cycle marked as harvested',
@@ -5809,7 +5882,7 @@
       aqua_mortality_h1: 'Nueva mortalidad', aqua_mortality_qty_label: 'Cantidad', aqua_mortality_cause_label: 'Causa',
       aqua_mortality_cause_water: 'Calidad de agua', aqua_mortality_cause_disease: 'Enfermedad', aqua_mortality_cause_predation: 'Depredación', aqua_mortality_cause_handling: 'Manejo', aqua_mortality_cause_unknown: 'Desconocida',
       aqua_mortality_note_label: 'Nota (opcional)', aqua_mortality_save_btn: 'Guardar mortalidad', aqua_mortality_history_label: 'Registros recientes', aqua_mortality_empty: 'Aún no hay mortalidad registrada.', aqua_mortality_saved: 'Mortalidad guardada',
-      aqua_feeding_h1: 'Calculadora de ración', aqua_feeding_sync_btn: 'Sincronizar con última biometría', aqua_feeding_weight_label: 'Peso promedio sugerido (g)', aqua_feeding_temp_label: 'Temperatura del agua hoy (°C)',
+      aqua_feeding_h1: 'Alimento', aqua_feeding_sync_btn: 'Sincronizar con última biometría', aqua_feeding_weight_label: 'Peso promedio sugerido (g)', aqua_feeding_temp_label: 'Temperatura del agua hoy (°C)',
       aqua_feeding_mortality_label: 'Mortalidad acumulada', aqua_feeding_calc_btn: 'Calcular', aqua_feeding_result_label: 'Ración sugerida hoy',
       aqua_feeding_kpi_today: 'Alimento hoy', aqua_feeding_kpi_cycle: 'Este ciclo', aqua_feeding_kpi_fcr: 'FCA prom.', aqua_feeding_quick_log_btn: 'Registrar alimento',
       aqua_feeding_calc_title: 'Calcular ración', aqua_feeding_log_title: 'Registrar alimentación',
@@ -5824,7 +5897,13 @@
       aqua_species_catalog_link: '📖 Catálogo de especies', aqua_species_h1: 'Catálogo de especies',
       aqua_species_temp: 'Temperatura ideal', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinidad', aqua_species_density: 'Densidad de siembra', aqua_species_feeding: 'Alimentación', aqua_species_cycle: 'Ciclo típico',
       aqua_species_growth_label: 'Curva de crecimiento', aqua_species_diseases_label: 'Enfermedades comunes', aqua_species_source_label: 'Fuente',
-      aqua_subnav_reports: 'Reportes', aqua_reports_h1: 'Reportes', aqua_reports_audit_title: 'Auditoría GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo actual · PDF',
+      aqua_subnav_reports: 'Reportes', aqua_reports_h1: 'Reportes y alertas', aqua_reports_audit_title: 'Auditoría GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo actual · PDF',
+      aqua_reports_kpi_biomass: 'Biomasa', aqua_reports_open_alerts: 'Alertas abiertas', aqua_reports_exports_label: 'Exportar',
+      aqua_reports_alert_mortality_title: 'Pico de mortalidad', aqua_reports_alert_mortality_meta: '{n} perdidos en las últimas 48h · sin confirmar',
+      aqua_reports_alert_ammonia_title: 'Amonio tóxico a este pH', aqua_reports_alert_ammonia_meta: 'Detectado {ts}',
+      aqua_reports_alert_o2_title: 'Oxígeno a la baja', aqua_reports_alert_o2_meta: 'Última lectura {val} mg/L',
+      aqua_reports_alert_stale_title: 'Biometría desactualizada', aqua_reports_alert_stale_meta: '{days} días desde el último pesaje',
+      aqua_reports_alert_none_title: 'Todos los parámetros en rango', aqua_reports_alert_none_meta: 'Sin alertas abiertas para este ciclo',
       aqua_reports_download: 'Descargar', aqua_reports_log_title: 'Bitácora de ciclo', aqua_reports_log_sub: 'Biometría + mortalidad + alimentación', aqua_reports_traceability_label: 'Trazabilidad',
       aqua_reports_qr_title: 'Código QR del lote', aqua_reports_qr_pending: 'Se activa al cosechar el ciclo', aqua_reports_mark_harvested: 'Marcar como cosechado',
       aqua_reports_qr_ready: 'Listo para compartir con compradores', aqua_reports_qr_lib_missing: 'Librería de QR no disponible sin conexión', aqua_reports_harvested_saved: 'Ciclo marcado como cosechado',
@@ -6206,7 +6285,7 @@
       aqua_mortality_h1: 'Nuova mortalità', aqua_mortality_qty_label: 'Quantità', aqua_mortality_cause_label: 'Causa',
       aqua_mortality_cause_water: 'Qualità dell\'acqua', aqua_mortality_cause_disease: 'Malattia', aqua_mortality_cause_predation: 'Predazione', aqua_mortality_cause_handling: 'Gestione', aqua_mortality_cause_unknown: 'Sconosciuta',
       aqua_mortality_note_label: 'Nota (opzionale)', aqua_mortality_save_btn: 'Salva mortalità', aqua_mortality_history_label: 'Voci recenti', aqua_mortality_empty: 'Nessuna mortalità registrata.', aqua_mortality_saved: 'Mortalità salvata',
-      aqua_feeding_h1: 'Calcolatrice di razione', aqua_feeding_sync_btn: 'Sincronizza con l\'ultima biometria', aqua_feeding_weight_label: 'Peso medio suggerito (g)', aqua_feeding_temp_label: 'Temperatura dell\'acqua oggi (°C)',
+      aqua_feeding_h1: 'Alimento', aqua_feeding_sync_btn: 'Sincronizza con l\'ultima biometria', aqua_feeding_weight_label: 'Peso medio suggerito (g)', aqua_feeding_temp_label: 'Temperatura dell\'acqua oggi (°C)',
       aqua_feeding_mortality_label: 'Mortalità accumulata', aqua_feeding_calc_btn: 'Calcola', aqua_feeding_result_label: 'Razione suggerita oggi',
       aqua_feeding_kpi_today: 'Alimento oggi', aqua_feeding_kpi_cycle: 'Questo ciclo', aqua_feeding_kpi_fcr: 'FCR medio', aqua_feeding_quick_log_btn: 'Registra alimento',
       aqua_feeding_calc_title: 'Calcola razione', aqua_feeding_log_title: 'Registra alimentazione',
@@ -6221,7 +6300,13 @@
       aqua_species_catalog_link: '📖 Catalogo delle specie', aqua_species_h1: 'Catalogo delle specie',
       aqua_species_temp: 'Temperatura ideale', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinità', aqua_species_density: 'Densità di semina', aqua_species_feeding: 'Alimentazione', aqua_species_cycle: 'Ciclo tipico',
       aqua_species_growth_label: 'Curva di crescita', aqua_species_diseases_label: 'Malattie comuni', aqua_species_source_label: 'Fonte',
-      aqua_subnav_reports: 'Report', aqua_reports_h1: 'Report', aqua_reports_audit_title: 'Audit GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo attuale · PDF',
+      aqua_subnav_reports: 'Report', aqua_reports_h1: 'Report e avvisi', aqua_reports_audit_title: 'Audit GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo attuale · PDF',
+      aqua_reports_kpi_biomass: 'Biomassa', aqua_reports_open_alerts: 'Avvisi aperti', aqua_reports_exports_label: 'Esportazioni',
+      aqua_reports_alert_mortality_title: 'Picco di mortalità', aqua_reports_alert_mortality_meta: '{n} persi nelle ultime 48h · non confermato',
+      aqua_reports_alert_ammonia_title: 'Ammoniaca tossica a questo pH', aqua_reports_alert_ammonia_meta: 'Rilevato {ts}',
+      aqua_reports_alert_o2_title: 'Ossigeno in calo', aqua_reports_alert_o2_meta: 'Ultima lettura {val} mg/L',
+      aqua_reports_alert_stale_title: 'Biometria non aggiornata', aqua_reports_alert_stale_meta: '{days} giorni dall\'ultima pesata',
+      aqua_reports_alert_none_title: 'Tutti i parametri nella norma', aqua_reports_alert_none_meta: 'Nessun avviso aperto per questo ciclo',
       aqua_reports_download: 'Scarica', aqua_reports_log_title: 'Diario di ciclo', aqua_reports_log_sub: 'Biometria + mortalità + alimentazione', aqua_reports_traceability_label: 'Tracciabilità',
       aqua_reports_qr_title: 'Codice QR del lotto', aqua_reports_qr_pending: 'Si attiva alla raccolta del ciclo', aqua_reports_mark_harvested: 'Segna come raccolto',
       aqua_reports_qr_ready: 'Pronto da condividere con gli acquirenti', aqua_reports_qr_lib_missing: 'Libreria QR non disponibile offline', aqua_reports_harvested_saved: 'Ciclo segnato come raccolto',
@@ -6582,7 +6667,7 @@
       aqua_mortality_h1: 'บันทึกอัตราตายใหม่', aqua_mortality_qty_label: 'จำนวน', aqua_mortality_cause_label: 'สาเหตุ',
       aqua_mortality_cause_water: 'คุณภาพน้ำ', aqua_mortality_cause_disease: 'โรค', aqua_mortality_cause_predation: 'ผู้ล่า', aqua_mortality_cause_handling: 'การจัดการ', aqua_mortality_cause_unknown: 'ไม่ทราบสาเหตุ',
       aqua_mortality_note_label: 'บันทึกเพิ่มเติม (ไม่บังคับ)', aqua_mortality_save_btn: 'บันทึกอัตราตาย', aqua_mortality_history_label: 'รายการล่าสุด', aqua_mortality_empty: 'ยังไม่มีข้อมูลอัตราตาย', aqua_mortality_saved: 'บันทึกอัตราตายแล้ว',
-      aqua_feeding_h1: 'เครื่องคำนวณอาหาร', aqua_feeding_sync_btn: 'ซิงค์กับชีวมาตรล่าสุด', aqua_feeding_weight_label: 'น้ำหนักเฉลี่ยที่แนะนำ (ก.)', aqua_feeding_temp_label: 'อุณหภูมิน้ำวันนี้ (°C)',
+      aqua_feeding_h1: 'อาหาร', aqua_feeding_sync_btn: 'ซิงค์กับชีวมาตรล่าสุด', aqua_feeding_weight_label: 'น้ำหนักเฉลี่ยที่แนะนำ (ก.)', aqua_feeding_temp_label: 'อุณหภูมิน้ำวันนี้ (°C)',
       aqua_feeding_mortality_label: 'อัตราตายสะสม', aqua_feeding_calc_btn: 'คำนวณ', aqua_feeding_result_label: 'ปริมาณอาหารที่แนะนำวันนี้',
       aqua_feeding_kpi_today: 'อาหารวันนี้', aqua_feeding_kpi_cycle: 'รอบนี้', aqua_feeding_kpi_fcr: 'FCR เฉลี่ย', aqua_feeding_quick_log_btn: 'บันทึกการให้อาหาร',
       aqua_feeding_calc_title: 'คำนวณปริมาณอาหาร', aqua_feeding_log_title: 'บันทึกการให้อาหาร',
@@ -6597,7 +6682,13 @@
       aqua_species_catalog_link: '📖 คลังข้อมูลชนิดพันธุ์', aqua_species_h1: 'คลังข้อมูลชนิดพันธุ์',
       aqua_species_temp: 'อุณหภูมิที่เหมาะสม', aqua_species_ph: 'pH', aqua_species_salinity: 'ความเค็ม', aqua_species_density: 'ความหนาแน่นการปล่อยเลี้ยง', aqua_species_feeding: 'การให้อาหาร', aqua_species_cycle: 'รอบการผลิตทั่วไป',
       aqua_species_growth_label: 'เส้นการเจริญเติบโต', aqua_species_diseases_label: 'โรคที่พบบ่อย', aqua_species_source_label: 'แหล่งข้อมูล',
-      aqua_subnav_reports: 'รายงาน', aqua_reports_h1: 'รายงาน', aqua_reports_audit_title: 'การตรวจสอบ GlobalGAP/ASC', aqua_reports_audit_sub: 'รอบปัจจุบัน · PDF',
+      aqua_subnav_reports: 'รายงาน', aqua_reports_h1: 'รายงานและการแจ้งเตือน', aqua_reports_audit_title: 'การตรวจสอบ GlobalGAP/ASC', aqua_reports_audit_sub: 'รอบปัจจุบัน · PDF',
+      aqua_reports_kpi_biomass: 'มวลชีวภาพ', aqua_reports_open_alerts: 'การแจ้งเตือนที่ยังเปิดอยู่', aqua_reports_exports_label: 'ส่งออก',
+      aqua_reports_alert_mortality_title: 'อัตราตายพุ่งสูง', aqua_reports_alert_mortality_meta: 'สูญเสีย {n} ตัวใน 48 ชม. ที่ผ่านมา · ยังไม่รับทราบ',
+      aqua_reports_alert_ammonia_title: 'แอมโมเนียเป็นพิษที่ pH นี้', aqua_reports_alert_ammonia_meta: 'ตรวจพบ {ts}',
+      aqua_reports_alert_o2_title: 'ออกซิเจนมีแนวโน้มลดลง', aqua_reports_alert_o2_meta: 'ค่าล่าสุด {val} มก./ล.',
+      aqua_reports_alert_stale_title: 'ข้อมูลชีวมาตรเก่าเกินไป', aqua_reports_alert_stale_meta: '{days} วันตั้งแต่ชั่งครั้งล่าสุด',
+      aqua_reports_alert_none_title: 'ทุกค่าอยู่ในเกณฑ์ปกติ', aqua_reports_alert_none_meta: 'ไม่มีการแจ้งเตือนที่เปิดอยู่สำหรับรอบนี้',
       aqua_reports_download: 'ดาวน์โหลด', aqua_reports_log_title: 'สมุดบันทึกรอบการผลิต', aqua_reports_log_sub: 'ชีวมาตร + อัตราตาย + การให้อาหาร', aqua_reports_traceability_label: 'การตรวจสอบย้อนกลับ',
       aqua_reports_qr_title: 'คิวอาร์โค้ดของล็อต', aqua_reports_qr_pending: 'จะเปิดใช้งานเมื่อเก็บเกี่ยวรอบการผลิต', aqua_reports_mark_harvested: 'ทำเครื่องหมายว่าเก็บเกี่ยวแล้ว',
       aqua_reports_qr_ready: 'พร้อมแชร์กับผู้ซื้อ', aqua_reports_qr_lib_missing: 'ไลบรารี QR ไม่พร้อมใช้งานแบบออฟไลน์', aqua_reports_harvested_saved: 'ทำเครื่องหมายรอบการผลิตว่าเก็บเกี่ยวแล้ว',
@@ -15030,6 +15121,7 @@
     if(screen === 'aqua-biometry' && typeof renderAquaBiometry === 'function') renderAquaBiometry();
     if(screen === 'aqua-mortality' && typeof renderAquaMortality === 'function') renderAquaMortality();
     if(screen === 'aqua-feeding' && typeof renderAquaFeeding === 'function') renderAquaFeeding();
+    if(screen === 'aqua-feeding-log' && typeof renderAquaFeedingLog === 'function') renderAquaFeedingLog();
     if(screen === 'aqua-stats' && typeof renderAquaStats === 'function') renderAquaStats();
     if(screen === 'aqua-species-list' && typeof renderAquaSpeciesList === 'function') renderAquaSpeciesList();
     if(screen === 'aqua-species-detail' && typeof renderAquaSpeciesDetail === 'function') renderAquaSpeciesDetail();
@@ -18374,20 +18466,9 @@
     if(!histEl) return;
     const unit = loadUnits().find(u => u.unit_id === localStorage.getItem(AQUA_SELECTED_UNIT_KEY));
     if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
-    document.getElementById('aquaFeedingResult').innerHTML = '';
-    document.getElementById('aquaFeedingLogCard').style.display = 'none';
-    document.getElementById('aquaFeedingStaleWarning').innerHTML = '';
 
     const cycle = currentCycleForActiveScreen();
     const entries = cycle ? loadFeedingAqua().filter(f => f.cycle_id === cycle.cycle_id).sort((a,b) => b.ts - a.ts) : [];
-
-    // Prefill accumulated mortality from the mortality log automatically —
-    // still editable, same "manual-smart" default as the weight field.
-    const mortEl = document.getElementById('aquaFeedMortality');
-    if(cycle && mortEl){
-      const totalDead = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id).reduce((s,m) => s + (m.qty||0), 0);
-      mortEl.value = totalDead || 0;
-    }
 
     // KPI row — real numbers, same FCR formula already used by Stats/Home:
     // total feed logged / biomass gained between first and latest biometry.
@@ -18432,6 +18513,26 @@
     }
   }
 
+  // Log-entry sub-screen: sync-with-biometry, the manual calculator, and
+  // the actual "log what was fed" form all live here, reached only via
+  // the "Log feed entry" button on the Feed overview above.
+  function renderAquaFeedingLog(){
+    const nameEl = document.getElementById('aquaFeedingLogUnitName');
+    const unit = loadUnits().find(u => u.unit_id === localStorage.getItem(AQUA_SELECTED_UNIT_KEY));
+    if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
+    document.getElementById('aquaFeedingResult').innerHTML = '';
+    document.getElementById('aquaFeedingStaleWarning').innerHTML = '';
+
+    const cycle = currentCycleForActiveScreen();
+    // Prefill accumulated mortality from the mortality log automatically —
+    // still editable, same "manual-smart" default as the weight field.
+    const mortEl = document.getElementById('aquaFeedMortality');
+    if(cycle && mortEl){
+      const totalDead = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id).reduce((s,m) => s + (m.qty||0), 0);
+      mortEl.value = totalDead || 0;
+    }
+  }
+
   function syncFeedingWithBiometry(){
     const cycle = currentCycleForActiveScreen();
     const weightEl = document.getElementById('aquaFeedWeight');
@@ -18466,8 +18567,6 @@
       + '<span class="aqua-ration-val">' + rationKg.toFixed(1) + ' kg</span>'
     + '</div>';
 
-    const logCard = document.getElementById('aquaFeedingLogCard');
-    logCard.style.display = 'block';
     document.getElementById('aquaFeedKg').value = rationKg.toFixed(1);
   }
 
@@ -18482,8 +18581,8 @@
     const entries = loadFeedingAqua();
     entries.push({ feeding_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(), kg: kg, type: (typeEl.value||'').trim(), cost: costEl.value ? Number(costEl.value) : null });
     saveFeedingAqua(entries);
-    typeEl.value = ''; costEl.value = '';
-    renderAquaFeeding();
+    kgEl.value = ''; typeEl.value = ''; costEl.value = '';
+    document.getElementById('aquaFeedingResult').innerHTML = '';
     showToast(t('aqua_feeding_saved'));
   }
 
@@ -18496,11 +18595,7 @@
     if(logBtn) logBtn.addEventListener('click', logAquaFeeding);
     const quickLogBtn = document.getElementById('aquaFeedingQuickLogBtn');
     if(quickLogBtn) quickLogBtn.addEventListener('click', () => {
-      const logCard = document.getElementById('aquaFeedingLogCard');
-      logCard.style.display = 'block';
-      logCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const kgEl = document.getElementById('aquaFeedKg');
-      if(kgEl) kgEl.focus();
+      if(typeof goTo === 'function') goTo('aqua-feeding-log');
     });
   });
 
@@ -19095,6 +19190,74 @@
     }
     noActiveEl.style.display = 'none';
     bodyEl.style.display = 'block';
+
+    // KPI row — same formulas Stats already uses, reused here rather than
+    // re-derived, so the two screens never disagree with each other.
+    const mortEvents = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id);
+    const totalDead = mortEvents.reduce((s,m) => s + (m.qty||0), 0);
+    const liveCount = Math.max(0, (cycle.seeded_qty||0) - totalDead);
+    const survivalPct = cycle.seeded_qty ? ((liveCount / cycle.seeded_qty) * 100) : null;
+    const bioEvents = loadBiometryAqua().filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
+    const firstBio = bioEvents[0] || null, lastBio = bioEvents[bioEvents.length-1] || null;
+    const biomassNowKg = lastBio ? (liveCount * lastBio.avg_weight_g) / 1000 : null;
+    const feedEvents = loadFeedingAqua().filter(f => f.cycle_id === cycle.cycle_id);
+    const totalFeedKg = feedEvents.reduce((s,f) => s + (f.kg||0), 0);
+
+    let fcrText = '—';
+    if(lastBio && firstBio && totalFeedKg > 0){
+      const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
+      const gainKg = biomassNowKg - biomassStartKg;
+      if(gainKg > 0) fcrText = (totalFeedKg / gainKg).toFixed(2);
+    }
+    document.getElementById('aquaReportsKpiFcr').textContent = fcrText;
+    document.getElementById('aquaReportsKpiSurvival').textContent = survivalPct != null ? survivalPct.toFixed(1) + '%' : '—';
+
+    let biomassTrendText = '—';
+    if(bioEvents.length >= 2){
+      const days = Math.max(1, (lastBio.ts - firstBio.ts) / 86400000);
+      const pctChange = ((lastBio.avg_weight_g - firstBio.avg_weight_g) / firstBio.avg_weight_g) * 100;
+      const perWeek = pctChange / days * 7;
+      biomassTrendText = (perWeek >= 0 ? '+' : '') + perWeek.toFixed(1) + '%/' + t('aqua_cages_note_wk');
+    } else if(biomassNowKg != null){
+      biomassTrendText = biomassNowKg.toFixed(1) + ' kg';
+    }
+    document.getElementById('aquaReportsKpiBiomass').textContent = biomassTrendText;
+
+    // Open alerts — same detection thresholds already used on Home/Cages
+    // (mortality spike, ammonia toxicity, low DO, stale biometry), scoped
+    // to this one unit's active/most-recent cycle.
+    const alerts = [];
+    const recentDead = mortEvents.filter(m => m.ts >= Date.now() - 2*86400000).reduce((s,m) => s + (m.qty||0), 0);
+    if(cycle.seeded_qty && (recentDead / cycle.seeded_qty) > 0.02){
+      alerts.push({ sev: 'alert', title: t('aqua_reports_alert_mortality_title'), meta: t('aqua_reports_alert_mortality_meta').replace('{n}', recentDead) });
+    }
+    const waterReadings = loadWater().filter(r => r.unit_id === unitId).sort((a,b) => b.ts - a.ts);
+    const toxicReading = waterReadings.find(r => r.ph != null && r.tan != null && r.temp != null);
+    if(toxicReading){
+      const nh3 = toxicReading.tan * unionizedAmmoniaFraction(toxicReading.ph, toxicReading.temp);
+      if(nh3 > 0.05){
+        alerts.push({ sev: 'alert', title: t('aqua_reports_alert_ammonia_title'), meta: t('aqua_reports_alert_ammonia_meta').replace('{ts}', aquaTimeAgo(toxicReading.ts)) });
+      }
+    }
+    const latestDo = waterReadings.find(r => r.do != null);
+    if(latestDo && latestDo.do < 4){
+      alerts.push({ sev: 'watch', title: t('aqua_reports_alert_o2_title'), meta: t('aqua_reports_alert_o2_meta').replace('{val}', latestDo.do) });
+    }
+    if(lastBio){
+      const ageDays = Math.floor((Date.now() - lastBio.ts) / 86400000);
+      if(ageDays > STALE_BIOMETRY_DAYS){
+        alerts.push({ sev: 'watch', title: t('aqua_reports_alert_stale_title'), meta: t('aqua_reports_alert_stale_meta').replace('{days}', ageDays) });
+      }
+    }
+    if(alerts.length === 0){
+      alerts.push({ sev: 'ok', title: t('aqua_reports_alert_none_title'), meta: t('aqua_reports_alert_none_meta') });
+    }
+    const alertDot = { ok: 'var(--released)', watch: 'var(--amber)', alert: 'var(--coral)' };
+    document.getElementById('aquaReportsAlerts').innerHTML = alerts.map(a => '<div class="aqua-alert-row">'
+      + '<div class="aqua-alert-dot" style="background:' + alertDot[a.sev] + ';"></div>'
+      + '<div><div class="aqua-alert-title">' + escapeHtmlAqua(a.title) + '</div><div class="aqua-alert-meta">' + escapeHtmlAqua(a.meta) + '</div></div>'
+    + '</div>').join('');
+
     renderAquaQrArea(unit, cycle);
   }
 
@@ -19249,6 +19412,7 @@
   window.renderAquaSpeciesDetail = renderAquaSpeciesDetail;
   window.renderAquaStats = renderAquaStats;
   window.renderAquaFeeding = renderAquaFeeding;
+  window.renderAquaFeedingLog = renderAquaFeedingLog;
   window.renderAquaBiometry = renderAquaBiometry;
   window.renderAquaMortality = renderAquaMortality;
   window.renderAquaCycle = renderAquaCycle;
