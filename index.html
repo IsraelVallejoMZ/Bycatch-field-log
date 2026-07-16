@@ -155,25 +155,203 @@
      for free. Screen 1 of 9 for this module; palette will get reused as
      the rest of the screens ship. */
   body.mode-aquaculture{
-    --chrome:       #0f4a3a;
+    --chrome:       #0a4a45;
     --ink:          #0f2e24;
     --ink-soft:     #4c6d61;
-    --ink-panel:    #123d30;
-    --paper:        #eef7f0;
+    --ink-panel:    #0a4a45;
+    --paper:        #ffffff;
     --panel:        #ffffff;
-    --line:         #d7e8dd;
-    --blue:         #1c8f6a;
-    --blue-deep:    #0d5c44;
-    --blue-mist:    #dcf0e6;
-    --cyan:         #6fd9b0;
+    --line:         #d7e6e4;
+    --blue:         #0f766e;
+    --blue-deep:    #0a4a45;
+    --blue-mist:    #dcf0ee;
+    --cyan:         #3fb8c9;
     --coral:        #d9825a;
     --chip-red-bg:  #fbe3da;
     --released:     #159871;
-    --chip-green-bg:#dcf1e7;
+    --chip-green-bg:#dcf1ee;
     --chip-amber-bg:#faf1dc;
     --amber:        #cf9a3c;
     --entry-del:    #cf9a3c;
   }
+  /* ===== Aquaculture Home (Pulse Grid) =====
+     New default screen for the segment (was: jumping straight to
+     Culture units / add-unit form). Visual language ported from the
+     Pulse Grid design Israel supplied, but rebuilt on the existing
+     --blue/--blue-deep/--cyan/--ink token set instead of a bespoke
+     palette, so it repaints for free if the aquaculture override above
+     ever changes. All numbers are computed live from real unit/cycle/
+     water/feeding data (see renderAquaHome) — nothing here is a mock. */
+  #screen-aqua-home .aqua-home-header{
+    position: relative;
+    background: linear-gradient(120deg, #0d2b4a 0%, var(--blue-deep) 55%, var(--blue) 100%);
+    padding: 20px 18px 40px;
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+  }
+  #screen-aqua-home .aqua-home-toprow{ display:flex; justify-content:space-between; align-items:flex-start; }
+  #screen-aqua-home .aqua-home-eyebrow{ font-family:var(--data); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.75); }
+  #screen-aqua-home .aqua-home-title{ font-family:var(--display); font-weight:700; font-size:21px; color:#fff; margin-top:4px; }
+  #screen-aqua-home .aqua-home-bell{
+    width:34px; height:34px; border-radius:9999px; background:rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; border:none;
+  }
+  #screen-aqua-home .aqua-gauge-row{ display:flex; align-items:center; justify-content:center; gap:20px; margin-top:16px; }
+  #screen-aqua-home .aqua-ring-wrap{ position:relative; width:54px; height:54px; }
+  #screen-aqua-home .aqua-ring-wrap.lg{ width:104px; height:104px; }
+  #screen-aqua-home .aqua-ring-label{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:var(--display); font-size:13px; color:#fff; text-align:center; line-height:1.15;
+  }
+  #screen-aqua-home .aqua-ring-wrap.lg .aqua-ring-label{ font-size:20px; }
+  #screen-aqua-home .aqua-ring-sub{ font-family:var(--data); font-size:8px; letter-spacing:0.05em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-top:2px; }
+  #screen-aqua-home .aqua-units-pill{
+    display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border-radius:9999px;
+    padding:5px 12px; font-family:var(--data); font-size:9.5px; color:#fff; font-weight:600; margin: 12px auto 0; width:fit-content;
+  }
+  #screen-aqua-home .aqua-bento-grid{
+    padding: 0 18px; margin-top:-22px; position:relative; display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  #screen-aqua-home .aqua-bento{
+    border-radius:16px; padding:13px; display:flex; flex-direction:column; justify-content:space-between; min-height:78px;
+    box-shadow:0 8px 18px rgba(14,27,38,0.14);
+  }
+  #screen-aqua-home .aqua-bento.light{ background:var(--panel); color:var(--ink); border:1px solid var(--line); box-shadow:0 2px 8px rgba(14,27,38,0.06); }
+  #screen-aqua-home .aqua-bento.dark{ background:var(--blue-deep); color:#fff; }
+  #screen-aqua-home .aqua-bento.alert{ background:var(--coral); color:#fff; }
+  #screen-aqua-home .aqua-bento-label{ font-family:var(--data); font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; opacity:0.75; font-weight:700; }
+  #screen-aqua-home .aqua-bento-val{ font-family:var(--display); font-weight:700; font-size:20px; margin-top:8px; }
+  #screen-aqua-home .aqua-bento-unit{ font-family:var(--data); font-size:10.5px; font-weight:600; opacity:0.7; margin-left:2px; }
+  #screen-aqua-home .aqua-bento-sub{ font-family:var(--data); font-size:9.5px; opacity:0.72; margin-top:2px; }
+  #screen-aqua-home .aqua-section-row{ padding:22px 18px 10px; display:flex; align-items:center; justify-content:space-between; }
+  #screen-aqua-home .aqua-section-title{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink); }
+  #screen-aqua-home .aqua-section-link{ font-family:var(--data); font-size:10px; color:var(--blue); font-weight:700; background:none; border:none; cursor:pointer; padding:0; }
+  #screen-aqua-home .aqua-cage-list{ padding:0 18px 100px; display:flex; flex-direction:column; gap:8px; }
+  #screen-aqua-home .aqua-cage-row{
+    display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:10px 12px; cursor:pointer;
+  }
+  #screen-aqua-home .aqua-cage-swatch{ width:38px; height:38px; border-radius:11px; flex-shrink:0; border:2px solid; }
+  #screen-aqua-home .aqua-cage-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
+  #screen-aqua-home .aqua-cage-species{ font-family:var(--data); font-size:10px; color:var(--ink-soft); font-weight:600; margin-top:1px; }
+  #screen-aqua-home .aqua-fab{
+    position:fixed; right:18px; bottom:96px; width:52px; height:52px; border-radius:9999px; background:var(--blue);
+    display:flex; align-items:center; justify-content:center; box-shadow:0 10px 22px rgba(28,143,106,0.4);
+    border:none; cursor:pointer; z-index:5;
+  }
+  body.aqua-tabbar-visible .aqua-tabbar{ display:flex; }
+  body.aqua-tabbar-visible #screen-aqua-units main{ padding-bottom: 96px; }
+
+  /* ===== Culture unit screen (Add + manage) — matches the "Add culture
+     unit" frame from the Pulse Grid design. Same gradient-band header
+     component as Home, minus the KPI rings, plus a back button since
+     this isn't a tab-bar root screen. */
+  .aqua-header-band{
+    position: relative;
+    background: linear-gradient(120deg, #0d2b4a 0%, var(--blue-deep) 55%, var(--blue) 100%);
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 18px 26px;
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+  }
+  .aqua-header-band-row{ display:flex; align-items:center; gap:10px; }
+  .aqua-header-band-back{
+    width:32px; height:32px; border-radius:9999px; background:rgba(255,255,255,0.15); border:none;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; color:#fff;
+  }
+  .aqua-header-band-title{ font-family:var(--display); font-weight:700; font-size:19px; color:#fff; }
+  .aqua-header-band-sub{ font-family:var(--data); font-size:10.5px; color:rgba(255,255,255,0.72); margin-top:2px; }
+
+  .aqua-field-label{
+    font-family: var(--data); font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
+    color: var(--ink-soft); margin-bottom:8px; display:block; font-weight:600;
+  }
+  .aqua-field-group{ margin-bottom:16px; }
+  .aqua-pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .aqua-pill{
+    flex:1; min-width:78px; text-align:center; font-family:var(--display); font-size:13px; font-weight:600;
+    border-radius:12px; padding:11px 6px; border:1.5px solid var(--line); color:var(--ink-soft);
+    background:var(--panel); cursor:pointer;
+  }
+  .aqua-pill.active{ background:var(--blue); border-color:var(--blue); color:#fff; }
+  .aqua-input{
+    width:100%; box-sizing:border-box; background:var(--panel); border:1.5px solid var(--line); border-radius:12px;
+    padding:13px 14px; font-family:'Inter',sans-serif; font-size:15px; color:var(--ink);
+  }
+  .aqua-input:focus{ outline:none; border-color:var(--blue); }
+  .aqua-add-submit{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:var(--blue); color:#fff;
+    font-family:var(--display); font-size:15px; font-weight:700; border:none; border-radius:9999px; padding:14px;
+    box-shadow:0 8px 18px rgba(28,143,106,0.3); cursor:pointer; margin-top:4px;
+  }
+  .aqua-unit-row{
+    display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:10px 12px; cursor:pointer;
+  }
+  .aqua-unit-swatch{ width:38px; height:38px; border-radius:11px; flex-shrink:0; border:2px solid var(--blue); background:var(--blue-mist); }
+  .aqua-unit-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
+  .aqua-unit-meta{ font-family:var(--data); font-size:10px; color:var(--ink-soft); font-weight:600; margin-top:1px; }
+
+  /* ===== Aquaculture per-unit sub-nav (Water/Cycle/Stats/Reports) =====
+     .fleet-tab-strip only had styling scoped to body.mode-fleet, so this
+     strip was rendering completely unstyled (browser-default buttons) on
+     every aquaculture per-unit screen. Mirrors Fleet's own treatment,
+     recolored to the aquaculture palette. */
+  body.mode-aquaculture .fleet-tab-strip{
+    display:flex; gap:6px; overflow-x:auto; padding:10px 16px; border-bottom:1px solid var(--line);
+    background:var(--paper); -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  body.mode-aquaculture .fleet-tab-strip::-webkit-scrollbar{ display:none; }
+  body.mode-aquaculture .fleet-tab-strip button{
+    flex-shrink:0; display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:transparent;
+    color:var(--ink-soft); border-radius:999px; padding:7px 12px; font-family:var(--data); font-size:10px;
+    font-weight:600; letter-spacing:0.04em; text-transform:uppercase; cursor:pointer;
+  }
+  body.mode-aquaculture .fleet-tab-strip button.active{ border-color:var(--blue); background:var(--blue-mist); color:var(--blue); }
+
+  /* ===== Water quality parameter cards ===== */
+  .aqua-log-row{ display:flex; gap:8px; margin-bottom:12px; }
+  .aqua-log-pill{
+    flex:1; border-radius:12px; padding:10px; font-family:var(--data);
+  }
+  .aqua-log-pill .llabel{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; }
+  .aqua-log-pill .lval{ font-size:13px; font-weight:600; margin-top:3px; }
+  .aqua-log-pill.done{ background:var(--chip-green-bg); }
+  .aqua-log-pill.done .llabel, .aqua-log-pill.done .lval{ color:var(--released); }
+  .aqua-log-pill.pending{ background:var(--chip-amber-bg); }
+  .aqua-log-pill.pending .llabel, .aqua-log-pill.pending .lval{ color:var(--amber); }
+  .aqua-param-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px;
+    margin-bottom:10px; box-shadow:0 2px 8px rgba(14,27,38,0.06);
+  }
+  .aqua-param-top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .aqua-param-icon{
+    width:32px; height:32px; border-radius:10px; background:var(--blue-mist); color:var(--blue);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .aqua-param-label{ font-family:var(--display); font-weight:600; font-size:14px; color:var(--ink); }
+  .aqua-param-updated{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); margin-top:1px; }
+  .aqua-param-chip{
+    margin-left:auto; font-family:var(--data); font-size:9px; font-weight:700; letter-spacing:0.04em;
+    text-transform:uppercase; border-radius:9999px; padding:4px 9px; flex-shrink:0;
+  }
+  .aqua-param-chip.ok{ background:var(--chip-green-bg); color:var(--released); }
+  .aqua-param-chip.watch{ background:var(--chip-amber-bg); color:var(--amber); }
+  .aqua-param-chip.alert{ background:var(--chip-red-bg); color:var(--coral); }
+  .aqua-param-val{ font-family:var(--data); font-size:28px; color:var(--ink); }
+  .aqua-param-unit{ font-family:var(--data); font-size:13px; color:var(--ink-soft); margin-left:4px; }
+  .aqua-param-track{ height:6px; border-radius:9999px; background:var(--line); position:relative; margin:10px 0 6px; }
+  .aqua-param-marker{ position:absolute; top:0; bottom:0; border-radius:9999px; width:4px; }
+  .aqua-param-range-row{ display:flex; justify-content:space-between; }
+  .aqua-param-range-row span{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); }
+  .aqua-tabbar{
+    display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
+    justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
+    padding:10px 8px; box-shadow:0 10px 24px rgba(14,27,38,0.16); z-index:5;
+  }
+  .aqua-tabbar .aqua-tab{
+    display:flex; flex-direction:column; align-items:center; gap:2px; border-radius:9999px; padding:6px 10px;
+    background:none; border:none; cursor:pointer; color:var(--ink-soft);
+  }
+  .aqua-tabbar .aqua-tab.active{ background:var(--blue-deep); color:#fff; padding:6px 14px; }
+  .aqua-tabbar .aqua-tab-label{ font-family:var(--data); font-size:8px; text-transform:uppercase; font-weight:700; }
   /* Home hero: gradient card replacing the old flat --blue-deep block,
      ported from the reference's homeHtml(). Everything inside (stats
      row, streak, mini-map) is new markup added specifically for this
@@ -2649,55 +2827,174 @@
 
 <!-- ================= FLEET: ROLE SELECT ================= -->
 <!-- ================= AQUACULTURE: CULTURE UNITS ================= -->
-<section class="screen" id="screen-aqua-units">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="mode-select">←</button>
-      <span class="brand" data-i18n="aqua_units_brand">Aquaculture</span>
-    </div>
-    <h1 data-i18n="aqua_units_h1">Culture units</h1>
-    <div class="site-line">&nbsp;</div>
-  </div>
-  <main>
-    <button type="button" class="btn" id="aquaSpeciesCatalogLink" style="width:100%;margin-bottom:12px;text-align:left;" data-i18n="aqua_species_catalog_link">📖 Species catalog</button>
-    <div class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="aqua_units_add">Add culture unit</div>
-      <label for="aquaUnitNewName" data-i18n="aqua_units_name_label">Name</label>
-      <input type="text" id="aquaUnitNewName" placeholder="e.g. Pond 3">
-      <label for="aquaUnitNewType" data-i18n="aqua_units_type_label">Type</label>
-      <select id="aquaUnitNewType">
-        <option value="earthen" data-i18n="aqua_units_type_earthen">Earthen pond</option>
-        <option value="lined" data-i18n="aqua_units_type_lined">Lined pond</option>
-        <option value="cage" data-i18n="aqua_units_type_cage">Floating cage</option>
-        <option value="tank" data-i18n="aqua_units_type_tank">Tank</option>
-        <option value="raceway" data-i18n="aqua_units_type_raceway">Raceway</option>
-      </select>
-      <label for="aquaUnitNewInfra" data-i18n="aqua_units_infra_label">Infrastructure</label>
-      <select id="aquaUnitNewInfra">
-        <option value="manual" data-i18n="aqua_units_infra_manual">Manual / gravity-fed</option>
-        <option value="tech" data-i18n="aqua_units_infra_tech">Aerated / biofloc</option>
-      </select>
-      <label for="aquaUnitNewCapacity" data-i18n="aqua_units_capacity_label">Capacity (m³ or m²)</label>
-      <input type="number" id="aquaUnitNewCapacity" placeholder="800" min="0" step="1">
-      <button class="btn btn-save" id="aquaUnitAddBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_units_add_btn">Add unit</button>
+<section class="screen" id="screen-aqua-home">
+  <main style="padding:0;">
+    <div class="aqua-home-header">
+      <div class="aqua-home-toprow">
+        <div>
+          <div class="aqua-home-eyebrow" data-i18n="aqua_home_eyebrow">FISH PULSE · AQUACULTURE</div>
+          <div class="aqua-home-title" id="aquaHomeTitle" data-i18n="aqua_units_brand">Aquaculture</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="aqua-home-bell" id="switchModeBtnAqua" aria-label="Switch mode" style="width:auto; height:auto; background:none; padding:6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 21l-4-4 4-4" stroke="#fff" stroke-opacity="0.75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="aqua-home-bell" data-go="aqua-reports" aria-label="Reports">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 1 1 12 0c0 3 1 5 2 6H4c1-1 2-3 2-6z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="aqua-gauge-row">
+        <div class="aqua-ring-wrap" id="aquaHomeSurvivalRing"></div>
+        <div class="aqua-ring-wrap lg" id="aquaHomeFcrRing"></div>
+        <div class="aqua-ring-wrap" id="aquaHomeO2Ring"></div>
+      </div>
+      <div style="display:flex; justify-content:center;">
+        <div class="aqua-units-pill" id="aquaHomeUnitsPill">—</div>
+      </div>
     </div>
 
-    <div class="hist-meta-row" style="margin-top:6px;">
+    <div class="aqua-bento-grid">
+      <div class="aqua-bento light">
+        <div class="aqua-bento-label" data-i18n="aqua_home_biomass">Biomass</div>
+        <div><span class="aqua-bento-val" id="aquaHomeBiomassVal">—</span><span class="aqua-bento-unit">t</span>
+          <div class="aqua-bento-sub" id="aquaHomeBiomassSub"></div>
+        </div>
+      </div>
+      <div class="aqua-bento dark">
+        <div class="aqua-bento-label" data-i18n="aqua_home_survival">Survival</div>
+        <div><span class="aqua-bento-val" id="aquaHomeSurvivalVal">—</span><span class="aqua-bento-unit">%</span>
+          <div class="aqua-bento-sub" data-i18n="aqua_home_active_cycles_sub">Active cycles</div>
+        </div>
+      </div>
+      <div class="aqua-bento dark">
+        <div class="aqua-bento-label" data-i18n="aqua_home_feed_today">Feed today</div>
+        <div><span class="aqua-bento-val" id="aquaHomeFeedVal">—</span><span class="aqua-bento-unit">kg</span>
+          <div class="aqua-bento-sub" id="aquaHomeFeedSub"></div>
+        </div>
+      </div>
+      <div class="aqua-bento" id="aquaHomeAlertsBento">
+        <div class="aqua-bento-label" data-i18n="aqua_home_alerts">Alerts</div>
+        <div><span class="aqua-bento-val" id="aquaHomeAlertsVal">—</span>
+          <div class="aqua-bento-sub" id="aquaHomeAlertsSub"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:14px 18px 0;">
+      <button type="button" class="aqua-cage-row" id="aquaSpeciesCatalogLink" style="width:100%; box-sizing:border-box; border:none; text-align:left;" data-go="aqua-species-list">
+        <div class="aqua-cage-swatch" style="border-color:var(--blue); background:var(--blue-mist); display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="var(--blue)"/><circle cx="6.5" cy="11" r="1" fill="#fff"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="aqua-cage-name" data-i18n="aqua_species_h1">Species catalog</div>
+          <div class="aqua-cage-species" data-i18n="aqua_home_species_sub">Biology &amp; regulatory reference</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="aqua-section-row">
+      <span class="aqua-section-title" data-i18n="aqua_home_cages">Cages</span>
+      <button type="button" class="aqua-section-link" id="aquaHomeCagesCount" data-go="aqua-units">0 →</button>
+    </div>
+    <div class="aqua-cage-list" id="aquaHomeCageList"></div>
+  </main>
+  <button type="button" class="aqua-fab" data-go="aqua-units" aria-label="Add culture unit">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+</section>
+
+<div class="aqua-tabbar">
+  <button type="button" class="aqua-tab" data-go="aqua-home">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="13" width="3.5" height="7" rx="0.8"/><rect x="10.2" y="8" width="3.5" height="12" rx="0.8"/><rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8"/></svg>
+    <span class="aqua-tab-label" data-i18n="aqua_tab_home">Home</span>
+  </button>
+  <button type="button" class="aqua-tab" data-go="aqua-units">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9M8 8l4-4 4 4"/><path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9"/></svg>
+    <span class="aqua-tab-label" data-i18n="aqua_tab_cages">Cages</span>
+  </button>
+  <button type="button" class="aqua-tab" data-go="aqua-units">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c2.5-4 4.5 2 7-2s4 3 6.5-2"/><path d="M3 15c2.5-4 4.5 2 7-2s4 3 6.5-2"/></svg>
+    <span class="aqua-tab-label" data-i18n="aqua_tab_water">Water</span>
+  </button>
+  <button type="button" class="aqua-tab" data-go="aqua-reports">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z"/><path d="M7 8h10M7 12h6"/></svg>
+    <span class="aqua-tab-label" data-i18n="aqua_tab_reports">Reports</span>
+  </button>
+</div>
+
+<section class="screen" id="screen-aqua-units">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-home" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_units_h1">Culture units</div>
+        <div class="aqua-header-band-sub" id="aquaUnitsHeaderSub" data-i18n="aqua_units_brand">Aquaculture</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_units_add">Add culture unit</div>
+
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_units_type_label">Type</span>
+      <div class="aqua-pill-row" id="aquaUnitTypePills" data-pill-group="type">
+        <div class="aqua-pill active" data-pill-value="earthen" data-i18n="aqua_units_type_earthen">Earthen pond</div>
+        <div class="aqua-pill" data-pill-value="lined" data-i18n="aqua_units_type_lined">Lined pond</div>
+        <div class="aqua-pill" data-pill-value="cage" data-i18n="aqua_units_type_cage">Floating cage</div>
+        <div class="aqua-pill" data-pill-value="tank" data-i18n="aqua_units_type_tank">Tank</div>
+        <div class="aqua-pill" data-pill-value="raceway" data-i18n="aqua_units_type_raceway">Raceway</div>
+      </div>
+      <input type="hidden" id="aquaUnitNewType" value="earthen">
+    </div>
+
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_units_name_label">Name</span>
+      <input type="text" class="aqua-input" id="aquaUnitNewName" placeholder="e.g. Pond 3">
+    </div>
+
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_units_infra_label">Infrastructure</span>
+      <div class="aqua-pill-row" id="aquaUnitInfraPills" data-pill-group="infra">
+        <div class="aqua-pill active" data-pill-value="manual" data-i18n="aqua_units_infra_manual">Manual / gravity-fed</div>
+        <div class="aqua-pill" data-pill-value="tech" data-i18n="aqua_units_infra_tech">Aerated / biofloc</div>
+      </div>
+      <input type="hidden" id="aquaUnitNewInfra" value="manual">
+    </div>
+
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_units_capacity_label">Capacity (m³ or m²)</span>
+      <input type="number" class="aqua-input" id="aquaUnitNewCapacity" placeholder="800" min="0" step="1">
+    </div>
+
+    <button type="button" class="aqua-add-submit" id="aquaUnitAddBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_units_add_btn">Add unit</span>
+    </button>
+
+    <div class="hist-meta-row" style="margin-top:24px;">
       <span class="insight-card-label" style="margin:0;" data-i18n="aqua_units_list_label">Your units</span>
     </div>
-    <div id="aquaUnitsList"></div>
+    <div id="aquaUnitsList" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
   </main>
 </section>
 
 <!-- ================= AQUACULTURE: WATER QUALITY (per unit) ================= -->
 <section class="screen" id="screen-aqua-water">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-units">←</button>
-      <span class="brand" id="aquaWaterUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-units" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_water_h1">Water quality</div>
+        <div class="aqua-header-band-sub" id="aquaWaterUnitName">—</div>
+      </div>
     </div>
-    <h1 data-i18n="aqua_water_h1">Water quality</h1>
-    <div class="site-line">&nbsp;</div>
+    <div class="aqua-gauge-row" id="aquaWaterGaugeRow" style="margin-top:16px;"></div>
   </div>
   <div class="fleet-tab-strip">
     <button type="button" class="active" data-go="aqua-water" data-i18n="aqua_subnav_water">Water</button>
@@ -2706,26 +3003,36 @@
     <button type="button" data-go="aqua-reports" data-i18n="aqua_subnav_reports">Reports</button>
   </div>
   <main>
-    <div id="aquaWaterSummary"></div>
+    <div class="aqua-log-row" id="aquaWaterLogRow"></div>
     <div id="aquaWaterToxicityBanner"></div>
+    <div id="aquaWaterParamCards"></div>
 
-    <div class="card">
-      <div class="insight-card-label" style="margin-bottom:12px;" data-i18n="aqua_water_add">Log a reading</div>
-      <label for="aquaWaterDO" data-i18n="aqua_water_do_label">Dissolved oxygen (mg/L)</label>
-      <input type="number" id="aquaWaterDO" step="0.1" min="0" placeholder="4.2">
-      <label for="aquaWaterTemp" data-i18n="aqua_water_temp_label">Temperature (°C)</label>
-      <input type="number" id="aquaWaterTemp" step="0.1" placeholder="28">
-      <label for="aquaWaterPH" data-i18n="aqua_water_ph_label">pH</label>
-      <input type="number" id="aquaWaterPH" step="0.1" min="0" max="14" placeholder="7.8">
-      <label for="aquaWaterTAN" data-i18n="aqua_water_tan_label">Total ammonia — TAN (mg/L)</label>
-      <input type="number" id="aquaWaterTAN" step="0.01" min="0" placeholder="0.5">
-      <button class="btn btn-save" id="aquaWaterAddBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_water_add_btn">Save reading</button>
+    <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_water_add">Log a reading</div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_water_do_label">Dissolved oxygen (mg/L)</span>
+      <input type="number" class="aqua-input" id="aquaWaterDO" step="0.1" min="0" placeholder="4.2">
     </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_water_temp_label">Temperature (°C)</span>
+      <input type="number" class="aqua-input" id="aquaWaterTemp" step="0.1" placeholder="28">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_water_ph_label">pH</span>
+      <input type="number" class="aqua-input" id="aquaWaterPH" step="0.1" min="0" max="14" placeholder="7.8">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_water_tan_label">Total ammonia — TAN (mg/L)</span>
+      <input type="number" class="aqua-input" id="aquaWaterTAN" step="0.01" min="0" placeholder="0.5">
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaWaterAddBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_water_add_btn">Save reading</span>
+    </button>
 
-    <div class="hist-meta-row" style="margin-top:6px;">
+    <div class="hist-meta-row" style="margin-top:24px;">
       <span class="insight-card-label" style="margin:0;" data-i18n="aqua_water_history_label">Recent readings</span>
     </div>
-    <div id="aquaWaterHistory"></div>
+    <div id="aquaWaterHistory" style="margin-top:8px;"></div>
   </main>
 </section>
 
@@ -2955,10 +3262,7 @@
 <section class="screen" id="screen-aqua-species-list">
   <div class="topbar">
     <div class="back-row">
-      <button class="back-btn" data-go="aqua-units">←</button>
-      <span class="brand" data-i18n="aqua_units_brand">Aquaculture</span>
-    </div>
-    <h1 data-i18n="aqua_species_h1">Species catalog</h1>
+      <button class="back-btn" data-go="aqua-home">←</button>
     <div class="site-line">&nbsp;</div>
   </div>
   <main>
@@ -4967,6 +5271,11 @@
       mode_sport_title: 'Sport / Recreational Fishing', mode_sport_sub: 'Sessions, catches, personal log',
       mode_aqua_title: 'Aquaculture', mode_aqua_sub: 'Culture units, water quality, feeding, cycles',
       aqua_units_brand: 'Aquaculture', aqua_units_h1: 'Culture units', aqua_units_add: 'Add culture unit', aqua_units_name_label: 'Name', aqua_units_type_label: 'Type',
+      aqua_home_eyebrow: 'FISH PULSE · AQUACULTURE', aqua_home_biomass: 'Biomass', aqua_home_survival: 'Survival', aqua_home_active_cycles_sub: 'Active cycles',
+      aqua_home_feed_today: 'Feed today', aqua_home_alerts: 'Alerts', aqua_home_cages: 'Cages', aqua_home_active_of: 'of', aqua_home_units_word: 'units',
+      aqua_home_no_units_yet: 'No units yet', aqua_home_survival_short: 'SURVIVAL', aqua_home_fcr_short: 'AVG FCR', aqua_home_o2_short: 'O₂ MG/L',
+      aqua_home_no_data_yet: 'No data yet', aqua_home_logged_today: 'logged today', aqua_home_alerts_sub: 'needs attention', aqua_home_alerts_none: 'all clear',
+      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Home', aqua_tab_cages: 'Cages', aqua_tab_water: 'Water', aqua_tab_reports: 'Reports', aqua_home_species_sub: 'Biology & regulatory reference',
       aqua_units_type_earthen: 'Earthen pond', aqua_units_type_lined: 'Lined pond', aqua_units_type_cage: 'Floating cage', aqua_units_type_tank: 'Tank', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastructure', aqua_units_infra_manual: 'Manual / gravity-fed', aqua_units_infra_tech: 'Aerated / biofloc',
       aqua_units_capacity_label: 'Capacity (m³ or m²)', aqua_units_add_btn: 'Add unit', aqua_units_list_label: 'Your units', aqua_units_empty: 'No culture units yet. Add your first one above.',
@@ -4975,6 +5284,9 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Total ammonia — TAN (mg/L)', aqua_water_add_btn: 'Save reading', aqua_water_history_label: 'Recent readings',
       aqua_water_do_am: 'DO (AM)', aqua_water_do_pm: 'DO (PM)', aqua_water_logged: 'Logged', aqua_water_pending: 'Pending',
       aqua_water_toxic_title: 'Ammonia is toxic at this pH', aqua_water_toxic_body: 'Turn on aerators and pause feeding', aqua_water_empty: 'No readings logged yet.',
+      aqua_water_status_ok: 'ok', aqua_water_status_watch: 'watch', aqua_water_status_alert: 'alert',
+      aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_just_now: 'just now', aqua_water_min_ago: 'min ago', aqua_water_hr_ago: 'h ago', aqua_water_day_ago: 'd ago',
       aqua_subnav_water: 'Water', aqua_subnav_cycle: 'Cycle', aqua_cycle_h1: 'Cycle', aqua_cycle_start: 'Start a new cycle', aqua_cycle_species_label: 'Species',
       aqua_cycle_seeded_label: 'Seeded quantity', aqua_cycle_goal_label: 'Harvest goal (kg, optional)', aqua_cycle_start_btn: 'Start cycle', aqua_cycle_day: 'day',
       aqua_cycle_seeded_short: 'Seeded', aqua_cycle_mortality_short: 'Mortality', aqua_cycle_avgweight_short: 'Avg. weight',
@@ -5350,6 +5662,11 @@
       mode_sport_title: 'Pesca Deportiva / Recreativa', mode_sport_sub: 'Sesiones, capturas, bitácora personal',
       mode_aqua_title: 'Acuicultura', mode_aqua_sub: 'Unidades de cultivo, calidad de agua, alimentación, ciclos',
       aqua_units_brand: 'Acuicultura', aqua_units_h1: 'Unidades de cultivo', aqua_units_add: 'Agregar unidad de cultivo', aqua_units_name_label: 'Nombre', aqua_units_type_label: 'Tipo',
+      aqua_home_eyebrow: 'FISH PULSE · ACUICULTURA', aqua_home_biomass: 'Biomasa', aqua_home_survival: 'Supervivencia', aqua_home_active_cycles_sub: 'Ciclos activos',
+      aqua_home_feed_today: 'Alimento hoy', aqua_home_alerts: 'Alertas', aqua_home_cages: 'Unidades', aqua_home_active_of: 'de', aqua_home_units_word: 'unidades',
+      aqua_home_no_units_yet: 'Aún no hay unidades', aqua_home_survival_short: 'SUPERVIVENCIA', aqua_home_fcr_short: 'FCA PROM.', aqua_home_o2_short: 'O₂ MG/L',
+      aqua_home_no_data_yet: 'Sin datos aún', aqua_home_logged_today: 'registrado hoy', aqua_home_alerts_sub: 'requiere atención', aqua_home_alerts_none: 'todo en orden',
+      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Inicio', aqua_tab_cages: 'Unidades', aqua_tab_water: 'Agua', aqua_tab_reports: 'Reportes', aqua_home_species_sub: 'Referencia biológica y regulatoria',
       aqua_units_type_earthen: 'Estanque de tierra', aqua_units_type_lined: 'Estanque revestido', aqua_units_type_cage: 'Jaula flotante', aqua_units_type_tank: 'Tanque', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infraestructura', aqua_units_infra_manual: 'Manual / llenado por gravedad', aqua_units_infra_tech: 'Aireación / biofloc',
       aqua_units_capacity_label: 'Capacidad (m³ o m²)', aqua_units_add_btn: 'Agregar unidad', aqua_units_list_label: 'Tus unidades', aqua_units_empty: 'Aún no hay unidades de cultivo. Agrega la primera arriba.',
@@ -5358,6 +5675,9 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Amonio total — TAN (mg/L)', aqua_water_add_btn: 'Guardar medición', aqua_water_history_label: 'Mediciones recientes',
       aqua_water_do_am: 'OD (AM)', aqua_water_do_pm: 'OD (PM)', aqua_water_logged: 'Registrado', aqua_water_pending: 'Pendiente',
       aqua_water_toxic_title: 'Amonio tóxico a este pH', aqua_water_toxic_body: 'Enciende aireadores y suspende alimentación', aqua_water_empty: 'Aún no hay mediciones registradas.',
+      aqua_water_status_ok: 'ok', aqua_water_status_watch: 'atención', aqua_water_status_alert: 'alerta',
+      aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_just_now: 'justo ahora', aqua_water_min_ago: 'min', aqua_water_hr_ago: 'h', aqua_water_day_ago: 'd',
       aqua_subnav_water: 'Agua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Iniciar nuevo ciclo', aqua_cycle_species_label: 'Especie',
       aqua_cycle_seeded_label: 'Cantidad sembrada', aqua_cycle_goal_label: 'Meta de cosecha (kg, opcional)', aqua_cycle_start_btn: 'Iniciar ciclo', aqua_cycle_day: 'día',
       aqua_cycle_seeded_short: 'Sembrados', aqua_cycle_mortality_short: 'Mortalidad', aqua_cycle_avgweight_short: 'Peso prom.',
@@ -5733,6 +6053,11 @@
       mode_sport_title: 'Pesca Sportiva / Ricreativa', mode_sport_sub: 'Sessioni, catture, diario personale',
       mode_aqua_title: 'Acquacoltura', mode_aqua_sub: 'Unità di coltura, qualità dell\'acqua, alimentazione, cicli',
       aqua_units_brand: 'Acquacoltura', aqua_units_h1: 'Unità di coltura', aqua_units_add: 'Aggiungi unità di coltura', aqua_units_name_label: 'Nome', aqua_units_type_label: 'Tipo',
+      aqua_home_eyebrow: 'FISH PULSE · ACQUACOLTURA', aqua_home_biomass: 'Biomassa', aqua_home_survival: 'Sopravvivenza', aqua_home_active_cycles_sub: 'Cicli attivi',
+      aqua_home_feed_today: 'Alimento oggi', aqua_home_alerts: 'Avvisi', aqua_home_cages: 'Unità', aqua_home_active_of: 'su', aqua_home_units_word: 'unità',
+      aqua_home_no_units_yet: 'Nessuna unità ancora', aqua_home_survival_short: 'SOPRAVVIVENZA', aqua_home_fcr_short: 'FCR MEDIO', aqua_home_o2_short: 'O₂ MG/L',
+      aqua_home_no_data_yet: 'Nessun dato ancora', aqua_home_logged_today: 'registrato oggi', aqua_home_alerts_sub: 'richiede attenzione', aqua_home_alerts_none: 'tutto ok',
+      aqua_home_total_arrow: 'totale →', aqua_tab_home: 'Home', aqua_tab_cages: 'Unità', aqua_tab_water: 'Acqua', aqua_tab_reports: 'Report', aqua_home_species_sub: 'Riferimento biologico e normativo',
       aqua_units_type_earthen: 'Stagno di terra', aqua_units_type_lined: 'Stagno rivestito', aqua_units_type_cage: 'Gabbia galleggiante', aqua_units_type_tank: 'Vasca', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastruttura', aqua_units_infra_manual: 'Manuale / a gravità', aqua_units_infra_tech: 'Aerazione / biofloc',
       aqua_units_capacity_label: 'Capacità (m³ o m²)', aqua_units_add_btn: 'Aggiungi unità', aqua_units_list_label: 'Le tue unità', aqua_units_empty: 'Nessuna unità di coltura ancora. Aggiungine una sopra.',
@@ -5741,6 +6066,9 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Ammoniaca totale — TAN (mg/L)', aqua_water_add_btn: 'Salva misurazione', aqua_water_history_label: 'Misurazioni recenti',
       aqua_water_do_am: 'OD (mattina)', aqua_water_do_pm: 'OD (sera)', aqua_water_logged: 'Registrato', aqua_water_pending: 'In sospeso',
       aqua_water_toxic_title: 'Ammoniaca tossica a questo pH', aqua_water_toxic_body: 'Accendi gli aeratori e sospendi l\'alimentazione', aqua_water_empty: 'Nessuna misurazione registrata.',
+      aqua_water_status_ok: 'ok', aqua_water_status_watch: 'attenzione', aqua_water_status_alert: 'allarme',
+      aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_just_now: 'adesso', aqua_water_min_ago: 'min fa', aqua_water_hr_ago: 'h fa', aqua_water_day_ago: 'g fa',
       aqua_subnav_water: 'Acqua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Avvia un nuovo ciclo', aqua_cycle_species_label: 'Specie',
       aqua_cycle_seeded_label: 'Quantità seminata', aqua_cycle_goal_label: 'Obiettivo di raccolta (kg, opzionale)', aqua_cycle_start_btn: 'Avvia ciclo', aqua_cycle_day: 'giorno',
       aqua_cycle_seeded_short: 'Seminati', aqua_cycle_mortality_short: 'Mortalità', aqua_cycle_avgweight_short: 'Peso medio',
@@ -6095,6 +6423,11 @@
       mode_sport_title: 'ตกปลากีฬา / นันทนาการ', mode_sport_sub: 'เซสชัน การจับปลา บันทึกส่วนตัว',
       mode_aqua_title: 'การเพาะเลี้ยงสัตว์น้ำ', mode_aqua_sub: 'หน่วยเพาะเลี้ยง คุณภาพน้ำ การให้อาหาร รอบการผลิต',
       aqua_units_brand: 'การเพาะเลี้ยงสัตว์น้ำ', aqua_units_h1: 'หน่วยเพาะเลี้ยง', aqua_units_add: 'เพิ่มหน่วยเพาะเลี้ยง', aqua_units_name_label: 'ชื่อ', aqua_units_type_label: 'ประเภท',
+      aqua_home_eyebrow: 'FISH PULSE · การเพาะเลี้ยงสัตว์น้ำ', aqua_home_biomass: 'มวลชีวภาพ', aqua_home_survival: 'อัตรารอด', aqua_home_active_cycles_sub: 'รอบการเลี้ยงที่ใช้งานอยู่',
+      aqua_home_feed_today: 'อาหารวันนี้', aqua_home_alerts: 'การแจ้งเตือน', aqua_home_cages: 'หน่วยเพาะเลี้ยง', aqua_home_active_of: 'จาก', aqua_home_units_word: 'หน่วย',
+      aqua_home_no_units_yet: 'ยังไม่มีหน่วยเพาะเลี้ยง', aqua_home_survival_short: 'อัตรารอด', aqua_home_fcr_short: 'FCR เฉลี่ย', aqua_home_o2_short: 'O₂ มก./ล.',
+      aqua_home_no_data_yet: 'ยังไม่มีข้อมูล', aqua_home_logged_today: 'บันทึกวันนี้', aqua_home_alerts_sub: 'ต้องตรวจสอบ', aqua_home_alerts_none: 'ปกติดี',
+      aqua_home_total_arrow: 'ทั้งหมด →', aqua_tab_home: 'หน้าแรก', aqua_tab_cages: 'หน่วยเพาะเลี้ยง', aqua_tab_water: 'คุณภาพน้ำ', aqua_tab_reports: 'รายงาน', aqua_home_species_sub: 'ข้อมูลชีววิทยาและกฎระเบียบ',
       aqua_units_type_earthen: 'บ่อดิน', aqua_units_type_lined: 'บ่อปูพื้น', aqua_units_type_cage: 'กระชังลอยน้ำ', aqua_units_type_tank: 'ถัง', aqua_units_type_raceway: 'ราง',
       aqua_units_infra_label: 'โครงสร้างพื้นฐาน', aqua_units_infra_manual: 'แบบแมนนวล / ไหลด้วยแรงโน้มถ่วง', aqua_units_infra_tech: 'มีอากาศ / ไบโอฟล็อค',
       aqua_units_capacity_label: 'ความจุ (ลบ.ม. หรือ ตร.ม.)', aqua_units_add_btn: 'เพิ่มหน่วย', aqua_units_list_label: 'หน่วยของคุณ', aqua_units_empty: 'ยังไม่มีหน่วยเพาะเลี้ยง เพิ่มหน่วยแรกด้านบน',
@@ -6103,6 +6436,9 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'แอมโมเนียรวม — TAN (มก./ล.)', aqua_water_add_btn: 'บันทึกค่า', aqua_water_history_label: 'ค่าที่บันทึกล่าสุด',
       aqua_water_do_am: 'DO (เช้า)', aqua_water_do_pm: 'DO (เย็น)', aqua_water_logged: 'บันทึกแล้ว', aqua_water_pending: 'ยังไม่ได้บันทึก',
       aqua_water_toxic_title: 'แอมโมเนียเป็นพิษที่ pH นี้', aqua_water_toxic_body: 'เปิดเครื่องเติมอากาศและหยุดให้อาหารทันที', aqua_water_empty: 'ยังไม่มีค่าที่บันทึกไว้',
+      aqua_water_status_ok: 'ปกติ', aqua_water_status_watch: 'เฝ้าระวัง', aqua_water_status_alert: 'แจ้งเตือน',
+      aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN',
+      aqua_water_just_now: 'เมื่อสักครู่', aqua_water_min_ago: 'นาทีที่แล้ว', aqua_water_hr_ago: 'ชม. ที่แล้ว', aqua_water_day_ago: 'วันที่แล้ว',
       aqua_subnav_water: 'น้ำ', aqua_subnav_cycle: 'รอบการผลิต', aqua_cycle_h1: 'รอบการผลิต', aqua_cycle_start: 'เริ่มรอบการผลิตใหม่', aqua_cycle_species_label: 'ชนิดพันธุ์',
       aqua_cycle_seeded_label: 'จำนวนที่ปล่อยเลี้ยง', aqua_cycle_goal_label: 'เป้าหมายการเก็บเกี่ยว (กก., ไม่บังคับ)', aqua_cycle_start_btn: 'เริ่มรอบการผลิต', aqua_cycle_day: 'วันที่',
       aqua_cycle_seeded_short: 'ปล่อยเลี้ยง', aqua_cycle_mortality_short: 'อัตราตาย', aqua_cycle_avgweight_short: 'น้ำหนักเฉลี่ย',
@@ -6717,6 +7053,7 @@
   // fleet screens (+ the role-specific tab bar).
   function applyMode(mode){
     document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'mode-aquaculture', 'fleet-role-captain', 'fleet-role-operations');
+    document.body.classList.toggle('aqua-tabbar-visible', mode === 'aquaculture');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     if(mode === 'research'){
       document.body.classList.add('mode-research');
@@ -6736,8 +7073,11 @@
       if(typeof renderSportSession === 'function') renderSportSession();
     } else if(mode === 'aquaculture'){
       document.body.classList.add('mode-aquaculture');
-      document.getElementById('screen-aqua-units').classList.add('active');
-      if(typeof renderAquaUnits === 'function') renderAquaUnits();
+      document.getElementById('screen-aqua-home').classList.add('active');
+      if(typeof renderAquaHome === 'function') renderAquaHome();
+      document.querySelectorAll('.aqua-tab').forEach(tabEl => tabEl.classList.remove('active'));
+      const homeTab = document.querySelector('.aqua-tab[data-go="aqua-home"]');
+      if(homeTab) homeTab.classList.add('active');
     }
   }
 
@@ -6756,13 +7096,13 @@
   }
 
   function showSplash(){
-    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'mode-aquaculture', 'fleet-role-captain', 'fleet-role-operations');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'mode-aquaculture', 'fleet-role-captain', 'fleet-role-operations', 'aqua-tabbar-visible');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-splash').classList.add('active');
   }
 
   function showModeSelect(){
-    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'mode-aquaculture', 'fleet-role-captain', 'fleet-role-operations');
+    document.body.classList.remove('mode-research', 'mode-fleet', 'mode-sport', 'mode-aquaculture', 'fleet-role-captain', 'fleet-role-operations', 'aqua-tabbar-visible');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-mode-select').classList.add('active');
   }
@@ -6780,7 +7120,7 @@
   });
 
   document.addEventListener('click', (e) => {
-    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport' || e.target.id === 'switchModeFromRoleSelect'){
+    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport' || e.target.id === 'switchModeBtnAqua' || e.target.id === 'switchModeFromRoleSelect'){
       showModeSelect();
     }
     if(e.target.closest('[data-switch-fleet-role]')){
@@ -14546,6 +14886,16 @@
     if(screen === 'aqua-species-detail' && typeof renderAquaSpeciesDetail === 'function') renderAquaSpeciesDetail();
     if(screen === 'aqua-reports' && typeof renderAquaReports === 'function') renderAquaReports();
     if(screen === 'aqua-units' && typeof renderAquaUnits === 'function') renderAquaUnits();
+    if(screen === 'aqua-home' && typeof renderAquaHome === 'function') renderAquaHome();
+    document.body.classList.toggle('aqua-tabbar-visible', screen === 'aqua-home' || screen === 'aqua-units');
+    document.querySelectorAll('.aqua-tab').forEach(tabEl => tabEl.classList.remove('active'));
+    if(screen === 'aqua-home'){
+      const homeTab = document.querySelector('.aqua-tab[data-go="aqua-home"]');
+      if(homeTab) homeTab.classList.add('active');
+    } else if(screen === 'aqua-units'){
+      const cagesTab = document.querySelectorAll('.aqua-tab[data-go="aqua-units"]')[0];
+      if(cagesTab) cagesTab.classList.add('active');
+    }
     document.querySelector('.screen.active').scrollTop = 0;
   }
   window.goTo = goTo;
@@ -17367,8 +17717,10 @@
 
   function renderAquaUnits(){
     const listEl = document.getElementById('aquaUnitsList');
+    const subEl = document.getElementById('aquaUnitsHeaderSub');
     if(!listEl) return;
     const units = loadUnits();
+    if(subEl) subEl.textContent = units.length ? (units.length + ' ' + t('aqua_home_units_word')) : t('aqua_units_brand');
     if(units.length === 0){
       listEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_units_empty') + '</div>';
       return;
@@ -17376,10 +17728,11 @@
     listEl.innerHTML = units.map(u => {
       const statusKey = u.status === 'inactive' ? 'aqua_units_status_inactive' : 'aqua_units_status_active';
       const statusClass = u.status === 'inactive' ? 'chip-grey' : 'chip-green';
-      return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;" data-unit-id="' + u.unit_id + '" data-open-unit="' + u.unit_id + '">'
-        + '<div>'
-          + '<div style="font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);">' + escapeHtmlAqua(u.name) + '</div>'
-          + '<div style="font-size:12px;color:var(--ink-soft);margin-top:2px;">' + typeLabel(u.type) + (u.capacity ? ' · ' + u.capacity + ' m³/m²' : '') + '</div>'
+      return '<div class="aqua-unit-row" data-unit-id="' + u.unit_id + '" data-open-unit="' + u.unit_id + '">'
+        + '<div class="aqua-unit-swatch"></div>'
+        + '<div style="flex:1;">'
+          + '<div class="aqua-unit-name">' + escapeHtmlAqua(u.name) + '</div>'
+          + '<div class="aqua-unit-meta">' + typeLabel(u.type) + (u.capacity ? ' · ' + u.capacity + ' m³/m²' : '') + '</div>'
         + '</div>'
         + '<span class="chip ' + statusClass + '" style="font-size:11px;padding:3px 8px;border-radius:var(--radius-sm);">' + t(statusKey) + '</span>'
       + '</div>';
@@ -17423,6 +17776,18 @@
     if(btn) btn.addEventListener('click', addUnit);
   });
 
+  document.addEventListener('click', (e) => {
+    const pill = e.target.closest('.aqua-pill[data-pill-value]');
+    if(!pill) return;
+    const group = pill.closest('[data-pill-group]');
+    if(!group) return;
+    group.querySelectorAll('.aqua-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    const hiddenId = group.dataset.pillGroup === 'type' ? 'aquaUnitNewType' : 'aquaUnitNewInfra';
+    const hiddenEl = document.getElementById(hiddenId);
+    if(hiddenEl) hiddenEl.value = pill.dataset.pillValue;
+  });
+
   // ----- Water quality (lives at unit level, independent of any cycle) -----
   const AQUA_WATER_KEY = 'fishpulse_aqua_water_readings';
   const AQUA_SELECTED_UNIT_KEY = 'fishpulse_aqua_selected_unit';
@@ -17451,44 +17816,79 @@
     return 1 / (1 + Math.pow(10, pKa - ph));
   }
 
+  // Generic-management thresholds, not species-specific (same caveat style
+  // as the ammonia toxicity check below). DO<4 mirrors the same cutoff
+  // already used to flag alerts on the aquaculture Home dashboard, so the
+  // two screens agree with each other. Temp comfort band (18-32°C) reuses
+  // the exact range already established by tempAdjustment() in the
+  // feeding calculator — one definition of "comfortable", not two.
+  function aquaParamStatus(param, val, combo){
+    if(val == null) return null;
+    if(param === 'do') return val < 4 ? 'alert' : (val < 5 ? 'watch' : 'ok');
+    if(param === 'temp') return (val < 15 || val > 35) ? 'alert' : ((val < 18 || val > 32) ? 'watch' : 'ok');
+    if(param === 'ph') return (val < 6 || val > 9.5) ? 'alert' : ((val < 6.5 || val > 9) ? 'watch' : 'ok');
+    if(param === 'tan'){
+      if(combo){
+        const nh3 = combo.tan * unionizedAmmoniaFraction(combo.ph, combo.temp);
+        return nh3 > 0.05 ? 'alert' : (nh3 > 0.03 ? 'watch' : 'ok');
+      }
+      return val > 1 ? 'alert' : (val > 0.5 ? 'watch' : 'ok');
+    }
+    return 'ok';
+  }
+  function aquaParamPct(param, val){
+    const scales = { do:[0,10], temp:[15,35], ph:[5,10], tan:[0,2] };
+    const [lo,hi] = scales[param];
+    return Math.max(0, Math.min(100, ((val - lo) / (hi - lo)) * 100));
+  }
+  function aquaTimeAgo(ts){
+    if(!ts) return '—';
+    const mins = Math.max(0, Math.round((Date.now() - ts) / 60000));
+    if(mins < 1) return t('aqua_water_just_now');
+    if(mins < 60) return mins + ' ' + t('aqua_water_min_ago');
+    const hrs = Math.round(mins / 60);
+    if(hrs < 24) return hrs + ' ' + t('aqua_water_hr_ago');
+    return Math.round(hrs / 24) + ' ' + t('aqua_water_day_ago');
+  }
+  function aquaParamCardHtml(iconSvg, label, val, unit, rangeMin, rangeMax, status, updated, param){
+    const st = status || 'ok';
+    const pct = val != null ? aquaParamPct(param, val) : 0;
+    return '<div class="aqua-param-card">'
+      + '<div class="aqua-param-top">'
+        + '<div class="aqua-param-icon">' + iconSvg + '</div>'
+        + '<div><div class="aqua-param-label">' + label + '</div><div class="aqua-param-updated">' + updated + '</div></div>'
+        + '<span class="aqua-param-chip ' + st + '">' + t('aqua_water_status_' + st) + '</span>'
+      + '</div>'
+      + '<div><span class="aqua-param-val">' + (val != null ? val : '—') + '</span><span class="aqua-param-unit">' + unit + '</span></div>'
+      + '<div class="aqua-param-track"><div class="aqua-param-marker" style="left:' + pct.toFixed(1) + '%; background:' + (st === 'ok' ? 'var(--released)' : (st === 'watch' ? 'var(--amber)' : 'var(--coral)')) + ';"></div></div>'
+      + '<div class="aqua-param-range-row"><span>' + rangeMin + '</span><span>' + rangeMax + '</span></div>'
+    + '</div>';
+  }
+
   function renderAquaWater(){
     const nameEl = document.getElementById('aquaWaterUnitName');
-    const summaryEl = document.getElementById('aquaWaterSummary');
+    const gaugeEl = document.getElementById('aquaWaterGaugeRow');
+    const logEl = document.getElementById('aquaWaterLogRow');
+    const cardsEl = document.getElementById('aquaWaterParamCards');
     const bannerEl = document.getElementById('aquaWaterToxicityBanner');
     const histEl = document.getElementById('aquaWaterHistory');
-    if(!summaryEl) return;
+    if(!cardsEl) return;
     const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
     const unit = loadUnits().find(u => u.unit_id === unitId);
     if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
 
     const readings = loadWater().filter(r => r.unit_id === unitId).sort((a,b) => b.ts - a.ts);
-    const latest = readings[0] || null;
 
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const amDone = readings.some(r => r.ts >= todayStart && new Date(r.ts).getHours() < 12 && r.do != null);
     const pmDone = readings.some(r => r.ts >= todayStart && new Date(r.ts).getHours() >= 15 && r.do != null);
-    const lastPh = readings.find(r => r.ph != null);
-    const lastTan = readings.find(r => r.tan != null);
 
-    function summaryCard(labelKey, value, pending, dangerVal){
-      const bg = pending ? 'var(--chip-amber-bg)' : (dangerVal ? 'var(--chip-red-bg)' : 'var(--panel))');
-      const color = pending ? 'var(--amber)' : (dangerVal ? 'var(--coral)' : 'var(--ink)');
-      return '<div style="background:'+bg+';border-radius:var(--radius);padding:10px;">'
-        + '<div style="font-size:12px;color:'+(pending||dangerVal?color:'var(--ink-soft)')+';">'+t(labelKey)+'</div>'
-        + '<div style="font-size:18px;font-weight:500;color:'+color+';">'+value+'</div>'
-      + '</div>';
-    }
-
-    summaryEl.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">'
-      + summaryCard('aqua_water_do_am', amDone ? t('aqua_water_logged') : t('aqua_water_pending'), !amDone, false)
-      + summaryCard('aqua_water_do_pm', pmDone ? t('aqua_water_logged') : t('aqua_water_pending'), !pmDone, false)
-      + summaryCard('aqua_water_ph_label', lastPh ? lastPh.ph : '—', false, false)
-      + summaryCard('aqua_water_tan_label', lastTan ? lastTan.tan + ' mg/L' : '—', false, false)
-    + '</div>';
+    logEl.innerHTML = '<div class="aqua-log-pill ' + (amDone ? 'done' : 'pending') + '"><div class="llabel">' + t('aqua_water_do_am') + '</div><div class="lval">' + (amDone ? t('aqua_water_logged') : t('aqua_water_pending')) + '</div></div>'
+      + '<div class="aqua-log-pill ' + (pmDone ? 'done' : 'pending') + '"><div class="llabel">' + t('aqua_water_do_pm') + '</div><div class="lval">' + (pmDone ? t('aqua_water_logged') : t('aqua_water_pending')) + '</div></div>';
 
     // Cross toxicity check: use the most recent reading that carries both
-    // pH and TAN together (same log entry), matching the boceto's design.
+    // pH and TAN together (same log entry), matching the original design.
     const combo = readings.find(r => r.ph != null && r.tan != null && r.temp != null);
     if(combo){
       const frac = unionizedAmmoniaFraction(combo.ph, combo.temp);
@@ -17500,6 +17900,39 @@
         + '</div>';
       } else { bannerEl.innerHTML = ''; }
     } else { bannerEl.innerHTML = ''; }
+
+    // Latest value per param — each field is looked up independently since
+    // a single log entry doesn't have to carry all four (matches the
+    // "manual-smart" logging pattern used across the rest of Aquaculture).
+    const lastDo = readings.find(r => r.do != null);
+    const lastTemp = readings.find(r => r.temp != null);
+    const lastPh = readings.find(r => r.ph != null);
+    const lastTan = readings.find(r => r.tan != null);
+
+    const doStatus = lastDo ? aquaParamStatus('do', lastDo.do) : null;
+    const tempStatus = lastTemp ? aquaParamStatus('temp', lastTemp.temp) : null;
+    const phStatus = lastPh ? aquaParamStatus('ph', lastPh.ph) : null;
+    const tanStatus = lastTan ? aquaParamStatus('tan', lastTan.tan, combo) : null;
+
+    gaugeEl.innerHTML = ['do','temp','ph','tan'].map(p => {
+      const map = { do: [lastDo && lastDo.do, 'var(--cyan)'], temp: [lastTemp && lastTemp.temp, 'var(--cyan)'], ph: [lastPh && lastPh.ph, 'var(--released)'], tan: [lastTan && lastTan.tan, 'var(--amber)'] };
+      const [val, color] = map[p];
+      const pct = val != null ? aquaParamPct(p, val) : 0;
+      const dispVal = val != null ? (p === 'temp' ? val + '°' : val) : '—';
+      return '<div class="aqua-ring-wrap">' + ringSvg(val != null ? pct : 0, color, 54)
+        + '<div class="aqua-ring-label">' + dispVal + '<span class="aqua-ring-sub">' + t('aqua_water_gauge_' + p) + '</span></div></div>';
+    }).join('');
+
+    const waveIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c2.5-4 4.5 2 7-2s4 3 6.5-2"/><path d="M3 15c2.5-4 4.5 2 7-2s4 3 6.5-2"/></svg>';
+    const thermoIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a2 2 0 0 0-2 2v9.5a4 4 0 1 0 4 0V5a2 2 0 0 0-2-2z"/></svg>';
+    const infoIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16v.5"/></svg>';
+    const dropIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c4 5 6 8.5 6 11a6 6 0 1 1-12 0c0-2.5 2-6 6-11z"/></svg>';
+
+    cardsEl.innerHTML =
+      aquaParamCardHtml(waveIcon, t('aqua_water_do_label'), lastDo ? lastDo.do : null, 'mg/L', '4.0', '10.0', doStatus, lastDo ? aquaTimeAgo(lastDo.ts) : t('aqua_home_no_data_yet'), 'do')
+      + aquaParamCardHtml(thermoIcon, t('aqua_water_temp_label'), lastTemp ? lastTemp.temp : null, '°C', '18°', '32°', tempStatus, lastTemp ? aquaTimeAgo(lastTemp.ts) : t('aqua_home_no_data_yet'), 'temp')
+      + aquaParamCardHtml(infoIcon, t('aqua_water_ph_label'), lastPh ? lastPh.ph : null, '', '6.5', '9.0', phStatus, lastPh ? aquaTimeAgo(lastPh.ts) : t('aqua_home_no_data_yet'), 'ph')
+      + aquaParamCardHtml(dropIcon, t('aqua_water_tan_label'), lastTan ? lastTan.tan : null, 'mg/L', '0', '0.5', tanStatus, lastTan ? aquaTimeAgo(lastTan.ts) : t('aqua_home_no_data_yet'), 'tan');
 
     if(readings.length === 0){
       histEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_water_empty') + '</div>';
@@ -18014,6 +18447,133 @@
     el.innerHTML = svg;
   }
 
+  // ----- Aquaculture Home (Pulse Grid dashboard) -----
+  // Aggregates real data across every unit's active cycle — no mock
+  // numbers. Reuses the exact same formulas as renderAquaStats (per-unit)
+  // and renderAquaWater (toxicity), just summed/averaged across units.
+  // A unit with no active cycle, or a cycle with no readings yet, simply
+  // contributes nothing to the relevant metric (shown as "—" if nothing
+  // at all is available) rather than being padded with a guess.
+  function ringSvg(pct, colorVar, size){
+    const stroke = size > 70 ? 10 : 6;
+    const r = (size - stroke) / 2, c = 2 * Math.PI * r, off = c * (1 - Math.max(0, Math.min(100, pct)) / 100);
+    return '<svg width="' + size + '" height="' + size + '" style="transform:rotate(-90deg);position:absolute;inset:0;">'
+      + '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + r + '" stroke="rgba(255,255,255,0.22)" stroke-width="' + stroke + '" fill="none"/>'
+      + '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + r + '" stroke="' + colorVar + '" stroke-width="' + stroke + '" fill="none" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" stroke-linecap="round"/>'
+      + '</svg>';
+  }
+
+  function renderAquaHome(){
+    const units = loadUnits();
+    const cycles = loadCycles();
+    const water = loadWater();
+    const feeding = loadFeedingAqua();
+    const mortality = loadMortalityAqua();
+    const biometry = loadBiometryAqua();
+
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    let totalSeeded = 0, totalLive = 0, totalBiomassKg = 0, fcrSum = 0, fcrCount = 0;
+    let latestDoSum = 0, latestDoCount = 0, alerts = 0;
+    let activeCycleCount = 0;
+    const cageRows = [];
+
+    units.forEach(unit => {
+      const cycle = cycles.find(c => c.unit_id === unit.unit_id && c.status === 'active');
+      let status = 'ok', speciesLabel = typeLabel(unit.type);
+
+      if(cycle){
+        activeCycleCount++;
+        speciesLabel = cycle.species;
+        const mortEvents = mortality.filter(m => m.cycle_id === cycle.cycle_id);
+        const totalDead = mortEvents.reduce((s, m) => s + (m.qty || 0), 0);
+        const liveCount = Math.max(0, (cycle.seeded_qty || 0) - totalDead);
+        totalSeeded += (cycle.seeded_qty || 0);
+        totalLive += liveCount;
+
+        const bioEvents = biometry.filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
+        const firstBio = bioEvents[0] || null, lastBio = bioEvents[bioEvents.length - 1] || null;
+        let biomassNowKg = null;
+        if(lastBio){
+          biomassNowKg = (liveCount * lastBio.avg_weight_g) / 1000;
+          totalBiomassKg += biomassNowKg;
+        }
+        const feedEvents = feeding.filter(f => f.cycle_id === cycle.cycle_id);
+        const totalFeedKg = feedEvents.reduce((s, f) => s + (f.kg || 0), 0);
+        if(firstBio && lastBio && totalFeedKg > 0){
+          const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
+          const gainKg = biomassNowKg - biomassStartKg;
+          if(gainKg > 0){ fcrSum += totalFeedKg / gainKg; fcrCount++; }
+        }
+
+        // Recent mortality spike heuristic: >2% of the live stock lost
+        // in the last 48h is flagged as an alert, same order of
+        // magnitude a farmer would actually act on.
+        const recentDead = mortEvents.filter(m => m.ts >= Date.now() - 2 * 86400000).reduce((s,m) => s + (m.qty||0), 0);
+        if(cycle.seeded_qty && (recentDead / cycle.seeded_qty) > 0.02){ status = 'alert'; alerts++; }
+      }
+
+      const unitReadings = water.filter(r => r.unit_id === unit.unit_id).sort((a,b) => b.ts - a.ts);
+      const latestDo = unitReadings.find(r => r.do != null);
+      if(latestDo){ latestDoSum += latestDo.do; latestDoCount++; if(latestDo.do < 4 && status === 'ok') status = 'watch'; if(latestDo.do < 4) alerts++; }
+      const toxicReading = unitReadings.find(r => r.ph != null && r.tan != null && r.temp != null);
+      if(toxicReading){
+        const nh3 = toxicReading.tan * unionizedAmmoniaFraction(toxicReading.ph, toxicReading.temp);
+        if(nh3 > 0.05){ status = 'alert'; alerts++; }
+      }
+
+      cageRows.push({ unit, speciesLabel, status });
+    });
+
+    const survivalPct = totalSeeded ? (totalLive / totalSeeded) * 100 : null;
+    const avgFcr = fcrCount ? fcrSum / fcrCount : null;
+    const avgDo = latestDoCount ? latestDoSum / latestDoCount : null;
+    const feedTodayKg = feeding.filter(f => f.ts >= todayStart).reduce((s, f) => s + (f.kg || 0), 0);
+
+    document.getElementById('aquaHomeUnitsPill').textContent = units.length
+      ? (activeCycleCount + ' ' + t('aqua_home_active_of') + ' ' + units.length + ' ' + t('aqua_home_units_word'))
+      : t('aqua_home_no_units_yet');
+
+    document.getElementById('aquaHomeSurvivalRing').innerHTML = ringSvg(survivalPct != null ? survivalPct : 0, 'var(--released,#159871)', 54)
+      + '<div class="aqua-ring-label">' + (survivalPct != null ? survivalPct.toFixed(0) : '—') + '<span class="aqua-ring-sub">' + t('aqua_home_survival_short') + '</span></div>';
+    document.getElementById('aquaHomeFcrRing').innerHTML = ringSvg(avgFcr != null ? Math.min(100, (avgFcr / 3) * 100) : 0, 'var(--cyan,#6fd9b0)', 104)
+      + '<div class="aqua-ring-label">' + (avgFcr != null ? avgFcr.toFixed(2) : '—') + '<span class="aqua-ring-sub">' + t('aqua_home_fcr_short') + '</span></div>';
+    document.getElementById('aquaHomeO2Ring').innerHTML = ringSvg(avgDo != null ? Math.min(100, (avgDo / 10) * 100) : 0, 'var(--amber,#cf9a3c)', 54)
+      + '<div class="aqua-ring-label">' + (avgDo != null ? avgDo.toFixed(1) : '—') + '<span class="aqua-ring-sub">' + t('aqua_home_o2_short') + '</span></div>';
+
+    document.getElementById('aquaHomeBiomassVal').textContent = totalBiomassKg ? (totalBiomassKg / 1000).toFixed(2) : '—';
+    document.getElementById('aquaHomeBiomassSub').textContent = activeCycleCount ? (activeCycleCount + ' ' + t('aqua_home_active_cycles_sub').toLowerCase()) : t('aqua_home_no_data_yet');
+    document.getElementById('aquaHomeSurvivalVal').textContent = survivalPct != null ? survivalPct.toFixed(1) : '—';
+    document.getElementById('aquaHomeFeedVal').textContent = feedTodayKg ? feedTodayKg.toFixed(0) : '—';
+    document.getElementById('aquaHomeFeedSub').textContent = t('aqua_home_logged_today');
+
+    const alertsBento = document.getElementById('aquaHomeAlertsBento');
+    alertsBento.className = 'aqua-bento ' + (alerts > 0 ? 'alert' : 'light');
+    document.getElementById('aquaHomeAlertsVal').textContent = String(alerts);
+    document.getElementById('aquaHomeAlertsSub').textContent = alerts > 0 ? t('aqua_home_alerts_sub') : t('aqua_home_alerts_none');
+
+    document.getElementById('aquaHomeCagesCount').textContent = units.length + ' ' + t('aqua_home_total_arrow');
+
+    const listEl = document.getElementById('aquaHomeCageList');
+    if(cageRows.length === 0){
+      listEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_units_empty') + '</div>';
+    } else {
+      const dot = { ok: 'var(--released,#159871)', watch: 'var(--amber,#cf9a3c)', alert: 'var(--coral,#d9825a)' };
+      listEl.innerHTML = cageRows.map(row => {
+        const c = dot[row.status];
+        return '<div class="aqua-cage-row" data-unit-id="' + row.unit.unit_id + '">'
+          + '<div class="aqua-cage-swatch" style="border-color:' + c + '; background:repeating-linear-gradient(135deg,' + c + '22 0px,' + c + '22 6px,transparent 6px,transparent 12px);"></div>'
+          + '<div style="flex:1;"><div class="aqua-cage-name">' + escapeHtmlAqua(row.unit.name) + '</div><div class="aqua-cage-species">' + escapeHtmlAqua(row.speciesLabel) + '</div></div>'
+          + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>'
+        + '</div>';
+      }).join('');
+      listEl.querySelectorAll('[data-unit-id]').forEach(el => {
+        el.addEventListener('click', () => openAquaWaterScreen(el.dataset.unitId));
+      });
+    }
+  }
+
   // ----- Species catalog (reference data, not user-editable) -----
   // 22 unique species across the 4 catalogs researched with Israel
   // (Mexico/USA/EU/Thailand — 29 fichas total once shared species are
@@ -18203,10 +18763,10 @@
       + '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;">' + t('aqua_species_source_label') + ': ' + aquaChartEscape(s.source) + '</div>';
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const catalogLink = document.getElementById('aquaSpeciesCatalogLink');
-    if(catalogLink) catalogLink.addEventListener('click', () => { if(typeof goTo === 'function') goTo('aqua-species-list'); renderAquaSpeciesList(); });
-  });
+  // Note: the catalog entry point button (id=aquaSpeciesCatalogLink, now
+  // on the aquaculture Home screen) uses the generic [data-go] click
+  // handler — goTo('aqua-species-list') already calls renderAquaSpeciesList
+  // internally, so no dedicated listener is needed here.
 
   // ----- Reports: audit PDF, cycle logbook PDF, and traceability QR -----
   // (QR only activates once the cycle is marked harvested, matching the
