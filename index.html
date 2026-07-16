@@ -375,6 +375,29 @@
   .aqua-feed-row-main{ flex:1; min-width:0; }
   .aqua-feed-row-title{ font-family:var(--display); font-size:13.5px; color:var(--ink); }
   .aqua-feed-row-sub{ font-family:var(--data); font-size:10.5px; color:var(--ink-soft); font-weight:600; margin-top:2px; }
+
+  /* ===== Cages screen (browse/overview grid) ===== */
+  .aqua-chip-row{ display:flex; gap:8px; padding:14px 18px 6px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .aqua-chip-row::-webkit-scrollbar{ display:none; }
+  .aqua-chip{
+    font-family:var(--data); font-size:11px; font-weight:600; letter-spacing:0.02em; border-radius:9999px;
+    padding:7px 13px; white-space:nowrap; flex-shrink:0; border:1px solid var(--line); color:var(--ink-soft);
+    background:var(--panel); cursor:pointer;
+  }
+  .aqua-chip.active{ border-color:var(--blue); color:#fff; background:var(--blue); }
+  .aqua-cage-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:6px 18px 100px; }
+  .aqua-cage-photo-card{ background:var(--panel); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(14,27,38,0.1); cursor:pointer; }
+  .aqua-cage-photo-banner{
+    height:70px; background:linear-gradient(135deg, #0d2b4a, var(--blue)); position:relative;
+    background-image: linear-gradient(135deg, #0d2b4a, var(--blue)), repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 8px, transparent 8px, transparent 16px);
+  }
+  .aqua-cage-photo-tag{ position:absolute; top:8px; right:8px; font-family:var(--data); font-size:8px; color:rgba(255,255,255,0.6); letter-spacing:0.05em; }
+  .aqua-cage-photo-dot{ position:absolute; bottom:8px; left:8px; width:9px; height:9px; border-radius:9999px; border:2px solid #fff; }
+  .aqua-cage-photo-body{ padding:12px; display:flex; flex-direction:column; gap:3px; }
+  .aqua-cage-photo-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
+  .aqua-cage-photo-species{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); font-weight:600; }
+  .aqua-cage-photo-biomass{ font-family:var(--data); font-size:15px; color:var(--ink); margin-top:2px; }
+  .aqua-cage-photo-note{ font-family:var(--data); font-size:9.5px; font-weight:700; }
   .aqua-tabbar{
     display:none; position:fixed; left:18px; right:18px; bottom:16px; max-width:392px; margin:0 auto;
     justify-content:space-around; align-items:center; background:var(--panel); border-radius:9999px;
@@ -2930,7 +2953,7 @@
 
     <div class="aqua-section-row">
       <span class="aqua-section-title" data-i18n="aqua_home_cages">Cages</span>
-      <button type="button" class="aqua-section-link" id="aquaHomeCagesCount" data-go="aqua-units">0 →</button>
+      <button type="button" class="aqua-section-link" id="aquaHomeCagesCount" data-go="aqua-cages">0 →</button>
     </div>
     <div class="aqua-cage-list" id="aquaHomeCageList"></div>
   </main>
@@ -2944,19 +2967,40 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="13" width="3.5" height="7" rx="0.8"/><rect x="10.2" y="8" width="3.5" height="12" rx="0.8"/><rect x="16.5" y="10.5" width="3.5" height="9.5" rx="0.8"/></svg>
     <span class="aqua-tab-label" data-i18n="aqua_tab_home">Home</span>
   </button>
-  <button type="button" class="aqua-tab" data-go="aqua-units">
+  <button type="button" class="aqua-tab" data-go="aqua-cages">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9M8 8l4-4 4 4"/><path d="M6 13c0 5 3 8 6 9 3-1 6-4 6-9"/></svg>
     <span class="aqua-tab-label" data-i18n="aqua_tab_cages">Cages</span>
   </button>
   <button type="button" class="aqua-tab" data-go="aqua-units">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c2.5-4 4.5 2 7-2s4 3 6.5-2"/><path d="M3 15c2.5-4 4.5 2 7-2s4 3 6.5-2"/></svg>
-    <span class="aqua-tab-label" data-i18n="aqua_tab_water">Water</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16a8 6 0 0 1-16 0z"/><circle cx="9" cy="8.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="7" r="0.9" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.7" r="0.9" fill="currentColor" stroke="none"/></svg>
+    <span class="aqua-tab-label" data-i18n="aqua_tab_feed">Feed</span>
   </button>
   <button type="button" class="aqua-tab" data-go="aqua-reports">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z"/><path d="M7 8h10M7 12h6"/></svg>
     <span class="aqua-tab-label" data-i18n="aqua_tab_reports">Reports</span>
   </button>
 </div>
+
+<section class="screen" id="screen-aqua-cages">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-home" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_home_cages">Cages</div>
+        <div class="aqua-header-band-sub" id="aquaCagesSub">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="aqua-chip-row" id="aquaCagesChipRow"></div>
+  <main style="padding:0;">
+    <div class="aqua-cage-grid" id="aquaCagesGrid"></div>
+  </main>
+  <button type="button" class="aqua-fab" data-go="aqua-units" aria-label="Add culture unit">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+</section>
 
 <section class="screen" id="screen-aqua-units">
   <div class="aqua-header-band">
@@ -5342,7 +5386,10 @@
       aqua_home_feed_today: 'Feed today', aqua_home_alerts: 'Alerts', aqua_home_cages: 'Cages', aqua_home_active_of: 'of', aqua_home_units_word: 'units',
       aqua_home_no_units_yet: 'No units yet', aqua_home_survival_short: 'SURVIVAL', aqua_home_fcr_short: 'AVG FCR', aqua_home_o2_short: 'O₂ MG/L',
       aqua_home_no_data_yet: 'No data yet', aqua_home_logged_today: 'logged today', aqua_home_alerts_sub: 'needs attention', aqua_home_alerts_none: 'all clear',
-      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Home', aqua_tab_cages: 'Cages', aqua_tab_water: 'Water', aqua_tab_reports: 'Reports', aqua_home_species_sub: 'Biology & regulatory reference',
+      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Home', aqua_tab_cages: 'Cages', aqua_tab_feed: 'Feed', aqua_tab_reports: 'Reports', aqua_home_species_sub: 'Biology & regulatory reference',
+      aqua_cages_combined: 'combined', aqua_cages_chip_all: 'All', aqua_cages_chip_alerts: 'Alerts', aqua_cages_photo_tag: 'PHOTO',
+      aqua_cages_note_mortality: 'High mortality', aqua_cages_note_ammonia: 'Ammonia high', aqua_cages_note_o2: 'O2 low', aqua_cages_note_wk: 'wk',
+      aqua_cages_note_no_biometry: 'No biometry yet', aqua_cages_note_no_cycle: 'No active cycle',
       aqua_units_type_earthen: 'Earthen pond', aqua_units_type_lined: 'Lined pond', aqua_units_type_cage: 'Floating cage', aqua_units_type_tank: 'Tank', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastructure', aqua_units_infra_manual: 'Manual / gravity-fed', aqua_units_infra_tech: 'Aerated / biofloc',
       aqua_units_capacity_label: 'Capacity (m³ or m²)', aqua_units_add_btn: 'Add unit', aqua_units_list_label: 'Your units', aqua_units_empty: 'No culture units yet. Add your first one above.',
@@ -5736,7 +5783,10 @@
       aqua_home_feed_today: 'Alimento hoy', aqua_home_alerts: 'Alertas', aqua_home_cages: 'Unidades', aqua_home_active_of: 'de', aqua_home_units_word: 'unidades',
       aqua_home_no_units_yet: 'Aún no hay unidades', aqua_home_survival_short: 'SUPERVIVENCIA', aqua_home_fcr_short: 'FCA PROM.', aqua_home_o2_short: 'O₂ MG/L',
       aqua_home_no_data_yet: 'Sin datos aún', aqua_home_logged_today: 'registrado hoy', aqua_home_alerts_sub: 'requiere atención', aqua_home_alerts_none: 'todo en orden',
-      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Inicio', aqua_tab_cages: 'Unidades', aqua_tab_water: 'Agua', aqua_tab_reports: 'Reportes', aqua_home_species_sub: 'Referencia biológica y regulatoria',
+      aqua_home_total_arrow: 'total →', aqua_tab_home: 'Inicio', aqua_tab_cages: 'Unidades', aqua_tab_feed: 'Alimento', aqua_tab_reports: 'Reportes', aqua_home_species_sub: 'Referencia biológica y regulatoria',
+      aqua_cages_combined: 'combinado', aqua_cages_chip_all: 'Todas', aqua_cages_chip_alerts: 'Alertas', aqua_cages_photo_tag: 'FOTO',
+      aqua_cages_note_mortality: 'Mortalidad alta', aqua_cages_note_ammonia: 'Amonio alto', aqua_cages_note_o2: 'O2 bajo', aqua_cages_note_wk: 'sem',
+      aqua_cages_note_no_biometry: 'Aún sin biometría', aqua_cages_note_no_cycle: 'Sin ciclo activo',
       aqua_units_type_earthen: 'Estanque de tierra', aqua_units_type_lined: 'Estanque revestido', aqua_units_type_cage: 'Jaula flotante', aqua_units_type_tank: 'Tanque', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infraestructura', aqua_units_infra_manual: 'Manual / llenado por gravedad', aqua_units_infra_tech: 'Aireación / biofloc',
       aqua_units_capacity_label: 'Capacidad (m³ o m²)', aqua_units_add_btn: 'Agregar unidad', aqua_units_list_label: 'Tus unidades', aqua_units_empty: 'Aún no hay unidades de cultivo. Agrega la primera arriba.',
@@ -6130,7 +6180,10 @@
       aqua_home_feed_today: 'Alimento oggi', aqua_home_alerts: 'Avvisi', aqua_home_cages: 'Unità', aqua_home_active_of: 'su', aqua_home_units_word: 'unità',
       aqua_home_no_units_yet: 'Nessuna unità ancora', aqua_home_survival_short: 'SOPRAVVIVENZA', aqua_home_fcr_short: 'FCR MEDIO', aqua_home_o2_short: 'O₂ MG/L',
       aqua_home_no_data_yet: 'Nessun dato ancora', aqua_home_logged_today: 'registrato oggi', aqua_home_alerts_sub: 'richiede attenzione', aqua_home_alerts_none: 'tutto ok',
-      aqua_home_total_arrow: 'totale →', aqua_tab_home: 'Home', aqua_tab_cages: 'Unità', aqua_tab_water: 'Acqua', aqua_tab_reports: 'Report', aqua_home_species_sub: 'Riferimento biologico e normativo',
+      aqua_home_total_arrow: 'totale →', aqua_tab_home: 'Home', aqua_tab_cages: 'Unità', aqua_tab_feed: 'Alimento', aqua_tab_reports: 'Report', aqua_home_species_sub: 'Riferimento biologico e normativo',
+      aqua_cages_combined: 'combinato', aqua_cages_chip_all: 'Tutte', aqua_cages_chip_alerts: 'Avvisi', aqua_cages_photo_tag: 'FOTO',
+      aqua_cages_note_mortality: 'Mortalità alta', aqua_cages_note_ammonia: 'Ammoniaca alta', aqua_cages_note_o2: 'O2 basso', aqua_cages_note_wk: 'sett',
+      aqua_cages_note_no_biometry: 'Nessuna biometria', aqua_cages_note_no_cycle: 'Nessun ciclo attivo',
       aqua_units_type_earthen: 'Stagno di terra', aqua_units_type_lined: 'Stagno rivestito', aqua_units_type_cage: 'Gabbia galleggiante', aqua_units_type_tank: 'Vasca', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastruttura', aqua_units_infra_manual: 'Manuale / a gravità', aqua_units_infra_tech: 'Aerazione / biofloc',
       aqua_units_capacity_label: 'Capacità (m³ o m²)', aqua_units_add_btn: 'Aggiungi unità', aqua_units_list_label: 'Le tue unità', aqua_units_empty: 'Nessuna unità di coltura ancora. Aggiungine una sopra.',
@@ -6503,7 +6556,10 @@
       aqua_home_feed_today: 'อาหารวันนี้', aqua_home_alerts: 'การแจ้งเตือน', aqua_home_cages: 'หน่วยเพาะเลี้ยง', aqua_home_active_of: 'จาก', aqua_home_units_word: 'หน่วย',
       aqua_home_no_units_yet: 'ยังไม่มีหน่วยเพาะเลี้ยง', aqua_home_survival_short: 'อัตรารอด', aqua_home_fcr_short: 'FCR เฉลี่ย', aqua_home_o2_short: 'O₂ มก./ล.',
       aqua_home_no_data_yet: 'ยังไม่มีข้อมูล', aqua_home_logged_today: 'บันทึกวันนี้', aqua_home_alerts_sub: 'ต้องตรวจสอบ', aqua_home_alerts_none: 'ปกติดี',
-      aqua_home_total_arrow: 'ทั้งหมด →', aqua_tab_home: 'หน้าแรก', aqua_tab_cages: 'หน่วยเพาะเลี้ยง', aqua_tab_water: 'คุณภาพน้ำ', aqua_tab_reports: 'รายงาน', aqua_home_species_sub: 'ข้อมูลชีววิทยาและกฎระเบียบ',
+      aqua_home_total_arrow: 'ทั้งหมด →', aqua_tab_home: 'หน้าแรก', aqua_tab_cages: 'หน่วยเพาะเลี้ยง', aqua_tab_feed: 'อาหาร', aqua_tab_reports: 'รายงาน', aqua_home_species_sub: 'ข้อมูลชีววิทยาและกฎระเบียบ',
+      aqua_cages_combined: 'รวม', aqua_cages_chip_all: 'ทั้งหมด', aqua_cages_chip_alerts: 'แจ้งเตือน', aqua_cages_photo_tag: 'รูปภาพ',
+      aqua_cages_note_mortality: 'อัตราตายสูง', aqua_cages_note_ammonia: 'แอมโมเนียสูง', aqua_cages_note_o2: 'O2 ต่ำ', aqua_cages_note_wk: 'สัปดาห์',
+      aqua_cages_note_no_biometry: 'ยังไม่มีข้อมูลชีวมาตร', aqua_cages_note_no_cycle: 'ไม่มีรอบที่ใช้งานอยู่',
       aqua_units_type_earthen: 'บ่อดิน', aqua_units_type_lined: 'บ่อปูพื้น', aqua_units_type_cage: 'กระชังลอยน้ำ', aqua_units_type_tank: 'ถัง', aqua_units_type_raceway: 'ราง',
       aqua_units_infra_label: 'โครงสร้างพื้นฐาน', aqua_units_infra_manual: 'แบบแมนนวล / ไหลด้วยแรงโน้มถ่วง', aqua_units_infra_tech: 'มีอากาศ / ไบโอฟล็อค',
       aqua_units_capacity_label: 'ความจุ (ลบ.ม. หรือ ตร.ม.)', aqua_units_add_btn: 'เพิ่มหน่วย', aqua_units_list_label: 'หน่วยของคุณ', aqua_units_empty: 'ยังไม่มีหน่วยเพาะเลี้ยง เพิ่มหน่วยแรกด้านบน',
@@ -7267,6 +7323,20 @@
     const short = returnId.slice('screen-'.length);
     document.body.classList.add('mode-research');
     if(window.goTo) window.goTo(short);
+  });
+
+  // Safety net for the initial `applyMode(existing)` call a few lines up:
+  // it can run before the Aquaculture IIFE (defined later in this file)
+  // has finished executing, in which case its
+  // `typeof renderAquaHome === 'function'` check silently fails and the
+  // Home screen is left showing its static placeholder content — the
+  // exact "no data until I tap something and come back" bug. By
+  // DOMContentLoaded every IIFE has parsed, so re-render once more if
+  // aquaculture turned out to be the mode we booted into.
+  document.addEventListener('DOMContentLoaded', () => {
+    if(document.body.classList.contains('mode-aquaculture') && typeof window.renderAquaHome === 'function'){
+      window.renderAquaHome();
+    }
   });
 })();
 
@@ -14966,13 +15036,14 @@
     if(screen === 'aqua-reports' && typeof renderAquaReports === 'function') renderAquaReports();
     if(screen === 'aqua-units' && typeof renderAquaUnits === 'function') renderAquaUnits();
     if(screen === 'aqua-home' && typeof renderAquaHome === 'function') renderAquaHome();
-    document.body.classList.toggle('aqua-tabbar-visible', screen === 'aqua-home' || screen === 'aqua-units');
+    if(screen === 'aqua-cages' && typeof renderAquaCagesScreen === 'function') renderAquaCagesScreen();
+    document.body.classList.toggle('aqua-tabbar-visible', screen === 'aqua-home' || screen === 'aqua-units' || screen === 'aqua-cages');
     document.querySelectorAll('.aqua-tab').forEach(tabEl => tabEl.classList.remove('active'));
     if(screen === 'aqua-home'){
       const homeTab = document.querySelector('.aqua-tab[data-go="aqua-home"]');
       if(homeTab) homeTab.classList.add('active');
-    } else if(screen === 'aqua-units'){
-      const cagesTab = document.querySelectorAll('.aqua-tab[data-go="aqua-units"]')[0];
+    } else if(screen === 'aqua-units' || screen === 'aqua-cages'){
+      const cagesTab = document.querySelector('.aqua-tab[data-go="aqua-cages"]');
       if(cagesTab) cagesTab.classList.add('active');
     }
     document.querySelector('.screen.active').scrollTop = 0;
@@ -18591,6 +18662,109 @@
       + '</svg>';
   }
 
+  // Shared per-unit summary — one real cage's status/species/biomass/note,
+  // computed from the same data (cycles, mortality, biometry, water) that
+  // already drives Home's alerts and Stats. Used by the Cages grid screen;
+  // written as a standalone helper so that logic isn't duplicated.
+  function aquaCageSummary(unit, cycles, water, feeding, mortality, biometry){
+    const cycle = cycles.find(c => c.unit_id === unit.unit_id && c.status === 'active');
+    let status = 'ok', speciesLabel = typeLabel(unit.type), biomassKg = null, noteText = t('aqua_cages_note_no_cycle');
+    if(cycle){
+      speciesLabel = cycle.species;
+      const mortEvents = mortality.filter(m => m.cycle_id === cycle.cycle_id);
+      const totalDead = mortEvents.reduce((s,m) => s + (m.qty||0), 0);
+      const liveCount = Math.max(0, (cycle.seeded_qty||0) - totalDead);
+      const bioEvents = biometry.filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
+      const lastBio = bioEvents[bioEvents.length-1] || null;
+      if(lastBio) biomassKg = (liveCount * lastBio.avg_weight_g) / 1000;
+
+      const recentDead = mortEvents.filter(m => m.ts >= Date.now() - 2*86400000).reduce((s,m) => s + (m.qty||0), 0);
+      const unitReadings = water.filter(r => r.unit_id === unit.unit_id).sort((a,b) => b.ts - a.ts);
+      const latestDo = unitReadings.find(r => r.do != null);
+      const toxicReading = unitReadings.find(r => r.ph != null && r.tan != null && r.temp != null);
+      let toxic = false;
+      if(toxicReading){
+        const nh3 = toxicReading.tan * unionizedAmmoniaFraction(toxicReading.ph, toxicReading.temp);
+        toxic = nh3 > 0.05;
+      }
+      if(cycle.seeded_qty && (recentDead / cycle.seeded_qty) > 0.02){
+        status = 'alert'; noteText = t('aqua_cages_note_mortality');
+      } else if(toxic){
+        status = 'alert'; noteText = t('aqua_cages_note_ammonia');
+      } else if(latestDo && latestDo.do < 4){
+        status = 'watch'; noteText = t('aqua_cages_note_o2');
+      } else if(bioEvents.length >= 2){
+        const first = bioEvents[0], last = bioEvents[bioEvents.length-1];
+        const days = Math.max(1, (last.ts - first.ts) / 86400000);
+        const pctChange = ((last.avg_weight_g - first.avg_weight_g) / first.avg_weight_g) * 100;
+        const perWeek = pctChange / days * 7;
+        noteText = (perWeek >= 0 ? '+' : '') + perWeek.toFixed(1) + '%/' + t('aqua_cages_note_wk');
+      } else {
+        noteText = t('aqua_cages_note_no_biometry');
+      }
+    }
+    return { unit: unit, cycle: cycle, status: status, speciesLabel: speciesLabel, biomassKg: biomassKg, noteText: noteText };
+  }
+
+  let aquaCagesFilter = null; // null = "All" chip, resolved to t('aqua_cages_chip_all') lazily since t() needs lang loaded
+
+  function renderAquaCagesScreen(){
+    const gridEl = document.getElementById('aquaCagesGrid');
+    if(!gridEl) return;
+    const units = loadUnits();
+    const cycles = loadCycles();
+    const water = loadWater();
+    const feeding = loadFeedingAqua();
+    const mortality = loadMortalityAqua();
+    const biometry = loadBiometryAqua();
+
+    const summaries = units.map(u => aquaCageSummary(u, cycles, water, feeding, mortality, biometry));
+    const totalBiomassT = summaries.reduce((s,x) => s + (x.biomassKg || 0), 0) / 1000;
+    document.getElementById('aquaCagesSub').textContent = units.length
+      ? (units.length + ' ' + t('aqua_home_units_word') + ' · ' + totalBiomassT.toFixed(1) + 't ' + t('aqua_cages_combined'))
+      : t('aqua_home_no_units_yet');
+
+    const allLabel = t('aqua_cages_chip_all'), alertsLabel = t('aqua_cages_chip_alerts');
+    if(aquaCagesFilter === null) aquaCagesFilter = allLabel;
+    const speciesChips = Array.from(new Set(summaries.filter(s => s.cycle).map(s => s.speciesLabel)));
+    const chips = [allLabel].concat(speciesChips).concat([alertsLabel]);
+    if(chips.indexOf(aquaCagesFilter) === -1) aquaCagesFilter = allLabel;
+
+    const chipRowEl = document.getElementById('aquaCagesChipRow');
+    chipRowEl.innerHTML = chips.map(c => '<div class="aqua-chip' + (c === aquaCagesFilter ? ' active' : '') + '" data-chip="' + escapeHtmlAqua(c) + '">' + escapeHtmlAqua(c) + '</div>').join('');
+    chipRowEl.querySelectorAll('[data-chip]').forEach(el => {
+      el.addEventListener('click', () => { aquaCagesFilter = el.dataset.chip; renderAquaCagesScreen(); });
+    });
+
+    let filtered = summaries;
+    if(aquaCagesFilter === alertsLabel) filtered = summaries.filter(s => s.status === 'alert' || s.status === 'watch');
+    else if(aquaCagesFilter !== allLabel) filtered = summaries.filter(s => s.speciesLabel === aquaCagesFilter);
+
+    if(filtered.length === 0){
+      gridEl.innerHTML = '<div class="empty-state" style="grid-column:1/3;padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_units_empty') + '</div>';
+      return;
+    }
+    const dot = { ok: 'var(--released,#159871)', watch: 'var(--amber,#cf9a3c)', alert: 'var(--coral,#d9825a)' };
+    gridEl.innerHTML = filtered.map(s => {
+      const noteColor = s.status === 'alert' ? 'var(--coral)' : (s.status === 'watch' ? 'var(--amber)' : 'var(--released)');
+      return '<div class="aqua-cage-photo-card" data-unit-id="' + s.unit.unit_id + '">'
+        + '<div class="aqua-cage-photo-banner">'
+          + '<div class="aqua-cage-photo-tag">' + t('aqua_cages_photo_tag') + '</div>'
+          + '<div class="aqua-cage-photo-dot" style="background:' + dot[s.status] + ';"></div>'
+        + '</div>'
+        + '<div class="aqua-cage-photo-body">'
+          + '<div class="aqua-cage-photo-name">' + escapeHtmlAqua(s.unit.name) + '</div>'
+          + '<div class="aqua-cage-photo-species">' + escapeHtmlAqua(s.speciesLabel) + '</div>'
+          + '<div class="aqua-cage-photo-biomass">' + (s.biomassKg != null ? (s.biomassKg/1000).toFixed(2) + 't' : '—') + '</div>'
+          + '<div class="aqua-cage-photo-note" style="color:' + noteColor + ';">' + escapeHtmlAqua(s.noteText) + '</div>'
+        + '</div>'
+      + '</div>';
+    }).join('');
+    gridEl.querySelectorAll('[data-unit-id]').forEach(el => {
+      el.addEventListener('click', () => openAquaWaterScreen(el.dataset.unitId));
+    });
+  }
+
   function renderAquaHome(){
     const units = loadUnits();
     const cycles = loadCycles();
@@ -19081,6 +19255,7 @@
   window.renderAquaWater = renderAquaWater;
   window.renderAquaUnits = renderAquaUnits;
   window.renderAquaHome = renderAquaHome;
+  window.renderAquaCagesScreen = renderAquaCagesScreen;
 })();
 
 
