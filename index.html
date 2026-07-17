@@ -1823,7 +1823,7 @@
 
   /* ===== Export overlay (Landing Report share/copy panel) ===== */
   .fleet-export-overlay{
-    position: absolute; inset: 0; z-index: 60;
+    position: fixed; inset: 0; z-index: 60;
     background: var(--paper);
     display: flex; flex-direction: column;
   }
@@ -4406,20 +4406,6 @@
 
     <div id="fleetTripDetailSettlement"></div>
   </main>
-
-  <div id="fleetExportOverlay" class="fleet-export-overlay" style="display:none;">
-    <div class="fleet-export-panel">
-      <div class="fleet-export-header">
-        <span class="brand" id="fleetExportTitle" data-i18n="fltripdet_export">Export</span>
-        <button class="back-btn" id="fleetExportCloseBtn">✕</button>
-      </div>
-      <div id="fleetExportText" class="fleet-export-text"></div>
-      <div class="savebar" style="position:relative;">
-        <button class="btn btn-clear" id="fleetExportCloseBtn2" data-i18n="premium_close">Close</button>
-        <button class="btn btn-save" id="fleetExportShareBtn" data-i18n="fltripdet_share">Share</button>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- ================= FLEET: SPECIES CATALOG ================= -->
@@ -5532,6 +5518,33 @@
 <div id="photoViewerOverlay" class="photo-viewer-overlay" style="display:none; position:fixed;">
   <button class="back-btn photo-viewer-close" id="photoViewerCloseBtn">✕</button>
   <img id="photoViewerImg" src="" alt="Document photo">
+</div>
+
+<!-- Fleet PDF export overlay — deliberately a top-level sibling of every
+     .screen section (not nested inside one), since it's triggered from
+     many different screens (Trip Detail, Fleet Stats, compliance
+     reports, etc.). It used to live inside #screen-fleet-trip-detail;
+     whenever a *different* screen was active, that parent was
+     display:none and silently hid the overlay too, even though the PDF
+     itself had generated fine — e.g. Financial Profile export from
+     Fleet Stats produced a blob with no visible way to reach it. Placed
+     here (before the first script tag, alongside the other top-level
+     overlays above) rather than at the end of <body>, since the script
+     block just below binds its buttons immediately on parse, not inside
+     DOMContentLoaded, so the elements must already exist in the DOM by
+     that point. -->
+<div id="fleetExportOverlay" class="fleet-export-overlay" style="display:none;">
+  <div class="fleet-export-panel">
+    <div class="fleet-export-header">
+      <span class="brand" id="fleetExportTitle" data-i18n="fltripdet_export">Export</span>
+      <button class="back-btn" id="fleetExportCloseBtn">✕</button>
+    </div>
+    <div id="fleetExportText" class="fleet-export-text"></div>
+    <div class="savebar" style="position:relative;">
+      <button class="btn btn-clear" id="fleetExportCloseBtn2" data-i18n="premium_close">Close</button>
+      <button class="btn btn-save" id="fleetExportShareBtn" data-i18n="fltripdet_share">Share</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -7502,7 +7515,7 @@
   });
 
   document.addEventListener('click', (e) => {
-    if(e.target.id === 'switchModeBtnResearch' || e.target.id === 'switchModeBtnFleet' || e.target.id === 'switchModeBtnOperations' || e.target.id === 'switchModeBtnSport' || e.target.id === 'switchModeBtnAqua' || e.target.id === 'switchModeFromRoleSelect'){
+    if(e.target.closest('#switchModeBtnResearch, #switchModeBtnFleet, #switchModeBtnOperations, #switchModeBtnSport, #switchModeBtnAqua, #switchModeFromRoleSelect')){
       showModeSelect();
     }
     if(e.target.closest('[data-switch-fleet-role]')){
@@ -19989,6 +20002,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
 </body>
 </html>
