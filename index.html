@@ -265,7 +265,7 @@
   }
   .aqua-header-band-row{ display:flex; align-items:center; gap:10px; }
   .aqua-header-band-back{
-    width:32px; height:32px; border-radius:9999px; background:rgba(255,255,255,0.15); border:none;
+    width:40px; height:40px; border-radius:9999px; background:rgba(255,255,255,0.15); border:none;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; color:#fff;
   }
   .aqua-header-band-title{ font-family:var(--display); font-weight:700; font-size:19px; color:#fff; }
@@ -1979,12 +1979,14 @@
     --sp-field: oklch(62% 0.13 235);
     --sp-fleet: oklch(72% 0.12 75);
     --sp-sport: oklch(66% 0.18 32);
+    --sp-aqua: oklch(55% 0.11 178);
     background: var(--sp-bg); position: relative; overflow: hidden;
   }
   .splash-blob{ position:absolute; border-radius:50%; filter:blur(50px); opacity:0.55; pointer-events:none; }
   .splash-blob.b1{ width:220px; height:220px; background:var(--sp-field); top:-60px; left:-60px; }
   .splash-blob.b2{ width:200px; height:200px; background:var(--sp-fleet); top:-40px; right:-70px; }
-  .splash-blob.b3{ width:240px; height:240px; background:var(--sp-sport); bottom:-90px; left:30%; }
+  .splash-blob.b3{ width:220px; height:220px; background:var(--sp-sport); bottom:-80px; right:-60px; }
+  .splash-blob.b4{ width:220px; height:220px; background:var(--sp-aqua); bottom:-80px; left:-60px; }
 
   .splash-wrap{
     height:100%; display:flex; flex-direction:column;
@@ -2010,7 +2012,7 @@
   @media (prefers-reduced-motion: reduce){ .splash-ring{ animation:none; display:none; } .splash-pulse-path{ animation:none; stroke-dashoffset:0; } }
 
   .splash-title{ font-family:var(--display); font-weight:700; font-size:33px; color:var(--sp-ink); margin-top:18px; letter-spacing:-0.02em; }
-  .splash-segpills{ display:flex; gap:8px; margin-top:8px; }
+  .splash-segpills{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; justify-content:center; }
   .splash-segpill{ display:flex; align-items:center; gap:6px; background:oklch(100% 0 0 / 0.06); border:1px solid oklch(100% 0 0 / 0.1); border-radius:999px; padding:6px 12px; }
   .splash-segpill .d{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
   .splash-segpill span{ font-family:var(--data); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--sp-ink-soft); white-space:nowrap; }
@@ -2099,7 +2101,7 @@
 
 <!-- ================= SPLASH / ONBOARDING ================= -->
 <section class="screen active" id="screen-splash">
-  <div class="splash-blob b1"></div><div class="splash-blob b2"></div><div class="splash-blob b3"></div>
+  <div class="splash-blob b1"></div><div class="splash-blob b2"></div><div class="splash-blob b3"></div><div class="splash-blob b4"></div>
   <div class="splash-wrap">
     <div class="splash-topbar">
       <span class="splash-version">v1.0</span>
@@ -2131,6 +2133,7 @@
         <div class="splash-segpill"><span class="d" style="background:var(--sp-field)"></span><span data-i18n="splash_seg_field">Field</span></div>
         <div class="splash-segpill"><span class="d" style="background:var(--sp-fleet)"></span><span data-i18n="splash_seg_fleet">Fleet</span></div>
         <div class="splash-segpill"><span class="d" style="background:var(--sp-sport)"></span><span data-i18n="splash_seg_sport">Sport</span></div>
+        <div class="splash-segpill"><span class="d" style="background:var(--sp-aqua)"></span><span data-i18n="splash_seg_aqua">Aquaculture</span></div>
       </div>
 
       <div class="splash-slide" id="splashSlide">
@@ -2142,6 +2145,7 @@
       </div>
       <div class="splash-dots" id="splashDots">
         <div class="splash-dot active"></div>
+        <div class="splash-dot"></div>
         <div class="splash-dot"></div>
         <div class="splash-dot"></div>
         <div class="splash-dot"></div>
@@ -5552,7 +5556,8 @@
       splash_slide2_title: 'Run your fleet', splash_slide2_body: 'Log trips, hauls, and costs at sea. Settlement, reconciliation, and reports on land.',
       splash_slide3_title: 'Log every catch', splash_slide3_body: 'Session tracking, solunar table, spot map with satellite view. Your personal fishing log.',
       splash_slide4_title: 'Works without signal', splash_slide4_body: 'All data stays on your device. Export CSV, GeoJSON, and PDFs anytime — even offline.',
-      splash_get_started: 'Get started — it\'s free', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Unlock advanced stats, multi-device sync & export', splash_seg_field: 'Field', splash_seg_fleet: 'Fleet', splash_seg_sport: 'Sport',
+      splash_slide5_title: 'Grow with precision', splash_slide5_body: 'Production cycles, water quality, feeding, and biometry — all in one place, for any culture system.',
+      splash_get_started: 'Get started — it\'s free', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Unlock advanced stats, multi-device sync & export', splash_seg_field: 'Field', splash_seg_fleet: 'Fleet', splash_seg_sport: 'Sport', splash_seg_aqua: 'Aquaculture',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Choose a mode', mode_select_welcome: '← Welcome', mode_select_clear_session: 'Clear saved session',
       mode_research_title: 'Field Research', mode_research_sub: 'Species, biology, bycatch, survey data',
       mode_fleet_title: 'Fishing Operations', mode_fleet_sub: 'Trips, costs, fleet efficiency, traceability',
@@ -5963,7 +5968,8 @@
       splash_slide2_title: 'Administra tu flota', splash_slide2_body: 'Registra viajes, lances y costos en el mar. Liquidación, reconciliación y reportes en tierra.',
       splash_slide3_title: 'Registra cada captura', splash_slide3_body: 'Seguimiento de sesión, tabla solunar, mapa de spots con vista satelital. Tu bitácora de pesca personal.',
       splash_slide4_title: 'Funciona sin señal', splash_slide4_body: 'Todos los datos se quedan en tu dispositivo. Exporta CSV, GeoJSON y PDFs en cualquier momento — incluso sin conexión.',
-      splash_get_started: 'Comenzar — es gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Desbloquea estadísticos avanzados, sincronización y exportación', splash_seg_field: 'Campo', splash_seg_fleet: 'Flota', splash_seg_sport: 'Deportiva',
+      splash_slide5_title: 'Cultiva con precisión', splash_slide5_body: 'Ciclos de producción, calidad de agua, alimentación y biometría — todo en un solo lugar, para cualquier sistema de cultivo.',
+      splash_get_started: 'Comenzar — es gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Desbloquea estadísticos avanzados, sincronización y exportación', splash_seg_field: 'Campo', splash_seg_fleet: 'Flota', splash_seg_sport: 'Deportiva', splash_seg_aqua: 'Acuicultura',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Elige un modo', mode_select_welcome: '← Bienvenida', mode_select_clear_session: 'Borrar sesión guardada',
       mode_research_title: 'Investigación de Campo', mode_research_sub: 'Especies, biología, bycatch, datos de muestreo',
       mode_fleet_title: 'Operaciones Pesqueras', mode_fleet_sub: 'Viajes, costos, eficiencia de flota, trazabilidad',
@@ -6374,7 +6380,8 @@
       splash_slide2_title: 'Gestisci la tua flotta', splash_slide2_body: 'Registra viaggi, cale e costi in mare. Liquidazione, riconciliazione e rapporti a terra.',
       splash_slide3_title: 'Registra ogni cattura', splash_slide3_body: 'Monitoraggio sessione, tabella lunare, mappa spot con vista satellitare. Il tuo diario di pesca personale.',
       splash_slide4_title: 'Funziona senza segnale', splash_slide4_body: 'Tutti i dati restano sul tuo dispositivo. Esporta CSV, GeoJSON e PDF in qualsiasi momento — anche offline.',
-      splash_get_started: 'Inizia — è gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Sblocca statistiche avanzate, sincronizzazione ed esportazione', splash_seg_field: 'Campo', splash_seg_fleet: 'Flotta', splash_seg_sport: 'Sportiva',
+      splash_slide5_title: 'Coltiva con precisione', splash_slide5_body: 'Cicli di produzione, qualità dell\'acqua, alimentazione e biometria — tutto in un unico posto, per qualsiasi sistema di coltura.',
+      splash_get_started: 'Inizia — è gratis', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'Sblocca statistiche avanzate, sincronizzazione ed esportazione', splash_seg_field: 'Campo', splash_seg_fleet: 'Flotta', splash_seg_sport: 'Sportiva', splash_seg_aqua: 'Acquacoltura',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'Scegli una modalità', mode_select_welcome: '← Benvenuto', mode_select_clear_session: 'Cancella sessione salvata',
       mode_research_title: 'Ricerca sul Campo', mode_research_sub: 'Specie, biologia, catture accessorie, dati di rilevamento',
       mode_fleet_title: 'Operazioni di Pesca', mode_fleet_sub: 'Viaggi, costi, efficienza della flotta, tracciabilità',
@@ -6764,7 +6771,8 @@
       splash_slide2_title: 'บริหารกองเรือของคุณ', splash_slide2_body: 'บันทึกทริป การลากอวน และค่าใช้จ่ายกลางทะเล คิดบัญชี กระทบยอด และรายงานบนฝั่ง',
       splash_slide3_title: 'บันทึกทุกการจับปลา', splash_slide3_body: 'ติดตามเซสชัน ตารางสุริยะจันทรคติ แผนที่จุดตกปลาพร้อมมุมมองดาวเทียม สมุดบันทึกการตกปลาส่วนตัวของคุณ',
       splash_slide4_title: 'ใช้งานได้แม้ไม่มีสัญญาณ', splash_slide4_body: 'ข้อมูลทั้งหมดอยู่ในอุปกรณ์ของคุณ ส่งออก CSV, GeoJSON และ PDF ได้ทุกเมื่อ — แม้ออฟไลน์',
-      splash_get_started: 'เริ่มต้นใช้งาน — ฟรี', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'ปลดล็อกสถิติขั้นสูง การซิงค์หลายอุปกรณ์ และการส่งออก', splash_seg_field: 'ภาคสนาม', splash_seg_fleet: 'กองเรือ', splash_seg_sport: 'กีฬา',
+      splash_slide5_title: 'เพาะเลี้ยงอย่างแม่นยำ', splash_slide5_body: 'รอบการผลิต คุณภาพน้ำ การให้อาหาร และชีวมาตร — ครบในที่เดียว สำหรับทุกระบบการเพาะเลี้ยง',
+      splash_get_started: 'เริ่มต้นใช้งาน — ฟรี', splash_premium: 'Fish Pulse Premium', splash_unlock_sub: 'ปลดล็อกสถิติขั้นสูง การซิงค์หลายอุปกรณ์ และการส่งออก', splash_seg_field: 'ภาคสนาม', splash_seg_fleet: 'กองเรือ', splash_seg_sport: 'กีฬา', splash_seg_aqua: 'การเพาะเลี้ยงสัตว์น้ำ',
       mode_select_eyebrow: 'Fish Pulse', mode_select_title: 'เลือกโหมด', mode_select_welcome: '← หน้าต้อนรับ', mode_select_clear_session: 'ล้างเซสชันที่บันทึกไว้',
       mode_research_title: 'งานวิจัยภาคสนาม', mode_research_sub: 'ชนิดพันธุ์ ชีววิทยา สัตว์น้ำพลอยได้ ข้อมูลสำรวจ',
       mode_fleet_title: 'ปฏิบัติการประมง', mode_fleet_sub: 'ทริป ค่าใช้จ่าย ประสิทธิภาพกองเรือ การตรวจสอบย้อนกลับ',
@@ -7215,6 +7223,12 @@
       title: t('splash_slide3_title'),
       body: t('splash_slide3_body'),
       iconSvg: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4c0 5-1 6-1 10a4 4 0 1 0 5 0c-2-2-4-5-4-10z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    },
+    {
+      color: 'oklch(55% 0.11 178)',
+      title: t('splash_slide5_title'),
+      body: t('splash_slide5_body'),
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 15c3-2 5-2 8 0s5 2 8 0"/><path d="M2 19c3-2 5-2 8 0s5 2 8 0"/><path d="M16 5l3 3-3 3M13 8h6"/></svg>'
     },
     {
       color: 'oklch(58% 0.1 205)',
@@ -15289,7 +15303,7 @@
     document.querySelector('.screen.active').scrollTop = 0;
   }
   window.goTo = goTo;
-  document.querySelectorAll('[data-go]:not([data-go^="fleet-"])').forEach(el => {
+  document.querySelectorAll('[data-go]:not([data-go^="fleet-"]):not([data-go^="sport-"])').forEach(el => {
     el.addEventListener('click', () => {
       const target = el.dataset.go;
       if(target === 'record' && editingRecordIdx !== null){
