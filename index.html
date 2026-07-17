@@ -3282,64 +3282,91 @@
 
 <!-- ================= AQUACULTURE: BIOMETRY (per cycle) ================= -->
 <section class="screen" id="screen-aqua-biometry">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-cycle">←</button>
-      <span class="brand" id="aquaBiometryUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_biometry_h1">New biometry</div>
+        <div class="aqua-header-band-sub" id="aquaBiometryUnitName">—</div>
+      </div>
     </div>
-    <h1 data-i18n="aqua_biometry_h1">New biometry</h1>
-    <div class="site-line">&nbsp;</div>
   </div>
   <main>
-    <div class="card">
-      <label for="aquaBioSample" data-i18n="aqua_biometry_sample_label">Sample size</label>
-      <input type="number" id="aquaBioSample" min="1" step="1" placeholder="30">
-      <label for="aquaBioAvg" data-i18n="aqua_biometry_avg_label">Average weight (g)</label>
-      <input type="number" id="aquaBioAvg" min="0" step="0.1" placeholder="180">
-      <label for="aquaBioMin" data-i18n="aqua_biometry_minmax_label">Min / max weight (g, optional)</label>
-      <div style="display:flex;gap:8px;">
-        <input type="number" id="aquaBioMin" min="0" step="0.1" placeholder="140">
-        <input type="number" id="aquaBioMax" min="0" step="0.1" placeholder="220">
-      </div>
-      <button class="btn btn-save" id="aquaBioSaveBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_biometry_save_btn">Save biometry</button>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_biometry_sample_label">Sample size</span>
+      <input type="number" class="aqua-input" id="aquaBioSample" min="1" step="1" placeholder="30">
     </div>
-    <div class="hist-meta-row" style="margin-top:6px;">
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_biometry_avg_label">Average weight (g)</span>
+      <input type="number" class="aqua-input" id="aquaBioAvg" min="0" step="0.1" placeholder="180">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_biometry_minmax_label">Min / max weight (g, optional)</span>
+      <div style="display:flex;gap:8px;">
+        <input type="number" class="aqua-input" id="aquaBioMin" min="0" step="0.1" placeholder="140">
+        <input type="number" class="aqua-input" id="aquaBioMax" min="0" step="0.1" placeholder="220">
+      </div>
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaBioSaveBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_biometry_save_btn">Save biometry</span>
+    </button>
+    <div class="hist-meta-row" style="margin-top:20px;">
       <span class="insight-card-label" style="margin:0;" data-i18n="aqua_biometry_history_label">Recent samples</span>
     </div>
-    <div id="aquaBiometryHistory"></div>
+    <div id="aquaBiometryHistory" style="margin-top:8px;"></div>
   </main>
 </section>
 
 <!-- ================= AQUACULTURE: MORTALITY (per cycle) ================= -->
 <section class="screen" id="screen-aqua-mortality">
-  <div class="topbar">
-    <div class="back-row">
-      <button class="back-btn" data-go="aqua-cycle">←</button>
-      <span class="brand" id="aquaMortalityUnitName">—</span>
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_mortality_h1">New mortality</div>
+        <div class="aqua-header-band-sub" id="aquaMortalityUnitName">—</div>
+      </div>
     </div>
-    <h1 data-i18n="aqua_mortality_h1">New mortality</h1>
-    <div class="site-line">&nbsp;</div>
   </div>
   <main>
-    <div class="card">
-      <label for="aquaMortQty" data-i18n="aqua_mortality_qty_label">Quantity</label>
-      <input type="number" id="aquaMortQty" min="1" step="1" placeholder="15">
-      <label for="aquaMortCause" data-i18n="aqua_mortality_cause_label">Cause</label>
-      <select id="aquaMortCause">
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_mortality_qty_label">Quantity</span>
+      <input type="number" class="aqua-input" id="aquaMortQty" min="1" step="1" placeholder="15">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_mortality_cause_label">Cause</span>
+      <div class="aqua-pill-row" id="aquaMortCausePills" data-pill-group="mortcause">
+        <div class="aqua-pill" data-pill-value="water_quality" data-i18n="aqua_mortality_cause_water">Water quality</div>
+        <div class="aqua-pill" data-pill-value="disease" data-i18n="aqua_mortality_cause_disease">Disease</div>
+        <div class="aqua-pill" data-pill-value="predation" data-i18n="aqua_mortality_cause_predation">Predation</div>
+        <div class="aqua-pill" data-pill-value="handling" data-i18n="aqua_mortality_cause_handling">Handling</div>
+        <div class="aqua-pill active" data-pill-value="unknown" data-i18n="aqua_mortality_cause_unknown">Unknown</div>
+      </div>
+      <select id="aquaMortCause" style="display:none;">
         <option value="water_quality" data-i18n="aqua_mortality_cause_water">Water quality</option>
         <option value="disease" data-i18n="aqua_mortality_cause_disease">Disease</option>
         <option value="predation" data-i18n="aqua_mortality_cause_predation">Predation</option>
         <option value="handling" data-i18n="aqua_mortality_cause_handling">Handling</option>
-        <option value="unknown" data-i18n="aqua_mortality_cause_unknown">Unknown</option>
+        <option value="unknown" selected data-i18n="aqua_mortality_cause_unknown">Unknown</option>
       </select>
-      <label for="aquaMortNote" data-i18n="aqua_mortality_note_label">Note (optional)</label>
-      <textarea id="aquaMortNote" style="min-height:60px;"></textarea>
-      <button class="btn btn-save" id="aquaMortSaveBtn" style="width:100%; margin-top:16px;" data-i18n="aqua_mortality_save_btn">Save mortality</button>
     </div>
-    <div class="hist-meta-row" style="margin-top:6px;">
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_mortality_note_label">Note (optional)</span>
+      <textarea class="aqua-input" id="aquaMortNote" style="min-height:70px;"></textarea>
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaMortSaveBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_mortality_save_btn">Save mortality</span>
+    </button>
+    <div class="hist-meta-row" style="margin-top:20px;">
       <span class="insight-card-label" style="margin:0;" data-i18n="aqua_mortality_history_label">Recent entries</span>
     </div>
-    <div id="aquaMortalityHistory"></div>
+    <div id="aquaMortalityHistory" style="margin-top:8px;"></div>
   </main>
 </section>
 
@@ -5580,6 +5607,11 @@
       aqua_species_search_placeholder: 'Search species...', aqua_species_sub_count: 'species · tap to select', aqua_species_empty: 'No species match your search.',
       aqua_species_temp: 'Ideal temperature', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinity', aqua_species_density: 'Stocking density', aqua_species_feeding: 'Feeding', aqua_species_cycle: 'Typical cycle',
       aqua_species_growth_label: 'Growth curve', aqua_species_diseases_label: 'Common diseases', aqua_species_source_label: 'Source',
+      aqua_species_growth_chart_real: 'Based on data from the cited study', aqua_species_growth_chart_model: 'Illustrative model — no specific study data found',
+      aqua_species_growth_axis_day: 'day', aqua_species_growth_axis_weight: 'weight', aqua_species_growth_axis_pct_cycle: '% of cycle', aqua_species_growth_axis_pct_weight: '% of final weight',
+      aqua_species_disease_syndrome: 'Symptoms', aqua_species_disease_treatment: 'Treatment',
+      aqua_species_disease_disclaimer: 'Reference information (FAO). Not a substitute for veterinary diagnosis — before using any medication, or in case of an outbreak or mortality event, consult an aquaculture veterinarian.',
+      aqua_species_disease_no_fao_data: 'No specific disease information found in FAO\u2019s Cultured Aquatic Species for this species.',
       aqua_subnav_reports: 'Reports', aqua_reports_h1: 'Reports & alerts', aqua_reports_audit_title: 'GlobalGAP/ASC audit', aqua_reports_audit_sub: 'Current cycle · PDF',
       aqua_reports_kpi_biomass: 'Biomass', aqua_reports_open_alerts: 'Open alerts', aqua_reports_exports_label: 'Exports',
       aqua_reports_alert_mortality_title: 'Mortality spike', aqua_reports_alert_mortality_meta: '{n} lost in the last 48h · not yet acknowledged',
@@ -5986,6 +6018,11 @@
       aqua_species_search_placeholder: 'Buscar especie...', aqua_species_sub_count: 'especies · toca para elegir', aqua_species_empty: 'Ninguna especie coincide con tu búsqueda.',
       aqua_species_temp: 'Temperatura ideal', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinidad', aqua_species_density: 'Densidad de siembra', aqua_species_feeding: 'Alimentación', aqua_species_cycle: 'Ciclo típico',
       aqua_species_growth_label: 'Curva de crecimiento', aqua_species_diseases_label: 'Enfermedades comunes', aqua_species_source_label: 'Fuente',
+      aqua_species_growth_chart_real: 'Basado en datos del estudio citado', aqua_species_growth_chart_model: 'Modelo ilustrativo — sin datos cuantitativos de estudio',
+      aqua_species_growth_axis_day: 'día', aqua_species_growth_axis_weight: 'peso', aqua_species_growth_axis_pct_cycle: '% del ciclo', aqua_species_growth_axis_pct_weight: '% del peso final',
+      aqua_species_disease_syndrome: 'Síntomas', aqua_species_disease_treatment: 'Tratamiento',
+      aqua_species_disease_disclaimer: 'Información de referencia (FAO). No sustituye un diagnóstico veterinario — antes de usar cualquier medicamento, o ante un brote o mortalidad, consulta a un veterinario acuícola.',
+      aqua_species_disease_no_fao_data: 'No se encontró información específica de enfermedades en Cultured Aquatic Species (FAO) para esta especie.',
       aqua_subnav_reports: 'Reportes', aqua_reports_h1: 'Reportes y alertas', aqua_reports_audit_title: 'Auditoría GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo actual · PDF',
       aqua_reports_kpi_biomass: 'Biomasa', aqua_reports_open_alerts: 'Alertas abiertas', aqua_reports_exports_label: 'Exportar',
       aqua_reports_alert_mortality_title: 'Pico de mortalidad', aqua_reports_alert_mortality_meta: '{n} perdidos en las últimas 48h · sin confirmar',
@@ -6392,6 +6429,11 @@
       aqua_species_search_placeholder: 'Cerca specie...', aqua_species_sub_count: 'specie · tocca per scegliere', aqua_species_empty: 'Nessuna specie corrisponde alla ricerca.',
       aqua_species_temp: 'Temperatura ideale', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinità', aqua_species_density: 'Densità di semina', aqua_species_feeding: 'Alimentazione', aqua_species_cycle: 'Ciclo tipico',
       aqua_species_growth_label: 'Curva di crescita', aqua_species_diseases_label: 'Malattie comuni', aqua_species_source_label: 'Fonte',
+      aqua_species_growth_chart_real: 'Basato sui dati dello studio citato', aqua_species_growth_chart_model: 'Modello illustrativo — nessun dato specifico dello studio',
+      aqua_species_growth_axis_day: 'giorno', aqua_species_growth_axis_weight: 'peso', aqua_species_growth_axis_pct_cycle: '% del ciclo', aqua_species_growth_axis_pct_weight: '% del peso finale',
+      aqua_species_disease_syndrome: 'Sintomi', aqua_species_disease_treatment: 'Trattamento',
+      aqua_species_disease_disclaimer: 'Informazione di riferimento (FAO). Non sostituisce una diagnosi veterinaria — prima di usare qualsiasi farmaco, o in caso di focolaio o mortalità, consulta un veterinario acquicolo.',
+      aqua_species_disease_no_fao_data: 'Nessuna informazione specifica sulle malattie trovata in Cultured Aquatic Species (FAO) per questa specie.',
       aqua_subnav_reports: 'Report', aqua_reports_h1: 'Report e avvisi', aqua_reports_audit_title: 'Audit GlobalGAP/ASC', aqua_reports_audit_sub: 'Ciclo attuale · PDF',
       aqua_reports_kpi_biomass: 'Biomassa', aqua_reports_open_alerts: 'Avvisi aperti', aqua_reports_exports_label: 'Esportazioni',
       aqua_reports_alert_mortality_title: 'Picco di mortalità', aqua_reports_alert_mortality_meta: '{n} persi nelle ultime 48h · non confermato',
@@ -6777,6 +6819,11 @@
       aqua_species_search_placeholder: 'ค้นหาชนิดพันธุ์...', aqua_species_sub_count: 'ชนิดพันธุ์ · แตะเพื่อเลือก', aqua_species_empty: 'ไม่พบชนิดพันธุ์ที่ตรงกับการค้นหา',
       aqua_species_temp: 'อุณหภูมิที่เหมาะสม', aqua_species_ph: 'pH', aqua_species_salinity: 'ความเค็ม', aqua_species_density: 'ความหนาแน่นการปล่อยเลี้ยง', aqua_species_feeding: 'การให้อาหาร', aqua_species_cycle: 'รอบการผลิตทั่วไป',
       aqua_species_growth_label: 'เส้นการเจริญเติบโต', aqua_species_diseases_label: 'โรคที่พบบ่อย', aqua_species_source_label: 'แหล่งข้อมูล',
+      aqua_species_growth_chart_real: 'อ้างอิงจากข้อมูลของงานวิจัยที่อ้างถึง', aqua_species_growth_chart_model: 'แบบจำลองประกอบ — ไม่พบข้อมูลเฉพาะจากงานวิจัย',
+      aqua_species_growth_axis_day: 'วัน', aqua_species_growth_axis_weight: 'น้ำหนัก', aqua_species_growth_axis_pct_cycle: '% ของรอบการเลี้ยง', aqua_species_growth_axis_pct_weight: '% ของน้ำหนักสุดท้าย',
+      aqua_species_disease_syndrome: 'อาการ', aqua_species_disease_treatment: 'การรักษา',
+      aqua_species_disease_disclaimer: 'ข้อมูลอ้างอิง (FAO) ไม่ใช่การวินิจฉัยของสัตวแพทย์ — ก่อนใช้ยาใดๆ หรือกรณีมีการระบาดหรือสัตว์ตาย ควรปรึกษาสัตวแพทย์ด้านการเพาะเลี้ยงสัตว์น้ำ',
+      aqua_species_disease_no_fao_data: 'ไม่พบข้อมูลโรคเฉพาะของสายพันธุ์นี้ใน Cultured Aquatic Species ของ FAO',
       aqua_subnav_reports: 'รายงาน', aqua_reports_h1: 'รายงานและการแจ้งเตือน', aqua_reports_audit_title: 'การตรวจสอบ GlobalGAP/ASC', aqua_reports_audit_sub: 'รอบปัจจุบัน · PDF',
       aqua_reports_kpi_biomass: 'มวลชีวภาพ', aqua_reports_open_alerts: 'การแจ้งเตือนที่ยังเปิดอยู่', aqua_reports_exports_label: 'ส่งออก',
       aqua_reports_alert_mortality_title: 'อัตราตายพุ่งสูง', aqua_reports_alert_mortality_meta: 'สูญเสีย {n} ตัวใน 48 ชม. ที่ผ่านมา · ยังไม่รับทราบ',
@@ -18123,11 +18170,24 @@
     const pill = e.target.closest('.aqua-pill[data-pill-value]');
     if(!pill) return;
     const group = pill.closest('[data-pill-group]');
-    if(!group) return;
+    if(!group || (group.dataset.pillGroup !== 'type' && group.dataset.pillGroup !== 'infra')) return;
     group.querySelectorAll('.aqua-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
     const hiddenId = group.dataset.pillGroup === 'type' ? 'aquaUnitNewType' : 'aquaUnitNewInfra';
     const hiddenEl = document.getElementById(hiddenId);
+    if(hiddenEl) hiddenEl.value = pill.dataset.pillValue;
+  });
+
+  // Mortality cause pills — separate group/handler from the culture-unit
+  // type/infra pills above (different hidden field, kept isolated rather
+  // than overloading the generic handler's two-value ternary).
+  document.addEventListener('click', (e) => {
+    const pill = e.target.closest('#aquaMortCausePills .aqua-pill[data-pill-value]');
+    if(!pill) return;
+    const group = document.getElementById('aquaMortCausePills');
+    group.querySelectorAll('.aqua-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    const hiddenEl = document.getElementById('aquaMortCause');
     if(hiddenEl) hiddenEl.value = pill.dataset.pillValue;
   });
 
@@ -18455,11 +18515,13 @@
     }
     histEl.innerHTML = entries.slice(0, 20).map(e => {
       const d = new Date(e.ts);
-      let line = t('aqua_biometry_avg_label') + ': ' + e.avg_weight_g + ' g (n=' + e.sample_size + ')';
-      if(e.min_weight_g != null || e.max_weight_g != null) line += ' · ' + (e.min_weight_g != null ? e.min_weight_g : '—') + '–' + (e.max_weight_g != null ? e.max_weight_g : '—') + ' g';
-      return '<div class="card" style="padding:10px 12px;">'
-        + '<div style="font-size:11px;color:var(--ink-soft);">' + d.toLocaleDateString() + '</div>'
-        + '<div style="font-size:13px;color:var(--ink);margin-top:2px;">' + line + '</div>'
+      let sub = 'n=' + e.sample_size;
+      if(e.min_weight_g != null || e.max_weight_g != null) sub += ' · ' + (e.min_weight_g != null ? e.min_weight_g : '—') + '–' + (e.max_weight_g != null ? e.max_weight_g : '—') + ' g';
+      return '<div class="aqua-feed-row">'
+        + '<div class="aqua-feed-row-date">' + d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</div>'
+        + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + e.avg_weight_g + ' g</div>'
+          + '<div class="aqua-feed-row-sub">' + sub + '</div>'
+        + '</div>'
       + '</div>';
     }).join('');
   }
@@ -18502,9 +18564,11 @@
     const causeKeys = { water_quality: 'aqua_mortality_cause_water', disease: 'aqua_mortality_cause_disease', predation: 'aqua_mortality_cause_predation', handling: 'aqua_mortality_cause_handling', unknown: 'aqua_mortality_cause_unknown' };
     histEl.innerHTML = entries.slice(0, 20).map(e => {
       const d = new Date(e.ts);
-      return '<div class="card" style="padding:10px 12px;">'
-        + '<div style="font-size:11px;color:var(--ink-soft);">' + d.toLocaleDateString() + '</div>'
-        + '<div style="font-size:13px;color:var(--ink);margin-top:2px;">' + e.qty + ' · ' + t(causeKeys[e.cause] || 'aqua_mortality_cause_unknown') + (e.note ? ' · ' + escapeHtmlAqua(e.note) : '') + '</div>'
+      return '<div class="aqua-feed-row">'
+        + '<div class="aqua-feed-row-date">' + d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</div>'
+        + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + e.qty + ' · ' + t(causeKeys[e.cause] || 'aqua_mortality_cause_unknown') + '</div>'
+          + (e.note ? ('<div class="aqua-feed-row-sub">' + escapeHtmlAqua(e.note) + '</div>') : '')
+        + '</div>'
       + '</div>';
     }).join('');
   }
@@ -18521,6 +18585,11 @@
     entries.push({ mortality_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(), qty: qty, cause: causeEl.value, note: (noteEl.value || '').trim() });
     saveMortalityAqua(entries);
     qtyEl.value = ''; noteEl.value = '';
+    causeEl.value = 'unknown';
+    const pillGroup = document.getElementById('aquaMortCausePills');
+    if(pillGroup){
+      pillGroup.querySelectorAll('.aqua-pill').forEach(p => p.classList.toggle('active', p.dataset.pillValue === 'unknown'));
+    }
     renderAquaMortality();
     showToast(t('aqua_mortality_saved'));
   }
@@ -19193,132 +19262,264 @@
   // bios is a follow-up pass, not done in this build (flagged honestly
   // rather than silently left in the wrong language).
   const AQUA_SPECIES = [
-    { id:'vannamei', common:'Camarón blanco del Pacífico', sci:'Litopenaeus vannamei', regions:['mx','us','th'], habitat:'Marina/salobre',
+    { id:'vannamei', common:'Camarón blanco del Pacífico', sci:'Penaeus vannamei', regions:['mx','us','th'], habitat:'Marina/salobre',
       temp:'28-32°C', ph:'7.5-8.5', salinity:'15-25 ppt (tolera 1-50 ppt)', density:'50-333 org/m² según intensidad',
       feeding:'~5% de la biomasa/día, 3-4 raciones', cycle:'90-120 días',
       growth:'1.0-1.5 g/semana en estanque comercial de Asia; cosecha a los 80-100 días con 12-15 g o más.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:90,
+        points:[{d:0,v:0.02},{d:15,v:0.54},{d:30,v:2.83},{d:45,v:6.51},{d:60,v:9.86},{d:75,v:12.16},{d:90,v:13.5}] },
+      diseaseDetail:[
+        { name:'Mancha blanca (WSD/WSSV)', agent:'Complejo baculovirus de la mancha blanca', type:'Virus', syndrome:'Mortalidad de hasta 100% en 3-10 días; puntos blancos de 0.5-2mm en el caparazón.', treatment:'Reproductores libres de patógenos; desinfectar huevos/nauplios; evitar cambios bruscos de agua; cloro 30ppm en estanques infectados.' },
+        { name:'Síndrome de Taura (TSV)', agent:'Virus ARN (Picornaviridae)', type:'Virus', syndrome:'Debilidad, caparazón blando, mortalidad de 5-95% en juveniles.', treatment:'Reproductores libres de patógenos; desinfección de equipo y vehículos; ahuyentar aves vectoras.' },
+        { name:'IHHNV (deformidad enana)', agent:'Parvovirus sistémico', type:'Virus', syndrome:'Reduce alimentación, crecimiento y eficiencia alimenticia; rostro curvo en <30% de la población infectada.', treatment:'Reproductores libres de patógenos; desinfección cuidadosa de huevos y nauplios.' }
+      ],
       diseases:'Mancha blanca (WSSV) y síndrome de mortalidad temprana (AHPND) — bioseguridad de agua, control de densidad, probióticos; consultar veterinario acuícola.',
       source:'FAO Cultured Aquatic Species Information Programme; FAO Fisheries and Aquaculture Technical Paper No. 583; FAO ad505e.' },
     { id:'tilapia', common:'Mojarra / tilapia nilótica', sci:'Oreochromis niloticus', regions:['mx','th'], habitat:'Dulceacuícola',
       temp:'25-27°C (tolera 11-42°C)', ph:'6-9', salinity:'—', density:'20-35 org/m³ en jaulas; menor en estanque de tierra',
       feeding:'Según biomasa, 3 raciones/día, dieta ~30% proteína', cycle:'180 días',
-      growth:'Estudio con datos reales a 7/30/60/90/120 días, tres líneas comerciales, ajuste exponencial/Gompertz — la temperatura acelera o retrasa la curva.',
+      growth:'Estudio con datos reales a 7/30/60/90/120 días, tres líneas comerciales, ajuste exponencial/Gompertz — la temperatura acelera o retrasa la curva. FAO documenta además la secuencia completa: reversión sexual 0.2g (3 sem) y 0.4g (4 sem) → vivero 30-40g (2-3 meses) → engorda comercial 400-500g en 5-8 meses.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:300,
+        points:[{d:21,v:0.2},{d:28,v:0.4},{d:103,v:35},{d:300,v:450}] },
+      diseaseDetail:[
+        { name:'Septicemia por Aeromonas móvil (MAS)', agent:'Aeromonas hydrophila y especies afines', type:'Bacteria', syndrome:'Pérdida de equilibrio, nado letárgico, ojos/aletas inflamados, mortalidad crónica baja.', treatment:'Permanganato de potasio en inmersión; antibióticos en alimento (requiere receta veterinaria).' },
+        { name:'Vibriosis', agent:'Vibrio anguillarum y otras especies', type:'Bacteria', syndrome:'Similar a MAS; causada por estrés y mala calidad de agua.', treatment:'Antibiótico en alimento, bajo indicación veterinaria.' },
+        { name:'Columnaris', agent:'Flavobacterium columnare', type:'Bacteria', syndrome:'Aletas deshilachadas, manchas blanquecinas-grisáceas en piel/aletas, lesiones necróticas en agallas.', treatment:'Permanganato de potasio; sulfato de cobre según alcalinidad del agua.' },
+        { name:'Edwardsielosis', agent:'Edwardsiella tarda', type:'Bacteria', syndrome:'Pocos signos externos; fluido sanguinolento en cavidad corporal, hígado moteado, bazo/riñón inflamados.', treatment:'Antibiótico en alimento, bajo indicación veterinaria.' }
+      ],
       diseases:'Estreptococosis, toxicidad por amonio elevado — manejo de calidad de agua y densidad; consultar veterinario acuícola.',
-      source:'FAO Fisheries and Aquaculture Department; Acta Scientiarum Animal Sciences (2013).' },
+      source:'FAO Cultured Aquatic Species Information Programme (Rakocy); Acta Scientiarum Animal Sciences (2013).' },
     { id:'ostion', common:'Ostión', sci:'Crassostrea virginica / C. gigas', regions:['mx','us','eu'], habitat:'Marina',
       temp:'20-28°C (larval óptimo 24-30°C)', ph:'—', salinity:'20-30 ppt', density:'20-40 org/canasta o 4-12 kg/bolsa (cultivo en bolsa intermareal)',
       feeding:'Sin alimentación artificial (filtrador)', cycle:'12-18 meses a talla comercial',
       growth:'Curva de talla (mm) por temperatura documentada en estudios de cultivo en bolsa/canasta — mismo patrón sigmoide, en mm en vez de peso.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Enfermedad de Malpeque Bay', agent:'Desconocido', type:'Desconocido', syndrome:'Regresión del manto, abscesos crema/amarillos de hasta 1cm en la pared del cuerpo.', treatment:'No introducir ostiones de zonas históricamente afectadas.' },
+        { name:'Dermo (Perkinsosis)', agent:'Perkinsus marinus', type:'Protozoario', syndrome:'Emaciación severa, retracción del manto, crecimiento retardado; asociada a agua cálida (>15-20°C).', treatment:'Sin cura conocida; reducir densidad, mover a zonas de baja salinidad, filtrar agua UV en criadero.' },
+        { name:'Enfermedad juvenil del ostión (JOD)', agent:'Desconocido', type:'Desconocido', syndrome:'Crecimiento de tejido/concha reducido, márgenes de concha frágiles, puede diezmar la semilla cultivada.', treatment:'Sin prevención conocida; crecer la semilla rápido hasta >30mm; aumentar flujo de agua y filtrar a 25µm.' }
+      ],
       diseases:'Mortalidad masiva estival asociada a estrés térmico/OsHV-1 — manejo de calendario de inmersión según temperatura; consultar veterinario acuícola.',
-      source:'USGS — Tolerance of Gulf of Mexico eastern oysters; PMC OsHV-1 production calendar study.' },
+      source:'FAO Cultured Aquatic Species Information Programme; USGS — Tolerance of Gulf of Mexico eastern oysters; PMC OsHV-1 production calendar study.' },
     { id:'atun', common:'Atún aleta azul (engorda)', sci:'Thunnus orientalis / T. thynnus', regions:['mx','eu'], habitat:'Marina',
       temp:'—', ph:'—', salinity:'37.1-37.8 (Mediterráneo)', density:'—',
       feeding:'—', cycle:'3-5 meses (México) / 3 meses a 2 años (Mediterráneo) de engorda',
       growth:'No aplica curva de siembra tradicional: es captura de ejemplares silvestres + engorda en jaula, no ciclo de vida completo.',
-      diseases:'Mortalidad por floraciones de algas nocivas (Chattonella spp. en B.C.) — monitoreo de calidad de agua costera.',
+      diseases:'Se sabe poco de la patología de esta especie en cautiverio — los adultos parecen bastante resistentes incluso bajo estrés y trauma. Mortalidades importantes se han asociado a tormentas de viento fuerte (mucosidad excesiva en agallas) y a floraciones de algas nocivas (Chattonella spp. en B.C.), turbidez o hipoxia — monitoreo de calidad de agua costera.',
       source:'Seafood Watch — Farmed Bluefin Tuna Mexico; Frontiers in Marine Science (2018); ResearchGate — Bluefin fattening Mediterranean.' },
     { id:'carpa', common:'Carpa común / herbívora', sci:'Cyprinus carpio / Ctenopharyngodon idella', regions:['mx','eu'], habitat:'Dulceacuícola',
       temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'Extensiva/policultivo, variable según sistema',
       feeding:'Omnívora — forraje natural + suplemento', cycle:'8-12 meses',
-      growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado sobre ciclo/talla comercial de la especie.',
+      growth:'Etapa larva-alevín documentada día a día (Mojer et al. 2021, Basrah): 0.002g→26.9g en 90 días en estanque de tierra. FAO reporta talla comercial de 0.6-1.0kg en una temporada en estanques policultivo de zonas subtropicales/tropicales — la etapa de engorda se proyecta usando tasas de crecimiento típicas de esa fase (2.5-4 g/día) reportadas en múltiples estudios de estanque semi-intensivo.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:300,
+        points:[{d:0,v:0.002},{d:19,v:2.88},{d:38,v:6.26},{d:57,v:13.57},{d:80,v:22.76},{d:90,v:26.9},{d:180,v:358},{d:300,v:800}] },
+      diseaseDetail:[
+        { name:'Saprolegniasis', agent:'Saprolegnia spp.', type:'Hongo', syndrome:'Colonias fúngicas blancas sobre el cuerpo, áreas heridas o úlceras, y sobre la superficie de los huevos.', treatment:'Dosis única o repetidas de verde de malaquita.' },
+        { name:'Branquiomicosis (podredumbre de agallas)', agent:'Branchiomyces sanguinis', type:'Hongo', syndrome:'Coloración tipo mosaico en agallas, hemorragias, mortalidad masiva; infección secundaria por Saprolegnia.', treatment:'Tratamiento del estanque con cal viva; sulfato de cobre repetido.' },
+        { name:'Eritrodermatitis (enfermedad ulcerosa)', agent:'Aeromonas salmonicida achromogenes', type:'Bacteria', syndrome:'Nódulos y úlceras, exoftalmia, abdomen hinchado, hemorragias en agallas.', treatment:'Evitar estrés; antibióticos en dieta o inyección; vacunación.' },
+        { name:'Enfermedad Columnaris', agent:'Flexibacter columnaris', type:'Bacteria', syndrome:'Puntos gris-blancuzcos con halo rojizo en cabeza/agallas/piel, aparece sobre 15°C.', treatment:'Cloruro de benzalkonio, sulfato de cobre o antibióticos (furazolidona, neomicina, oxitetraciclina).' }
+      ],
       diseases:'Parásitos externos, hidropesía en aguas de mala calidad — manejo general de calidad de agua; consultar veterinario acuícola.',
-      source:'FAO Cultured Aquatic Species Information Programme.' },
+      source:'Mojer et al. 2021, Basrah J. Agric. Sci. (etapa larva-alevín); FAO Cultured Aquatic Species Information Programme (talla comercial).' },
     { id:'lobina', common:'Lobina / black bass', sci:'Micropterus salmoides', regions:['mx'], habitat:'Dulceacuícola',
       temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'~1,000-3,000 org/ha en sistema extensivo (estimación técnica general)',
       feeding:'Carnívora — dieta alta en proteína', cycle:'8-10 meses',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseNoFaoData:true,
       diseases:'Susceptible a estrés por manejo — cuidado en transporte y densidad; consultar veterinario acuícola.',
       source:'Conocimiento técnico general de la especie (FAO) — pendiente de fuente específica de cultivo en México.' },
     { id:'bagre', common:'Bagre de canal', sci:'Ictalurus punctatus', regions:['mx','us'], habitat:'Dulceacuícola',
       temp:'27-31°C', ph:'6.5-9', salinity:'—', density:'90-720 org/m³ en tanques circulares experimentales',
       feeding:'Consumo aumenta linealmente entre 15.7-31.7°C', cycle:'6-9 meses',
       growth:'Estudio comparativo con pangasio bajo condiciones comerciales, con relación peso-longitud documentada.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Enfermedad viral del bagre de canal', agent:'No identificado', type:'Virus', syndrome:'Reducción de la alimentación, nado errático (a veces en espiral), abdomen hinchado, hemorragias.', treatment:'Sin tratamiento; buenas prácticas de manejo.' },
+        { name:'Septicemia entérica', agent:'Edwardsiella ictaluri', type:'Bacteria', syndrome:'Hemorragias externas en vientre y boca, lesiones blancas focales en el cuerpo.', treatment:'Oxitetraciclina; sulfametoxina; ormetoprim.' },
+        { name:'Enfermedad Columnaris', agent:'Flavobacterium columnare', type:'Bacteria', syndrome:'Puntos blancos en boca/escamas/aletas, crecimiento algodonoso, aletas se desintegran en los bordes.', treatment:'Oxitetraciclina; sulfametoxina; ormetoprim.' },
+        { name:'Septicemia por Aeromonas', agent:'Aeromonas hydrophila; A. sobria', type:'Bacteria', syndrome:'Deshilache y enrojecimiento de aletas, despigmentación, úlceras.', treatment:'Oxitetraciclina; sulfametoxina; ormetoprim.' }
+      ],
       diseases:'Estrés por transporte/manejo, toxicidad por amonio — manejo de densidad y calidad de agua; consultar veterinario acuícola.',
-      source:'ScienceDirect — Water temperature/DO effects on feed consumption; PanamJAS growth comparison study.' },
+      source:'FAO Cultured Aquatic Species Information Programme; ScienceDirect — Water temperature/DO effects on feed consumption; PanamJAS growth comparison study.' },
     { id:'trucha', common:'Trucha arcoíris', sci:'Oncorhynchus mykiss', regions:['mx','us','eu'], habitat:'Dulceacuícola (agua fría)',
       temp:'15-18°C (estrés crítico 25-28°C)', ph:'6.5-8', salinity:'—', density:'15-40 kg/m³ (máximo 60 kg/m³)',
       feeding:'Según biomasa', cycle:'8-10 meses',
-      growth:'Estudio en jaulas flotantes: 100 g → 266 g en 106 días, tasa de crecimiento específico 0.915%/día.',
+      growth:'Estudio en jaulas flotantes: 100 g → 266 g en 106 días, tasa de crecimiento específico 0.915%/día. FAO confirma que la talla de mercado "pan-size" (280-400g) se alcanza típicamente a los 9 meses — este estudio ya llega muy cerca de ese punto en menos tiempo.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:106,
+        points:[{d:0,v:100},{d:106,v:266}] },
+      diseaseDetail:[
+        { name:'Furunculosis', agent:'Aeromonas salmonicida', type:'Bacteria', syndrome:'Inflamación intestinal, aletas enrojecidas, forúnculos en el cuerpo, tejido de aletas pectorales muere.', treatment:'Antibiótico mezclado con alimento (ej. oxitetraciclina).' },
+        { name:'Similar a furunculosis', agent:'Aeromonas liquefaciens', type:'Bacteria', syndrome:'Lesiones pequeñas que se abren en llagas, aletas enrojecidas, tejido se descompone.', treatment:'Mismo tratamiento que furunculosis.' },
+        { name:'Vibriosis', agent:'Vibrio anguillarum', type:'Bacteria', syndrome:'Pérdida de apetito, enrojecimiento en boca/aletas, a veces sangrado, mortalidad potencialmente alta.', treatment:'Igual que furunculosis, más vacuna para mayor protección.' },
+        { name:'Enfermedad bacteriana del riñón (BKD)', agent:'Corynebacterium', type:'Bacteria', syndrome:'Lesiones blanquecinas en riñón, sangrado de riñón e hígado, pérdida de apetito.', treatment:'Igual que furunculosis.' }
+      ],
       diseases:'Estrés térmico y por hacinamiento — control de densidad y oxigenación; consultar veterinario acuícola.',
-      source:'PMC — Low Stocking Densities on Rainbow Trout Juveniles; Kayim et al. — Net Cages Almus Dam Lake.' },
+      source:'PMC — Low Stocking Densities on Rainbow Trout Juveniles; Kayim et al. — Net Cages Almus Dam Lake; FAO CASIP (referencia de talla comercial).' },
     { id:'crawfish', common:'Crawfish / acocil de Luisiana', sci:'Procambarus clarkii', regions:['us'], habitat:'Dulceacuícola',
       temp:'19-25°C', ph:'7.5-8.0', salinity:'—', density:'5-20 org/m² en estanque comercial',
       feeding:'Omnívoro — forraje de arroz/soya en estanque', cycle:'3-4 meses (estacional)',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Enfermedades de caparazón', agent:'Bacterias quitinoclásticas', type:'Bacteria', syndrome:'Lesiones negras o café oscuro en el exoesqueleto.', treatment:'Mejorar manejo y condiciones de cultivo.' },
+        { name:'Septicemia bacteriana', agent:'Vibrio mimicus; V. cholerae', type:'Bacteria', syndrome:'Individuos letárgicos.', treatment:'Mejorar manejo y condiciones de cultivo.' },
+        { name:'Infecciones fúngicas', agent:'Aphanomyces laevis, Fusarium y Ramularia spp.', type:'Hongo', syndrome:'Parásitos de herida que infectan cutícula y carne.', treatment:'Mejorar manejo y condiciones de cultivo.' },
+        { name:'Enfermedad de porcelana', agent:'Thelohania', type:'Microsporidio', syndrome:'Apariencia blanco-lechosa del abdomen.', treatment:'Mejorar manejo y condiciones de cultivo.' }
+      ],
       diseases:'Sensible a mala calidad de agua y hacinamiento — manejo de densidad; consultar veterinario acuícola.',
-      source:'ResearchGate — Stocking densities effect on crawfish growth; LSU AgCenter Crawfish Production Manual.' },
+      source:'FAO Cultured Aquatic Species Information Programme; ResearchGate — Stocking densities effect on crawfish growth; LSU AgCenter Crawfish Production Manual.' },
     { id:'almeja', common:'Almeja dura', sci:'Mercenaria mercenaria', regions:['us'], habitat:'Marina',
       temp:'18-25°C (rango 10-30°C)', ph:'—', salinity:'20-30 ppt', density:'500-2,220 semillas/m² en vivero comercial',
       feeding:'Sin alimentación artificial (filtrador)', cycle:'18-24 meses',
       growth:'Curva de talla documentada en estudios de vivero comercial — patrón sigmoide en mm.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Vibriosis', agent:'Vibrio anguillarum; V. alginolyticus', type:'Bacteria', syndrome:'Infección sistémica de tejidos blandos larvales; necrosis y muerte por exotoxina bacteriana.', treatment:'Buen manejo; esterilización del agua usada en cultivo de algas y lotes.' },
+        { name:'Enfermedad QPX (tipo chytrid)', agent:'Desconocido', type:'Desconocido', syndrome:'Nódulos amarillo-tostado en el manto, crecimiento de concha reducido, mortalidad severa.', treatment:'Sin control conocido, salvo sembrar cepas resistentes.' }
+      ],
       diseases:'Estrés por caída brusca de salinidad (lluvias) — monitoreo tras eventos de precipitación; consultar veterinario acuícola.',
-      source:'Smithsonian NEMESIS species profile; University of Florida IFAS.' },
+      source:'FAO Cultured Aquatic Species Information Programme; Smithsonian NEMESIS species profile; University of Florida IFAS.' },
     { id:'mejillon_azul', common:'Mejillón azul', sci:'Mytilus edulis', regions:['us'], habitat:'Marina',
       temp:'8.8-17.8°C', ph:'—', salinity:'21-40 ppt', density:'~4-12 kg de semilla/bolsa o cuerda',
       feeding:'Sin alimentación artificial (filtrador)', cycle:'12-18 meses',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado en mm.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Infección parasitaria', agent:'Marteilia maurini', type:'Protozoario', syndrome:'Potencialmente letal; infiltración de hemocitos y destrucción de la glándula digestiva.', treatment:'Sin cura; selección de sitio y monitoreo de traslados de mejillón.' },
+        { name:'Enfermedad viral', agent:'Virus tipo Picornaviridae', type:'Virus', syndrome:'Mortalidades severas.', treatment:'Sin tratamiento conocido.' },
+        { name:'Vibriosis', agent:'Vibrio spp.', type:'Bacteria', syndrome:'Sin detalle específico documentado.', treatment:'Sin tratamiento conocido.' },
+        { name:'Rickettsiosis', agent:'Organismos tipo Rickettsia/Chlamydia', type:'Bacteria', syndrome:'Microcolonias en las células epiteliales de agallas y glándula digestiva.', treatment:'Sin cura; selección de sitio y monitoreo de traslados.' }
+      ],
       diseases:'Sensible a temperaturas extremas y desprendimiento por oleaje fuerte; consultar veterinario acuícola.',
-      source:'ScienceDirect — Integrated mussel-salmon culture study, Tasmania.' },
+      source:'FAO Cultured Aquatic Species Information Programme; ScienceDirect — Integrated mussel-salmon culture study, Tasmania.' },
     { id:'salmon', common:'Salmón atlántico', sci:'Salmo salar', regions:['us'], habitat:'Marina (jaulas costeras)',
       temp:'8-14°C (evita >20°C)', ph:'—', salinity:'Marina completa', density:'Máximo recomendado 50 kg/m³ para bienestar',
       feeding:'Según biomasa', cycle:'12-18 meses agua dulce (smolt) + 18-24 meses mar hasta ~5.5 kg',
-      growth:'Crecimiento post-smolt prácticamente lineal: ~386-413 g/mes, de 0.3-0.75 kg a 4-5.5 kg.',
+      growth:'Crecimiento post-smolt prácticamente lineal: ~386-413 g/mes, de 0.3-0.75 kg a 4-5.5 kg. FAO confirma que los esmolts se transfieren a mar en 40-120g y se cosechan desde 2kg en adelante, con engorda marina de hasta 2 años.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:390,
+        points:[{d:0,v:300},{d:390,v:5500}] },
+      diseaseDetail:[
+        { name:'Anemia infecciosa del salmón (ISA)', agent:'Orthomyxovirus', type:'Virus', syndrome:'Letargo, pérdida de apetito, agallas/corazón pálidos, hígado oscuro, hemorragias internas.', treatment:'Sin tratamiento; controles sanitarios obligatorios; bioseguridad.' },
+        { name:'Septicemia hemorrágica viral (VHS)', agent:'Rhabdovirus', type:'Virus', syndrome:'Ojos saltones y a veces sangrantes, agallas pálidas, abdomen hinchado, letargo.', treatment:'Sin tratamiento; controles sanitarios; vacunas en desarrollo.' },
+        { name:'Necrosis pancreática infecciosa (IPN)', agent:'Birnavirus', type:'Virus', syndrome:'Nado errático hasta morir en el fondo del tanque.', treatment:'Sin tratamiento; bioseguridad; cribado de reproductores; vacunas en desarrollo.' },
+        { name:'Enfermedad del páncreas del salmón (SPDV)', agent:'Togavirus', type:'Virus', syndrome:'Pérdida de peso, emaciación, mortalidad.', treatment:'Sin tratamiento; retiro de alimento; vacunación.' }
+      ],
       diseases:'Estrés térmico por olas de calor marino, hipoxia — monitoreo de temperatura y OD; consultar veterinario acuícola.',
-      source:'PMC — Summer is Coming: Ocean Warming Salmon Cage Farming; ScienceDirect — Stocking density limits post-smolt.' },
+      source:'PMC — Summer is Coming: Ocean Warming Salmon Cage Farming; ScienceDirect — Stocking density limits post-smolt; FAO CASIP.' },
     { id:'mejillon_med', common:'Mejillón mediterráneo', sci:'Mytilus galloprovincialis', regions:['eu'], habitat:'Marina',
       temp:'10-20°C (estrés >26-27°C)', ph:'—', salinity:'34-39 ppt', density:'~4-12 kg de semilla/bolsa o cuerda',
       feeding:'Sin alimentación artificial (filtrador)', cycle:'12-18 meses',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado en mm.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Marteiliasis (enfermedad de Aber)', agent:'Marteilia maurini; M. refringens', type:'Protozoario', syndrome:'Tejidos pierden pigmentación, manto a veces translúcido, cese del crecimiento de la concha.', treatment:'Sin tratamiento disponible; evitar traslado de mejillón desde zonas infectadas.' },
+        { name:'Enfermedad del "gusano rojo"', agent:'Mytilicola intestinalis', type:'Copépodo', syndrome:'Organismo comensal; los mejillones aparentemente no se ven afectados.', treatment:'Sin medidas conocidas.' }
+      ],
       diseases:'Mortalidad por olas de calor marino — monitoreo de temperatura en verano; consultar veterinario acuícola.',
-      source:'The Fish Site — How to Farm Mediterranean Mussel; PMC — Mediterranean mussel climate change responses.' },
+      source:'FAO Cultured Aquatic Species Information Programme; The Fish Site — How to Farm Mediterranean Mussel; PMC — Mediterranean mussel climate change responses.' },
     { id:'dorada', common:'Dorada / gilthead seabream', sci:'Sparus aurata', regions:['eu'], habitat:'Marina',
       temp:'18-25°C (tolera 10-30°C)', ph:'—', salinity:'28-38 ppt', density:'~15 kg/m³ en jaula/tanque',
       feeding:'Según biomasa', cycle:'12-18 meses',
-      growth:'Estudios de crecimiento en jaula offshore (Dakhla Bay) documentan tasas de crecimiento específico por estacionalidad y densidad.',
+      growth:'FAO documenta sistema intensivo: alevines pre-engordados de 5g alcanzan talla comercial (350-400g) en ~1 año en tanque. En jaula marina el mismo proceso toma algo más (hasta 16 meses con juveniles de 5g). Estudios adicionales de jaula offshore (Dakhla Bay) documentan tasas por estacionalidad y densidad.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:365,
+        points:[{d:45,v:2.5},{d:365,v:375}] },
+      diseaseDetail:[
+        { name:'Pasteurelosis (Pseudotuberculosis)', agent:'Photobacterium damselae subsp. piscicida', type:'Bacteria', syndrome:'Anorexia, necrosis focal de las agallas.', treatment:'Vacunación de reproductores/juveniles; inmunoestimulantes y vitaminas; buena higiene; antibióticos.' },
+        { name:'Vibriosis', agent:'Photobacterium damselae subsp. damselae; Vibrio alginolyticus; V. anguillarum', type:'Bacteria', syndrome:'Piel oscura, letargo, abdomen distendido, hemorragias y lesiones cutáneas.', treatment:'Evitar dietas con niveles muy altos de lípidos; buena higiene; antibióticos.' },
+        { name:'Linfocistis', agent:'Iridoviridae', type:'Virus', syndrome:'Pseudotumor blanquecino.', treatment:'Reducir tasa de alimentación y biomasa; baja patogenicidad, generalmente sin tratamiento.' },
+        { name:'Acuareovirus', agent:'Aquareovirus', type:'Virus', syndrome:'Generalmente sin síntomas notables.', treatment:'Baja patogenicidad, sin tratamiento.' }
+      ],
       diseases:'Estrés por manejo/densidad — control de densidad y calidad de agua; consultar veterinario acuícola.',
-      source:'ResearchGate — Stocking density effect on gilthead seabream growth; PMC — Allostatic load seabass/seabream.' },
+      source:'FAO Cultured Aquatic Species Information Programme; ResearchGate — Stocking density effect on gilthead seabream growth; PMC — Allostatic load seabass/seabream.' },
     { id:'lubina', common:'Lubina / róbalo europeo', sci:'Dicentrarchus labrax', regions:['eu'], habitat:'Marina',
       temp:'15-25°C (tolera hasta 28°C con estrés)', ph:'—', salinity:'Marina completa, tolera salobre', density:'~16 kg/m³ en tanque/jaula',
       feeding:'Según biomasa', cycle:'18-24 meses',
-      growth:'Estudios de tanque de flujo continuo documentan tasa de crecimiento específico y curva estacional.',
+      growth:'FAO documenta el ciclo intensivo completo: juveniles de 1.5-2.5g (comprados para engorda) alcanzan 400-450g en 18-24 meses. Estudios de tanque de flujo continuo documentan además la tasa de crecimiento específico y curva estacional.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:630,
+        points:[{d:0,v:2},{d:630,v:425}] },
+      diseaseDetail:[
+        { name:'Encefalo-retinopatía viral', agent:'Nodavirus', type:'Virus', syndrome:'Síntomas nerviosos.', treatment:'Buena profilaxis y buenas condiciones de manejo.' },
+        { name:'Vibriosis', agent:'Vibrio anguillarum; V. ordali y otras', type:'Bacteria', syndrome:'Anorexia, oscurecimiento, úlceras en piel, distensión abdominal.', treatment:'Vacunación de alevines; tratamiento antibiótico.' },
+        { name:'Fotobacteriosis (Pseudotuberculosis)', agent:'Photobacterium damsela subsp. piscicida', type:'Bacteria', syndrome:'Anorexia, oscurecimiento, lesiones miliares en bazo.', treatment:'Tratamiento antibiótico.' },
+        { name:'Micobacteriosis', agent:'Mycobacterium marinum', type:'Bacteria', syndrome:'Emaciación, crecimiento pobre, riñón y bazo hipertrofiados con granulomas.', treatment:'Buena profilaxis; sin tratamiento efectivo conocido.' }
+      ],
       diseases:'Estrés térmico por encima de 28°C — monitoreo en verano; consultar veterinario acuícola.',
-      source:'PLOS One — Metabolic scope of juvenile seabass; ScienceDirect — energy/protein efficiency comparison.' },
+      source:'FAO Cultured Aquatic Species Information Programme; PLOS One — Metabolic scope of juvenile seabass; ScienceDirect — energy/protein efficiency comparison.' },
     { id:'tigre', common:'Camarón tigre gigante', sci:'Penaeus monodon', regions:['th'], habitat:'Marina',
       temp:'28-33°C (mortalidad <13°C o >33°C)', ph:'—', salinity:'2-30 ppt', density:'Estanque de tierra, alimentador de fondo',
       feeding:'Según biomasa', cycle:'Hasta talla comercial de 40-60 g',
-      growth:'Tasa de 1.0-1.2 g/semana bajo condiciones comerciales tailandesas, mismo reporte FAO usado para vannamei.',
+      growth:'Tasa de 1.0-1.2 g/semana bajo condiciones comerciales tailandesas, mismo reporte FAO usado para vannamei. FAO documenta además el ciclo completo: postlarvas (PL15) sembradas en estanque intensivo alcanzan 30-35g en 4-5 meses.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:135,
+        points:[{d:0,v:0.02},{d:135,v:32.5}] },
+      diseaseDetail:[
+        { name:'Mancha blanca (WSD/WSSV)', agent:'Complejo baculovirus de la mancha blanca', type:'Virus', syndrome:'Mortalidad de hasta 100% en 3-10 días; puntos blancos en el caparazón.', treatment:'Cribado en todas las etapas; evitar cambios bruscos de agua; cloro 30ppm en estanques infectados.' },
+        { name:'Cabeza amarilla (YHD)', agent:'Baculovirus (agente aún no descrito por completo)', type:'Virus', syndrome:'Mortalidad de hasta 100% en 3-5 días; cefalotórax amarillo e hinchado.', treatment:'Cribado de reproductores y postlarvas; desinfección de estanques y criaderos.' },
+        { name:'Necrosis del intestino medio (BMN)', agent:'Baculovirus', type:'Virus', syndrome:'Afecta larvas y postlarvas tempranas; turbidez blanca del hepatopáncreas.', treatment:'Lavar huevos fértiles con agua de mar limpia; desinfectar instalación si hay brote.' }
+      ],
       diseases:'Igual que camarón blanco — bioseguridad, manejo de densidad; consultar veterinario acuícola.',
-      source:'The Fish Site — How to Farm Giant Tiger Prawn; USGS Species Profile — Penaeus monodon; FAO On-farm feeding whiteleg shrimp.' },
+      source:'FAO Cultured Aquatic Species Information Programme; The Fish Site — How to Farm Giant Tiger Prawn; USGS Species Profile — Penaeus monodon.' },
     { id:'bagre_hibrido', common:'Bagre híbrido / pla duk', sci:'Clarias spp.', regions:['th'], habitat:'Dulceacuícola',
       temp:'25-30°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~50-100 org/m² en estanque intensivo (estimación técnica general)',
       feeding:'Omnívoro, tolerante a baja concentración de oxígeno disuelto', cycle:'4-6 meses',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseNoFaoData:true,
       diseases:'Generalmente resistente — infecciones bacterianas en agua de mala calidad; consultar veterinario acuícola.',
       source:'International Aquafeed — Aquafeed industry in Thailand (contexto de especie, densidad y temperatura sin cifra exacta citable).' },
     { id:'langostino', common:'Langostino gigante de río', sci:'Macrobrachium rosenbergii', regions:['th'], habitat:'Dulceacuícola',
       temp:'26-31°C (tolera 14-35°C)', ph:'—', salinity:'Dulce, tolera hasta 25 ppt en adultos', density:'4-20 postlarvas/m²',
       feeding:'~3-5% de biomasa/día, 2 raciones', cycle:'5-7 meses',
-      growth:'Tasa de crecimiento documentada en estudios de salinidad y tolerancia térmica.',
+      growth:'Tasa de crecimiento documentada en estudios de salinidad y tolerancia térmica, sin curva completa peso-tiempo — modelo sigmoide genérico aplicado.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseNoFaoData:true,
       diseases:'Estrés por temperatura baja, infecciones bacterianas oportunistas — manejo de densidad y temperatura; consultar veterinario acuícola.',
       source:'ScienceDirect — Salinity effect on growth of giant freshwater prawn; PMC — Low-temperature tolerance mechanism.' },
     { id:'robalo_asiatico', common:'Róbalo asiático / barramundi', sci:'Lates calcarifer', regions:['th'], habitat:'Marina/salobre/dulceacuícola',
       temp:'15-28°C', ph:'—', salinity:'Eurihalina — marina, salobre y dulce', density:'—',
       feeding:'Según biomasa', cycle:'8-10 meses',
-      growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado.',
+      growth:'FAO documenta juveniles de engorda libre (20-100g) en estanque salobre, creciendo rápido hasta talla cosechable de 350g-3kg en 6 meses a 2 años según sistema — en jaulas de Sudeste Asiático (más relevante para Tailandia) la venta típica es 500-900g.',
+      growthCurve:{ type:'real', unit:'g', cycleDays:270,
+        points:[{d:0,v:60},{d:270,v:700}] },
+      diseaseDetail:[
+        { name:'Necrosis nerviosa viral (VNN)', agent:'Betanodavirus (LcEV)', type:'Virus', syndrome:'Nado errático o en espiral, coloración pálida u oscura, "desmayos"; frecuente en fase de criadero.', treatment:'Cribado de reproductores; baja densidad larval; buena nutrición e higiene de criadero.' },
+        { name:'Linfocistis', agent:'Virus Lymphocystis', type:'Virus', syndrome:'Crecimientos tipo verruga en piel y aletas.', treatment:'Retirar peces infectados; mejorar el ambiente de cultivo.' },
+        { name:'Vibriosis', agent:'Vibrio harveyi y otras especies', type:'Bacteria', syndrome:'Oscurecimiento, letargo, anorexia, úlceras rojizas en el cuerpo.', treatment:'Mejorar ambiente de cultivo; tratamiento antibiótico.' },
+        { name:'Septicemia hemorrágica bacteriana', agent:'Aeromonas spp.; Pseudomonas sp.', type:'Bacteria', syndrome:'Úlceras rojizas irregulares en piel, letargo, anorexia.', treatment:'Mejorar ambiente de cultivo; tratamiento antibiótico.' }
+      ],
       diseases:'Streptococcus iniae, virus emergentes (Megalocytivirus) en alta densidad — manejo de densidad y bioseguridad; consultar veterinario acuícola.',
-      source:'FishBase — Lates calcarifer species profile; PMC — Streptococcus iniae in barramundi.' },
+      source:'FAO Cultured Aquatic Species Information Programme; FishBase — Lates calcarifer species profile; PMC — Streptococcus iniae in barramundi.' },
     { id:'mejillon_verde', common:'Mejillón verde', sci:'Perna viridis', regions:['th'], habitat:'Marina',
       temp:'26-32°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~4-12 kg de semilla/bolsa o cuerda',
       feeding:'Sin alimentación artificial (filtrador)', cycle:'8-12 meses',
       growth:'Sin estudio cuantitativo específico encontrado — modelo sigmoide genérico aplicado en mm.',
-      diseases:'—',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseNoFaoData:true,
+      diseases:'Filtrador, generalmente resistente — sensible a variaciones bruscas de salinidad y temperatura; consultar veterinario acuícola.',
       source:'BIOTROPIA — Review of Aquaculture Genetic Researches (menciona la especie sin parámetros cuantitativos específicos — pendiente).' },
     { id:'pangasio', common:'Pangasio / pez gato rayado', sci:'Pangasianodon hypophthalmus', regions:['th'], habitat:'Dulceacuícola',
       temp:'26-30°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~40-60 org/m³ en jaula (estimación técnica general)',
       feeding:'Según biomasa', cycle:'6-8 meses',
       growth:'Estudio comparativo con bagre de canal bajo condiciones comerciales, con relación peso-longitud documentada.',
+      growthCurve:{ type:'model',
+        points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
+      diseaseDetail:[
+        { name:'Necrosis bacilar del pangasio (BNP)', agent:'Edwardsiella ictaluri', type:'Bacteria', syndrome:'Hemorragias petequiales en ojos y base de aletas, puntos blancos en riñón/bazo/hígado.', treatment:'Antibióticos.' },
+        { name:'Septicemia móvil por Aeromonas (MAS)', agent:'Aeromonas spp. (A. hydrophila, A. sobria, A. caviae)', type:'Bacteria', syndrome:'Hemorragias en ojos/cuerpo/aletas, ascitis sanguinolenta con abdomen hinchado.', treatment:'Mejorar calidad de agua y nutrición; antibióticos.' },
+        { name:'Enfermedad de la ictericia', agent:'No confirmado', type:'No confirmado', syndrome:'Amarillamiento de la carne.', treatment:'Mejorar manejo y nutrición; antibióticos.' }
+      ],
       diseases:'Bacterianas en agua de mala calidad — manejo de densidad; consultar veterinario acuícola.',
-      source:'PanamJAS — Growth rates and weight-length relationship Ictalurus punctatus and Pangasius hypophthalmus.' }
+      source:'FAO Cultured Aquatic Species Information Programme; PanamJAS — Growth rates and weight-length relationship Ictalurus punctatus and Pangasius hypophthalmus.' }
   ];
   const AQUA_REGIONS = [ ['mx','México'], ['us','EUA'], ['eu','Unión Europea'], ['th','Tailandia'] ];
   let aquaSpeciesRegionFilter = 'mx';
@@ -19368,6 +19569,91 @@
     if(searchEl) searchEl.addEventListener('input', () => { aquaSpeciesSearchQuery = searchEl.value; renderAquaSpeciesList(); });
   });
 
+  // Species-catalog growth curve chart. Two modes, matching what's
+  // actually knowable per species:
+  // - 'real': plotted from points anchored to numbers reported in the
+  //   growth text (rate/harvest weight/etc from the cited source) —
+  //   solid line, actual units on the axes.
+  // - 'model': no specific quantitative data exists for this species, so
+  //   points are a normalized generic sigmoid (% of cycle vs % of final
+  //   weight) — dashed line, no fabricated absolute numbers.
+  // Visual language intentionally matches renderAquaWeightChart/
+  // renderAquaMortalityChart in Stats, so it reads as the same app.
+  function aquaSpeciesGrowthChartSvg(gc){
+    if(!gc || !gc.points || !gc.points.length) return '';
+    const isReal = gc.type === 'real';
+    const pts = gc.points;
+    const chartW = 300, chartH = 140, padL = 34, padR = 10, padT = 12, padB = 22;
+    const plotW = chartW - padL - padR, plotH = chartH - padT - padB;
+    const maxX = isReal ? (gc.cycleDays || pts[pts.length-1].d) : 100;
+    const maxY = isReal ? Math.max(...pts.map(p => p.v)) * 1.15 : 100;
+    const linePts = pts.map(p => {
+      const x = padL + (p.d / maxX) * plotW;
+      const y = padT + plotH - (p.v / maxY) * plotH;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    const dots = pts.map((p,i) => {
+      const [x,y] = linePts[i].split(',');
+      return '<circle cx="'+x+'" cy="'+y+'" r="2.5" fill="'+(isReal ? 'var(--blue,#1c8f6a)' : 'var(--ink-soft)')+'"/>';
+    }).join('');
+    const baseline = padT + plotH;
+    const yTopLabel = isReal ? (Math.round(Math.max(...pts.map(p=>p.v))) + (gc.unit||'g')) : '100%';
+    const yBottomLabel = isReal ? ('0' + (gc.unit||'g')) : '0%';
+    const xStartLabel = isReal ? (t('aqua_species_growth_axis_day') + ' 0') : ('0% ' + t('aqua_species_growth_axis_pct_cycle'));
+    const xEndLabel = isReal ? (t('aqua_species_growth_axis_day') + ' ' + maxX) : ('100% ' + t('aqua_species_growth_axis_pct_cycle'));
+    const strokeAttr = isReal ? 'stroke="var(--blue,#1c8f6a)" stroke-width="2"' : 'stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="4 3"';
+    const caption = t(isReal ? 'aqua_species_growth_chart_real' : 'aqua_species_growth_chart_model');
+    const svg = '<svg width="100%" height="'+chartH+'" viewBox="0 0 '+chartW+' '+chartH+'">'
+      + '<line x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+baseline+'" stroke="var(--line,#d9e0e0)"/>'
+      + '<line x1="'+padL+'" y1="'+baseline+'" x2="'+chartW+'" y2="'+baseline+'" stroke="var(--line,#d9e0e0)"/>'
+      + '<text x="2" y="'+(padT+4)+'" font-size="8" fill="var(--ink-soft)">'+yTopLabel+'</text>'
+      + '<text x="2" y="'+baseline+'" font-size="8" fill="var(--ink-soft)">'+yBottomLabel+'</text>'
+      + '<polyline points="'+linePts.join(' ')+'" fill="none" '+strokeAttr+'/>'
+      + dots
+      + '<text x="'+padL+'" y="'+(chartH-6)+'" font-size="8" fill="var(--ink-soft)">'+xStartLabel+'</text>'
+      + '<text x="'+(chartW-70)+'" y="'+(chartH-6)+'" font-size="8" fill="var(--ink-soft)">'+xEndLabel+'</text>'
+      + '</svg>';
+    return '<div class="aqua-species-stat-card" style="margin-bottom:16px;">'
+      + svg
+      + '<div style="font-size:10.5px;color:var(--ink-soft);font-style:italic;margin-top:2px;text-align:center;">'+aquaChartEscape(caption)+'</div>'
+    + '</div>';
+  }
+
+  // Species-catalog disease cards. Structured per-disease data (agent, type,
+  // condensed symptoms, treatment) sourced from FAO Cultured Aquatic Species —
+  // researched and condensed to Spanish by Israel. Falls back to the old
+  // free-text summary for species where no structured FAO data was found,
+  // and flags that gap honestly (diseaseNoFaoData) rather than looking like
+  // an oversight.
+  function aquaSpeciesDiseaseCardHtml(d){
+    return '<div class="aqua-species-stat-card" style="margin-bottom:8px;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;">'
+        + '<div style="font-size:13px;font-weight:600;color:var(--ink);">' + aquaChartEscape(d.name) + '</div>'
+        + '<div style="font-size:10.5px;color:var(--ink-soft);white-space:nowrap;">' + aquaChartEscape(d.type) + '</div>'
+      + '</div>'
+      + '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-top:1px;">' + aquaChartEscape(d.agent) + '</div>'
+      + '<div style="font-size:12.5px;color:var(--ink);margin-top:6px;line-height:1.4;"><strong>' + t('aqua_species_disease_syndrome') + ':</strong> ' + aquaChartEscape(d.syndrome) + '</div>'
+      + '<div style="font-size:12.5px;color:var(--ink);margin-top:4px;line-height:1.4;"><strong>' + t('aqua_species_disease_treatment') + ':</strong> ' + aquaChartEscape(d.treatment) + '</div>'
+    + '</div>';
+  }
+
+  function aquaSpeciesDiseaseSectionHtml(s){
+    const hasDetail = s.diseaseDetail && s.diseaseDetail.length;
+    const hasText = s.diseases && s.diseases !== '—';
+    if(!hasDetail && !hasText) return '';
+    let inner = '';
+    if(hasDetail){
+      inner += s.diseaseDetail.map(aquaSpeciesDiseaseCardHtml).join('');
+    } else {
+      inner += '<div style="font-size:13px;color:var(--ink);line-height:1.5;margin-bottom:6px;">' + aquaChartEscape(s.diseases) + '</div>';
+    }
+    if(s.diseaseNoFaoData){
+      inner += '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:4px;">' + t('aqua_species_disease_no_fao_data') + '</div>';
+    }
+    inner += '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:16px;">' + t('aqua_species_disease_disclaimer') + '</div>';
+    return '<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_diseases_label') + '</div>' + inner;
+  }
+
   function renderAquaSpeciesDetail(){
     const nameEl = document.getElementById('aquaSpeciesDetailName');
     const sciEl = document.getElementById('aquaSpeciesDetailScientific');
@@ -19390,9 +19676,9 @@
       + row('aqua_species_density', s.density) + row('aqua_species_feeding', s.feeding) + row('aqua_species_cycle', s.cycle)
       + '</div>'
       + '<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_growth_label') + '</div>'
+      + aquaSpeciesGrowthChartSvg(s.growthCurve)
       + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(s.growth) + '</div>'
-      + (s.diseases && s.diseases !== '—' ? ('<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_diseases_label') + '</div>'
-        + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(s.diseases) + '</div>') : '')
+      + aquaSpeciesDiseaseSectionHtml(s)
       + '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;">' + t('aqua_species_source_label') + ': ' + aquaChartEscape(s.source) + '</div>';
   }
 
