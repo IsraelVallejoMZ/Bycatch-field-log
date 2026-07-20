@@ -1912,6 +1912,8 @@
     display:flex; flex-direction:column; gap:14px;
     background: linear-gradient(135deg, #0a5c8c 0%, #06384f 100%);
     border:none; position:relative;
+    padding-bottom: 46px; /* reserves room for the chevron pinned below,
+      so it never overlaps text and never needs to sit in the flex flow */
   }
   .mode-card-num{
     position:absolute; right:14px; top:2px; font-family:var(--display); font-weight:700;
@@ -1923,7 +1925,15 @@
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
   .segment-card .mode-card-icon-box svg{ width:26px; height:26px; }
-  .segment-card .mode-card-chevron-row{ display:flex; justify-content:flex-end; position:relative; z-index:1; }
+  /* Pinned to the card's bottom-right corner — position:absolute relative
+     to .segment-card (which is position:relative) — instead of flowing
+     after mode-card-row1. Before this fix the chevron's vertical position
+     depended on how tall the title/subtitle text above it happened to be,
+     so it drifted to a different height on every card whose copy changed
+     length, and sank further whenever a card's text grew. Now it's fixed
+     at the same 22px/22px offset (matching the card's own padding) on
+     every card, always, regardless of text length. */
+  .segment-card .mode-card-chevron-row{ position:absolute; right:22px; bottom:22px; z-index:1; }
   .segment-card .mode-card-chevron{ width:20px; height:20px; transform:rotate(-90deg); }
   /* nth-child counts ALL siblings of .mode-select-wrap, and
      .mode-select-head-row is sibling #1 — so the four mode cards are
@@ -3182,6 +3192,7 @@
     <button type="button" data-go="aqua-cycle" data-i18n="aqua_subnav_cycle">Cycle</button>
   </div>
   <main>
+    <div id="aquaWaterSpeciesLegend" style="display:none;font-size:11px;color:var(--ink-soft);margin-bottom:10px;"></div>
     <div class="aqua-log-row" id="aquaWaterLogRow"></div>
     <div id="aquaWaterToxicityBanner"></div>
     <div id="aquaWaterParamCards"></div>
@@ -3239,9 +3250,11 @@
   <main>
     <div id="aquaCycleNoActive">
       <div class="aqua-field-label" style="margin-bottom:12px; font-size:15px; text-transform:none; letter-spacing:0; font-family:var(--display); color:var(--ink); font-weight:700;" data-i18n="aqua_cycle_start">Start a new cycle</div>
-      <div class="aqua-field-group">
+      <div class="aqua-field-group" style="position:relative;">
         <span class="aqua-field-label" data-i18n="aqua_cycle_species_label">Species</span>
-        <input type="text" class="aqua-input" id="aquaCycleSpecies" placeholder="e.g. Nile tilapia">
+        <input type="text" class="aqua-input" id="aquaCycleSpecies" placeholder="e.g. Nile tilapia" autocomplete="off">
+        <div id="aquaCycleSpeciesResults" style="display:none;position:absolute;left:0;right:0;z-index:5;background:var(--card-bg,#fff);border:0.5px solid var(--line,#ddd);border-radius:var(--radius);margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 14px rgba(0,0,0,0.08);"></div>
+        <div id="aquaCycleSpeciesMatchNote" style="display:none;font-size:11px;color:var(--ink-soft);margin-top:4px;"></div>
       </div>
       <div class="aqua-field-group">
         <span class="aqua-field-label" data-i18n="aqua_cycle_seeded_label">Seeded quantity</span>
@@ -3251,6 +3264,23 @@
         <span class="aqua-field-label" data-i18n="aqua_cycle_goal_label">Harvest goal (kg, optional)</span>
         <input type="number" class="aqua-input" id="aquaCycleGoal" min="0" step="1" placeholder="3000">
       </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_currency_label">Currency</span>
+        <select class="aqua-input" id="aquaCycleCurrency">
+          <option value="USD">USD</option>
+          <option value="MXN">MXN</option>
+          <option value="EUR">EUR</option>
+          <option value="THB">THB</option>
+        </select>
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_seedcost_label">Price per organism (optional)</span>
+        <input type="number" class="aqua-input" id="aquaCycleSeedCost" min="0" step="0.01" placeholder="0.05">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_cycle_saleprice_label">Expected sale price per kg (optional)</span>
+        <input type="number" class="aqua-input" id="aquaCycleSalePrice" min="0" step="0.01" placeholder="4.50">
+      </div>
       <button type="button" class="aqua-add-submit" id="aquaCycleStartBtn">
         <span data-i18n="aqua_cycle_start_btn">Start cycle</span>
       </button>
@@ -3259,6 +3289,7 @@
     <div id="aquaCycleActive" style="display:none;">
       <div class="aqua-cycle-summary">
         <div class="aqua-cycle-summary-title" id="aquaCycleSpeciesDay"></div>
+        <div id="aquaCycleSpeciesLegend" style="display:none;font-size:11px;color:var(--ink-soft);margin-top:2px;"></div>
       </div>
       <div class="aqua-kpi-row" style="padding:12px 0;">
         <div class="aqua-kpi-card"><div class="aqua-kpi-label" data-i18n="aqua_cycle_seeded_short">Seeded</div><div class="aqua-kpi-val" id="aquaCycleStatSeeded">—</div></div>
@@ -3280,11 +3311,135 @@
         <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_feeding">Log feeding</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
       </button>
+      <button type="button" class="aqua-action-row" id="aquaCycleCostsBtn" data-go="aqua-costs">
+        <div class="aqua-action-row-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.3c0 3-6 1.7-6 4.7 0 1.2 1.3 2.3 3 2.3s3-1.1 3-2.5"/></svg></div>
+        <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_costs">Cycle costs</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button type="button" class="aqua-action-row" id="aquaCycleTreatmentBtn" data-go="aqua-treatment">
+        <div class="aqua-action-row-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 0 1 7-7l.5.5.5-.5a4.95 4.95 0 0 1 7 7l-3.5 3.5M14 14l3 3"/></svg></div>
+        <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_treatment">Treatment log</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </div>
   </main>
 </section>
 
-<!-- ================= AQUACULTURE: BIOMETRY (per cycle) ================= -->
+<!-- ================= AQUACULTURE: TREATMENT LOG (per active cycle) ================= -->
+<section class="screen" id="screen-aqua-treatment">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_treatment_h1">Treatment log</div>
+        <div class="aqua-header-band-sub" id="aquaTreatmentUnitName">—</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div id="aquaTreatmentNoActive" style="display:none;">
+      <div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;" data-i18n="aqua_treatment_no_cycle">Start a cycle first to log treatments.</div>
+    </div>
+    <div id="aquaTreatmentBody">
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_treatment_disease_label">Disease / issue treated</span>
+      <input type="text" class="aqua-input" id="aquaTreatDisease" placeholder="">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_treatment_medication_label">Medication / treatment</span>
+      <input type="text" class="aqua-input" id="aquaTreatMedication" placeholder="">
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_treatment_dose_label">Dose / notes (optional)</span>
+      <textarea class="aqua-input" id="aquaTreatDose" style="min-height:60px;"></textarea>
+    </div>
+    <div class="aqua-field-group">
+      <span class="aqua-field-label" data-i18n="aqua_treatment_cost_label">Cost (optional)</span>
+      <input type="number" class="aqua-input" id="aquaTreatCost" min="0" step="0.01" placeholder="0.00">
+    </div>
+    <button type="button" class="aqua-add-submit" id="aquaTreatSaveBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="aqua_treatment_save_btn">Save treatment</span>
+    </button>
+    <div class="hist-meta-row" style="margin-top:20px;">
+      <span class="insight-card-label" style="margin:0;" data-i18n="aqua_treatment_history_label">Recent treatments</span>
+    </div>
+    <div id="aquaTreatmentHistory" style="margin-top:8px;"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= AQUACULTURE: COSTS (per active cycle) ================= -->
+<section class="screen" id="screen-aqua-costs">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-cycle" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_costs_h1">Cycle costs</div>
+        <div class="aqua-header-band-sub" id="aquaCostsUnitName">—</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div id="aquaCostsNoActive" style="display:none;">
+      <div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;" data-i18n="aqua_costs_no_cycle">Start a cycle first to configure its costs.</div>
+    </div>
+    <div id="aquaCostsBody" style="display:none;">
+
+      <div class="insight-card-label" style="margin:0 0 8px;" data-i18n="aqua_costs_labor_title">Labor</div>
+      <div class="aqua-cost-current" id="aquaCostLaborCurrent" style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;"></div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" id="aquaCostLaborLabel" data-i18n="aqua_costs_labor_new_rate">New monthly rate</span>
+        <input type="number" class="aqua-input" id="aquaCostLaborInput" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <button type="button" class="aqua-add-submit" id="aquaCostLaborBtn" style="margin-bottom:24px;">
+        <span data-i18n="aqua_costs_update_rate">Update rate</span>
+      </button>
+
+      <div class="insight-card-label" style="margin:0 0 8px;" id="aquaCostElecTitle" data-i18n="aqua_costs_elec_title">Electricity</div>
+      <div class="aqua-cost-current" id="aquaCostElecCurrent" style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;"></div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_costs_elec_new_rate">New monthly rate</span>
+        <input type="number" class="aqua-input" id="aquaCostElecInput" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <button type="button" class="aqua-add-submit" id="aquaCostElecBtn" style="margin-bottom:24px;">
+        <span data-i18n="aqua_costs_update_rate">Update rate</span>
+      </button>
+      <button type="button" id="aquaCostElecShowBtn" style="display:none;background:none;border:none;color:var(--ink-soft);font-size:12px;text-decoration:underline;margin:-16px 0 24px;padding:0;" data-i18n="aqua_costs_elec_show_manual">+ Add electricity cost anyway</button>
+
+      <div class="insight-card-label" style="margin:0 0 8px;" data-i18n="aqua_costs_extra_title">One-off expense</div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_costs_extra_type">Type</span>
+        <select class="aqua-input" id="aquaCostExtraType">
+          <option value="mano_obra" data-i18n="aqua_costs_type_labor">Labor</option>
+          <option value="electricidad" data-i18n="aqua_costs_type_elec">Electricity</option>
+          <option value="medicamento" data-i18n="aqua_costs_type_med">Medicine</option>
+          <option value="otro" data-i18n="aqua_costs_type_other">Other</option>
+        </select>
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_costs_extra_amount">Amount</span>
+        <input type="number" class="aqua-input" id="aquaCostExtraAmount" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="aqua-field-group">
+        <span class="aqua-field-label" data-i18n="aqua_costs_extra_note">Note (optional)</span>
+        <input type="text" class="aqua-input" id="aquaCostExtraNote" placeholder="">
+      </div>
+      <button type="button" class="aqua-add-submit" id="aquaCostExtraBtn">
+        <span data-i18n="aqua_costs_extra_add">Add expense</span>
+      </button>
+
+      <div class="hist-meta-row" style="margin-top:24px;">
+        <span class="insight-card-label" style="margin:0;" data-i18n="aqua_costs_history_label">Recent cost entries</span>
+      </div>
+      <div id="aquaCostsHistory" style="margin-top:8px;"></div>
+    </div>
+  </main>
+</section>
 <section class="screen" id="screen-aqua-biometry">
   <div class="aqua-header-band">
     <div class="aqua-header-band-row">
@@ -3607,12 +3762,63 @@
             <span data-i18n="aqua_reports_download">Download</span>
           </button>
         </div>
+        <div class="aqua-export-btn" data-go="aqua-financial" style="cursor:pointer;">
+          <div>
+            <div class="aqua-export-btn-title" data-i18n="aqua_financial_title">Financial report</div>
+            <div class="aqua-export-btn-sub" data-i18n="aqua_financial_sub">Costs, break-even · PDF</div>
+          </div>
+          <button type="button" class="aqua-export-btn-cta" id="aquaReportsFinancialBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
+            <span data-i18n="aqua_financial_open">Open</span>
+          </button>
+        </div>
       </div>
 
       <div class="hist-meta-row" style="margin-top:12px;">
         <span class="insight-card-label" style="margin:0;" data-i18n="aqua_reports_traceability_label">Traceability</span>
       </div>
       <div id="aquaReportsQrArea" class="card" style="margin-top:8px;"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= AQUACULTURE: FINANCIAL REPORT (Fase 5) ================= -->
+<section class="screen" id="screen-aqua-financial">
+  <div class="aqua-header-band">
+    <div class="aqua-header-band-row">
+      <button type="button" class="aqua-header-band-back" data-go="aqua-reports" aria-label="Back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div>
+        <div class="aqua-header-band-title" data-i18n="aqua_financial_title">Financial report</div>
+        <div class="aqua-header-band-sub" id="aquaFinancialScopeSub">—</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div class="aqua-rocker" style="margin-bottom:16px;">
+      <button type="button" class="active" id="aquaFinScopeUnitBtn" data-fin-scope="unit"><span class="dot"></span><span data-i18n="aqua_financial_scope_unit">This pond</span></button>
+      <button type="button" id="aquaFinScopeAllBtn" data-fin-scope="all"><span class="dot"></span><span data-i18n="aqua_financial_scope_all">All ponds</span></button>
+    </div>
+
+    <div id="aquaFinancialEmpty" style="display:none;">
+      <div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;" data-i18n="aqua_financial_empty">No cost data yet for this scope.</div>
+    </div>
+
+    <div id="aquaFinancialBody" style="display:none;">
+      <div id="aquaFinCurrencyGroups"></div>
+
+      <div class="hist-meta-row" style="margin-top:20px;">
+        <span class="insight-card-label" style="margin:0;" data-i18n="aqua_financial_by_cycle_label">By cycle</span>
+      </div>
+      <div id="aquaFinCycleTable" style="margin-top:8px;"></div>
+
+      <div style="margin-top:8px;font-size:10.5px;color:var(--ink-soft);" data-i18n="aqua_financial_disclaimer">Self-reported operational data — not an audited financial statement.</div>
+
+      <button type="button" class="aqua-add-submit" id="aquaFinExportBtn" style="margin-top:20px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>
+        <span data-i18n="aqua_financial_export">Export PDF</span>
+      </button>
     </div>
   </main>
 </section>
@@ -5599,8 +5805,32 @@
       aqua_water_just_now: 'just now', aqua_water_min_ago: 'min ago', aqua_water_hr_ago: 'h ago', aqua_water_day_ago: 'd ago',
       aqua_subnav_water: 'Water', aqua_subnav_cycle: 'Cycle', aqua_cycle_h1: 'Cycle', aqua_cycle_start: 'Start a new cycle', aqua_cycle_species_label: 'Species',
       aqua_cycle_seeded_label: 'Seeded quantity', aqua_cycle_goal_label: 'Harvest goal (kg, optional)', aqua_cycle_start_btn: 'Start cycle', aqua_cycle_day: 'day',
+      aqua_cycle_seedcost_label: 'Price per organism (optional)', aqua_cycle_currency_label: 'Currency', aqua_cycle_saleprice_label: 'Expected sale price per kg (optional)',
       aqua_cycle_seeded_short: 'Seeded', aqua_cycle_mortality_short: 'Mortality', aqua_cycle_avgweight_short: 'Avg. weight',
-      aqua_cycle_log_biometry: 'Log biometry', aqua_cycle_log_mortality: 'Log mortality', aqua_cycle_log_feeding: 'Log feeding',
+      aqua_cycle_log_biometry: 'Log biometry', aqua_cycle_log_mortality: 'Log mortality', aqua_cycle_log_feeding: 'Log feeding', aqua_cycle_log_costs: 'Cycle costs',
+      aqua_costs_h1: 'Cycle costs', aqua_costs_no_cycle: 'Start a cycle first to configure its costs.',
+      aqua_costs_labor_title: 'Labor', aqua_costs_labor_new_rate: 'New monthly rate', aqua_costs_update_rate: 'Update rate',
+      aqua_costs_elec_title: 'Electricity', aqua_costs_elec_new_rate: 'New monthly rate', aqua_costs_elec_show_manual: '+ Add electricity cost anyway',
+      aqua_costs_extra_title: 'One-off expense', aqua_costs_extra_type: 'Type', aqua_costs_extra_amount: 'Amount', aqua_costs_extra_note: 'Note (optional)', aqua_costs_extra_add: 'Add expense',
+      aqua_costs_type_labor: 'Labor', aqua_costs_type_elec: 'Electricity', aqua_costs_type_med: 'Medicine', aqua_costs_type_other: 'Other', aqua_costs_type_seed: 'Seed', aqua_costs_type_feed: 'Feed',
+      aqua_costs_history_label: 'Recent cost entries', aqua_costs_no_history: 'No cost entries yet.',
+      aqua_costs_no_rate_set: 'No rate set — $0/month.', aqua_costs_current_rate: 'Current rate:', aqua_costs_per_month: '/month, since',
+      aqua_costs_freq_monthly: 'monthly', aqua_costs_freq_once: 'one-off',
+      aqua_cycle_log_treatment: 'Treatment log',
+      aqua_treatment_h1: 'Treatment log', aqua_treatment_disease_label: 'Disease / issue treated', aqua_treatment_medication_label: 'Medication / treatment',
+      aqua_treatment_dose_label: 'Dose / notes (optional)', aqua_treatment_cost_label: 'Cost (optional)', aqua_treatment_save_btn: 'Save treatment',
+      aqua_treatment_history_label: 'Recent treatments', aqua_treatment_empty: 'No treatments logged yet.', aqua_treatment_saved: 'Treatment saved', aqua_treatment_no_cycle: 'Start a cycle first to log treatments.',
+      aqua_species_alerts_tuned: 'Water alerts tuned to {species}', aqua_species_alerts_generic: 'Generic water alerts — species not in catalog',
+      aqua_financial_title: 'Financial report', aqua_financial_sub: 'Costs, break-even · PDF', aqua_financial_open: 'Open',
+      aqua_financial_scope_unit: 'This pond', aqua_financial_scope_all: 'All ponds',
+      aqua_financial_empty: 'No cost data yet for this scope.',
+      aqua_financial_by_cycle_label: 'By cycle', aqua_financial_disclaimer: 'Self-reported operational data — not an audited financial statement.', aqua_financial_export: 'Export PDF',
+      aqua_financial_kpi_total: 'Total cost', aqua_financial_kpi_costkg: 'Cost / kg', aqua_financial_breakdown_label: 'Breakdown',
+      aqua_financial_breakeven_title: 'Break-even', aqua_financial_breakeven_value: 'Estimated value today', aqua_financial_breakeven_cost: 'Accumulated cost',
+      aqua_financial_breakeven_ahead: "You're ahead by", aqua_financial_breakeven_behind: "You're behind by",
+      aqua_financial_col_cycle: 'Cycle', aqua_financial_col_cost: 'Cost', aqua_financial_col_costkg: 'Cost/kg', aqua_financial_col_status: 'Status',
+      aqua_financial_status_active: 'Active', aqua_financial_mixed_currency: 'Multiple currencies in this scope — shown separately, not blended.',
+      aqua_cycle_species_matched: '✓ Matched to catalog — tuned water alerts', aqua_cycle_species_other: 'Other (not in catalog)',
       aqua_coming_soon: 'Coming in the next update',
       aqua_biometry_h1: 'New biometry', aqua_biometry_sample_label: 'Sample size', aqua_biometry_avg_label: 'Average weight (g)', aqua_biometry_minmax_label: 'Min / max weight (g, optional)',
       aqua_biometry_save_btn: 'Save biometry', aqua_biometry_history_label: 'Recent samples', aqua_biometry_empty: 'No biometry samples logged yet.', aqua_biometry_saved: 'Biometry saved',
@@ -6011,8 +6241,32 @@
       aqua_water_just_now: 'justo ahora', aqua_water_min_ago: 'min', aqua_water_hr_ago: 'h', aqua_water_day_ago: 'd',
       aqua_subnav_water: 'Agua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Iniciar nuevo ciclo', aqua_cycle_species_label: 'Especie',
       aqua_cycle_seeded_label: 'Cantidad sembrada', aqua_cycle_goal_label: 'Meta de cosecha (kg, opcional)', aqua_cycle_start_btn: 'Iniciar ciclo', aqua_cycle_day: 'día',
+      aqua_cycle_seedcost_label: 'Precio por organismo (opcional)', aqua_cycle_currency_label: 'Moneda', aqua_cycle_saleprice_label: 'Precio de venta esperado por kg (opcional)',
       aqua_cycle_seeded_short: 'Sembrados', aqua_cycle_mortality_short: 'Mortalidad', aqua_cycle_avgweight_short: 'Peso prom.',
-      aqua_cycle_log_biometry: 'Registrar biometría', aqua_cycle_log_mortality: 'Registrar mortalidad', aqua_cycle_log_feeding: 'Registrar alimentación',
+      aqua_cycle_log_biometry: 'Registrar biometría', aqua_cycle_log_mortality: 'Registrar mortalidad', aqua_cycle_log_feeding: 'Registrar alimentación', aqua_cycle_log_costs: 'Costos del ciclo',
+      aqua_costs_h1: 'Costos del ciclo', aqua_costs_no_cycle: 'Primero inicia un ciclo para configurar sus costos.',
+      aqua_costs_labor_title: 'Mano de obra', aqua_costs_labor_new_rate: 'Nueva tasa mensual', aqua_costs_update_rate: 'Actualizar tasa',
+      aqua_costs_elec_title: 'Electricidad', aqua_costs_elec_new_rate: 'Nueva tasa mensual', aqua_costs_elec_show_manual: '+ Agregar costo de electricidad de todos modos',
+      aqua_costs_extra_title: 'Gasto extra', aqua_costs_extra_type: 'Tipo', aqua_costs_extra_amount: 'Monto', aqua_costs_extra_note: 'Nota (opcional)', aqua_costs_extra_add: 'Agregar gasto',
+      aqua_costs_type_labor: 'Mano de obra', aqua_costs_type_elec: 'Electricidad', aqua_costs_type_med: 'Medicamento', aqua_costs_type_other: 'Otro', aqua_costs_type_seed: 'Semilla', aqua_costs_type_feed: 'Alimento',
+      aqua_costs_history_label: 'Movimientos recientes de costos', aqua_costs_no_history: 'Aún no hay costos registrados.',
+      aqua_costs_no_rate_set: 'Sin tasa configurada — $0/mes.', aqua_costs_current_rate: 'Tasa actual:', aqua_costs_per_month: '/mes, desde',
+      aqua_costs_freq_monthly: 'mensual', aqua_costs_freq_once: 'único',
+      aqua_cycle_log_treatment: 'Bitácora de tratamiento',
+      aqua_treatment_h1: 'Bitácora de tratamiento', aqua_treatment_disease_label: 'Enfermedad / problema tratado', aqua_treatment_medication_label: 'Medicamento / tratamiento',
+      aqua_treatment_dose_label: 'Dosis / notas (opcional)', aqua_treatment_cost_label: 'Costo (opcional)', aqua_treatment_save_btn: 'Guardar tratamiento',
+      aqua_treatment_history_label: 'Tratamientos recientes', aqua_treatment_empty: 'Aún no hay tratamientos registrados.', aqua_treatment_saved: 'Tratamiento guardado', aqua_treatment_no_cycle: 'Primero inicia un ciclo para registrar tratamientos.',
+      aqua_species_alerts_tuned: 'Alertas de agua ajustadas a {species}', aqua_species_alerts_generic: 'Alertas de agua genéricas — especie no catalogada',
+      aqua_financial_title: 'Reporte financiero', aqua_financial_sub: 'Costos, punto de equilibrio · PDF', aqua_financial_open: 'Abrir',
+      aqua_financial_scope_unit: 'Este estanque', aqua_financial_scope_all: 'Todas las unidades',
+      aqua_financial_empty: 'Aún no hay datos de costos para este alcance.',
+      aqua_financial_by_cycle_label: 'Por ciclo', aqua_financial_disclaimer: 'Datos operativos autorreportados — no es un estado financiero auditado.', aqua_financial_export: 'Exportar PDF',
+      aqua_financial_kpi_total: 'Costo total', aqua_financial_kpi_costkg: 'Costo / kg', aqua_financial_breakdown_label: 'Desglose',
+      aqua_financial_breakeven_title: 'Punto de equilibrio', aqua_financial_breakeven_value: 'Valor estimado hoy', aqua_financial_breakeven_cost: 'Costo acumulado',
+      aqua_financial_breakeven_ahead: 'Vas arriba por', aqua_financial_breakeven_behind: 'Vas abajo por',
+      aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Estado',
+      aqua_financial_status_active: 'Activo', aqua_financial_mixed_currency: 'Hay varias monedas en este alcance — se muestran por separado, no mezcladas.',
+      aqua_cycle_species_matched: '✓ Conectada al catálogo — alertas de agua ajustadas', aqua_cycle_species_other: 'Otra (no está en el catálogo)',
       aqua_coming_soon: 'Disponible en la próxima actualización',
       aqua_biometry_h1: 'Nueva biometría', aqua_biometry_sample_label: 'Tamaño de muestra', aqua_biometry_avg_label: 'Peso promedio (g)', aqua_biometry_minmax_label: 'Peso mín. / máx. (g, opcional)',
       aqua_biometry_save_btn: 'Guardar biometría', aqua_biometry_history_label: 'Muestras recientes', aqua_biometry_empty: 'Aún no hay biometrías registradas.', aqua_biometry_saved: 'Biometría guardada',
@@ -6423,8 +6677,32 @@
       aqua_water_just_now: 'adesso', aqua_water_min_ago: 'min fa', aqua_water_hr_ago: 'h fa', aqua_water_day_ago: 'g fa',
       aqua_subnav_water: 'Acqua', aqua_subnav_cycle: 'Ciclo', aqua_cycle_h1: 'Ciclo', aqua_cycle_start: 'Avvia un nuovo ciclo', aqua_cycle_species_label: 'Specie',
       aqua_cycle_seeded_label: 'Quantità seminata', aqua_cycle_goal_label: 'Obiettivo di raccolta (kg, opzionale)', aqua_cycle_start_btn: 'Avvia ciclo', aqua_cycle_day: 'giorno',
+      aqua_cycle_seedcost_label: 'Prezzo per organismo (opzionale)', aqua_cycle_currency_label: 'Valuta', aqua_cycle_saleprice_label: 'Prezzo di vendita previsto per kg (opzionale)',
       aqua_cycle_seeded_short: 'Seminati', aqua_cycle_mortality_short: 'Mortalità', aqua_cycle_avgweight_short: 'Peso medio',
-      aqua_cycle_log_biometry: 'Registra biometria', aqua_cycle_log_mortality: 'Registra mortalità', aqua_cycle_log_feeding: 'Registra alimentazione',
+      aqua_cycle_log_biometry: 'Registra biometria', aqua_cycle_log_mortality: 'Registra mortalità', aqua_cycle_log_feeding: 'Registra alimentazione', aqua_cycle_log_costs: 'Costi del ciclo',
+      aqua_costs_h1: 'Costi del ciclo', aqua_costs_no_cycle: 'Avvia prima un ciclo per configurarne i costi.',
+      aqua_costs_labor_title: 'Manodopera', aqua_costs_labor_new_rate: 'Nuova tariffa mensile', aqua_costs_update_rate: 'Aggiorna tariffa',
+      aqua_costs_elec_title: 'Elettricità', aqua_costs_elec_new_rate: 'Nuova tariffa mensile', aqua_costs_elec_show_manual: '+ Aggiungi comunque il costo elettrico',
+      aqua_costs_extra_title: 'Spesa straordinaria', aqua_costs_extra_type: 'Tipo', aqua_costs_extra_amount: 'Importo', aqua_costs_extra_note: 'Nota (opzionale)', aqua_costs_extra_add: 'Aggiungi spesa',
+      aqua_costs_type_labor: 'Manodopera', aqua_costs_type_elec: 'Elettricità', aqua_costs_type_med: 'Medicinale', aqua_costs_type_other: 'Altro', aqua_costs_type_seed: 'Semi', aqua_costs_type_feed: 'Mangime',
+      aqua_costs_history_label: 'Movimenti di costo recenti', aqua_costs_no_history: 'Nessun costo registrato ancora.',
+      aqua_costs_no_rate_set: 'Nessuna tariffa impostata — $0/mese.', aqua_costs_current_rate: 'Tariffa attuale:', aqua_costs_per_month: '/mese, dal',
+      aqua_costs_freq_monthly: 'mensile', aqua_costs_freq_once: 'una tantum',
+      aqua_cycle_log_treatment: 'Registro trattamenti',
+      aqua_treatment_h1: 'Registro trattamenti', aqua_treatment_disease_label: 'Malattia / problema trattato', aqua_treatment_medication_label: 'Farmaco / trattamento',
+      aqua_treatment_dose_label: 'Dose / note (opzionale)', aqua_treatment_cost_label: 'Costo (opzionale)', aqua_treatment_save_btn: 'Salva trattamento',
+      aqua_treatment_history_label: 'Trattamenti recenti', aqua_treatment_empty: 'Nessun trattamento registrato ancora.', aqua_treatment_saved: 'Trattamento salvato', aqua_treatment_no_cycle: 'Avvia prima un ciclo per registrare i trattamenti.',
+      aqua_species_alerts_tuned: 'Avvisi acqua calibrati per {species}', aqua_species_alerts_generic: 'Avvisi acqua generici — specie non a catalogo',
+      aqua_financial_title: 'Report finanziario', aqua_financial_sub: 'Costi, pareggio · PDF', aqua_financial_open: 'Apri',
+      aqua_financial_scope_unit: 'Questo stagno', aqua_financial_scope_all: 'Tutti gli stagni',
+      aqua_financial_empty: 'Nessun dato di costo ancora per questo ambito.',
+      aqua_financial_by_cycle_label: 'Per ciclo', aqua_financial_disclaimer: 'Dati operativi autodichiarati — non è un bilancio certificato.', aqua_financial_export: 'Esporta PDF',
+      aqua_financial_kpi_total: 'Costo totale', aqua_financial_kpi_costkg: 'Costo / kg', aqua_financial_breakdown_label: 'Ripartizione',
+      aqua_financial_breakeven_title: 'Punto di pareggio', aqua_financial_breakeven_value: 'Valore stimato oggi', aqua_financial_breakeven_cost: 'Costo accumulato',
+      aqua_financial_breakeven_ahead: 'Sei in vantaggio di', aqua_financial_breakeven_behind: 'Sei in svantaggio di',
+      aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Stato',
+      aqua_financial_status_active: 'Attivo', aqua_financial_mixed_currency: 'Più valute in questo ambito — mostrate separatamente, non unite.',
+      aqua_cycle_species_matched: '✓ Collegata al catalogo — avvisi acqua calibrati', aqua_cycle_species_other: 'Altra (non a catalogo)',
       aqua_coming_soon: 'Disponibile nel prossimo aggiornamento',
       aqua_biometry_h1: 'Nuova biometria', aqua_biometry_sample_label: 'Dimensione campione', aqua_biometry_avg_label: 'Peso medio (g)', aqua_biometry_minmax_label: 'Peso min / max (g, opzionale)',
       aqua_biometry_save_btn: 'Salva biometria', aqua_biometry_history_label: 'Campioni recenti', aqua_biometry_empty: 'Nessun campione biometrico registrato.', aqua_biometry_saved: 'Biometria salvata',
@@ -6814,8 +7092,32 @@
       aqua_water_just_now: 'เมื่อสักครู่', aqua_water_min_ago: 'นาทีที่แล้ว', aqua_water_hr_ago: 'ชม. ที่แล้ว', aqua_water_day_ago: 'วันที่แล้ว',
       aqua_subnav_water: 'น้ำ', aqua_subnav_cycle: 'รอบการผลิต', aqua_cycle_h1: 'รอบการผลิต', aqua_cycle_start: 'เริ่มรอบการผลิตใหม่', aqua_cycle_species_label: 'ชนิดพันธุ์',
       aqua_cycle_seeded_label: 'จำนวนที่ปล่อยเลี้ยง', aqua_cycle_goal_label: 'เป้าหมายการเก็บเกี่ยว (กก., ไม่บังคับ)', aqua_cycle_start_btn: 'เริ่มรอบการผลิต', aqua_cycle_day: 'วันที่',
+      aqua_cycle_seedcost_label: 'ราคาต่อตัว (ไม่บังคับ)', aqua_cycle_currency_label: 'สกุลเงิน', aqua_cycle_saleprice_label: 'ราคาขายที่คาดไว้ต่อกก. (ไม่บังคับ)',
       aqua_cycle_seeded_short: 'ปล่อยเลี้ยง', aqua_cycle_mortality_short: 'อัตราตาย', aqua_cycle_avgweight_short: 'น้ำหนักเฉลี่ย',
-      aqua_cycle_log_biometry: 'บันทึกชีวมาตร', aqua_cycle_log_mortality: 'บันทึกอัตราตาย', aqua_cycle_log_feeding: 'บันทึกการให้อาหาร',
+      aqua_cycle_log_biometry: 'บันทึกชีวมาตร', aqua_cycle_log_mortality: 'บันทึกอัตราตาย', aqua_cycle_log_feeding: 'บันทึกการให้อาหาร', aqua_cycle_log_costs: 'ต้นทุนของรอบการผลิต',
+      aqua_costs_h1: 'ต้นทุนของรอบการผลิต', aqua_costs_no_cycle: 'เริ่มรอบการผลิตก่อนเพื่อกำหนดค่าต้นทุน',
+      aqua_costs_labor_title: 'ค่าแรงงาน', aqua_costs_labor_new_rate: 'อัตรารายเดือนใหม่', aqua_costs_update_rate: 'อัปเดตอัตรา',
+      aqua_costs_elec_title: 'ค่าไฟฟ้า', aqua_costs_elec_new_rate: 'อัตรารายเดือนใหม่', aqua_costs_elec_show_manual: '+ เพิ่มค่าไฟฟ้าอยู่ดี',
+      aqua_costs_extra_title: 'ค่าใช้จ่ายพิเศษ', aqua_costs_extra_type: 'ประเภท', aqua_costs_extra_amount: 'จำนวนเงิน', aqua_costs_extra_note: 'บันทึกย่อ (ไม่บังคับ)', aqua_costs_extra_add: 'เพิ่มค่าใช้จ่าย',
+      aqua_costs_type_labor: 'ค่าแรงงาน', aqua_costs_type_elec: 'ค่าไฟฟ้า', aqua_costs_type_med: 'ยา', aqua_costs_type_other: 'อื่นๆ', aqua_costs_type_seed: 'พันธุ์สัตว์น้ำ', aqua_costs_type_feed: 'อาหาร',
+      aqua_costs_history_label: 'รายการต้นทุนล่าสุด', aqua_costs_no_history: 'ยังไม่มีรายการต้นทุน',
+      aqua_costs_no_rate_set: 'ยังไม่ได้กำหนดอัตรา — $0/เดือน', aqua_costs_current_rate: 'อัตราปัจจุบัน:', aqua_costs_per_month: '/เดือน ตั้งแต่',
+      aqua_costs_freq_monthly: 'รายเดือน', aqua_costs_freq_once: 'ครั้งเดียว',
+      aqua_cycle_log_treatment: 'บันทึกการรักษา',
+      aqua_treatment_h1: 'บันทึกการรักษา', aqua_treatment_disease_label: 'โรค / ปัญหาที่รักษา', aqua_treatment_medication_label: 'ยา / การรักษา',
+      aqua_treatment_dose_label: 'ขนาดยา / บันทึกย่อ (ไม่บังคับ)', aqua_treatment_cost_label: 'ค่าใช้จ่าย (ไม่บังคับ)', aqua_treatment_save_btn: 'บันทึกการรักษา',
+      aqua_treatment_history_label: 'การรักษาล่าสุด', aqua_treatment_empty: 'ยังไม่มีการบันทึกการรักษา', aqua_treatment_saved: 'บันทึกการรักษาแล้ว', aqua_treatment_no_cycle: 'เริ่มรอบการผลิตก่อนเพื่อบันทึกการรักษา',
+      aqua_species_alerts_tuned: 'ปรับการแจ้งเตือนคุณภาพน้ำสำหรับ {species}', aqua_species_alerts_generic: 'การแจ้งเตือนคุณภาพน้ำทั่วไป — ไม่มีชนิดพันธุ์ในแคตตาล็อก',
+      aqua_financial_title: 'รายงานการเงิน', aqua_financial_sub: 'ต้นทุน จุดคุ้มทุน · PDF', aqua_financial_open: 'เปิด',
+      aqua_financial_scope_unit: 'บ่อนี้', aqua_financial_scope_all: 'ทุกบ่อ',
+      aqua_financial_empty: 'ยังไม่มีข้อมูลต้นทุนสำหรับขอบเขตนี้',
+      aqua_financial_by_cycle_label: 'ตามรอบการผลิต', aqua_financial_disclaimer: 'ข้อมูลปฏิบัติการที่รายงานเอง — ไม่ใช่งบการเงินที่ตรวจสอบแล้ว', aqua_financial_export: 'ส่งออก PDF',
+      aqua_financial_kpi_total: 'ต้นทุนรวม', aqua_financial_kpi_costkg: 'ต้นทุน/กก.', aqua_financial_breakdown_label: 'รายละเอียด',
+      aqua_financial_breakeven_title: 'จุดคุ้มทุน', aqua_financial_breakeven_value: 'มูลค่าประเมินวันนี้', aqua_financial_breakeven_cost: 'ต้นทุนสะสม',
+      aqua_financial_breakeven_ahead: 'คุณกำไรอยู่', aqua_financial_breakeven_behind: 'คุณขาดทุนอยู่',
+      aqua_financial_col_cycle: 'รอบการผลิต', aqua_financial_col_cost: 'ต้นทุน', aqua_financial_col_costkg: 'ต้นทุน/กก.', aqua_financial_col_status: 'สถานะ',
+      aqua_financial_status_active: 'กำลังดำเนินการ', aqua_financial_mixed_currency: 'มีหลายสกุลเงินในขอบเขตนี้ — แสดงแยกกัน ไม่รวมกัน',
+      aqua_cycle_species_matched: '✓ เชื่อมกับแคตตาล็อกแล้ว — ปรับการแจ้งเตือนคุณภาพน้ำ', aqua_cycle_species_other: 'อื่นๆ (ไม่มีในแคตตาล็อก)',
       aqua_coming_soon: 'จะมาในอัปเดตถัดไป',
       aqua_biometry_h1: 'บันทึกชีวมาตรใหม่', aqua_biometry_sample_label: 'ขนาดตัวอย่าง', aqua_biometry_avg_label: 'น้ำหนักเฉลี่ย (ก.)', aqua_biometry_minmax_label: 'น้ำหนักต่ำสุด / สูงสุด (ก., ไม่บังคับ)',
       aqua_biometry_save_btn: 'บันทึกชีวมาตร', aqua_biometry_history_label: 'ตัวอย่างล่าสุด', aqua_biometry_empty: 'ยังไม่มีข้อมูลชีวมาตร', aqua_biometry_saved: 'บันทึกชีวมาตรแล้ว',
@@ -12897,6 +13199,14 @@
   }
   document.getElementById('fleetStatsVesselFilter').addEventListener('change', renderFleetStats);
 
+  // Pre-existing bug found while building the Acuaculture financial report
+  // (not introduced by these changes): the Aquaculture module's PDF
+  // exports (GlobalGAP/ASC audit, cycle logbook) call showFleetPdfExport
+  // as a bare identifier, but it's defined in this — a different — IIFE,
+  // so every aqua PDF export has always thrown silently on click. This
+  // export fixes it for all of them, not just the new financial report.
+  window.showFleetPdfExport = showFleetPdfExport;
+
   if(window.fishPulseReapplyIfActive){
     window.fishPulseReapplyIfActive('fleet', () => {
       if(document.body.classList.contains('fleet-role-operations')) renderFleetDashboard();
@@ -15295,6 +15605,9 @@
     if(screen === 'aqua-species-list' && typeof renderAquaSpeciesList === 'function') renderAquaSpeciesList();
     if(screen === 'aqua-species-detail' && typeof renderAquaSpeciesDetail === 'function') renderAquaSpeciesDetail();
     if(screen === 'aqua-reports' && typeof renderAquaReports === 'function') renderAquaReports();
+    if(screen === 'aqua-costs' && typeof renderAquaCosts === 'function') renderAquaCosts();
+    if(screen === 'aqua-treatment' && typeof renderAquaTreatment === 'function') renderAquaTreatment();
+    if(screen === 'aqua-financial' && typeof renderAquaFinancial === 'function') renderAquaFinancial();
     if(screen === 'aqua-units' && typeof renderAquaUnits === 'function') renderAquaUnits();
     if(screen === 'aqua-home' && typeof renderAquaHome === 'function') renderAquaHome();
     if(screen === 'aqua-cages' && typeof renderAquaCagesScreen === 'function') renderAquaCagesScreen();
@@ -15316,6 +15629,14 @@
     document.querySelector('.screen.active').scrollTop = 0;
   }
   window.goTo = goTo;
+  // Pre-existing bug found during Fase 3 audit (not introduced by these
+  // changes): showToast is defined in the *other* IIFE from goTo, so
+  // every bare `showToast(...)` call from the second IIFE (biometry,
+  // mortality, feeding, treatment, etc.) has always thrown silently —
+  // the data still saved correctly, but no confirmation toast ever
+  // showed. Exporting it here (where it's actually defined) fixes it
+  // app-wide.
+  window.showToast = showToast;
   document.querySelectorAll('[data-go]:not([data-go^="fleet-"]):not([data-go^="sport-"])').forEach(el => {
     el.addEventListener('click', () => {
       const target = el.dataset.go;
@@ -18252,8 +18573,70 @@
   // two screens agree with each other. Temp comfort band (18-32°C) reuses
   // the exact range already established by tempAdjustment() in the
   // feeding calculator — one definition of "comfortable", not two.
-  function aquaParamStatus(param, val, combo){
+  // ----- Species-specific alert ranges (Fase 4) -----
+  // Transcribed from AQUA_SPECIES' free-text temp/ph strings into numeric
+  // [lo,hi] pairs so aquaParamStatus() can score against them instead of
+  // the universal generic band. `_ideal` = comfortable/target range
+  // ('ok'). `_limite` = the outer edge before real trouble ('alert'
+  // beyond it, 'watch' between ideal and limite). Where the catalog text
+  // already states an explicit tolerance/estrés/mortalidad sub-range
+  // (e.g. 'tolera 11-42°C'), that's used verbatim and `estimated:false`.
+  // Where the catalog only gives one range with no stated outer limit,
+  // `_limite` is estimated as ideal ±4 (temp) or ±1 (ph) and flagged
+  // `estimated:true` — a margin, not a sourced number; shown with a
+  // discreet indicator in the species detail screen, per design.
+  // Species not listed here (or params left out, e.g. ph for most marine
+  // finfish where the catalog gives no ph figure) fall back to the
+  // generic thresholds in aquaParamStatus(), unchanged.
+  const AQUA_SPECIES_RANGES = {
+    vannamei:       { temp_ideal:[28,32],   temp_limite:[24,36],   temp_estimated:true,  ph_ideal:[7.5,8.5], ph_limite:[6.5,9.5], ph_estimated:true },
+    tilapia:        { temp_ideal:[25,27],   temp_limite:[11,42],   temp_estimated:false, ph_ideal:[6,9],     ph_limite:[5,10],    ph_estimated:true },
+    ostion:         { temp_ideal:[20,28],   temp_limite:[16,32],   temp_estimated:true },
+    carpa:          { temp_ideal:[20,28],   temp_limite:[16,32],   temp_estimated:true,  ph_ideal:[6.5,9],   ph_limite:[5.5,10],  ph_estimated:true },
+    lobina:         { temp_ideal:[20,28],   temp_limite:[16,32],   temp_estimated:true,  ph_ideal:[6.5,9],   ph_limite:[5.5,10],  ph_estimated:true },
+    bagre:          { temp_ideal:[27,31],   temp_limite:[23,35],   temp_estimated:true,  ph_ideal:[6.5,9],   ph_limite:[5.5,10],  ph_estimated:true },
+    trucha:         { temp_ideal:[15,18],   temp_limite:[11,28],   temp_estimated:true,  ph_ideal:[6.5,8],   ph_limite:[5.5,9],   ph_estimated:true },
+    crawfish:       { temp_ideal:[19,25],   temp_limite:[15,29],   temp_estimated:true,  ph_ideal:[7.5,8.0], ph_limite:[6.5,9],   ph_estimated:true },
+    almeja:         { temp_ideal:[18,25],   temp_limite:[10,30],   temp_estimated:false },
+    mejillon_azul:  { temp_ideal:[8.8,17.8],temp_limite:[4.8,21.8],temp_estimated:true },
+    salmon:         { temp_ideal:[8,14],    temp_limite:[4,20],    temp_estimated:true },
+    mejillon_med:   { temp_ideal:[10,20],   temp_limite:[6,26.5],  temp_estimated:true },
+    dorada:         { temp_ideal:[18,25],   temp_limite:[10,30],   temp_estimated:false },
+    lubina:         { temp_ideal:[15,25],   temp_limite:[11,28],   temp_estimated:true },
+    tigre:          { temp_ideal:[28,33],   temp_limite:[13,33],   temp_estimated:false },
+    bagre_hibrido:  { temp_ideal:[25,30],   temp_limite:[21,34],   temp_estimated:true },
+    langostino:     { temp_ideal:[26,31],   temp_limite:[14,35],   temp_estimated:false },
+    robalo_asiatico:{ temp_ideal:[15,28],   temp_limite:[11,32],   temp_estimated:true },
+    mejillon_verde: { temp_ideal:[26,32],   temp_limite:[22,36],   temp_estimated:true },
+    pangasio:       { temp_ideal:[26,30],   temp_limite:[22,34],   temp_estimated:true }
+    // 'atun' intentionally omitted — the catalog gives no temp figure for
+    // it (salinity is the tracked parameter for that entry instead).
+  };
+  function speciesRangeStatus(range, val){
+    if(!range) return undefined; // no entry for this param -> caller falls back to generic
+    const [iLo, iHi] = range.ideal, [lLo, lHi] = range.limite;
+    if(val < lLo || val > lHi) return 'alert';
+    if(val < iLo || val > iHi) return 'watch';
+    return 'ok';
+  }
+  function speciesRangesFor(speciesId, param){
+    const entry = speciesId ? AQUA_SPECIES_RANGES[speciesId] : null;
+    if(!entry) return null;
+    const ideal = entry[param + '_ideal'], limite = entry[param + '_limite'];
+    if(!ideal || !limite) return null;
+    return { ideal, limite, estimated: !!entry[param + '_estimated'] };
+  }
+
+  function aquaParamStatus(param, val, combo, speciesId){
     if(val == null) return null;
+    // Species-specific range first (Fase 4); falls through to the
+    // generic universal band below when there's no active cycle, the
+    // species isn't catalog-linked, or this species has no data for
+    // this particular parameter.
+    if(param === 'temp' || param === 'ph'){
+      const range = speciesRangesFor(speciesId, param);
+      if(range) return speciesRangeStatus(range, val);
+    }
     if(param === 'do') return val < 4 ? 'alert' : (val < 5 ? 'watch' : 'ok');
     if(param === 'temp') return (val < 15 || val > 35) ? 'alert' : ((val < 18 || val > 32) ? 'watch' : 'ok');
     if(param === 'ph') return (val < 6 || val > 9.5) ? 'alert' : ((val < 6.5 || val > 9) ? 'watch' : 'ok');
@@ -18346,9 +18729,27 @@
     const lastTan = readings.find(r => r.tan != null);
     const lastSal = readings.find(r => r.salinity != null);
 
+    // Fase 4: species-specific alert ranges, sourced from the active
+    // cycle on this unit (if any) and its catalog link (if the species
+    // was picked from AQUA_SPECIES rather than typed as "Otra").
+    const activeCycle = unitId ? activeCycleForUnit(unitId) : null;
+    const speciesId = activeCycle ? activeCycle.species_catalog_id : null;
+    const speciesLegendEl = document.getElementById('aquaWaterSpeciesLegend');
+    if(speciesLegendEl){
+      if(activeCycle && speciesId){
+        speciesLegendEl.textContent = t('aqua_species_alerts_tuned').replace('{species}', activeCycle.species);
+        speciesLegendEl.style.display = '';
+      } else if(activeCycle){
+        speciesLegendEl.textContent = t('aqua_species_alerts_generic');
+        speciesLegendEl.style.display = '';
+      } else {
+        speciesLegendEl.style.display = 'none';
+      }
+    }
+
     const doStatus = lastDo ? aquaParamStatus('do', lastDo.do) : null;
-    const tempStatus = lastTemp ? aquaParamStatus('temp', lastTemp.temp) : null;
-    const phStatus = lastPh ? aquaParamStatus('ph', lastPh.ph) : null;
+    const tempStatus = lastTemp ? aquaParamStatus('temp', lastTemp.temp, null, speciesId) : null;
+    const phStatus = lastPh ? aquaParamStatus('ph', lastPh.ph, null, speciesId) : null;
     const tanStatus = lastTan ? aquaParamStatus('tan', lastTan.tan, combo) : null;
 
     gaugeEl.innerHTML = ['do','temp','ph','tan','salinity'].map(p => {
@@ -18434,6 +18835,46 @@
     return loadCycles().find(c => c.unit_id === unitId && c.status === 'active') || null;
   }
 
+  // ----- Cost configuration (Fase 1: cimiento de costos por ciclo) -----
+  // One typed line per cost item, always scoped to a cycle_id. Recurring
+  // costs (mano_obra, electricidad) carry frecuencia:'mensual' and get
+  // prorated by days-elapsed when the financial report sums them up;
+  // one-off costs (semilla, medicamento via AQUA_TREATMENT_KEY, gasto
+  // extra) carry frecuencia:'unico' and are added at face value. Keeping
+  // every cost type in one table — instead of separate fields on the
+  // cycle object — is what lets the financial report (Fase 5) sum
+  // everything with one loop instead of one branch per cost type.
+  const AQUA_COST_CONFIG_KEY = 'fishpulse_aqua_cost_config';
+
+  function loadAquaCostConfig(){
+    try{ return JSON.parse(localStorage.getItem(AQUA_COST_CONFIG_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveAquaCostConfig(list){
+    localStorage.setItem(AQUA_COST_CONFIG_KEY, JSON.stringify(list));
+  }
+  // tipo: 'mano_obra' | 'electricidad' | 'semilla' | 'medicamento' | 'otro'
+  // frecuencia: 'mensual' | 'unico'
+  function addAquaCostLine(cycleId, tipo, frecuencia, monto, extra){
+    if(!cycleId || !monto || monto <= 0) return null;
+    const lines = loadAquaCostConfig();
+    const line = Object.assign({
+      cost_id: uidAqua(),
+      cycle_id: cycleId,
+      tipo: tipo,
+      frecuencia: frecuencia,
+      monto: Number(monto),
+      vigente_desde: Date.now()
+    }, extra || {});
+    lines.push(line);
+    saveAquaCostConfig(lines);
+    return line;
+  }
+  function costLinesForCycle(cycleId){
+    return loadAquaCostConfig().filter(l => l.cycle_id === cycleId);
+  }
+
+
   function renderAquaCycle(){
     const nameEl = document.getElementById('aquaCycleUnitName');
     const noActiveEl = document.getElementById('aquaCycleNoActive');
@@ -18454,6 +18895,15 @@
 
     const days = Math.max(0, Math.floor((Date.now() - cycle.started_at) / 86400000));
     document.getElementById('aquaCycleSpeciesDay').textContent = cycle.species + ' · ' + t('aqua_cycle_day') + ' ' + days;
+    const legendEl = document.getElementById('aquaCycleSpeciesLegend');
+    if(legendEl){
+      if(cycle.species_catalog_id){
+        legendEl.textContent = t('aqua_species_alerts_tuned').replace('{species}', cycle.species);
+      } else {
+        legendEl.textContent = t('aqua_species_alerts_generic');
+      }
+      legendEl.style.display = '';
+    }
 
     const mortalityEvents = loadMortalityAqua().filter(m => m.cycle_id === cycle.cycle_id);
     const totalDead = mortalityEvents.reduce((sum, m) => sum + (m.qty || 0), 0);
@@ -18485,22 +18935,113 @@
     const speciesEl = document.getElementById('aquaCycleSpecies');
     const seededEl = document.getElementById('aquaCycleSeeded');
     const goalEl = document.getElementById('aquaCycleGoal');
+    const currencyEl = document.getElementById('aquaCycleCurrency');
+    const seedCostEl = document.getElementById('aquaCycleSeedCost');
+    const salePriceEl = document.getElementById('aquaCycleSalePrice');
     const species = (speciesEl.value || '').trim();
     if(!species){ speciesEl.focus(); return; }
+    const speciesCatalogId = speciesEl.dataset.catalogId || null; // set only when picked from the search results; typing freely (or editing after picking) leaves this null -> "Otra"
+    const seededQty = seededEl.value ? Number(seededEl.value) : null;
+    const currency = currencyEl && currencyEl.value ? currencyEl.value : 'USD';
     const cycles = loadCycles();
+    const cycleId = uidAqua();
     cycles.push({
-      cycle_id: uidAqua(),
+      cycle_id: cycleId,
       unit_id: unitId,
       species: species,
+      species_catalog_id: speciesCatalogId,
       started_at: Date.now(),
-      seeded_qty: seededEl.value ? Number(seededEl.value) : null,
+      seeded_qty: seededQty,
       goal_kg: goalEl.value ? Number(goalEl.value) : null,
+      currency: currency, // set once at cycle start — every cost line and
+                           // the financial report for this cycle inherit it
+      sale_price_kg: salePriceEl && salePriceEl.value ? Number(salePriceEl.value) : null, // optional; unlocks break-even in the financial report
       status: 'active'
     });
     saveCycles(cycles);
+
+    // Semilla: precio por organismo × cantidad sembrada = costo total,
+    // guardado como línea única de costo (no como campo suelto en el
+    // ciclo) para que el reporte financiero solo tenga que sumar la
+    // tabla de costos, sin casos especiales.
+    const seedCostPerUnit = seedCostEl && seedCostEl.value ? Number(seedCostEl.value) : null;
+    if(seedCostPerUnit && seededQty){
+      addAquaCostLine(cycleId, 'semilla', 'unico', seedCostPerUnit * seededQty, { moneda: currency, costo_unitario: seedCostPerUnit });
+    }
+
     speciesEl.value = ''; seededEl.value = ''; goalEl.value = '';
+    delete speciesEl.dataset.catalogId;
+    const matchNoteEl = document.getElementById('aquaCycleSpeciesMatchNote');
+    if(matchNoteEl) matchNoteEl.style.display = 'none';
+    if(seedCostEl) seedCostEl.value = '';
+    if(salePriceEl) salePriceEl.value = '';
     renderAquaCycle();
   }
+
+  // ----- Species search-and-link for cycle start (Fase 4) -----
+  // A search box, not a rigid dropdown: typing filters AQUA_SPECIES by
+  // common/scientific name; picking a result links species_catalog_id
+  // (tuned water alerts). Typing anything and never picking a result —
+  // intentional design for species not in the catalog — leaves the
+  // link empty and the cycle still creates normally; it just falls back
+  // to the generic water-quality thresholds, same as every cycle did
+  // before Fase 4. See design discussion: no dead end for the ~unlimited
+  // real-world species this 21-entry catalog can't cover.
+  // Accent-insensitive so "camaron" finds "Camarón" — matters for an
+  // app used mostly by Spanish typing, often via voice-to-text.
+  function aquaNormalizeSearch(str){
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+  function aquaSpeciesSearchMatches(query){
+    const q = aquaNormalizeSearch(query.trim());
+    if(!q) return [];
+    return AQUA_SPECIES.filter(sp =>
+      aquaNormalizeSearch(sp.common).includes(q) || aquaNormalizeSearch(sp.sci).includes(q)
+    ).slice(0, 6);
+  }
+  function renderAquaSpeciesSearchResults(query){
+    const resultsEl = document.getElementById('aquaCycleSpeciesResults');
+    if(!resultsEl) return;
+    const matches = aquaSpeciesSearchMatches(query);
+    if(matches.length === 0){
+      resultsEl.style.display = 'none';
+      resultsEl.innerHTML = '';
+      return;
+    }
+    resultsEl.innerHTML = matches.map(sp =>
+      '<div class="aqua-species-search-row" data-species-id="' + sp.id + '" data-species-name="' + escapeHtmlAqua(sp.common) + '" style="padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--line,#eee);">'
+        + '<div style="color:var(--ink);">' + escapeHtmlAqua(sp.common) + '</div>'
+        + '<div style="color:var(--ink-soft);font-size:11px;font-style:italic;">' + escapeHtmlAqua(sp.sci) + '</div>'
+      + '</div>'
+    ).join('');
+    resultsEl.style.display = '';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const speciesEl = document.getElementById('aquaCycleSpecies');
+    const resultsEl = document.getElementById('aquaCycleSpeciesResults');
+    const matchNoteEl = document.getElementById('aquaCycleSpeciesMatchNote');
+    if(speciesEl && resultsEl){
+      speciesEl.addEventListener('input', () => {
+        delete speciesEl.dataset.catalogId; // any manual edit invalidates a previous match
+        if(matchNoteEl) matchNoteEl.style.display = 'none';
+        renderAquaSpeciesSearchResults(speciesEl.value);
+      });
+      speciesEl.addEventListener('focus', () => renderAquaSpeciesSearchResults(speciesEl.value));
+      resultsEl.addEventListener('click', (e) => {
+        const row = e.target.closest('[data-species-id]');
+        if(!row) return;
+        speciesEl.value = row.dataset.speciesName;
+        speciesEl.dataset.catalogId = row.dataset.speciesId;
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        if(matchNoteEl){ matchNoteEl.textContent = t('aqua_cycle_species_matched'); matchNoteEl.style.display = ''; }
+      });
+      document.addEventListener('click', (e) => {
+        if(e.target !== speciesEl && !resultsEl.contains(e.target)) resultsEl.style.display = 'none';
+      });
+    }
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('aquaCycleStartBtn');
@@ -18514,6 +19055,219 @@
       aquaFeedingLogReturn = 'aqua-cycle';
       if(typeof goTo === 'function') goTo('aqua-feeding-log');
     });
+  });
+
+  // ----- Cost configuration screen (Fase 2) -----
+  function aquaCostDateShort(ts){
+    if(!ts) return '—';
+    const d = new Date(ts);
+    return d.toLocaleDateString();
+  }
+  function currentCycleForCostsScreen(){
+    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
+    const unit = loadUnits().find(u => u.unit_id === unitId) || null;
+    const cycle = unitId ? activeCycleForUnit(unitId) : null;
+    return { unitId, unit, cycle };
+  }
+  function renderAquaCosts(){
+    const nameEl = document.getElementById('aquaCostsUnitName');
+    const noActiveEl = document.getElementById('aquaCostsNoActive');
+    const bodyEl = document.getElementById('aquaCostsBody');
+    if(!bodyEl) return;
+    const { unit, cycle } = currentCycleForCostsScreen();
+    if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
+    if(!cycle){
+      noActiveEl.style.display = '';
+      bodyEl.style.display = 'none';
+      return;
+    }
+    noActiveEl.style.display = 'none';
+    bodyEl.style.display = '';
+
+    const currency = cycle.currency || 'USD';
+    const lines = costLinesForCycle(cycle.cycle_id);
+    const byTipoMensual = (tipo) => lines.filter(l => l.tipo === tipo && l.frecuencia === 'mensual').sort((a,b) => b.vigente_desde - a.vigente_desde);
+
+    const laborCurrent = byTipoMensual('mano_obra')[0] || null;
+    const laborEl = document.getElementById('aquaCostLaborCurrent');
+    laborEl.textContent = laborCurrent
+      ? t('aqua_costs_current_rate') + ' ' + laborCurrent.monto.toLocaleString() + ' ' + currency + t('aqua_costs_per_month') + ' ' + aquaCostDateShort(laborCurrent.vigente_desde)
+      : t('aqua_costs_no_rate_set');
+
+    const elecCurrent = byTipoMensual('electricidad')[0] || null;
+    const elecEl = document.getElementById('aquaCostElecCurrent');
+    elecEl.textContent = elecCurrent
+      ? t('aqua_costs_current_rate') + ' ' + elecCurrent.monto.toLocaleString() + ' ' + currency + t('aqua_costs_per_month') + ' ' + aquaCostDateShort(elecCurrent.vigente_desde)
+      : t('aqua_costs_no_rate_set');
+
+    // Electricity is shown by default only for técnificado/aerado units
+    // (unit.infrastructure === 'tech') — for gravity-fed Manual units it's
+    // usually marginal, so it's hidden behind a "add anyway" link instead
+    // of being asked upfront. See design discussion: infrastructure drives
+    // which costs are *expected*, not which are *allowed*.
+    const isTech = unit && unit.infrastructure === 'tech';
+    const elecTitle = document.getElementById('aquaCostElecTitle');
+    const elecInputGroup = document.getElementById('aquaCostElecInput').closest('.aqua-field-group');
+    const elecBtn = document.getElementById('aquaCostElecBtn');
+    const elecShowBtn = document.getElementById('aquaCostElecShowBtn');
+    const showElec = isTech || elecShowBtn.dataset.forced === '1' || !!elecCurrent;
+    elecTitle.style.display = showElec ? '' : 'none';
+    elecEl.style.display = showElec ? '' : 'none';
+    elecInputGroup.style.display = showElec ? '' : 'none';
+    elecBtn.style.display = showElec ? '' : 'none';
+    elecShowBtn.style.display = showElec ? 'none' : '';
+
+    const histEl = document.getElementById('aquaCostsHistory');
+    const sorted = lines.slice().sort((a,b) => b.vigente_desde - a.vigente_desde).slice(0, 15);
+    const costTypeI18nKey = { mano_obra: 'labor', electricidad: 'elec', medicamento: 'med', semilla: 'seed', otro: 'other' };
+    if(sorted.length === 0){
+      histEl.innerHTML = '<div class="empty-state" style="padding:16px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_costs_no_history') + '</div>';
+    } else {
+      histEl.innerHTML = sorted.map(l => {
+        const typeLabel = t('aqua_costs_type_' + (costTypeI18nKey[l.tipo] || 'other'));
+        const freqLabel = l.frecuencia === 'mensual' ? t('aqua_costs_freq_monthly') : t('aqua_costs_freq_once');
+        return '<div class="aqua-unit-row">'
+          + '<div style="flex:1;">'
+            + '<div class="aqua-unit-name">' + escapeHtmlAqua(typeLabel) + (l.nota ? ' — ' + escapeHtmlAqua(l.nota) : '') + '</div>'
+            + '<div class="aqua-unit-meta">' + freqLabel + ' · ' + aquaCostDateShort(l.vigente_desde) + '</div>'
+          + '</div>'
+          + '<span class="chip chip-grey" style="font-size:11px;padding:3px 8px;border-radius:var(--radius-sm);">' + l.monto.toLocaleString() + ' ' + (l.moneda || currency) + '</span>'
+        + '</div>';
+      }).join('');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const laborBtn = document.getElementById('aquaCostLaborBtn');
+    if(laborBtn) laborBtn.addEventListener('click', () => {
+      const { cycle } = currentCycleForCostsScreen();
+      if(!cycle) return;
+      const input = document.getElementById('aquaCostLaborInput');
+      const val = Number(input.value);
+      if(!val || val <= 0) return;
+      addAquaCostLine(cycle.cycle_id, 'mano_obra', 'mensual', val, { moneda: cycle.currency || 'USD' });
+      input.value = '';
+      renderAquaCosts();
+    });
+    const elecBtn = document.getElementById('aquaCostElecBtn');
+    if(elecBtn) elecBtn.addEventListener('click', () => {
+      const { cycle } = currentCycleForCostsScreen();
+      if(!cycle) return;
+      const input = document.getElementById('aquaCostElecInput');
+      const val = Number(input.value);
+      if(!val || val <= 0) return;
+      addAquaCostLine(cycle.cycle_id, 'electricidad', 'mensual', val, { moneda: cycle.currency || 'USD' });
+      input.value = '';
+      renderAquaCosts();
+    });
+    const elecShowBtn = document.getElementById('aquaCostElecShowBtn');
+    if(elecShowBtn) elecShowBtn.addEventListener('click', () => {
+      elecShowBtn.dataset.forced = '1';
+      renderAquaCosts();
+    });
+    const extraBtn = document.getElementById('aquaCostExtraBtn');
+    if(extraBtn) extraBtn.addEventListener('click', () => {
+      const { cycle } = currentCycleForCostsScreen();
+      if(!cycle) return;
+      const typeEl = document.getElementById('aquaCostExtraType');
+      const amountEl = document.getElementById('aquaCostExtraAmount');
+      const noteEl = document.getElementById('aquaCostExtraNote');
+      const val = Number(amountEl.value);
+      if(!val || val <= 0) return;
+      addAquaCostLine(cycle.cycle_id, typeEl.value, 'unico', val, { moneda: cycle.currency || 'USD', nota: (noteEl.value || '').trim() || null });
+      amountEl.value = ''; noteEl.value = '';
+      renderAquaCosts();
+    });
+  });
+
+  // ----- Treatment log (Fase 3) -----
+  // Free-text disease field on purpose — the species catalog's `diseases`
+  // field is prose for humans (disease names mixed with management
+  // advice in one sentence), not a clean list to build a dropdown from.
+  // See design discussion: a selector would be incomplete/inconsistent
+  // across species until that field is restructured, same class of
+  // problem as temp/ph ranges in Fase 4 but for a different field.
+  // Cost lives directly on the treatment event (like aquaFeedCost on
+  // feeding events), not duplicated into AQUA_COST_CONFIG_KEY — the
+  // financial report (Fase 5) sums it from here as its own source.
+  const AQUA_TREATMENT_KEY = 'fishpulse_aqua_treatments';
+
+  function loadAquaTreatments(){
+    try{ return JSON.parse(localStorage.getItem(AQUA_TREATMENT_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveAquaTreatments(list){
+    localStorage.setItem(AQUA_TREATMENT_KEY, JSON.stringify(list));
+  }
+  function treatmentsForCycle(cycleId){
+    return loadAquaTreatments().filter(tr => tr.cycle_id === cycleId);
+  }
+
+  function renderAquaTreatment(){
+    const nameEl = document.getElementById('aquaTreatmentUnitName');
+    const histEl = document.getElementById('aquaTreatmentHistory');
+    const noActiveEl = document.getElementById('aquaTreatmentNoActive');
+    const bodyEl = document.getElementById('aquaTreatmentBody');
+    if(!histEl) return;
+    const unit = loadUnits().find(u => u.unit_id === localStorage.getItem(AQUA_SELECTED_UNIT_KEY));
+    if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
+    const cycle = currentCycleForActiveScreen();
+    if(!cycle){
+      noActiveEl.style.display = '';
+      bodyEl.style.display = 'none';
+      return;
+    }
+    noActiveEl.style.display = 'none';
+    bodyEl.style.display = '';
+    const entries = treatmentsForCycle(cycle.cycle_id).sort((a,b) => b.ts - a.ts);
+    if(entries.length === 0){
+      histEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_treatment_empty') + '</div>';
+      return;
+    }
+    const currency = cycle && cycle.currency ? cycle.currency : 'USD';
+    histEl.innerHTML = entries.slice(0, 20).map(e => {
+      const d = new Date(e.ts);
+      const title = escapeHtmlAqua(e.disease) + (e.medication ? ' — ' + escapeHtmlAqua(e.medication) : '');
+      let sub = '';
+      if(e.dose_note) sub += escapeHtmlAqua(e.dose_note);
+      if(e.cost){ sub += (sub ? ' · ' : '') + e.cost.toLocaleString() + ' ' + currency; }
+      return '<div class="aqua-feed-row">'
+        + '<div class="aqua-feed-row-date">' + d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</div>'
+        + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + title + '</div>'
+          + (sub ? ('<div class="aqua-feed-row-sub">' + sub + '</div>') : '')
+        + '</div>'
+      + '</div>';
+    }).join('');
+  }
+
+  function addAquaTreatment(){
+    const cycle = currentCycleForActiveScreen();
+    if(!cycle) return;
+    const diseaseEl = document.getElementById('aquaTreatDisease');
+    const medEl = document.getElementById('aquaTreatMedication');
+    const doseEl = document.getElementById('aquaTreatDose');
+    const costEl = document.getElementById('aquaTreatCost');
+    const disease = (diseaseEl.value || '').trim();
+    if(!disease){ diseaseEl.focus(); return; }
+    const entries = loadAquaTreatments();
+    entries.push({
+      treatment_id: uidAqua(),
+      cycle_id: cycle.cycle_id,
+      ts: Date.now(),
+      disease: disease,
+      medication: (medEl.value || '').trim() || null,
+      dose_note: (doseEl.value || '').trim() || null,
+      cost: costEl.value ? Number(costEl.value) : null
+    });
+    saveAquaTreatments(entries);
+    diseaseEl.value = ''; medEl.value = ''; doseEl.value = ''; costEl.value = '';
+    renderAquaTreatment();
+    showToast(t('aqua_treatment_saved'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const treatSaveBtn = document.getElementById('aquaTreatSaveBtn');
+    if(treatSaveBtn) treatSaveBtn.addEventListener('click', addAquaTreatment);
   });
 
   // ----- Biometry & Mortality (per active cycle) -----
@@ -19859,6 +20613,254 @@
     return { mortalityEvents, biometryEvents, feedingEvents, totalDead, totalFeedKg };
   }
 
+  // ----- Financial report (Fase 5) -----
+  // Pulls together every cost source built in Fases 1-3: AQUA_COST_CONFIG_KEY
+  // (labor/electricity prorated monthly, seed/extras one-off), feeding
+  // events' own `cost` field, and treatment events' own `cost` field —
+  // exactly the three sources agreed in the design discussion, summed
+  // with one loop instead of special-casing each type.
+  function aquaFmtMoney(amount, currency){
+    if(amount == null) return '—';
+    return Math.round(amount).toLocaleString() + ' ' + (currency || '');
+  }
+  function prorateMonthlyCostForCycle(lines, tipo, cycleStart, endRef){
+    const entries = lines.filter(l => l.tipo === tipo && l.frecuencia === 'mensual').sort((a,b) => a.vigente_desde - b.vigente_desde);
+    if(entries.length === 0) return 0;
+    let total = 0;
+    for(let i = 0; i < entries.length; i++){
+      const segStart = Math.max(entries[i].vigente_desde, cycleStart);
+      const segEnd = (i + 1 < entries.length) ? entries[i+1].vigente_desde : endRef;
+      const days = Math.max(0, (segEnd - segStart) / 86400000);
+      total += (days / 30) * entries[i].monto;
+    }
+    return total;
+  }
+  function computeCycleFinancials(cycle){
+    const data = cycleReportData(cycle);
+    const costLines = costLinesForCycle(cycle.cycle_id);
+    const treatments = treatmentsForCycle(cycle.cycle_id);
+    const endRef = cycle.status === 'active' ? Date.now() : (cycle.ended_at || Date.now());
+
+    const breakdown = {
+      alimento: data.feedingEvents.reduce((s,f) => s + (f.cost || 0), 0),
+      mano_obra: prorateMonthlyCostForCycle(costLines, 'mano_obra', cycle.started_at, endRef),
+      electricidad: prorateMonthlyCostForCycle(costLines, 'electricidad', cycle.started_at, endRef),
+      semilla: costLines.filter(l => l.tipo === 'semilla').reduce((s,l) => s + l.monto, 0),
+      medicamento: treatments.reduce((s,tr) => s + (tr.cost || 0), 0) + costLines.filter(l => l.tipo === 'medicamento').reduce((s,l) => s + l.monto, 0),
+      otro: costLines.filter(l => l.tipo === 'otro').reduce((s,l) => s + l.monto, 0)
+    };
+    const totalCost = Object.values(breakdown).reduce((a,b) => a + b, 0);
+
+    const liveCount = Math.max(0, (cycle.seeded_qty || 0) - data.totalDead);
+    const lastBio = data.biometryEvents[data.biometryEvents.length - 1];
+    const biomassKg = lastBio ? (liveCount * lastBio.avg_weight_g) / 1000 : 0;
+    const costPerKg = biomassKg > 0 ? totalCost / biomassKg : null;
+
+    let breakEven = null;
+    if(cycle.sale_price_kg && biomassKg > 0){
+      const value = biomassKg * cycle.sale_price_kg;
+      breakEven = { value, cost: totalCost, diff: value - totalCost };
+    }
+    return { cycle, totalCost, breakdown, biomassKg, costPerKg, currency: cycle.currency || 'USD', breakEven };
+  }
+  function cyclesForFinancialScope(scope){
+    const cycles = loadCycles();
+    if(scope === 'all') return cycles;
+    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
+    return cycles.filter(c => c.unit_id === unitId);
+  }
+  const AQUA_FIN_BREAKDOWN_KEYS = ['alimento','mano_obra','electricidad','semilla','medicamento','otro'];
+  const AQUA_FIN_TYPE_I18N = { alimento:'feed', mano_obra:'labor', electricidad:'elec', semilla:'seed', medicamento:'med', otro:'other' };
+  const AQUA_FIN_TYPE_COLOR = { alimento:'var(--cyan)', mano_obra:'var(--amber)', electricidad:'var(--released)', semilla:'var(--coral)', medicamento:'rgba(150,110,255,0.85)', otro:'var(--ink-soft)' };
+
+  let aquaFinancialScope = 'unit';
+
+  function renderAquaFinancial(){
+    const bodyEl = document.getElementById('aquaFinancialBody');
+    if(!bodyEl) return;
+    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
+    const unit = loadUnits().find(u => u.unit_id === unitId);
+    const subEl = document.getElementById('aquaFinancialScopeSub');
+    if(subEl) subEl.textContent = aquaFinancialScope === 'all' ? t('aqua_financial_scope_all') : (unit ? unit.name : t('aqua_units_brand'));
+    const unitBtn = document.getElementById('aquaFinScopeUnitBtn'), allBtn = document.getElementById('aquaFinScopeAllBtn');
+    if(unitBtn) unitBtn.classList.toggle('active', aquaFinancialScope === 'unit');
+    if(allBtn) allBtn.classList.toggle('active', aquaFinancialScope === 'all');
+
+    const cycles = cyclesForFinancialScope(aquaFinancialScope);
+    const emptyEl = document.getElementById('aquaFinancialEmpty');
+    if(cycles.length === 0){
+      emptyEl.style.display = ''; bodyEl.style.display = 'none';
+      return;
+    }
+    const perCycle = cycles.map(computeCycleFinancials);
+    const byCurrency = {};
+    perCycle.forEach(f => {
+      const cur = f.currency;
+      if(!byCurrency[cur]) byCurrency[cur] = { totalCost:0, breakdown:{alimento:0,mano_obra:0,electricidad:0,semilla:0,medicamento:0,otro:0}, biomassKg:0, items:[] };
+      const g = byCurrency[cur];
+      g.totalCost += f.totalCost;
+      AQUA_FIN_BREAKDOWN_KEYS.forEach(k => g.breakdown[k] += f.breakdown[k]);
+      g.biomassKg += f.biomassKg;
+      g.items.push(f);
+    });
+    emptyEl.style.display = 'none'; bodyEl.style.display = '';
+
+    const currencies = Object.keys(byCurrency);
+    const groupsEl = document.getElementById('aquaFinCurrencyGroups');
+    groupsEl.innerHTML = currencies.map(cur => {
+      const g = byCurrency[cur];
+      const costPerKg = g.biomassKg > 0 ? g.totalCost / g.biomassKg : null;
+      const barSegments = AQUA_FIN_BREAKDOWN_KEYS.filter(k => g.breakdown[k] > 0).map(k =>
+        '<div style="flex:' + g.breakdown[k] + ';background:' + AQUA_FIN_TYPE_COLOR[k] + ';height:8px;"></div>'
+      ).join('');
+      const legendRows = AQUA_FIN_BREAKDOWN_KEYS.filter(k => g.breakdown[k] > 0).sort((a,b) => g.breakdown[b] - g.breakdown[a]).map(k => {
+        const pct = g.totalCost > 0 ? (g.breakdown[k] / g.totalCost * 100).toFixed(0) : 0;
+        return '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12.5px;">'
+          + '<span style="width:9px;height:9px;border-radius:2px;background:' + AQUA_FIN_TYPE_COLOR[k] + ';flex-shrink:0;"></span>'
+          + '<span style="flex:1;color:var(--ink);">' + t('aqua_costs_type_' + AQUA_FIN_TYPE_I18N[k]) + '</span>'
+          + '<span style="color:var(--ink-soft);">' + pct + '%</span>'
+          + '<span style="font-weight:600;min-width:70px;text-align:right;">' + aquaFmtMoney(g.breakdown[k], cur) + '</span>'
+        + '</div>';
+      }).join('');
+
+      // Break-even only shown for a single-cycle "this pond" view where
+      // sale_price_kg unambiguously applies to one species/cycle — mixing
+      // it across multiple cycles or "all ponds" would blend different
+      // species and prices into one misleading number.
+      let breakEvenHtml = '';
+      if(aquaFinancialScope === 'unit' && g.items.length === 1 && g.items[0].breakEven){
+        const be = g.items[0].breakEven;
+        const ahead = be.diff >= 0;
+        breakEvenHtml = '<div style="margin-top:14px;padding:12px;border:0.5px solid var(--line,#ddd);border-radius:var(--radius);">'
+          + '<div class="insight-card-label" style="margin:0 0 8px;">' + t('aqua_financial_breakeven_title') + '</div>'
+          + '<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;"><span style="color:var(--ink-soft);">' + t('aqua_financial_breakeven_value') + '</span><span>' + aquaFmtMoney(be.value, cur) + '</span></div>'
+          + '<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;"><span style="color:var(--ink-soft);">' + t('aqua_financial_breakeven_cost') + '</span><span>' + aquaFmtMoney(be.cost, cur) + '</span></div>'
+          + '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0 0;font-weight:700;color:' + (ahead ? 'var(--released)' : 'var(--coral)') + ';"><span>' + t(ahead ? 'aqua_financial_breakeven_ahead' : 'aqua_financial_breakeven_behind') + '</span><span>' + aquaFmtMoney(Math.abs(be.diff), cur) + '</span></div>'
+        + '</div>';
+      }
+
+      return '<div style="margin-bottom:18px;">'
+        + (currencies.length > 1 ? '<div style="font-size:11px;color:var(--amber);margin-bottom:6px;">' + t('aqua_financial_mixed_currency') + '</div>' : '')
+        + '<div class="aqua-kpi-row">'
+          + '<div class="aqua-kpi-card"><div class="aqua-kpi-label">' + t('aqua_financial_kpi_total') + '</div><div class="aqua-kpi-val">' + aquaFmtMoney(g.totalCost, cur) + '</div></div>'
+          + '<div class="aqua-kpi-card"><div class="aqua-kpi-label">' + t('aqua_financial_kpi_costkg') + '</div><div class="aqua-kpi-val">' + (costPerKg != null ? aquaFmtMoney(costPerKg, cur) : '—') + '</div></div>'
+        + '</div>'
+        + '<div class="insight-card-label" style="margin:12px 0 6px;">' + t('aqua_financial_breakdown_label') + '</div>'
+        + '<div style="display:flex;width:100%;border-radius:4px;overflow:hidden;margin-bottom:8px;">' + barSegments + '</div>'
+        + legendRows
+        + breakEvenHtml
+      + '</div>';
+    }).join('');
+
+    const tableEl = document.getElementById('aquaFinCycleTable');
+    const sortedItems = perCycle.slice().sort((a,b) => b.cycle.started_at - a.cycle.started_at);
+    tableEl.innerHTML = sortedItems.map(f => {
+      const c = f.cycle;
+      const statusLabel = c.status === 'active' ? t('aqua_financial_status_active') : c.status;
+      return '<div class="aqua-unit-row">'
+        + '<div style="flex:1;">'
+          + '<div class="aqua-unit-name">' + escapeHtmlAqua(c.species) + '</div>'
+          + '<div class="aqua-unit-meta">' + new Date(c.started_at).toLocaleDateString() + ' · ' + statusLabel + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+          + '<div style="font-size:13px;font-weight:600;">' + aquaFmtMoney(f.totalCost, f.currency) + '</div>'
+          + '<div style="font-size:11px;color:var(--ink-soft);">' + (f.costPerKg != null ? aquaFmtMoney(f.costPerKg, f.currency) + '/kg' : '—') + '</div>'
+        + '</div>'
+      + '</div>';
+    }).join('');
+  }
+
+  function generateAquaFinancialReportPdf(){
+    if(typeof jspdf === 'undefined'){ showToast(t('msg_pdf_not_loaded')); return; }
+    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
+    const unit = loadUnits().find(u => u.unit_id === unitId);
+    const cycles = cyclesForFinancialScope(aquaFinancialScope);
+    if(cycles.length === 0) return;
+    const perCycle = cycles.map(computeCycleFinancials).sort((a,b) => b.cycle.started_at - a.cycle.started_at);
+    const byCurrency = {};
+    perCycle.forEach(f => {
+      const cur = f.currency;
+      if(!byCurrency[cur]) byCurrency[cur] = { totalCost:0, biomassKg:0, count:0 };
+      byCurrency[cur].totalCost += f.totalCost;
+      byCurrency[cur].biomassKg += f.biomassKg;
+      byCurrency[cur].count += 1;
+    });
+    const currencies = Object.keys(byCurrency);
+
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 48;
+    let y = 56;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+    doc.text(t('aqua_financial_title'), margin, y); y += 20;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(110,110,110);
+    doc.text('Fish Pulse — ' + t('mode_aqua_title'), margin, y); y += 26;
+    doc.setDrawColor(200,200,200); doc.line(margin, y, pageWidth - margin, y); y += 24;
+
+    doc.setTextColor(20,20,20); doc.setFontSize(11);
+    doc.setFont('helvetica','bold'); doc.text(t('aqua_reports_h1') + ':', margin, y);
+    doc.setFont('helvetica','normal');
+    doc.text(aquaFinancialScope === 'all' ? t('aqua_financial_scope_all') : (unit ? unit.name : '—'), margin + 150, y);
+    y += 18;
+    doc.setFont('helvetica','bold'); doc.text(t('aqua_costs_history_label').replace('Recent cost entries','Generated').replace('Movimientos recientes de costos','Generado') + ':', margin, y);
+    doc.setFont('helvetica','normal'); doc.text(new Date().toLocaleDateString(), margin + 150, y);
+    y += 26;
+
+    currencies.forEach(cur => {
+      const g = byCurrency[cur];
+      const costPerKg = g.biomassKg > 0 ? g.totalCost / g.biomassKg : null;
+      doc.setFont('helvetica','bold'); doc.setFontSize(12);
+      doc.text(cur, margin, y); y += 4;
+      doc.setDrawColor(210,210,210); doc.rect(margin, y, pageWidth - margin*2, 44);
+      doc.setFontSize(13);
+      doc.text(t('aqua_financial_kpi_total') + ': ' + aquaFmtMoney(g.totalCost, cur), margin + 10, y + 18);
+      doc.setFont('helvetica','normal'); doc.setFontSize(10);
+      doc.text(t('aqua_financial_kpi_costkg') + ': ' + (costPerKg != null ? aquaFmtMoney(costPerKg, cur) : '—'), margin + 10, y + 34);
+      y += 44 + 16;
+    });
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(13);
+    doc.text(t('aqua_financial_by_cycle_label'), margin, y); y += 18;
+    doc.setFillColor(240,240,240); doc.rect(margin, y, pageWidth - margin*2, 20, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(90,90,90);
+    doc.text(t('aqua_financial_col_cycle'), margin + 6, y + 13);
+    doc.text(t('aqua_financial_col_cost'), margin + 280, y + 13);
+    doc.text(t('aqua_financial_col_costkg'), margin + 400, y + 13);
+    y += 20;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    perCycle.forEach((f, i) => {
+      if(y > pageHeight - 100){ doc.addPage(); y = 56; }
+      if(i % 2 === 1){ doc.setFillColor(250,250,250); doc.rect(margin, y, pageWidth - margin*2, 20, 'F'); }
+      doc.setTextColor(20,20,20);
+      doc.text((f.cycle.species || '—') + ' — ' + new Date(f.cycle.started_at).toLocaleDateString(), margin + 6, y + 14, { maxWidth: 260 });
+      doc.text(aquaFmtMoney(f.totalCost, f.currency), margin + 280, y + 14);
+      doc.text(f.costPerKg != null ? aquaFmtMoney(f.costPerKg, f.currency) : '—', margin + 400, y + 14);
+      y += 20;
+    });
+    y += 16;
+
+    if(y > pageHeight - 80){ doc.addPage(); y = 56; }
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(140,140,140);
+    const lines = doc.splitTextToSize(t('aqua_financial_disclaimer'), pageWidth - margin*2);
+    doc.text(lines, margin, y);
+
+    const filename = 'aqua-financial-' + aquaFinancialScope + '-' + new Date().toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('aqua_financial_title'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const unitScopeBtn = document.getElementById('aquaFinScopeUnitBtn');
+    const allScopeBtn = document.getElementById('aquaFinScopeAllBtn');
+    if(unitScopeBtn) unitScopeBtn.addEventListener('click', () => { aquaFinancialScope = 'unit'; renderAquaFinancial(); });
+    if(allScopeBtn) allScopeBtn.addEventListener('click', () => { aquaFinancialScope = 'all'; renderAquaFinancial(); });
+    const exportBtn = document.getElementById('aquaFinExportBtn');
+    if(exportBtn) exportBtn.addEventListener('click', generateAquaFinancialReportPdf);
+  });
+
   function generateAquaAuditPdf(unit, cycle){
     if(typeof jspdf === 'undefined'){ showToast(t('msg_pdf_not_loaded')); return; }
     const { jsPDF } = jspdf;
@@ -19969,6 +20971,9 @@
   window.renderAquaUnits = renderAquaUnits;
   window.renderAquaHome = renderAquaHome;
   window.renderAquaCagesScreen = renderAquaCagesScreen;
+  window.renderAquaCosts = renderAquaCosts;
+  window.renderAquaTreatment = renderAquaTreatment;
+  window.renderAquaFinancial = renderAquaFinancial;
 })();
 
 
