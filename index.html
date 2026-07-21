@@ -3353,6 +3353,15 @@
         <span class="aqua-action-row-title" data-i18n="aqua_cycle_log_treatment">Treatment log</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>
       </button>
+
+      <!-- Closes the cycle right from where it's actually managed day to
+           day — same markCycleHarvested() the Reports tab's QR unlock
+           already used, just also reachable here instead of only tucked
+           inside Reports. Frees this unit for a new cycle once tapped. -->
+      <button type="button" class="aqua-add-submit" id="aquaCycleMarkHarvestedBtn" style="margin-top:14px;">
+        <span data-i18n="aqua_reports_mark_harvested">Mark as harvested</span>
+      </button>
+      <div style="font-size:11px;color:var(--ink-soft);text-align:center;margin-top:8px;" data-i18n="aqua_cycle_close_hint">Ends this cycle and frees this cage/pond for a new one.</div>
     </div>
   </main>
 </section>
@@ -5968,7 +5977,7 @@
       aqua_costs_history_label: 'Recent cost entries', aqua_costs_no_history: 'No cost entries yet.',
       aqua_costs_no_rate_set: 'No rate set — $0/month.', aqua_costs_current_rate: 'Current rate:', aqua_costs_per_month: '/month, since',
       aqua_costs_freq_monthly: 'monthly', aqua_costs_freq_once: 'one-off',
-      aqua_cycle_log_treatment: 'Treatment log',
+      aqua_cycle_log_treatment: 'Treatment log', aqua_cycle_close_hint: 'Ends this cycle and frees this cage/pond for a new one.',
       aqua_treatment_h1: 'Treatment log', aqua_treatment_disease_label: 'Disease / issue treated', aqua_treatment_medication_label: 'Medication / treatment',
       aqua_treatment_dose_label: 'Dose / notes (optional)', aqua_treatment_cost_label: 'Cost (optional)', aqua_treatment_save_btn: 'Save treatment',
       aqua_treatment_history_label: 'Recent treatments', aqua_treatment_empty: 'No treatments logged yet.', aqua_treatment_saved: 'Treatment saved', aqua_treatment_no_cycle: 'Start a cycle first to log treatments.',
@@ -6414,7 +6423,7 @@
       aqua_costs_history_label: 'Movimientos recientes de costos', aqua_costs_no_history: 'Aún no hay costos registrados.',
       aqua_costs_no_rate_set: 'Sin tasa configurada — $0/mes.', aqua_costs_current_rate: 'Tasa actual:', aqua_costs_per_month: '/mes, desde',
       aqua_costs_freq_monthly: 'mensual', aqua_costs_freq_once: 'único',
-      aqua_cycle_log_treatment: 'Bitácora de tratamiento',
+      aqua_cycle_log_treatment: 'Bitácora de tratamiento', aqua_cycle_close_hint: 'Termina este ciclo y libera esta jaula/estanque para uno nuevo.',
       aqua_treatment_h1: 'Bitácora de tratamiento', aqua_treatment_disease_label: 'Enfermedad / problema tratado', aqua_treatment_medication_label: 'Medicamento / tratamiento',
       aqua_treatment_dose_label: 'Dosis / notas (opcional)', aqua_treatment_cost_label: 'Costo (opcional)', aqua_treatment_save_btn: 'Guardar tratamiento',
       aqua_treatment_history_label: 'Tratamientos recientes', aqua_treatment_empty: 'Aún no hay tratamientos registrados.', aqua_treatment_saved: 'Tratamiento guardado', aqua_treatment_no_cycle: 'Primero inicia un ciclo para registrar tratamientos.',
@@ -6860,7 +6869,7 @@
       aqua_costs_history_label: 'Movimenti di costo recenti', aqua_costs_no_history: 'Nessun costo registrato ancora.',
       aqua_costs_no_rate_set: 'Nessuna tariffa impostata — $0/mese.', aqua_costs_current_rate: 'Tariffa attuale:', aqua_costs_per_month: '/mese, dal',
       aqua_costs_freq_monthly: 'mensile', aqua_costs_freq_once: 'una tantum',
-      aqua_cycle_log_treatment: 'Registro trattamenti',
+      aqua_cycle_log_treatment: 'Registro trattamenti', aqua_cycle_close_hint: 'Termina questo ciclo e libera questa gabbia/vasca per uno nuovo.',
       aqua_treatment_h1: 'Registro trattamenti', aqua_treatment_disease_label: 'Malattia / problema trattato', aqua_treatment_medication_label: 'Farmaco / trattamento',
       aqua_treatment_dose_label: 'Dose / note (opzionale)', aqua_treatment_cost_label: 'Costo (opzionale)', aqua_treatment_save_btn: 'Salva trattamento',
       aqua_treatment_history_label: 'Trattamenti recenti', aqua_treatment_empty: 'Nessun trattamento registrato ancora.', aqua_treatment_saved: 'Trattamento salvato', aqua_treatment_no_cycle: 'Avvia prima un ciclo per registrare i trattamenti.',
@@ -7285,7 +7294,7 @@
       aqua_costs_history_label: 'รายการต้นทุนล่าสุด', aqua_costs_no_history: 'ยังไม่มีรายการต้นทุน',
       aqua_costs_no_rate_set: 'ยังไม่ได้กำหนดอัตรา — $0/เดือน', aqua_costs_current_rate: 'อัตราปัจจุบัน:', aqua_costs_per_month: '/เดือน ตั้งแต่',
       aqua_costs_freq_monthly: 'รายเดือน', aqua_costs_freq_once: 'ครั้งเดียว',
-      aqua_cycle_log_treatment: 'บันทึกการรักษา',
+      aqua_cycle_log_treatment: 'บันทึกการรักษา', aqua_cycle_close_hint: 'สิ้นสุดรอบการผลิตนี้และเปิดกระชัง/บ่อนี้สำหรับรอบใหม่',
       aqua_treatment_h1: 'บันทึกการรักษา', aqua_treatment_disease_label: 'โรค / ปัญหาที่รักษา', aqua_treatment_medication_label: 'ยา / การรักษา',
       aqua_treatment_dose_label: 'ขนาดยา / บันทึกย่อ (ไม่บังคับ)', aqua_treatment_cost_label: 'ค่าใช้จ่าย (ไม่บังคับ)', aqua_treatment_save_btn: 'บันทึกการรักษา',
       aqua_treatment_history_label: 'การรักษาล่าสุด', aqua_treatment_empty: 'ยังไม่มีการบันทึกการรักษา', aqua_treatment_saved: 'บันทึกการรักษาแล้ว', aqua_treatment_no_cycle: 'เริ่มรอบการผลิตก่อนเพื่อบันทึกการรักษา',
