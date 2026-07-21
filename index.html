@@ -4065,6 +4065,8 @@
       </div>
       <div id="fleetTripHaulList"></div>
 
+      <div id="fleetTripCaptainLogbookCard" style="margin-top:6px;"></div>
+
       <button class="fleet-close-trip-btn" id="fleetCloseTripBtn" data-i18n="fltrip_close_trip" style="margin-top:16px;">Close Trip</button>
     </div>
   </main>
@@ -4612,7 +4614,7 @@
 <section class="screen" id="screen-fleet-trip-log">
   <div class="topbar">
     <div class="back-row">
-      <button class="back-btn" data-go="fleet-dashboard">←</button>
+      <button class="back-btn" id="fleetTripLogBackBtn" data-go="fleet-dashboard">←</button>
       <span class="brand" data-i18n="fltriplog_brand">Trip Log</span>
       <div class="topbar-actions" style="margin-left:auto;">
         <div class="rocker">
@@ -5387,6 +5389,10 @@
   <button class="tab active" data-go="fleet-trip">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 10l4-6 4 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 16c0 3 2 5 6 6 4-1 6-3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
     <span data-i18n="fltab_trip">Trip</span>
+  </button>
+  <button class="tab" data-go="fleet-trip-log">
+    <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg></span>
+    <span data-i18n="fltab_trips">Trips</span>
   </button>
   <button class="tab" data-go="fleet-fuel-log">
     <span class="tab-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M10 7h4M10 10h4M10 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
@@ -8135,6 +8141,29 @@
     const overrides = (trip && trip.catch_presentation_overrides) || {};
     return overrides[species] || (trip && trip.catch_presentation) || '';
   }
+
+  // Groups a trip's catches by species — shared by the active Trip
+  // screen and Trip Detail, so the Captain's Logbook card can render
+  // identically (same numbers, same PDF buttons) whether the trip is
+  // still open or already closed. Scale weight only ever exists as one
+  // number per species once multiple hauls are landed together, never
+  // per individual haul.
+  function computeFleetLandingGroups(catches){
+    const landingBySpecies = {};
+    catches.forEach(c => {
+      if(!landingBySpecies[c.species]) landingBySpecies[c.species] = { species: c.species, estKg: 0, actualKg: null, hasActual: false };
+      landingBySpecies[c.species].estKg += parseFloat(c.kg) || 0;
+      if(c.actual_kg != null && c.actual_kg !== ''){
+        landingBySpecies[c.species].actualKg = (landingBySpecies[c.species].actualKg || 0) + parseFloat(c.actual_kg);
+        landingBySpecies[c.species].hasActual = true;
+      }
+    });
+    const landingGroups = Object.values(landingBySpecies);
+    const totalEstKg = landingGroups.reduce((s,g)=>s+g.estKg,0);
+    const totalActualKg = landingGroups.reduce((s,g)=>s+(g.hasActual?g.actualKg:0),0);
+    const hasActuals = landingGroups.some(g => g.hasActual);
+    return { landingGroups, totalEstKg, totalActualKg, hasActuals };
+  }
   // No offline tile-download system in this segment (unlike Field
   // Research), so a fixed subdomain isn't strictly required here — kept
   // anyway for visual/behavioral consistency across segments.
@@ -8907,6 +8936,7 @@
     noTripCard.style.display = 'none';
     activeCard.style.display = 'block';
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
+    const captain = load(CAPTAINS_KEY).find(cc => cc.captain_id === trip.captain_id);
     const vesselName = vessel ? vessel.name : t('flg_unknown_vessel');
     document.getElementById('fleetVesselLine').textContent = vesselName;
 
@@ -8981,6 +9011,33 @@
     document.querySelectorAll('[data-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
     });
+
+    // Captain's Logbook — same card, same two export buttons (dense list
+    // + Grid view) as Trip Detail, so a captain can pull the logbook for
+    // the trip they're currently on without waiting to close it first.
+    // Distinct button ids from Trip Detail's own copy of this card, since
+    // both screens' markup lives in the DOM at the same time.
+    const { landingGroups: tripLandingGroups, totalEstKg: tripTotalEstKg, hasActuals: tripHasActuals } = computeFleetLandingGroups(catches);
+    document.getElementById('fleetTripCaptainLogbookCard').innerHTML =
+      '<div class="card" style="border-left:3px solid #0a5c8c;">'
+      + '<div class="insight-card-label" style="margin-bottom:6px;">'+t('flcaptainlog_card_title')+'</div>'
+      + '<div style="font-family:var(--data); font-size:11.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:12px;">'+t('flcaptainlog_card_desc')+'</div>'
+      + '<button class="exportbtn" id="fleetTripExportCaptainLogBtn" style="padding:10px 16px;font-size:12px;">'+t('flcaptainlog_export_btn')+'</button>'
+      + '<button class="exportbtn" id="fleetTripExportCaptainLogGridBtn" style="padding:10px 16px;font-size:12px;margin-left:8px;">'+t('flcaptainlog_grid_export_btn')+'</button>'
+      + '</div>';
+    const tripExportCaptainLogBtn = document.getElementById('fleetTripExportCaptainLogBtn');
+    if(tripExportCaptainLogBtn){
+      tripExportCaptainLogBtn.addEventListener('click', () => {
+        generateFleetCaptainLogbookPdf({ vessel, captain, trip, catches, landingGroups: tripLandingGroups, totalEstKg: tripTotalEstKg, hasActuals: tripHasActuals });
+      });
+    }
+    const tripExportCaptainLogGridBtn = document.getElementById('fleetTripExportCaptainLogGridBtn');
+    if(tripExportCaptainLogGridBtn){
+      tripExportCaptainLogGridBtn.addEventListener('click', () => {
+        generateFleetHaulGridPdf({ vessel, captain, trip, catches, landingGroups: tripLandingGroups, totalEstKg: tripTotalEstKg, hasActuals: tripHasActuals });
+      });
+    }
+
     applyDefaultCurrencyToSelects();
   }
 
@@ -9898,6 +9955,10 @@
   }
 
   function renderFleetTripLog(){
+    // Reachable from both tab bars now (Ops' fleet-tab-strip, and the
+    // Captain's own tab bar) — back should return wherever that captain
+    // or office user actually came from, not always the Ops dashboard.
+    document.getElementById('fleetTripLogBackBtn').dataset.go = document.body.classList.contains('fleet-role-operations') ? 'fleet-dashboard' : 'fleet-trip';
     renderVesselOptions();
     const vessels = load(VESSELS_KEY);
     const filterVessel = document.getElementById('fleetTripLogVesselFilter').value;
@@ -9974,22 +10035,7 @@
     // where reconciled, actual scale weight. This is the data a buyer,
     // port authority, or capture-certificate process would need; we are
     // generating the supporting report here, not issuing any certificate.
-    // Grouped by species for the same reason reconciliation is: once
-    // multiple hauls of a species are landed together, scale weight only
-    // exists as one number for that species, not per individual haul.
-    const landingBySpecies = {};
-    catches.forEach(c => {
-      if(!landingBySpecies[c.species]) landingBySpecies[c.species] = { species: c.species, estKg: 0, actualKg: null, hasActual: false };
-      landingBySpecies[c.species].estKg += parseFloat(c.kg) || 0;
-      if(c.actual_kg != null && c.actual_kg !== ''){
-        landingBySpecies[c.species].actualKg = (landingBySpecies[c.species].actualKg || 0) + parseFloat(c.actual_kg);
-        landingBySpecies[c.species].hasActual = true;
-      }
-    });
-    const landingGroups = Object.values(landingBySpecies);
-    const totalEstKg = landingGroups.reduce((s,g)=>s+g.estKg,0);
-    const totalActualKg = landingGroups.reduce((s,g)=>s+(g.hasActual?g.actualKg:0),0);
-    const hasActuals = landingGroups.some(g => g.hasActual);
+    const { landingGroups, totalEstKg, totalActualKg, hasActuals } = computeFleetLandingGroups(catches);
 
     // Captain's Logbook — a universal, comprehensive voyage record (FAO
     // logbook-style: identification, trip, gear, crew, haul-by-haul,
