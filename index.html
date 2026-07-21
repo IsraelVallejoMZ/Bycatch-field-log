@@ -10087,47 +10087,48 @@
   function drawPdfLetterhead(doc, { pdfFont, eyebrow, title, subtitle, docRef }){
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 48;
-    let y = 54;
+    let y = 52;
 
-    try{ doc.addImage(PDF_LOGO_HEADER_BASE64, 'PNG', margin, y - 20, 26, 26); }catch(e){}
+    try{ doc.addImage(PDF_LOGO_HEADER_BASE64, 'PNG', margin, y - 6, 24, 24); }catch(e){}
     doc.setFont(pdfFont, 'bold'); doc.setFontSize(12.5);
     doc.setTextColor(...PDF_COLORS.textPrimary);
-    doc.text('FISH PULSE', margin + 34, y - 6);
+    doc.text('FISH PULSE', margin + 32, y + 4);
     doc.setFont(pdfFont, 'normal'); doc.setFontSize(7.5);
     doc.setTextColor(...PDF_COLORS.textSecondary);
-    doc.text('MARINE DATA INTELLIGENCE', margin + 34, y + 4);
+    doc.text('MARINE DATA INTELLIGENCE', margin + 32, y + 15);
 
     if(docRef){
       doc.setFont(pdfFont, 'normal'); doc.setFontSize(8.5);
       doc.setTextColor(...PDF_COLORS.textSecondary);
-      doc.text(docRef, pageWidth - margin, y - 6, { align: 'right' });
+      doc.text(docRef, pageWidth - margin, y + 4, { align: 'right' });
     }
-    y += 20;
+    y += 34;
 
     doc.setDrawColor(...PDF_COLORS.brand); doc.setLineWidth(2.2);
     doc.line(margin, y, pageWidth - margin, y);
     doc.setLineWidth(0.75);
-    y += 20;
+    y += 22;
 
     if(eyebrow){
       doc.setFont(pdfFont, 'bold'); doc.setFontSize(9.5);
       doc.setTextColor(...PDF_COLORS.brand);
       doc.text(eyebrow.toUpperCase(), margin, y);
-      y += 15;
+      y += 18;
     }
 
-    doc.setFont(pdfFont, 'bold'); doc.setFontSize(19);
+    doc.setFont(pdfFont, 'bold'); doc.setFontSize(18);
     doc.setTextColor(...PDF_COLORS.textPrimary);
-    doc.text(title, margin, y);
-    y += 17;
+    doc.text(title, margin, y, { maxWidth: pageWidth - margin*2 });
+    y += 24;
 
     if(subtitle){
       doc.setFont(pdfFont, 'normal'); doc.setFontSize(10);
       doc.setTextColor(...PDF_COLORS.textSecondary);
-      doc.text(subtitle, margin, y);
-      y += 14;
+      const subtitleLines = doc.splitTextToSize(subtitle, pageWidth - margin*2);
+      doc.text(subtitleLines, margin, y);
+      y += subtitleLines.length * 13 + 4;
     }
-    y += 10;
+    y += 14;
     return y;
   }
 
@@ -10139,21 +10140,31 @@
     const margin = 48;
     const usableW = pageWidth - margin * 2;
     const colW = usableW / cols.length;
-    const rowH = 40;
+
+    // Row height must grow with the tallest wrapped value — a fixed
+    // height clipped multi-line values (e.g. long vessel-name lists,
+    // "started – ended" ranges) against the bottom border.
+    doc.setFont(pdfFont, 'bold'); doc.setFontSize(11);
+    let maxLines = 1;
+    const wrapped = cols.map(([label, value], i) => {
+      const lines = doc.splitTextToSize(String(value), colW - (i === 0 ? 16 : 30));
+      maxLines = Math.max(maxLines, lines.length);
+      return lines;
+    });
+    const rowH = 22 + maxLines * 13 + 10;
 
     doc.setDrawColor(...PDF_COLORS.borderLight); doc.setLineWidth(0.75);
     doc.line(margin, y, pageWidth - margin, y);
-    let ny = y + 12;
-    cols.forEach(([label, value], i) => {
-      const cx = margin + colW * i + (i === 0 ? 0 : 14);
+    const ny = y + 16;
+    cols.forEach(([label], i) => {
+      const cx = margin + colW * i + (i === 0 ? 0 : 16);
       if(i > 0){ doc.line(margin + colW * i, y, margin + colW * i, y + rowH); }
       doc.setFont(pdfFont, 'normal'); doc.setFontSize(7.5);
       doc.setTextColor(...PDF_COLORS.textSecondary);
       doc.text(label.toUpperCase(), cx, ny);
       doc.setFont(pdfFont, 'bold'); doc.setFontSize(11);
       doc.setTextColor(...PDF_COLORS.textPrimary);
-      const lines = doc.splitTextToSize(String(value), colW - (i === 0 ? 14 : 28));
-      doc.text(lines, cx, ny + 15);
+      doc.text(wrapped[i], cx, ny + 16);
     });
     y += rowH;
     doc.line(margin, y, pageWidth - margin, y);
@@ -10168,7 +10179,19 @@
     const gap = 8;
     const usableW = pageWidth - margin * 2;
     const cardW = (usableW - gap * (kpis.length - 1)) / kpis.length;
-    const cardH = 50;
+
+    // Card height (and where the value sits) must grow with the
+    // longest wrapped label — a fixed height let a 2-line label
+    // collide with the value line below it.
+    doc.setFont(pdfFont, 'normal'); doc.setFontSize(7.2);
+    let maxLabelLines = 1;
+    const labelWrapped = kpis.map(k => {
+      const lines = doc.splitTextToSize(k.label.toUpperCase(), cardW - 16);
+      maxLabelLines = Math.max(maxLabelLines, lines.length);
+      return lines;
+    });
+    const valueY = 16 + maxLabelLines * 9 + 12;
+    const cardH = valueY + 12;
 
     kpis.forEach((k, i) => {
       const cx = margin + (cardW + gap) * i;
@@ -10176,23 +10199,22 @@
       doc.roundedRect(cx, y, cardW, cardH, 4, 4);
       doc.setFont(pdfFont, 'normal'); doc.setFontSize(7.2);
       doc.setTextColor(...PDF_COLORS.textSecondary);
-      const labelLines = doc.splitTextToSize(k.label.toUpperCase(), cardW - 16);
-      doc.text(labelLines, cx + 8, y + 14);
+      doc.text(labelWrapped[i], cx + 8, y + 14);
       doc.setFont(pdfFont, 'bold'); doc.setFontSize(14.5);
       // valueTone colors the big value itself (e.g. net income going
       // negative) — separate from `tone`, which only colors the small
       // delta chip, since a card can need one without the other.
       const valueColor = k.valueTone === 'good' ? PDF_COLORS.good : k.valueTone === 'bad' ? PDF_COLORS.bad : PDF_COLORS.textPrimary;
       doc.setTextColor(...valueColor);
-      doc.text(String(k.value), cx + 8, y + 34);
+      doc.text(String(k.value), cx + 8, y + valueY);
       if(k.delta){
         const tone = k.tone === 'good' ? PDF_COLORS.good : k.tone === 'bad' ? PDF_COLORS.bad : PDF_COLORS.neutral;
         doc.setFont(pdfFont, 'bold'); doc.setFontSize(9);
         doc.setTextColor(...tone);
-        doc.text(String(k.delta), cx + cardW - 8, y + 34, { align: 'right' });
+        doc.text(String(k.delta), cx + cardW - 8, y + valueY, { align: 'right' });
       }
     });
-    return y + cardH + 18;
+    return y + cardH + 20;
   }
 
   // Small bold uppercase section label in brand blue (used above tables
@@ -13376,6 +13398,23 @@
   // so every aqua PDF export has always thrown silently on click. This
   // export fixes it for all of them, not just the new financial report.
   window.showFleetPdfExport = showFleetPdfExport;
+
+  // Same cross-IIFE issue as above, now for the shared PDF design kit
+  // (letterhead/KPI/table/watermark helpers) and the Thai font
+  // registrar: Aquaculture's PDF exports live in a separate IIFE and
+  // call these as bare identifiers, so every one of them threw a
+  // silent ReferenceError on click until they're exported here too.
+  window.registerThaiPdfFont = registerThaiPdfFont;
+  window.PDF_COLORS = PDF_COLORS;
+  window.drawPdfWatermark = drawPdfWatermark;
+  window.pdfAddPage = pdfAddPage;
+  window.drawPdfLetterhead = drawPdfLetterhead;
+  window.drawPdfMetaRow = drawPdfMetaRow;
+  window.drawPdfKpiRow = drawPdfKpiRow;
+  window.drawPdfSectionLabel = drawPdfSectionLabel;
+  window.drawPdfTable = drawPdfTable;
+  window.drawPdfSummaryBlock = drawPdfSummaryBlock;
+  window.drawPdfDisclaimerFooter = drawPdfDisclaimerFooter;
 
   if(window.fishPulseReapplyIfActive){
     window.fishPulseReapplyIfActive('fleet', () => {
