@@ -10116,19 +10116,20 @@
       y += 18;
     }
 
-    doc.setFont(pdfFont, 'bold'); doc.setFontSize(18);
+    doc.setFont(pdfFont, 'bold'); doc.setFontSize(14.5);
     doc.setTextColor(...PDF_COLORS.textPrimary);
-    doc.text(title, margin, y, { maxWidth: pageWidth - margin*2 });
-    y += 24;
+    const titleLines = doc.splitTextToSize(title, pageWidth - margin*2);
+    doc.text(titleLines, margin, y);
+    y += titleLines.length * 18 + 6;
 
     if(subtitle){
-      doc.setFont(pdfFont, 'normal'); doc.setFontSize(10);
+      doc.setFont(pdfFont, 'normal'); doc.setFontSize(9.5);
       doc.setTextColor(...PDF_COLORS.textSecondary);
       const subtitleLines = doc.splitTextToSize(subtitle, pageWidth - margin*2);
       doc.text(subtitleLines, margin, y);
-      y += subtitleLines.length * 13 + 4;
+      y += subtitleLines.length * 12 + 4;
     }
-    y += 14;
+    y += 16;
     return y;
   }
 
