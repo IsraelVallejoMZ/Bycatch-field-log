@@ -10727,7 +10727,11 @@
     const margin = 48;
     const lw = labelWidth || 170;
     const vw = pageWidth - margin * 2 - lw;
-    const rowH = 18;
+    // Grows past the 18pt default if the value wraps to more than one
+    // line (a long company/permit-holder name, a long gear description)
+    // instead of clipping it — same safeguard as drawPdfGridTable.
+    const valueLines = doc.splitTextToSize(String(value == null || value === '' ? '—' : value), vw - 12);
+    const rowH = Math.max(18, valueLines.length * 11 + 8);
     doc.setFillColor(...PDF_COLORS.brand);
     doc.rect(margin, y, lw, rowH, 'F');
     doc.setDrawColor(...PDF_COLORS.brandDark);
@@ -10739,7 +10743,7 @@
     doc.text(label.toUpperCase(), margin + 8, y + 12, { maxWidth: lw - 12 });
     doc.setFont(pdfFont, 'normal'); doc.setFontSize(9);
     doc.setTextColor(...PDF_COLORS.textPrimary);
-    doc.text(String(value == null || value === '' ? '—' : value), margin + lw + 8, y + 12, { maxWidth: vw - 12 });
+    doc.text(valueLines, margin + lw + 8, y + 12);
     return y + rowH;
   }
 
@@ -10750,7 +10754,8 @@
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 48;
     const limit = bottomMargin || 110;
-    const rowH = 20;
+    const minRowH = 20;
+    const lineH = 10;
 
     function header(){
       let cx = margin;
@@ -10773,7 +10778,15 @@
     header();
     doc.setFont(pdfFont, 'normal'); doc.setFontSize(8);
     rows.forEach(row => {
-      if(y > pageHeight - limit){
+      // Wrap every cell against its own column width first, so the row
+      // grows to fit whichever cell needs the most lines — a long note
+      // or species name no longer overflows past its cell border once
+      // real trip data (not short mockup samples) fills the table.
+      const wrapped = row.map((cell, ci) => doc.splitTextToSize(String(cell == null || cell === '' ? '—' : cell), cols[ci].width - 6));
+      const maxLines = Math.max(1, ...wrapped.map(w => w.length));
+      const rowH = Math.max(minRowH, maxLines * lineH + 8);
+
+      if(y + rowH > pageHeight - limit){
         pdfAddPage(doc);
         y = 54;
         header();
@@ -10781,11 +10794,11 @@
       }
       let cx = margin;
       doc.setDrawColor(...PDF_COLORS.borderLight); doc.setLineWidth(0.5);
-      row.forEach((cell, ci) => {
+      wrapped.forEach((lines, ci) => {
         const c = cols[ci];
         doc.rect(cx, y, c.width, rowH, 'S');
         doc.setTextColor(...PDF_COLORS.textPrimary);
-        doc.text(String(cell == null || cell === '' ? '—' : cell), cx + c.width / 2, y + 14, { align: 'center', maxWidth: c.width - 6 });
+        doc.text(lines, cx + c.width / 2, y + (lines.length > 1 ? 8 : 14), { align: 'center' });
         cx += c.width;
       });
       y += rowH;
@@ -11111,7 +11124,12 @@
     const c = (vessel && vessel.compliance) || {};
     const country = c.reporting_country;
     const { jsPDF } = jspdf;
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    // Landscape, not portrait like every other report — this is the one
+    // PDF with several wide, densely-packed grid tables (haul-by-haul,
+    // catch/discard/incidental), and the extra ~250pt of width keeps
+    // real trip data (long notes, long species names, DMS positions)
+    // from feeling cramped once a trip has many hauls/catches.
+    const doc = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'landscape' });
     const useThaiFont = window.getFishPulseLang && window.getFishPulseLang() === 'th';
     if(useThaiFont) registerThaiPdfFont(doc);
     const pdfFont = useThaiFont ? 'NotoSansThai' : 'helvetica';
