@@ -738,7 +738,8 @@
   .fleet-gauge-value{ font-family:var(--display); font-weight:700; font-size:30px; line-height:1; color:var(--ink); }
   .fleet-gauge-meta{ font-family:var(--data); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px; }
 
-  .fleet-dock{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin: 0 0 16px; }
+  .fleet-dock{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin: 0 0 16px; }
+  .fleet-dock-item.amber{ color: var(--amber); }
   .fleet-dock-item{
     background:var(--fleet-panel-2); border:1px solid var(--line); border-radius:12px; cursor:pointer;
     padding:10px 4px; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--cyan);
@@ -4025,6 +4026,10 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1"/></svg>
           <span data-i18n="fltrip_log_catch">Catch</span>
         </div>
+        <div class="fleet-dock-item amber" id="fleetLogProtectedDockBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21c4-5 7-8.5 7-12a7 7 0 10-14 0c0 3.5 3 7 7 12z"/></svg>
+          <span data-i18n="fltrip_log_protected">Protected</span>
+        </div>
         <div class="fleet-dock-item" id="fleetLogFuelDockBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="3" width="10" height="16" rx="2"/><path d="M10 7h4M10 10h4"/></svg>
           <span data-i18n="fltab_fuel">Fuel</span>
@@ -4210,26 +4215,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="insight-card-label" style="margin-bottom:10px;"><span data-i18n="flhaul_protected_section">Protected Species Interaction</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></div>
-      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flhaul_protected_hint">Only if this set interacted with a marine mammal, sea turtle, or seabird — leave blank otherwise.</div>
-      <label for="fleetProtectedSpecies" data-i18n="flhaul_protected_species">Species</label>
-      <input type="text" id="fleetProtectedSpecies" placeholder="e.g. California sea lion, black-footed albatross">
-      <div class="grid2">
-        <div>
-          <label for="fleetProtectedCount" data-i18n="flhaul_protected_count">Count</label>
-          <input type="number" inputmode="numeric" id="fleetProtectedCount">
-        </div>
-        <div>
-          <label for="fleetProtectedStatus" data-i18n="flhaul_protected_status">Status</label>
-          <select id="fleetProtectedStatus">
-            <option value="" data-i18n="rec_select_placeholder">— Select —</option>
-            <option value="alive" data-i18n="flhaul_protected_alive">Released Alive</option>
-            <option value="dead" data-i18n="flhaul_protected_dead">Dead</option>
-          </select>
-        </div>
-      </div>
-    </div>
     </div>
 
     <div class="card">
@@ -4243,6 +4228,19 @@
         <span style="font-family:var(--display); font-size:13px; color:#cfe7f4; font-weight:600; text-transform:none; letter-spacing:0;" data-i18n="flhaul_log_catch_now">Log catch for this haul now</span>
       </label>
       <div style="font-family:var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; line-height:1.5; padding-left:26px;" data-i18n="flhaul_log_catch_hint">Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.</div>
+    </div>
+
+    <!-- Protected species interaction is no longer captured inline here —
+         it has its own dock entry point + data table (see fleet_protected_
+         interactions_v1) so a haul can log more than one interaction. This
+         checkbox is just the fast path right after saving a haul, same
+         role as fleetLogCatchNow above. -->
+    <div class="track-note" style="margin-bottom:0;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin:0;">
+        <input type="checkbox" id="fleetLogProtectedNow" style="width:16px; height:16px; margin:0; flex-shrink:0;">
+        <span style="font-family:var(--display); font-size:13px; color:#cfe7f4; font-weight:600; text-transform:none; letter-spacing:0;" data-i18n="flhaul_log_protected_now">Log a protected species interaction for this haul</span>
+      </label>
+      <div style="font-family:var(--data); font-size:10px; color:#7fa3b5; margin-top:6px; line-height:1.5; padding-left:26px;" data-i18n="flhaul_log_protected_hint">Only if this set interacted with a marine mammal, sea turtle, or seabird — leave unchecked otherwise. Opens a quick form after you save, already linked to this haul.</div>
     </div>
   </main>
   <div class="savebar">
@@ -4315,6 +4313,12 @@
           <option value="market" data-i18n="flcatch_discard_market">Market Condition</option>
           <option value="other" data-i18n="rec_gear_other">Other</option>
         </select>
+        <label for="fleetCatchDiscardCondition"><span data-i18n="flcatch_discard_condition">Discard Condition</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <select id="fleetCatchDiscardCondition">
+          <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+          <option value="dead" data-i18n="flhaul_protected_dead">Dead</option>
+          <option value="alive" data-i18n="flhaul_protected_alive">Released Alive</option>
+        </select>
       </div>
       <div id="fleetCatchThFields">
         <label for="fleetCatchThLocalName"><span data-i18n="flcatch_th_local_name">Local / Regional Name (Thailand)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
@@ -4356,6 +4360,65 @@
   <div class="savebar">
     <button class="btn btn-clear" id="fleetCatchAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
     <button class="btn btn-save" id="fleetCatchSaveBtn" data-i18n="flcatch_save_return">Save & Return To Trip</button>
+  </div>
+</section>
+
+<!-- ================= FLEET: LOG PROTECTED SPECIES INTERACTION ================= -->
+<section class="screen" id="screen-fleet-log-protected">
+  <div class="topbar">
+    <div class="back-row">
+      <button class="back-btn" id="fleetProtectedBackBtn" data-go="fleet-trip">←</button>
+      <span class="brand" data-i18n="flprotected_brand">Log Protected Species</span>
+      <div class="topbar-actions" style="margin-left:auto;">
+        <div class="rocker">
+          <button type="button" class="active" data-role="captain"><span class="dot"></span><span data-i18n="flrole_captain_short">Capt.</span></button>
+          <button type="button" data-role="operations" data-i18n="flrole_ops_short">Ops</button>
+        </div>
+        <button class="fleet-sun-toggle icon-only" type="button" aria-label="Modo Sol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/></svg>
+          <span data-i18n="fleet_sun_toggle">Sun</span>
+        </button>
+      </div>
+    </div>
+    <h1 data-i18n="flhaul_protected_section">Protected Species Interaction</h1>
+    <div class="site-line" id="fleetProtectedHaulLine" data-i18n="flcatch_not_linked">Not Linked To A Haul</div>
+  </div>
+  <main>
+    <div class="card">
+      <div class="step-card-header" style="margin-bottom:14px;">
+        <div class="sc-icon-box" style="background:var(--blue-mist);">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>
+        </div>
+        <span class="sc-title"><span data-i18n="flcatch_haul">Haul</span> <span class="optional-tag" data-i18n="flprotected_haul_hint">this interaction belongs to</span></span>
+      </div>
+      <select id="fleetProtectedHaulSelect"></select>
+      <div class="duration-line" id="fleetProtectedHaulCountLine" style="display:none;"></div>
+    </div>
+
+    <div class="card">
+      <div class="insight-card-label" style="margin-bottom:10px;" data-i18n="flprotected_species_outcome">Species & outcome</div>
+      <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" data-i18n="flhaul_protected_hint">Only if this set interacted with a marine mammal, sea turtle, or seabird — leave blank otherwise.</div>
+      <label for="fleetProtectedSpecies" data-i18n="flhaul_protected_species">Species</label>
+      <input type="text" id="fleetProtectedSpecies" placeholder="e.g. California sea lion, black-footed albatross">
+      <div class="grid2">
+        <div>
+          <label for="fleetProtectedCount" data-i18n="flhaul_protected_count">Count</label>
+          <input type="number" inputmode="numeric" id="fleetProtectedCount">
+        </div>
+        <div>
+          <label for="fleetProtectedStatus" data-i18n="flhaul_protected_status">Status</label>
+          <select id="fleetProtectedStatus">
+            <option value="" data-i18n="rec_select_placeholder">— Select —</option>
+            <option value="alive" data-i18n="flhaul_protected_alive">Released Alive</option>
+            <option value="dead" data-i18n="flhaul_protected_dead">Dead</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="savebar">
+    <button class="btn btn-clear" id="fleetProtectedAddAnotherBtn" data-i18n="flcatch_add_another">+ Add Another</button>
+    <button class="btn btn-save" id="fleetProtectedSaveBtn" data-i18n="flcatch_save_return">Save & Return To Trip</button>
   </div>
 </section>
 
@@ -4452,6 +4515,8 @@
         <input type="text" id="fleetCloseNewCrewName" placeholder="e.g. J. Sombrero">
         <button class="btn btn-save" id="fleetCloseAddCrewBtn" style="padding:0;" data-i18n="flclose_add">Add</button>
       </div>
+      <label for="fleetCloseNewCrewDoc" style="margin-top:8px;"><span data-i18n="flclose_crew_doc_number">Passport / Seaman Book No.</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+      <input type="text" id="fleetCloseNewCrewDoc" placeholder="e.g. AB1234567" data-i18n-placeholder="flclose_crew_doc_placeholder">
       <div style="font-family:var(--data); font-size:10.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5;" data-i18n="flclose_crew_hint">Marking who was on board saves the office from retyping names at settlement — pay shares are still set there.</div>
     </div>
 
@@ -4497,6 +4562,8 @@
       <div id="fleetCloseEuFields">
         <label for="fleetCloseEuSalesNote" data-i18n="flclose_eu_sales_note">Sales Note Number (EU)</label>
         <input type="text" id="fleetCloseEuSalesNote" placeholder="e.g. IT-2026-004521">
+        <label for="fleetCloseEuFaoArea"><span data-i18n="flclose_eu_fao_area">FAO Area / Subarea (EU)</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+        <input type="text" id="fleetCloseEuFaoArea" placeholder="e.g. 27.8.a" data-i18n-placeholder="flclose_eu_fao_area_placeholder">
       </div>
       <div id="fleetCloseThFields">
         <label for="fleetCloseThPiNo" data-i18n="flclose_th_pi_no">PI No. — Port-In Notification Number (Thailand)</label>
@@ -4600,6 +4667,7 @@
     <div class="site-line" id="fleetTripDetailVesselLine">&nbsp;</div>
   </div>
   <main>
+    <div id="fleetCaptainLogbookCard"></div>
     <div id="fleetTripDetailLanding"></div>
 
     <div class="card">
@@ -4614,6 +4682,13 @@
       <div class="collapsible-body" id="fleetIndividualCatchesBody" style="display:none;">
         <div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5;" data-i18n="fltripdet_tap_catch_hint">Tap a catch to fix its species, weight, or which haul it belongs to. The Landing Report above always reflects the latest values.</div>
         <div id="fleetTripDetailCatchList"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label collapsible" id="fleetProtectedToggle"><span data-i18n="fltripdet_protected_section">Protected Species Interactions</span> <span id="fleetProtectedChevron">▾</span></div>
+      <div class="collapsible-body" id="fleetProtectedBody" style="display:none;">
+        <div id="fleetTripDetailProtectedList"></div>
       </div>
     </div>
 
@@ -5936,7 +6011,7 @@
       rec_species_label: 'Scientific Name', rec_common_name_label: 'Common Name',
       rec_step4_title: 'Biometrics', rec_length_label: 'Length (cm)', rec_weight_label: 'Weight (kg)',
       flcatch_specimen_count: 'No. of Specimens', flcatch_specimen_count_placeholder: 'e.g. 3',
-      flcatch_discarded_kg: 'Discarded Weight (kg)', flcatch_discard_reason: 'Discard Disposition', flcatch_th_local_name: 'Local / Regional Name (Thailand)',
+      flcatch_discarded_kg: 'Discarded Weight (kg)', flcatch_discard_reason: 'Discard Disposition', flcatch_discard_condition: 'Discard Condition', flcatch_th_local_name: 'Local / Regional Name (Thailand)',
       flcatch_discard_undersize: 'Below Minimum Size', flcatch_discard_regulatory: 'Regulatory (quota/closure/prohibited species)', flcatch_discard_predation: 'Damaged / Predation', flcatch_discard_market: 'Market Condition',
       rec_sex_label: 'Sex', rec_condition_label: 'Condition At Release',
       rec_step5_title: 'Bycatch Status', rec_bycatch_label: 'Is This Bycatch?',
@@ -5996,7 +6071,7 @@
       fltrip_vessel: 'Vessel', fltrip_select_vessel: '— Select Vessel —', fltrip_new_vessel: '+ New Vessel', fltrip_vessel_name: 'Vessel Name',
       fltrip_default_currency: 'Default Currency', fltrip_crew_count: 'Crew Count', fltrip_fuel_loaded: 'Fuel Loaded (L)', fltrip_start_trip: 'Start Trip',
       fltrip_new_vessel_country_hint: 'This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.',
-      fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_close_trip: 'Close Trip', fltrip_quick_log: 'Quick log', fltrip_position: 'Position', fltrip_goal_kg: 'Catch Goal (kg)', fltrip_goal_kg_optional: '— optional', fltrip_nautical_charts: 'Nautical charts available', fltrip_nautical_charts_sub: 'Confirms the vessel has up-to-date nautical charts for this area before departure.', fltrip_day_label: 'Day {n}', fltrip_goal_meta: 'of goal · {goal} kg', fltrip_no_goal_set: 'No goal set for this trip', flrole_captain_short: 'Capt.', flrole_ops_short: 'Ops',
+      fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_log_protected: 'Protected', fltrip_close_trip: 'Close Trip', fltrip_quick_log: 'Quick log', fltrip_position: 'Position', fltrip_goal_kg: 'Catch Goal (kg)', fltrip_goal_kg_optional: '— optional', fltrip_nautical_charts: 'Nautical charts available', fltrip_nautical_charts_sub: 'Confirms the vessel has up-to-date nautical charts for this area before departure.', fltrip_day_label: 'Day {n}', fltrip_goal_meta: 'of goal · {goal} kg', fltrip_no_goal_set: 'No goal set for this trip', flrole_captain_short: 'Capt.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
       flhaul_brand: 'Log Haul', flhaul_title: 'Haul Details', flhaul_gear_effort: 'Gear & effort',
       flhaul_start: 'Haul Start', flhaul_end: 'Haul End', flhaul_notes: 'Notes',
@@ -6011,8 +6086,10 @@
       flhaul_protected_section: 'Protected Species Interaction', flhaul_protected_hint: 'Only if this set interacted with a marine mammal, sea turtle, or seabird — leave blank otherwise.',
       flhaul_protected_species: 'Species', flhaul_protected_count: 'Count', flhaul_protected_status: 'Status', flhaul_protected_alive: 'Released Alive', flhaul_protected_dead: 'Dead',
       flhaul_log_catch_now: 'Log catch for this haul now', flhaul_log_catch_hint: 'Leave unchecked to return to the trip and log catch later — or combine all catch at end of trip.',
+      flhaul_log_protected_now: 'Log a protected species interaction for this haul', flhaul_log_protected_hint: 'Only if this set interacted with a marine mammal, sea turtle, or seabird — leave unchecked otherwise. Opens a quick form after you save, already linked to this haul.',
       flhaul_cancel: 'Cancel', flhaul_save: 'Save Haul',
       flcatch_brand: 'Log Catch', flcatch_title: 'Catch Entry', flcatch_not_linked: 'Not Linked To A Haul',
+      flprotected_brand: 'Log Protected Species', flprotected_haul_hint: 'this interaction belongs to', flprotected_species_outcome: 'Species & outcome', flprotected_no_interactions_yet: 'No interactions logged for this haul yet', flprotected_logged_so_far: 'interaction(s) logged so far',
       flcatch_haul: 'Haul', flcatch_haul_hint: 'this catch belongs to', flcatch_species_weight: 'Species & weight', flcatch_species_label: 'Species / Commercial Category',
       flcatch_ref_price: 'Reference price', flcatch_add_another: '+ Add Another', flcatch_save_return: 'Save & Return To Trip', flcatch_no_haul: 'No haul (loose catch)',
       hist_unassigned_records: 'Unassigned records', ins_no_campaign_unassigned: 'No campaign (unassigned)',
@@ -6027,6 +6104,7 @@
       flclose_fishing_zone: 'Fishing Zone (Mexico)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Trip Type (US)', flclose_triptype_commercial: 'Commercial', flclose_triptype_party: 'Party', flclose_triptype_charter: 'Charter', flclose_anglers: 'Number of Anglers',
       flclose_eu_sales_note: 'Sales Note Number (EU)',
+      flclose_crew_doc_number: 'Passport / Seaman Book No.', flclose_crew_doc_placeholder: 'e.g. AB1234567', flclose_eu_fao_area: 'FAO Area / Subarea (EU)', flclose_eu_fao_area_placeholder: 'e.g. 27.8.a',
       flclose_th_pi_no: 'PI No. — Port-In Notification Number (Thailand)', flclose_th_province: 'Arrival Province (Thailand)', flclose_th_zone: 'Coastal Sea Zone (Thailand)', flclose_th_total_kg: 'Total Aquatic Animal Quantity — kg (Thailand)', flclose_th_egg_crabs: 'Egg-Bearing Crabs Released — units (Thailand)',
       fltriplog_brand: 'Trip Log', fltriplog_title: 'Past Trips', fltriplog_all_vessels: 'All Vessels',
       fltripdet_brand: 'Trip Detail', fltripdet_h1: 'Landing Report & Settlement', fltripdet_haul_log: 'Haul Log', fltripdet_catches_logged: 'Individual Catches Logged',
@@ -6035,6 +6113,8 @@
       fltripdet_kg_estimated: 'kg Estimated', fltripdet_kg_scaled: 'kg Scaled', fltripdet_report_disclaimer: 'This report supports a landing declaration or capture certificate application — it is not itself an official certificate.',
       fltripdet_generic_format_notice: 'Generic Fish Pulse format — it doesn\'t match the official layout of any specific authority. If your jurisdiction requires a particular format, set a Reporting Authority in this vessel\'s compliance settings.',
       fltripdet_export_pdf_btn: 'Export as PDF', fltripdet_no_hauls: 'No hauls logged.', fltripdet_no_catches: 'No catches logged.',
+      fltripdet_protected_section: 'Protected Species Interactions', fltripdet_no_protected: 'No protected species interactions logged.',
+      flcaptainlog_card_title: 'Captain\'s Logbook', flcaptainlog_card_desc: 'A comprehensive voyage record — vessel &amp; permit identification, trip details, gear, crew, haul-by-haul log, and onboard catch estimate — in one exportable document.', flcaptainlog_export_btn: 'Generate Captain\'s Logbook', flcaptainlog_title: 'Captain\'s Logbook', flcaptainlog_sec_id: 'Vessel &amp; Permit Identification', flcaptainlog_sec_trip: 'Trip Information', flcaptainlog_sec_gear: 'Gear Characteristics', flcaptainlog_sec_crew: 'Crew Aboard', flcaptainlog_sec_hauls: 'Haul-by-Haul Log', flcaptainlog_sec_catch: 'Onboard Catch Estimate', flcaptainlog_disclaimer: 'This logbook is generated from data self-reported in Fish Pulse and is not an official government logbook. Fields marked \'— complete by hand\' are not currently captured by the app; verify all entries against your vessel\'s documents and applicable regulations before relying on this record.', flcaptainlog_not_captured: '— complete by hand', flcaptainlog_f_vessel: 'Vessel Name', flcaptainlog_f_registration: 'Registration / Matrícula', flcaptainlog_f_permit_holder: 'Permit Holder', flcaptainlog_f_permit_number: 'Fishing Permit No.', flcaptainlog_f_captain: 'Captain', flcaptainlog_f_flag: 'Flag / Nationality', flcaptainlog_f_callsign: 'Radio Call Sign', flcaptainlog_f_hold_capacity: 'Hold Capacity', flcaptainlog_f_trip_number: 'Trip No. (season)', flcaptainlog_f_departure_port: 'Departure Port', flcaptainlog_f_departure_dt: 'Departure Date/Time', flcaptainlog_f_arrival_port: 'Arrival Port', flcaptainlog_f_arrival_dt: 'Arrival Date/Time', flcaptainlog_f_arrival_folio: 'Arrival Folio No.', flcaptainlog_f_fishing_zone: 'Authorized Fishing Zone', flcaptainlog_f_gear_desc: 'Gear Description', flcaptainlog_col_hauldate: 'Date / Time', flcaptainlog_col_position: 'Position', flcaptainlog_col_depth: 'Depth (m)', flcaptainlog_col_notes: 'Notes', flcaptainlog_col_species: 'Species', flcaptainlog_col_estkg: 'Est. Weight', flcaptainlog_col_preservation: 'Preservation', flcaptainlog_kpi_days: 'Days at Sea', flcaptainlog_kpi_hauls: 'Hauls', flcaptainlog_kpi_fuel: 'Fuel Consumed', flcaptainlog_kpi_catch: 'Total Catch', flcaptainlog_sec_bycatch: 'Bycatch — Kept / Discarded at Sea', flcaptainlog_col_kept: 'Kept (kg)', flcaptainlog_col_discarded: 'Discarded (kg)', flcaptainlog_sec_protected: 'Protected Species Interactions', flcaptainlog_col_block: 'Block #', flcaptainlog_col_fao: 'FAO Code', flcaptainlog_tolerance_warning: 'Marked species differ from the scale weight by more than the EU\'s 10% per-species tolerance \u2014 reconcile before submitting.',
       flmx_aviso_export_btn: 'Export Aviso de Arribo (Mexico)',
       flmx_escama_export_btn: 'Export Bitácora de Escama (Mexico)', flmx_camaron_export_btn: 'Export Bitácora de Camarón (Mexico)', flmx_tiburon_export_btn: 'Export Bitácora de Tiburón (Mexico)',
       flus_nt_export_btn: 'Export Non-Trawl Logbook Worksheet (US)',
@@ -6166,6 +6246,7 @@
       msg_vessel_name_required: 'Vessel name is required', msg_captain_name_required: 'Captain name is required', msg_select_captain_vessel: 'Select or add a captain and vessel',
       msg_trip_started: 'Trip started', msg_currency_updated: 'Default currency updated', msg_vessel_added: 'Vessel added', msg_no_active_trip: 'No active trip',
       msg_haul_saved: 'Haul saved', msg_species_category_required: 'Species or category is required', msg_catch_saved: 'Catch saved', msg_enter_name_first: 'Enter a name first',
+      msg_protected_interaction_saved: 'Interaction saved', flprotected_chip_one: 'protected interaction', flprotected_chip_other: 'protected interactions',
       msg_trip_closed: 'Trip closed', msg_enter_amount: 'Enter an amount', msg_cost_added: 'Cost added', msg_name_percentage_required: 'Name and percentage are required',
       msg_crew_copied: 'Crew copied from last trip — feel free to adjust', msg_crew_added_captain: "Crew added from the captain's list — set each share %",
       msg_cost_updated: 'Cost updated', msg_cost_removed: 'Cost removed', msg_pdf_not_loaded: 'PDF library not loaded — check your connection',
@@ -6375,7 +6456,7 @@
       rec_species_label: 'Nombre Científico', rec_common_name_label: 'Nombre Común',
       rec_step4_title: 'Biometría', rec_length_label: 'Longitud (cm)', rec_weight_label: 'Peso (kg)',
       flcatch_specimen_count: 'No. de Ejemplares', flcatch_specimen_count_placeholder: 'ej. 3',
-      flcatch_discarded_kg: 'Peso Descartado (kg)', flcatch_discard_reason: 'Motivo de Descarte', flcatch_th_local_name: 'Nombre Local / Regional (Tailandia)',
+      flcatch_discarded_kg: 'Peso Descartado (kg)', flcatch_discard_reason: 'Motivo de Descarte', flcatch_discard_condition: 'Condición del Descarte', flcatch_th_local_name: 'Nombre Local / Regional (Tailandia)',
       flcatch_discard_undersize: 'Talla Menor al Mínimo', flcatch_discard_regulatory: 'Regulatorio (cuota/veda/especie prohibida)', flcatch_discard_predation: 'Dañado / Depredación', flcatch_discard_market: 'Condición de Mercado',
       rec_sex_label: 'Sexo', rec_condition_label: 'Condición al Liberar',
       rec_step5_title: 'Estatus de Bycatch', rec_bycatch_label: '¿Es Esto Bycatch?',
@@ -6435,7 +6516,7 @@
       fltrip_vessel: 'Embarcación', fltrip_select_vessel: '— Seleccionar Embarcación —', fltrip_new_vessel: '+ Nueva Embarcación', fltrip_vessel_name: 'Nombre de la Embarcación',
       fltrip_default_currency: 'Moneda Predeterminada', fltrip_crew_count: 'Número de Tripulantes', fltrip_fuel_loaded: 'Combustible Cargado (L)', fltrip_start_trip: 'Iniciar Viaje',
       fltrip_new_vessel_country_hint: 'Esto decide qué campos específicos de país aparecen para este barco — lo puedes cambiar cuando quieras desde Vessels → Compliance.',
-      fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_close_trip: 'Cerrar Viaje', fltrip_quick_log: 'Registro rápido', fltrip_position: 'Posición', fltrip_goal_kg: 'Meta de Captura (kg)', fltrip_goal_kg_optional: '— opcional', fltrip_nautical_charts: 'Cartas náuticas disponibles', fltrip_nautical_charts_sub: 'Confirma si la embarcación cuenta con cartas náuticas actualizadas para esta zona antes de zarpar.', fltrip_day_label: 'Día {n}', fltrip_goal_meta: 'de meta · {goal} kg', fltrip_no_goal_set: 'Sin meta definida para este viaje', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
+      fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_log_protected: 'Protegida', fltrip_close_trip: 'Cerrar Viaje', fltrip_quick_log: 'Registro rápido', fltrip_position: 'Posición', fltrip_goal_kg: 'Meta de Captura (kg)', fltrip_goal_kg_optional: '— opcional', fltrip_nautical_charts: 'Cartas náuticas disponibles', fltrip_nautical_charts_sub: 'Confirma si la embarcación cuenta con cartas náuticas actualizadas para esta zona antes de zarpar.', fltrip_day_label: 'Día {n}', fltrip_goal_meta: 'de meta · {goal} kg', fltrip_no_goal_set: 'Sin meta definida para este viaje', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Capturas de este viaje', fltrip_hauls_this_trip: 'Lances de este viaje', fltrip_view_map: 'Ver Mapa',
       flhaul_brand: 'Registrar Lance', flhaul_title: 'Detalles del Lance', flhaul_gear_effort: 'Arte y esfuerzo',
       flhaul_start: 'Inicio del Lance', flhaul_end: 'Fin del Lance', flhaul_notes: 'Notas',
@@ -6450,8 +6531,10 @@
       flhaul_protected_section: 'Interacción con Especies Protegidas', flhaul_protected_hint: 'Solo si este lance interactuó con un mamífero marino, tortuga marina o ave protegida — deja en blanco si no.',
       flhaul_protected_species: 'Especie', flhaul_protected_count: 'Cantidad', flhaul_protected_status: 'Estado', flhaul_protected_alive: 'Liberado Vivo', flhaul_protected_dead: 'Muerto',
       flhaul_log_catch_now: 'Registrar captura de este lance ahora', flhaul_log_catch_hint: 'Déjalo sin marcar para volver al viaje y registrar la captura después — o combinar toda la captura al final del viaje.',
+      flhaul_log_protected_now: 'Registrar una interacción con especie protegida en este lance', flhaul_log_protected_hint: 'Solo si este lance interactuó con un mamífero marino, tortuga marina o ave protegida — deja sin marcar si no. Abre un formulario rápido después de guardar, ya ligado a este lance.',
       flhaul_cancel: 'Cancelar', flhaul_save: 'Guardar Lance',
       flcatch_brand: 'Registrar Captura', flcatch_title: 'Entrada de Captura', flcatch_not_linked: 'No Vinculado a un Lance',
+      flprotected_brand: 'Registrar Especie Protegida', flprotected_haul_hint: 'a la que pertenece esta interacción', flprotected_species_outcome: 'Especie y resultado', flprotected_no_interactions_yet: 'Aún no hay interacciones registradas para este lance', flprotected_logged_so_far: 'interacción(es) registradas hasta ahora',
       flcatch_haul: 'Lance', flcatch_haul_hint: 'a la que pertenece esta captura', flcatch_species_weight: 'Especie y peso', flcatch_species_label: 'Especie / Categoría Comercial',
       flcatch_ref_price: 'Precio de referencia', flcatch_add_another: '+ Agregar Otra', flcatch_save_return: 'Guardar y Volver al Viaje', flcatch_no_haul: 'Sin lance (captura suelta)',
       hist_unassigned_records: 'Registros sin asignar', ins_no_campaign_unassigned: 'Sin campaña (sin asignar)',
@@ -6466,6 +6549,7 @@
       flclose_fishing_zone: 'Zona de Pesca (México)', flclose_zone_litoral: 'Litoral', flclose_zone_bahia: 'Bahía', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continental',
       flclose_trip_type: 'Tipo de Viaje (EE.UU.)', flclose_triptype_commercial: 'Comercial', flclose_triptype_party: 'Grupo (Party)', flclose_triptype_charter: 'Charter', flclose_anglers: 'Número de Pescadores (Anglers)',
       flclose_eu_sales_note: 'Número de Nota de Venta (UE)',
+      flclose_crew_doc_number: 'Pasaporte / No. de Seaman Book', flclose_crew_doc_placeholder: 'ej. AB1234567', flclose_eu_fao_area: 'Área / Subárea FAO (UE)', flclose_eu_fao_area_placeholder: 'ej. 27.8.a',
       flclose_th_pi_no: 'No. PI — Número de Aviso de Entrada a Puerto (Tailandia)', flclose_th_province: 'Provincia de Arribo (Tailandia)', flclose_th_zone: 'Zona de Mar Costero (Tailandia)', flclose_th_total_kg: 'Cantidad Total de Fauna Acuática — kg (Tailandia)', flclose_th_egg_crabs: 'Cangrejas Ovígeras Liberadas — unidades (Tailandia)',
       fltriplog_brand: 'Registro de Viajes', fltriplog_title: 'Viajes Anteriores', fltriplog_all_vessels: 'Todas las Embarcaciones',
       fltripdet_brand: 'Detalle del Viaje', fltripdet_h1: 'Reporte de Desembarque y Liquidación', fltripdet_haul_log: 'Registro de Lances', fltripdet_catches_logged: 'Capturas Individuales Registradas',
@@ -6474,6 +6558,8 @@
       fltripdet_kg_estimated: 'kg Estimados', fltripdet_kg_scaled: 'kg Pesados', fltripdet_report_disclaimer: 'Este reporte apoya una declaración de desembarque o solicitud de certificado de captura — no es en sí mismo un certificado oficial.',
       fltripdet_generic_format_notice: 'Formato genérico de Fish Pulse — no coincide con el formato oficial de ninguna autoridad específica. Si tu jurisdicción requiere un formato particular, configura una Autoridad de Reporte en los ajustes de cumplimiento de este barco.',
       fltripdet_export_pdf_btn: 'Exportar como PDF', fltripdet_no_hauls: 'No hay lances registrados.', fltripdet_no_catches: 'No hay capturas registradas.',
+      fltripdet_protected_section: 'Interacciones con Especies Protegidas', fltripdet_no_protected: 'No hay interacciones con especies protegidas registradas.',
+      flcaptainlog_card_title: 'Bitácora del Capitán', flcaptainlog_card_desc: 'Un registro completo del viaje — identificación de embarcación y permisos, datos del viaje, arte de pesca, tripulación, lances y estimación de captura a bordo — en un solo documento exportable.', flcaptainlog_export_btn: 'Generar Bitácora del Capitán', flcaptainlog_title: 'Bitácora del Capitán', flcaptainlog_sec_id: 'Identificación de la Embarcación y Permisos', flcaptainlog_sec_trip: 'Datos del Viaje', flcaptainlog_sec_gear: 'Características del Arte de Pesca', flcaptainlog_sec_crew: 'Tripulación a Bordo', flcaptainlog_sec_hauls: 'Registro de Lances', flcaptainlog_sec_catch: 'Estimación de Captura a Bordo', flcaptainlog_disclaimer: 'Esta bitácora se genera con datos autorreportados en Fish Pulse y no sustituye la bitácora oficial exigida por la autoridad. Los campos marcados \'— completar a mano\' no están capturados actualmente por la app; verifica cada dato contra los documentos de la embarcación y la normativa aplicable antes de usar este registro.', flcaptainlog_not_captured: '— completar a mano', flcaptainlog_f_vessel: 'Nombre de la Embarcación', flcaptainlog_f_registration: 'Matrícula / No. de Registro', flcaptainlog_f_permit_holder: 'Titular del Permiso', flcaptainlog_f_permit_number: 'No. de Permiso de Pesca', flcaptainlog_f_captain: 'Capitán', flcaptainlog_f_flag: 'Bandera / Nacionalidad', flcaptainlog_f_callsign: 'Distintivo de Llamada (Radio)', flcaptainlog_f_hold_capacity: 'Capacidad de Bodega', flcaptainlog_f_trip_number: 'No. de Viaje (temporada)', flcaptainlog_f_departure_port: 'Puerto de Salida', flcaptainlog_f_departure_dt: 'Fecha/Hora de Salida', flcaptainlog_f_arrival_port: 'Puerto de Arribo', flcaptainlog_f_arrival_dt: 'Fecha/Hora de Arribo', flcaptainlog_f_arrival_folio: 'No. de Folio de Arribo', flcaptainlog_f_fishing_zone: 'Zona de Pesca Autorizada', flcaptainlog_f_gear_desc: 'Descripción del Arte de Pesca', flcaptainlog_col_hauldate: 'Fecha / Hora', flcaptainlog_col_position: 'Posición', flcaptainlog_col_depth: 'Profundidad (m)', flcaptainlog_col_notes: 'Notas', flcaptainlog_col_species: 'Especie', flcaptainlog_col_estkg: 'Peso Est.', flcaptainlog_col_preservation: 'Conservación', flcaptainlog_kpi_days: 'Días en Mar', flcaptainlog_kpi_hauls: 'Lances', flcaptainlog_kpi_fuel: 'Combustible Consumido', flcaptainlog_kpi_catch: 'Captura Total', flcaptainlog_sec_bycatch: 'Fauna de Acompañamiento — Retenida / Descartada en el Mar', flcaptainlog_col_kept: 'Retenido (kg)', flcaptainlog_col_discarded: 'Descartado (kg)', flcaptainlog_sec_protected: 'Interacciones con Especies Protegidas', flcaptainlog_col_block: 'No. de Bloque', flcaptainlog_col_fao: 'Código FAO', flcaptainlog_tolerance_warning: 'Las especies marcadas difieren del peso en b\u00e1scula por m\u00e1s del margen de tolerancia del 10% por especie de la UE \u2014 concilia antes de enviar.',
       flmx_aviso_export_btn: 'Exportar Aviso de Arribo (México)',
       flmx_escama_export_btn: 'Exportar Bitácora de Escama (México)', flmx_camaron_export_btn: 'Exportar Bitácora de Camarón (México)', flmx_tiburon_export_btn: 'Exportar Bitácora de Tiburón (México)',
       flus_nt_export_btn: 'Exportar Hoja de Non-Trawl Logbook (EE.UU.)',
@@ -6605,6 +6691,7 @@
       msg_vessel_name_required: 'El nombre de la embarcación es obligatorio', msg_captain_name_required: 'El nombre del capitán es obligatorio', msg_select_captain_vessel: 'Selecciona o agrega un capitán y una embarcación',
       msg_trip_started: 'Viaje iniciado', msg_currency_updated: 'Moneda predeterminada actualizada', msg_vessel_added: 'Embarcación agregada', msg_no_active_trip: 'Sin viaje activo',
       msg_haul_saved: 'Lance guardado', msg_species_category_required: 'La especie o categoría es obligatoria', msg_catch_saved: 'Captura guardada', msg_enter_name_first: 'Ingresa un nombre primero',
+      msg_protected_interaction_saved: 'Interacción guardada', flprotected_chip_one: 'interacción protegida', flprotected_chip_other: 'interacciones protegidas',
       msg_trip_closed: 'Viaje cerrado', msg_enter_amount: 'Ingresa un monto', msg_cost_added: 'Costo agregado', msg_name_percentage_required: 'El nombre y el porcentaje son obligatorios',
       msg_crew_copied: 'Tripulación copiada del último viaje — siéntete libre de ajustar', msg_crew_added_captain: 'Tripulación agregada desde la lista del capitán — define cada porcentaje',
       msg_cost_updated: 'Costo actualizado', msg_cost_removed: 'Costo eliminado', msg_pdf_not_loaded: 'La librería de PDF no cargó — revisa tu conexión',
@@ -6814,7 +6901,7 @@
       rec_species_label: 'Nome Scientifico', rec_common_name_label: 'Nome Comune',
       rec_step4_title: 'Biometria', rec_length_label: 'Lunghezza (cm)', rec_weight_label: 'Peso (kg)',
       flcatch_specimen_count: 'N. di Esemplari', flcatch_specimen_count_placeholder: 'es. 3',
-      flcatch_discarded_kg: 'Peso Scartato (kg)', flcatch_discard_reason: 'Motivo dello Scarto', flcatch_th_local_name: 'Nome Locale / Regionale (Thailandia)',
+      flcatch_discarded_kg: 'Peso Scartato (kg)', flcatch_discard_reason: 'Motivo dello Scarto', flcatch_discard_condition: 'Condizione dello Scarto', flcatch_th_local_name: 'Nome Locale / Regionale (Thailandia)',
       flcatch_discard_undersize: 'Sotto Taglia Minima', flcatch_discard_regulatory: 'Normativo (quota/chiusura/specie proibita)', flcatch_discard_predation: 'Danneggiato / Predazione', flcatch_discard_market: 'Condizione di Mercato',
       rec_sex_label: 'Sesso', rec_condition_label: 'Condizione al Rilascio',
       rec_step5_title: 'Stato di Cattura Accessoria', rec_bycatch_label: 'È una Cattura Accessoria?',
@@ -6874,7 +6961,7 @@
       fltrip_vessel: 'Imbarcazione', fltrip_select_vessel: '— Seleziona Imbarcazione —', fltrip_new_vessel: '+ Nuova Imbarcazione', fltrip_vessel_name: 'Nome Imbarcazione',
       fltrip_default_currency: 'Valuta Predefinita', fltrip_crew_count: "Numero dell'Equipaggio", fltrip_fuel_loaded: 'Carburante Caricato (L)', fltrip_start_trip: 'Avvia Viaggio',
       fltrip_new_vessel_country_hint: 'Questo decide quali campi specifici del paese appaiono per questa imbarcazione — puoi cambiarlo in qualsiasi momento da Vessels → Compliance.',
-      fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_close_trip: 'Chiudi Viaggio', fltrip_quick_log: 'Registro rapido', fltrip_position: 'Posizione', fltrip_goal_kg: 'Obiettivo di Cattura (kg)', fltrip_goal_kg_optional: '— opzionale', fltrip_nautical_charts: 'Carte nautiche disponibili', fltrip_nautical_charts_sub: 'Conferma se la barca dispone di carte nautiche aggiornate per questa zona prima della partenza.', fltrip_day_label: 'Giorno {n}', fltrip_goal_meta: "dell'obiettivo · {goal} kg", fltrip_no_goal_set: 'Nessun obiettivo impostato per questo viaggio', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
+      fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_log_protected: 'Protetta', fltrip_close_trip: 'Chiudi Viaggio', fltrip_quick_log: 'Registro rapido', fltrip_position: 'Posizione', fltrip_goal_kg: 'Obiettivo di Cattura (kg)', fltrip_goal_kg_optional: '— opzionale', fltrip_nautical_charts: 'Carte nautiche disponibili', fltrip_nautical_charts_sub: 'Conferma se la barca dispone di carte nautiche aggiornate per questa zona prima della partenza.', fltrip_day_label: 'Giorno {n}', fltrip_goal_meta: "dell'obiettivo · {goal} kg", fltrip_no_goal_set: 'Nessun obiettivo impostato per questo viaggio', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catture di questo viaggio', fltrip_hauls_this_trip: 'Calate di questo viaggio', fltrip_view_map: 'Vedi Mappa',
       flhaul_brand: 'Registra Calata', flhaul_title: 'Dettagli Calata', flhaul_gear_effort: 'Attrezzo e sforzo',
       flhaul_start: 'Inizio Calata', flhaul_end: 'Fine Calata', flhaul_notes: 'Note',
@@ -6889,8 +6976,10 @@
       flhaul_protected_section: 'Interazione con Specie Protette', flhaul_protected_hint: 'Solo se questa calata ha interagito con un mammifero marino, tartaruga marina o uccello marino — lascia vuoto altrimenti.',
       flhaul_protected_species: 'Specie', flhaul_protected_count: 'Numero', flhaul_protected_status: 'Stato', flhaul_protected_alive: 'Rilasciato Vivo', flhaul_protected_dead: 'Morto',
       flhaul_log_catch_now: 'Registra ora la cattura di questa calata', flhaul_log_catch_hint: 'Lascia deselezionato per tornare al viaggio e registrare la cattura più tardi — o combinare tutta la cattura a fine viaggio.',
+      flhaul_log_protected_now: 'Registra un\'interazione con specie protetta per questa calata', flhaul_log_protected_hint: 'Solo se questa calata ha interagito con un mammifero marino, tartaruga marina o uccello marino — lascia deselezionato altrimenti. Apre un modulo rapido dopo il salvataggio, già collegato a questa calata.',
       flhaul_cancel: 'Annulla', flhaul_save: 'Salva Calata',
       flcatch_brand: 'Registra Cattura', flcatch_title: 'Inserimento Cattura', flcatch_not_linked: 'Non Collegata a una Calata',
+      flprotected_brand: 'Registra Specie Protetta', flprotected_haul_hint: 'a cui appartiene questa interazione', flprotected_species_outcome: 'Specie ed esito', flprotected_no_interactions_yet: 'Nessuna interazione registrata ancora per questa calata', flprotected_logged_so_far: 'interazione/i registrate finora',
       flcatch_haul: 'Calata', flcatch_haul_hint: 'a cui appartiene questa cattura', flcatch_species_weight: 'Specie e peso', flcatch_species_label: 'Specie / Categoria Commerciale',
       flcatch_ref_price: 'Prezzo di riferimento', flcatch_add_another: '+ Aggiungi Altra', flcatch_save_return: 'Salva e Torna al Viaggio', flcatch_no_haul: 'Nessuna calata (cattura singola)',
       hist_unassigned_records: 'Schede non assegnate', ins_no_campaign_unassigned: 'Nessuna campagna (non assegnata)',
@@ -6905,6 +6994,7 @@
       flclose_fishing_zone: 'Zona di Pesca (Messico)', flclose_zone_litoral: 'Litorale', flclose_zone_bahia: 'Baia', flclose_zone_estuarina: 'Estuarina', flclose_zone_continental: 'Continentale',
       flclose_trip_type: 'Tipo di Viaggio (USA)', flclose_triptype_commercial: 'Commerciale', flclose_triptype_party: 'Gruppo (Party)', flclose_triptype_charter: 'Charter', flclose_anglers: 'Numero di Pescatori (Anglers)',
       flclose_eu_sales_note: 'Numero della Nota di Vendita (UE)',
+      flclose_crew_doc_number: 'Passaporto / N. Seaman Book', flclose_crew_doc_placeholder: 'es. AB1234567', flclose_eu_fao_area: 'Area / Sottoarea FAO (UE)', flclose_eu_fao_area_placeholder: 'es. 27.8.a',
       flclose_th_pi_no: 'N. PI — Numero di Notifica di Ingresso in Porto (Thailandia)', flclose_th_province: 'Provincia di Arrivo (Thailandia)', flclose_th_zone: 'Zona di Mare Costiera (Thailandia)', flclose_th_total_kg: 'Quantità Totale di Fauna Acquatica — kg (Thailandia)', flclose_th_egg_crabs: 'Granchi Ovigeri Rilasciati — unità (Thailandia)',
       fltriplog_brand: 'Registro Viaggi', fltriplog_title: 'Viaggi Passati', fltriplog_all_vessels: 'Tutte le Imbarcazioni',
       fltripdet_brand: 'Dettaglio Viaggio', fltripdet_h1: 'Rapporto di Sbarco e Liquidazione', fltripdet_haul_log: 'Registro Calate', fltripdet_catches_logged: 'Catture Individuali Registrate',
@@ -6913,6 +7003,8 @@
       fltripdet_kg_estimated: 'kg Stimati', fltripdet_kg_scaled: 'kg Pesati', fltripdet_report_disclaimer: 'Questo rapporto supporta una dichiarazione di sbarco o una richiesta di certificato di cattura — non è di per sé un certificato ufficiale.',
       fltripdet_generic_format_notice: 'Formato generico di Fish Pulse — non corrisponde al layout ufficiale di nessuna autorità specifica. Se la tua giurisdizione richiede un formato particolare, imposta un\'Autorità di Riferimento nelle impostazioni di conformità di questa nave.',
       fltripdet_export_pdf_btn: 'Esporta come PDF', fltripdet_no_hauls: 'Nessuna calata registrata.', fltripdet_no_catches: 'Nessuna cattura registrata.',
+      fltripdet_protected_section: 'Interazioni con Specie Protette', fltripdet_no_protected: 'Nessuna interazione con specie protette registrata.',
+      flcaptainlog_card_title: 'Diario di Bordo del Capitano', flcaptainlog_card_desc: 'Un registro completo del viaggio — identificazione dell\'imbarcazione e permessi, dati del viaggio, attrezzo da pesca, equipaggio, calate e stima della cattura a bordo — in un unico documento esportabile.', flcaptainlog_export_btn: 'Genera Diario di Bordo del Capitano', flcaptainlog_title: 'Diario di Bordo del Capitano', flcaptainlog_sec_id: 'Identificazione dell\'Imbarcazione e Permessi', flcaptainlog_sec_trip: 'Dati del Viaggio', flcaptainlog_sec_gear: 'Caratteristiche dell\'Attrezzo da Pesca', flcaptainlog_sec_crew: 'Equipaggio a Bordo', flcaptainlog_sec_hauls: 'Registro delle Calate', flcaptainlog_sec_catch: 'Stima della Cattura a Bordo', flcaptainlog_disclaimer: 'Questo diario è generato con dati autodichiarati in Fish Pulse e non sostituisce il giornale di pesca ufficiale richiesto dall\'autorità. I campi contrassegnati con \'— completare a mano\' non sono attualmente acquisiti dall\'app; verifica ogni dato con i documenti dell\'imbarcazione e la normativa applicabile prima di usare questo registro.', flcaptainlog_not_captured: '— completare a mano', flcaptainlog_f_vessel: 'Nome dell\'Imbarcazione', flcaptainlog_f_registration: 'Matricola / N. di Registro', flcaptainlog_f_permit_holder: 'Titolare del Permesso', flcaptainlog_f_permit_number: 'N. di Permesso di Pesca', flcaptainlog_f_captain: 'Capitano', flcaptainlog_f_flag: 'Bandiera / Nazionalità', flcaptainlog_f_callsign: 'Nominativo Radio', flcaptainlog_f_hold_capacity: 'Capacità della Stiva', flcaptainlog_f_trip_number: 'N. di Viaggio (stagione)', flcaptainlog_f_departure_port: 'Porto di Partenza', flcaptainlog_f_departure_dt: 'Data/Ora di Partenza', flcaptainlog_f_arrival_port: 'Porto di Arrivo', flcaptainlog_f_arrival_dt: 'Data/Ora di Arrivo', flcaptainlog_f_arrival_folio: 'N. di Foglio di Arrivo', flcaptainlog_f_fishing_zone: 'Zona di Pesca Autorizzata', flcaptainlog_f_gear_desc: 'Descrizione dell\'Attrezzo', flcaptainlog_col_hauldate: 'Data / Ora', flcaptainlog_col_position: 'Posizione', flcaptainlog_col_depth: 'Profondità (m)', flcaptainlog_col_notes: 'Note', flcaptainlog_col_species: 'Specie', flcaptainlog_col_estkg: 'Peso Stimato', flcaptainlog_col_preservation: 'Conservazione', flcaptainlog_kpi_days: 'Giorni in Mare', flcaptainlog_kpi_hauls: 'Calate', flcaptainlog_kpi_fuel: 'Carburante Consumato', flcaptainlog_kpi_catch: 'Cattura Totale', flcaptainlog_sec_bycatch: 'Catture Accessorie — Trattenute / Scartate in Mare', flcaptainlog_col_kept: 'Trattenuto (kg)', flcaptainlog_col_discarded: 'Scartato (kg)', flcaptainlog_sec_protected: 'Interazioni con Specie Protette', flcaptainlog_col_block: 'N. Blocco', flcaptainlog_col_fao: 'Codice FAO', flcaptainlog_tolerance_warning: 'Le specie contrassegnate differiscono dal peso alla bilancia di oltre la tolleranza UE del 10% per specie \u2014 riconciliare prima dell\'invio.',
       flmx_aviso_export_btn: 'Esporta Aviso de Arribo (Messico)',
       flmx_escama_export_btn: 'Esporta Bitácora de Escama (Messico)', flmx_camaron_export_btn: 'Esporta Bitácora de Camarón (Messico)', flmx_tiburon_export_btn: 'Esporta Bitácora de Tiburón (Messico)',
       flus_nt_export_btn: 'Esporta Foglio Non-Trawl Logbook (USA)',
@@ -7044,6 +7136,7 @@
       msg_vessel_name_required: "Il nome dell'imbarcazione è obbligatorio", msg_captain_name_required: 'Il nome del capitano è obbligatorio', msg_select_captain_vessel: "Seleziona o aggiungi un capitano e un'imbarcazione",
       msg_trip_started: 'Viaggio iniziato', msg_currency_updated: 'Valuta predefinita aggiornata', msg_vessel_added: 'Imbarcazione aggiunta', msg_no_active_trip: 'Nessun viaggio attivo',
       msg_haul_saved: 'Calata salvata', msg_species_category_required: 'La specie o categoria è obbligatoria', msg_catch_saved: 'Cattura salvata', msg_enter_name_first: 'Inserisci prima un nome',
+      msg_protected_interaction_saved: 'Interazione salvata', flprotected_chip_one: 'interazione protetta', flprotected_chip_other: 'interazioni protette',
       msg_trip_closed: 'Viaggio chiuso', msg_enter_amount: 'Inserisci un importo', msg_cost_added: 'Costo aggiunto', msg_name_percentage_required: 'Nome e percentuale sono obbligatori',
       msg_crew_copied: "Equipaggio copiato dall'ultimo viaggio — sentiti libero di modificare", msg_crew_added_captain: "Equipaggio aggiunto dalla lista del capitano — imposta ogni quota",
       msg_cost_updated: 'Costo aggiornato', msg_cost_removed: 'Costo rimosso', msg_pdf_not_loaded: 'Libreria PDF non caricata — controlla la connessione',
@@ -7232,7 +7325,7 @@
       rec_species_label: 'ชื่อวิทยาศาสตร์', rec_common_name_label: 'ชื่อสามัญ',
       rec_step4_title: 'ข้อมูลชีวมิติ', rec_length_label: 'ความยาว (ซม.)', rec_weight_label: 'น้ำหนัก (กก.)',
       flcatch_specimen_count: 'จำนวนตัวอย่าง', flcatch_specimen_count_placeholder: 'เช่น 3',
-      flcatch_discarded_kg: 'น้ำหนักที่ทิ้ง (กก.)', flcatch_discard_reason: 'เหตุผลการทิ้ง', flcatch_th_local_name: 'ชื่อท้องถิ่น/ชื่อภูมิภาค',
+      flcatch_discarded_kg: 'น้ำหนักที่ทิ้ง (กก.)', flcatch_discard_reason: 'เหตุผลการทิ้ง', flcatch_discard_condition: 'สภาพของสัตว์น้ำที่ทิ้ง', flcatch_th_local_name: 'ชื่อท้องถิ่น/ชื่อภูมิภาค',
       flcatch_discard_undersize: 'ขนาดต่ำกว่าเกณฑ์', flcatch_discard_regulatory: 'ข้อบังคับ (โควตา/ปิดฤดู/ชนิดต้องห้าม)', flcatch_discard_predation: 'เสียหาย / ถูกล่า', flcatch_discard_market: 'สภาพตลาด',
       rec_sex_label: 'เพศ', rec_condition_label: 'สภาพขณะปล่อยคืน',
       rec_step5_title: 'สถานะสัตว์น้ำพลอยได้', rec_bycatch_label: 'นี่คือสัตว์น้ำพลอยได้หรือไม่?',
@@ -7292,7 +7385,7 @@
       fltrip_vessel: 'เรือ', fltrip_select_vessel: '— เลือกเรือ —', fltrip_new_vessel: '+ เรือใหม่', fltrip_vessel_name: 'ชื่อเรือ',
       fltrip_default_currency: 'สกุลเงินเริ่มต้น', fltrip_crew_count: 'จำนวนลูกเรือ', fltrip_fuel_loaded: 'เชื้อเพลิงที่เติม (ลิตร)', fltrip_start_trip: 'เริ่มทริป',
       fltrip_new_vessel_country_hint: 'สิ่งนี้กำหนดว่าฟิลด์เฉพาะประเทศใดจะปรากฏสำหรับเรือลำนี้ — คุณสามารถเปลี่ยนได้ทุกเมื่อจาก Vessels → Compliance',
-      fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_close_trip: 'ปิดทริป', fltrip_quick_log: 'บันทึกด่วน', fltrip_position: 'ตำแหน่ง', fltrip_goal_kg: 'เป้าหมายการจับ (กก.)', fltrip_goal_kg_optional: '— ไม่บังคับ', fltrip_nautical_charts: 'มีแผนที่เดินเรือพร้อมใช้งาน', fltrip_nautical_charts_sub: 'ยืนยันว่าเรือมีแผนที่เดินเรือที่อัปเดตสำหรับพื้นที่นี้ก่อนออกเดินทาง', fltrip_day_label: 'วันที่ {n}', fltrip_goal_meta: 'ของเป้าหมาย · {goal} กก.', fltrip_no_goal_set: 'ยังไม่ได้ตั้งเป้าหมายสำหรับทริปนี้', flrole_captain_short: 'กัปตัน', flrole_ops_short: 'ฝ่ายปฏิบัติการ',
+      fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_log_protected: 'คุ้มครอง', fltrip_close_trip: 'ปิดทริป', fltrip_quick_log: 'บันทึกด่วน', fltrip_position: 'ตำแหน่ง', fltrip_goal_kg: 'เป้าหมายการจับ (กก.)', fltrip_goal_kg_optional: '— ไม่บังคับ', fltrip_nautical_charts: 'มีแผนที่เดินเรือพร้อมใช้งาน', fltrip_nautical_charts_sub: 'ยืนยันว่าเรือมีแผนที่เดินเรือที่อัปเดตสำหรับพื้นที่นี้ก่อนออกเดินทาง', fltrip_day_label: 'วันที่ {n}', fltrip_goal_meta: 'ของเป้าหมาย · {goal} กก.', fltrip_no_goal_set: 'ยังไม่ได้ตั้งเป้าหมายสำหรับทริปนี้', flrole_captain_short: 'กัปตัน', flrole_ops_short: 'ฝ่ายปฏิบัติการ',
       fltrip_catches_this_trip: 'การจับปลาในทริปนี้', fltrip_hauls_this_trip: 'การลากอวนในทริปนี้', fltrip_view_map: 'ดูแผนที่',
       flhaul_brand: 'บันทึกการลากอวน', flhaul_title: 'รายละเอียดการลากอวน', flhaul_gear_effort: 'เครื่องมือประมงและความพยายาม',
       flhaul_start: 'เริ่มลากอวน', flhaul_end: 'สิ้นสุดลากอวน', flhaul_notes: 'บันทึกย่อ',
@@ -7307,8 +7400,10 @@
       flhaul_protected_section: 'ปฏิสัมพันธ์กับสัตว์คุ้มครอง', flhaul_protected_hint: 'เฉพาะกรณีที่การลากอวนนี้มีปฏิสัมพันธ์กับสัตว์เลี้ยงลูกด้วยนมทางทะเล เต่าทะเล หรือนกทะเล — เว้นว่างไว้หากไม่มี',
       flhaul_protected_species: 'ชนิดพันธุ์', flhaul_protected_count: 'จำนวน', flhaul_protected_status: 'สถานะ', flhaul_protected_alive: 'ปล่อยกลับมีชีวิต', flhaul_protected_dead: 'ตาย',
       flhaul_log_catch_now: 'บันทึกการจับปลาของการลากอวนนี้ตอนนี้', flhaul_log_catch_hint: 'ไม่ต้องเลือกหากต้องการกลับไปที่ทริปแล้วบันทึกการจับปลาทีหลัง — หรือรวมการจับปลาทั้งหมดตอนจบทริป',
+      flhaul_log_protected_now: 'บันทึกปฏิสัมพันธ์กับสัตว์คุ้มครองสำหรับการลากอวนนี้', flhaul_log_protected_hint: 'เฉพาะกรณีที่การลากอวนนี้มีปฏิสัมพันธ์กับสัตว์เลี้ยงลูกด้วยนมทางทะเล เต่าทะเล หรือนกทะเล — ไม่ต้องเลือกหากไม่มี จะเปิดแบบฟอร์มด่วนหลังจากบันทึก โดยเชื่อมกับการลากอวนนี้แล้ว',
       flhaul_cancel: 'ยกเลิก', flhaul_save: 'บันทึกการลากอวน',
       flcatch_brand: 'บันทึกการจับปลา', flcatch_title: 'รายการจับปลา', flcatch_not_linked: 'ยังไม่ได้เชื่อมกับการลากอวน',
+      flprotected_brand: 'บันทึกสัตว์คุ้มครอง', flprotected_haul_hint: 'ที่ปฏิสัมพันธ์นี้เป็นของ', flprotected_species_outcome: 'ชนิดพันธุ์และผลลัพธ์', flprotected_no_interactions_yet: 'ยังไม่มีปฏิสัมพันธ์ที่บันทึกสำหรับการลากอวนนี้', flprotected_logged_so_far: 'ปฏิสัมพันธ์ที่บันทึกไว้แล้ว',
       flcatch_haul: 'การลากอวน', flcatch_haul_hint: 'ที่การจับปลานี้เป็นของ', flcatch_species_weight: 'ชนิดพันธุ์และน้ำหนัก', flcatch_species_label: 'ชนิดพันธุ์ / ประเภททางการค้า',
       flcatch_ref_price: 'ราคาอ้างอิง', flcatch_add_another: '+ เพิ่มอีกรายการ', flcatch_save_return: 'บันทึกและกลับไปที่ทริป', flcatch_no_haul: 'ไม่มีการลากอวน (จับแยก)',
       hist_unassigned_records: 'บันทึกที่ไม่ได้กำหนดแคมเปญ', ins_no_campaign_unassigned: 'ไม่มีแคมเปญ (ไม่ได้กำหนด)',
@@ -7323,6 +7418,7 @@
       flclose_fishing_zone: 'เขตประมง (เม็กซิโก)', flclose_zone_litoral: 'ชายฝั่ง', flclose_zone_bahia: 'อ่าว', flclose_zone_estuarina: 'ปากแม่น้ำ', flclose_zone_continental: 'ทวีป',
       flclose_trip_type: 'ประเภททริป (สหรัฐฯ)', flclose_triptype_commercial: 'เชิงพาณิชย์', flclose_triptype_party: 'กลุ่ม (Party)', flclose_triptype_charter: 'เช่าเหมาลำ', flclose_anglers: 'จำนวนนักตกปลา',
       flclose_eu_sales_note: 'หมายเลขใบขายสัตว์น้ำ (สหภาพยุโรป)',
+      flclose_crew_doc_number: 'หนังสือเดินทาง / เลขที่ Seaman Book', flclose_crew_doc_placeholder: 'เช่น AB1234567', flclose_eu_fao_area: 'เขต/เขตย่อย FAO (สหภาพยุโรป)', flclose_eu_fao_area_placeholder: 'เช่น 27.8.a',
       flclose_th_pi_no: 'เลข PI — เลขที่แจ้งเข้าท่า (ไทย)', flclose_th_province: 'จังหวัดที่เข้าเทียบท่า (ไทย)', flclose_th_zone: 'เขตทะเลชายฝั่ง (ไทย)', flclose_th_total_kg: 'ปริมาณสัตว์น้ำรวมทั้งหมด — กก. (ไทย)', flclose_th_egg_crabs: 'ปล่อยปูไข่ — ตัว (ไทย)',
       fltriplog_brand: 'บันทึกทริป', fltriplog_title: 'ทริปที่ผ่านมา', fltriplog_all_vessels: 'เรือทั้งหมด',
       fltripdet_brand: 'รายละเอียดทริป', fltripdet_h1: 'รายงานการขึ้นท่าและการคิดบัญชี', fltripdet_haul_log: 'บันทึกการลากอวน', fltripdet_catches_logged: 'การจับปลาแต่ละรายการที่บันทึก',
@@ -7331,6 +7427,8 @@
       fltripdet_kg_estimated: 'กก. ประมาณการ', fltripdet_kg_scaled: 'กก. ชั่งแล้ว', fltripdet_report_disclaimer: 'รายงานนี้ใช้ประกอบคำประกาศการขึ้นท่าหรือการขอใบรับรองการจับสัตว์น้ำ — ไม่ใช่ใบรับรองอย่างเป็นทางการในตัวเอง',
       fltripdet_generic_format_notice: 'รูปแบบทั่วไปของ Fish Pulse — ไม่ตรงกับรูปแบบทางการของหน่วยงานใดหน่วยงานหนึ่งโดยเฉพาะ หากเขตอำนาจของคุณต้องการรูปแบบเฉพาะ โปรดตั้งค่าหน่วยงานที่รายงานในการตั้งค่าการปฏิบัติตามข้อกำหนดของเรือลำนี้',
       fltripdet_export_pdf_btn: 'ส่งออกเป็น PDF', fltripdet_no_hauls: 'ไม่มีการลากอวนที่บันทึกไว้', fltripdet_no_catches: 'ไม่มีการจับปลาที่บันทึกไว้',
+      fltripdet_protected_section: 'ปฏิสัมพันธ์กับสัตว์คุ้มครอง', fltripdet_no_protected: 'ไม่มีปฏิสัมพันธ์กับสัตว์คุ้มครองที่บันทึกไว้',
+      flcaptainlog_card_title: 'สมุดบันทึกกัปตัน', flcaptainlog_card_desc: 'บันทึกการเดินทางแบบครบถ้วน — ข้อมูลระบุตัวเรือและใบอนุญาต รายละเอียดการเดินทาง เครื่องมือประมง ลูกเรือ บันทึกการลากอวนแต่ละครั้ง และประมาณการจับสัตว์น้ำบนเรือ — ในเอกสารเดียวที่ส่งออกได้', flcaptainlog_export_btn: 'สร้างสมุดบันทึกกัปตัน', flcaptainlog_title: 'สมุดบันทึกกัปตัน', flcaptainlog_sec_id: 'ข้อมูลระบุตัวเรือและใบอนุญาต', flcaptainlog_sec_trip: 'ข้อมูลการเดินทาง', flcaptainlog_sec_gear: 'ลักษณะเครื่องมือประมง', flcaptainlog_sec_crew: 'ลูกเรือบนเรือ', flcaptainlog_sec_hauls: 'บันทึกการลากอวน', flcaptainlog_sec_catch: 'ประมาณการจับสัตว์น้ำบนเรือ', flcaptainlog_disclaimer: 'สมุดบันทึกนี้สร้างจากข้อมูลที่รายงานเองใน Fish Pulse และไม่ใช่สมุดบันทึกทางการที่หน่วยงานกำหนด ช่องที่ระบุ \'— กรอกด้วยมือ\' ยังไม่ถูกบันทึกในแอปนี้ กรุณาตรวจสอบข้อมูลทุกรายการกับเอกสารของเรือและกฎระเบียบที่บังคับใช้ก่อนใช้บันทึกนี้', flcaptainlog_not_captured: '— กรอกด้วยมือ', flcaptainlog_f_vessel: 'ชื่อเรือ', flcaptainlog_f_registration: 'ทะเบียนเรือ', flcaptainlog_f_permit_holder: 'ผู้ถือใบอนุญาต', flcaptainlog_f_permit_number: 'เลขที่ใบอนุญาตประมง', flcaptainlog_f_captain: 'กัปตัน', flcaptainlog_f_flag: 'สัญชาติเรือ', flcaptainlog_f_callsign: 'สัญญาณเรียกขานวิทยุ', flcaptainlog_f_hold_capacity: 'ความจุระวางเก็บสัตว์น้ำ', flcaptainlog_f_trip_number: 'เที่ยวที่ (ฤดูกาล)', flcaptainlog_f_departure_port: 'ท่าเรือต้นทาง', flcaptainlog_f_departure_dt: 'วันที่/เวลาออกเรือ', flcaptainlog_f_arrival_port: 'ท่าเรือปลายทาง', flcaptainlog_f_arrival_dt: 'วันที่/เวลาเข้าเทียบท่า', flcaptainlog_f_arrival_folio: 'เลขที่ใบแจ้งเข้าเทียบท่า', flcaptainlog_f_fishing_zone: 'เขตประมงที่ได้รับอนุญาต', flcaptainlog_f_gear_desc: 'รายละเอียดเครื่องมือประมง', flcaptainlog_col_hauldate: 'วันที่ / เวลา', flcaptainlog_col_position: 'ตำแหน่ง', flcaptainlog_col_depth: 'ความลึก (ม.)', flcaptainlog_col_notes: 'หมายเหตุ', flcaptainlog_col_species: 'ชนิดสัตว์น้ำ', flcaptainlog_col_estkg: 'น้ำหนักโดยประมาณ', flcaptainlog_col_preservation: 'การเก็บรักษา', flcaptainlog_kpi_days: 'จำนวนวันในทะเล', flcaptainlog_kpi_hauls: 'จำนวนครั้งลากอวน', flcaptainlog_kpi_fuel: 'เชื้อเพลิงที่ใช้', flcaptainlog_kpi_catch: 'จับได้ทั้งหมด', flcaptainlog_sec_bycatch: 'สัตว์น้ำพลอยจับ — เก็บไว้ / ทิ้งในทะเล', flcaptainlog_col_kept: 'เก็บไว้ (กก.)', flcaptainlog_col_discarded: 'ทิ้ง (กก.)', flcaptainlog_sec_protected: 'การปะทะกับสัตว์น้ำคุ้มครอง', flcaptainlog_col_block: 'หมายเลขบล็อก', flcaptainlog_col_fao: 'รหัส FAO', flcaptainlog_tolerance_warning: 'ชนิดที่ทำเครื่องหมายมีน้ำหนักต่างจากตาชั่งเกินกว่าเกณฑ์ผ่อนผัน 10% ต่อชนิดของสหภาพยุโรป \u2014 กรุณาตรวจสอบก่อนส่ง',
       flmx_aviso_export_btn: 'ส่งออก Aviso de Arribo (เม็กซิโก)',
       flmx_escama_export_btn: 'ส่งออก Bitácora de Escama (เม็กซิโก)', flmx_camaron_export_btn: 'ส่งออก Bitácora de Camarón (เม็กซิโก)', flmx_tiburon_export_btn: 'ส่งออก Bitácora de Tiburón (เม็กซิโก)',
       flus_nt_export_btn: 'ส่งออกเอกสาร Non-Trawl Logbook (สหรัฐฯ)',
@@ -7462,6 +7560,7 @@
       msg_vessel_name_required: 'ต้องระบุชื่อเรือ', msg_captain_name_required: 'ต้องระบุชื่อกัปตัน', msg_select_captain_vessel: 'เลือกหรือเพิ่มกัปตันและเรือ',
       msg_trip_started: 'เริ่มทริปแล้ว', msg_currency_updated: 'อัปเดตสกุลเงินเริ่มต้นแล้ว', msg_vessel_added: 'เพิ่มเรือแล้ว', msg_no_active_trip: 'ไม่มีทริปที่ใช้งานอยู่',
       msg_haul_saved: 'บันทึกการลากอวนแล้ว', msg_species_category_required: 'ต้องระบุชนิดพันธุ์หรือประเภท', msg_catch_saved: 'บันทึกการจับปลาแล้ว', msg_enter_name_first: 'กรุณากรอกชื่อก่อน',
+      msg_protected_interaction_saved: 'บันทึกปฏิสัมพันธ์แล้ว', flprotected_chip_one: 'ปฏิสัมพันธ์คุ้มครอง', flprotected_chip_other: 'ปฏิสัมพันธ์คุ้มครอง',
       msg_trip_closed: 'ปิดทริปแล้ว', msg_enter_amount: 'กรุณากรอกจำนวนเงิน', msg_cost_added: 'เพิ่มค่าใช้จ่ายแล้ว', msg_name_percentage_required: 'ต้องระบุชื่อและเปอร์เซ็นต์',
       msg_crew_copied: 'คัดลอกลูกเรือจากทริปที่แล้ว — ปรับได้ตามต้องการ', msg_crew_added_captain: 'เพิ่มลูกเรือจากรายชื่อของกัปตัน — กำหนดส่วนแบ่งแต่ละคน',
       msg_cost_updated: 'อัปเดตค่าใช้จ่ายแล้ว', msg_cost_removed: 'ลบค่าใช้จ่ายแล้ว', msg_pdf_not_loaded: 'ไลบรารี PDF ไม่โหลด — ตรวจสอบการเชื่อมต่อของคุณ',
@@ -7996,6 +8095,30 @@
   const TRIPS_KEY = 'fleet_trips_v1';
   const HAULS_KEY = 'fleet_hauls_v1';
   const CATCHES_KEY = 'fleet_catches_v1';
+  const PROTECTED_KEY = 'fleet_protected_interactions_v1';
+
+  // Protected species interactions used to be 3 fields glued directly onto
+  // the haul (protected_species/protected_count/protected_status, one per
+  // haul). They now live in their own table so a haul can log more than
+  // one interaction. This runs once at load and silently folds any old-
+  // format haul into a record here, then strips the legacy fields so it
+  // never gets migrated twice.
+  (function migrateLegacyProtectedFields(){
+    const hauls = load(HAULS_KEY);
+    let changed = false;
+    const interactions = load(PROTECTED_KEY);
+    hauls.forEach(h => {
+      if(h.protected_species){
+        interactions.push({
+          interaction_id: uid(), trip_id: h.trip_id, haul_id: h.haul_id,
+          species: h.protected_species, count: h.protected_count || '', status: h.protected_status || ''
+        });
+        delete h.protected_species; delete h.protected_count; delete h.protected_status;
+        changed = true;
+      }
+    });
+    if(changed){ save(HAULS_KEY, hauls); save(PROTECTED_KEY, interactions); }
+  })();
   // No offline tile-download system in this segment (unlike Field
   // Research), so a fixed subdomain isn't strictly required here — kept
   // anyway for visual/behavioral consistency across segments.
@@ -8781,6 +8904,7 @@
 
     const hauls = load(HAULS_KEY).filter(hl => hl.trip_id === trip.trip_id);
     const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
+    const protectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
 
     const totalKg = catches.reduce((s,c) => s + (parseFloat(c.kg) || 0), 0);
     const goalKg = parseFloat(trip.goal_kg) || 0;
@@ -8802,6 +8926,7 @@
       ? '<div class="empty">No hauls logged yet this trip.</div>'
       : hauls.slice().reverse().map(hl => {
           const n = catches.filter(c => c.haul_id === hl.haul_id).length;
+          const nProtected = protectedInteractions.filter(p => p.haul_id === hl.haul_id).length;
           return '<div class="entry">'
             + '<div class="entry-icon">' + haulIconSvg + '</div>'
             + '<div class="entry-body">'
@@ -8810,6 +8935,7 @@
             + (hl.depth ? '<span class="chip chip-blue">'+hl.depth+'m</span>' : '')
             + (hl.duration_min ? '<span class="chip chip-blue">'+hl.duration_min+' min</span>' : '')
             + '<span class="chip chip-grey">'+n+' catch'+( n===1?'':'es')+'</span>'
+            + (nProtected > 0 ? '<span class="chip chip-amber">'+nProtected+' '+(nProtected===1?t('flprotected_chip_one'):t('flprotected_chip_other'))+'</span>' : '')
             + (hl.lat ? '<span class="chip chip-blue">📍 GPS</span>' : '')
             + '</div>'
             + '</div></div>';
@@ -8875,6 +9001,7 @@
     input.value = !isNaN(cur) ? cur + 1 : 1;
   });
   document.getElementById('fleetLogCatchBtn').addEventListener('click', () => {
+    pendingProtectedHaulIdAfterCatch = null;
     enterFleetLogCatch(null);
   });
 
@@ -8975,6 +9102,7 @@
   function openFleetCatchEdit(catchId){
     const record = load(CATCHES_KEY).find(c => c.catch_id === catchId);
     if(!record) return;
+    pendingProtectedHaulIdAfterCatch = null;
     currentEditingCatchId = catchId;
     currentEditingCatchTripId = record.trip_id;
     const isClosedTrip = !load(TRIPS_KEY).some(t => t.trip_id === record.trip_id && !t.ended_at);
@@ -8987,6 +9115,7 @@
     document.getElementById('fleetCatchSpecimenCount').value = record.specimen_count || '';
     document.getElementById('fleetCatchDiscardedKg').value = record.discarded_kg || '';
     document.getElementById('fleetCatchDiscardReason').value = record.discard_reason || '';
+    document.getElementById('fleetCatchDiscardCondition').value = record.discard_condition || '';
     document.getElementById('fleetCatchThLocalName').value = record.th_local_name || '';
     document.getElementById('fleetRefPrice').value = record.ref_price || '';
     if(record.currency) document.getElementById('fleetRefCurrency').value = record.currency;
@@ -9014,6 +9143,13 @@
   document.getElementById('fleetHaulLogToggle').addEventListener('click', () => {
     const body = document.getElementById('fleetHaulLogBody');
     const chevron = document.getElementById('fleetHaulLogChevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.textContent = isOpen ? '▾' : '▴';
+  });
+  document.getElementById('fleetProtectedToggle').addEventListener('click', () => {
+    const body = document.getElementById('fleetProtectedBody');
+    const chevron = document.getElementById('fleetProtectedChevron');
     const isOpen = body.style.display !== 'none';
     body.style.display = isOpen ? 'none' : 'block';
     chevron.textContent = isOpen ? '▾' : '▴';
@@ -9171,9 +9307,6 @@
       target_species: document.getElementById('fleetTargetSpecies').value.trim(),
       block_number: document.getElementById('fleetBlockNumber').value.trim(),
       segment_no: document.getElementById('fleetSegmentNo').value || '',
-      protected_species: document.getElementById('fleetProtectedSpecies').value.trim(),
-      protected_count: document.getElementById('fleetProtectedCount').value || '',
-      protected_status: document.getElementById('fleetProtectedStatus').value,
       notes: document.getElementById('fleetHaulNotes').value.trim()
     };
     const hauls = load(HAULS_KEY); hauls.push(haul); save(HAULS_KEY, hauls);
@@ -9182,6 +9315,8 @@
     showFleetToast(t('msg_haul_saved'));
 
     const logCatchNow = document.getElementById('fleetLogCatchNow').checked;
+    const logProtectedNow = document.getElementById('fleetLogProtectedNow').checked;
+    document.getElementById('fleetLogProtectedNow').checked = false;
     document.getElementById('fleetGearType').value = '';
     document.getElementById('fleetDepth').value = '';
     document.getElementById('fleetHaulStart').value = '';
@@ -9195,15 +9330,18 @@
     document.getElementById('fleetTargetSpecies').value = '';
     document.getElementById('fleetBlockNumber').value = '';
     document.getElementById('fleetSegmentNo').value = '';
-    document.getElementById('fleetProtectedSpecies').value = '';
-    document.getElementById('fleetProtectedCount').value = '';
-    document.getElementById('fleetProtectedStatus').value = '';
     document.getElementById('fleetHaulNotes').value = '';
     document.getElementById('fleetHaulDurationLine').textContent = t('msg_duration') + ': —';
     resetFleetHaulGps();
 
     if(logCatchNow){
+      // Both boxes checked: log the catch first (the more common flow),
+      // then continue straight into the protected-species form once the
+      // catch is saved — see fleetCatchSaveBtn's handler below.
+      pendingProtectedHaulIdAfterCatch = logProtectedNow ? haul.haul_id : null;
       enterFleetLogCatch(haul.haul_id);
+    } else if(logProtectedNow){
+      enterFleetLogProtected(haul.haul_id);
     } else {
       fleetGoTo('trip');
     }
@@ -9253,6 +9391,7 @@
     document.getElementById('fleetCatchSpecimenCount').value = '';
     document.getElementById('fleetCatchDiscardedKg').value = '';
     document.getElementById('fleetCatchDiscardReason').value = '';
+    document.getElementById('fleetCatchDiscardCondition').value = '';
     document.getElementById('fleetCatchThLocalName').value = '';
     document.getElementById('fleetRefPrice').value = '';
     document.getElementById('fleetEstValueLine').textContent = t('msg_estimated_value') + ': —';
@@ -9270,6 +9409,7 @@
     const specimenCount = document.getElementById('fleetCatchSpecimenCount').value || '';
     const discardedKg = document.getElementById('fleetCatchDiscardedKg').value || '';
     const discardReason = document.getElementById('fleetCatchDiscardReason').value || '';
+    const discardCondition = document.getElementById('fleetCatchDiscardCondition').value || '';
     const thLocalName = document.getElementById('fleetCatchThLocalName').value.trim();
     const price = document.getElementById('fleetRefPrice').value;
     const currency = document.getElementById('fleetRefCurrency').value;
@@ -9283,6 +9423,7 @@
         specimen_count: specimenCount,
         discarded_kg: discardedKg,
         discard_reason: discardReason,
+        discard_condition: discardCondition,
         th_local_name: thLocalName,
         ref_price: price || '',
         currency,
@@ -9303,6 +9444,7 @@
       specimen_count: specimenCount,
       discarded_kg: discardedKg,
       discard_reason: discardReason,
+      discard_condition: discardCondition,
       th_local_name: thLocalName,
       ref_price: price || '',
       currency,
@@ -9330,12 +9472,135 @@
         currentTripDetailId = currentEditingCatchTripId;
         currentEditingCatchTripId = null;
         fleetGoTo('trip-detail');
+      } else if(pendingProtectedHaulIdAfterCatch){
+        const haulId = pendingProtectedHaulIdAfterCatch;
+        pendingProtectedHaulIdAfterCatch = null;
+        currentEditingCatchTripId = null;
+        enterFleetLogProtected(haulId);
       } else {
         currentEditingCatchTripId = null;
         fleetGoTo('trip');
       }
     }
   });
+
+  // ===== Log protected species interaction =====
+  // Its own data table (fleet_protected_interactions_v1), not fields glued
+  // onto the haul, so a single haul can record more than one interaction —
+  // same shape as how catches already relate to hauls.
+  let currentHaulIdForProtected = '';
+  // Set right before enterFleetLogCatch() when both "log catch now" and
+  // "log protected species now" are checked on the same haul — the catch
+  // flow runs first (the common case), then this carries the haul id
+  // forward so fleetCatchSaveBtn's handler can continue straight into
+  // this screen once the catch is saved. null the rest of the time.
+  let pendingProtectedHaulIdAfterCatch = null;
+  function protectedHaulLabel(h){ return (h.gear_type||t('flcatch_haul')) + ' · ' + (h.haul_start||'—') + (h.haul_end ? '–'+h.haul_end : '') + (h.depth ? ' · '+h.depth+'m' : ''); }
+  // Trip whose hauls populate the picker: the active trip if one is open,
+  // otherwise whichever closed trip Trip Detail is currently showing —
+  // same fallback openFleetCatchEdit relies on for editing a catch after
+  // its trip has already closed.
+  // Trip this interaction is being logged against — set explicitly by
+  // enterFleetLogProtected() at entry, not re-derived later, so a captain
+  // browsing a past closed trip's history can add/edit an interaction for
+  // THAT trip even while a different trip is currently active. Mirrors
+  // currentEditingCatchTripId's role for catches.
+  let currentProtectedTripId = null;
+  // Whether we're logging against a trip that's already closed — same
+  // check openFleetCatchEdit/setFleetCatchScreenMode use, so the back/
+  // save buttons return to Trip Detail rather than the active Trip screen.
+  function fleetProtectedIsClosedTripContext(){
+    return !!currentProtectedTripId && !load(TRIPS_KEY).some(t => t.trip_id === currentProtectedTripId && !t.ended_at);
+  }
+  // "Active haul" = the most recently logged haul of this trip context —
+  // the app has no separate in-progress-haul state, a haul is complete
+  // the instant it's saved. Empty string when the trip has no haul yet,
+  // which just leaves the interaction unlinked.
+  function mostRecentFleetHaulId(tripId){
+    const hauls = tripId ? load(HAULS_KEY).filter(h => h.trip_id === tripId) : [];
+    return hauls.length > 0 ? hauls[hauls.length - 1].haul_id : '';
+  }
+  function populateFleetProtectedHaulSelect(haulId){
+    const hauls = currentProtectedTripId ? load(HAULS_KEY).filter(h => h.trip_id === currentProtectedTripId) : [];
+    const sel = document.getElementById('fleetProtectedHaulSelect');
+    sel.innerHTML = '<option value="">'+t('flcatch_no_haul')+'</option>'
+      + hauls.slice().reverse().map(h => '<option value="'+h.haul_id+'">'+protectedHaulLabel(h)+'</option>').join('');
+    sel.value = haulId || '';
+    updateFleetProtectedHaulStatus();
+  }
+  function updateFleetProtectedHaulStatus(){
+    const sel = document.getElementById('fleetProtectedHaulSelect');
+    const line = document.getElementById('fleetProtectedHaulLine');
+    const countLine = document.getElementById('fleetProtectedHaulCountLine');
+    currentHaulIdForProtected = sel.value || '';
+    if(!currentHaulIdForProtected){
+      line.textContent = t('flcatch_not_linked');
+      countLine.style.display = 'none';
+      return;
+    }
+    const haul = load(HAULS_KEY).find(h => h.haul_id === currentHaulIdForProtected);
+    if(!haul){ line.textContent = t('flcatch_not_linked'); countLine.style.display = 'none'; return; }
+    line.textContent = t('flcatch_haul') + ': ' + protectedHaulLabel(haul);
+    const n = load(PROTECTED_KEY).filter(p => p.haul_id === currentHaulIdForProtected).length;
+    countLine.style.display = 'block';
+    countLine.textContent = n === 0 ? t('flprotected_no_interactions_yet') : n + ' ' + t('flprotected_logged_so_far');
+  }
+  document.getElementById('fleetProtectedHaulSelect').addEventListener('change', updateFleetProtectedHaulStatus);
+  // haulId === null means "resolve automatically" — preselect this trip's
+  // most recent haul if it has one, otherwise leave unlinked. Passed
+  // explicitly (a specific haul id) when arriving right after saving that
+  // haul, or when tapping a specific haul in a haul list. tripId defaults
+  // to the currently active trip — pass it explicitly when entering from
+  // a closed trip's Trip Detail, so it's not misattributed to whichever
+  // trip (if any) happens to be active right now.
+  function enterFleetLogProtected(haulId, tripId){
+    document.getElementById('fleetProtectedSpecies').value = '';
+    document.getElementById('fleetProtectedCount').value = '';
+    document.getElementById('fleetProtectedStatus').value = '';
+    const activeTrip = getActiveTrip();
+    currentProtectedTripId = tripId || (activeTrip ? activeTrip.trip_id : null);
+    const editingClosedTrip = fleetProtectedIsClosedTripContext();
+    document.getElementById('fleetProtectedBackBtn').dataset.go = editingClosedTrip ? 'fleet-trip-detail' : 'fleet-trip';
+    const resolvedHaulId = haulId !== null ? haulId : mostRecentFleetHaulId(currentProtectedTripId);
+    populateFleetProtectedHaulSelect(resolvedHaulId);
+    fleetGoTo('log-protected');
+  }
+  function saveFleetProtectedEntry(){
+    const species = document.getElementById('fleetProtectedSpecies').value.trim();
+    if(!species || !currentProtectedTripId) return false;
+    const list = load(PROTECTED_KEY);
+    list.push({
+      interaction_id: uid(),
+      trip_id: currentProtectedTripId,
+      haul_id: currentHaulIdForProtected || null,
+      species,
+      count: document.getElementById('fleetProtectedCount').value || '',
+      status: document.getElementById('fleetProtectedStatus').value || ''
+    });
+    save(PROTECTED_KEY, list);
+    document.getElementById('fleetProtectedSpecies').value = '';
+    document.getElementById('fleetProtectedCount').value = '';
+    document.getElementById('fleetProtectedStatus').value = '';
+    updateFleetProtectedHaulStatus();
+    return true;
+  }
+  document.getElementById('fleetLogProtectedDockBtn').addEventListener('click', () => {
+    enterFleetLogProtected(null, null);
+  });
+  document.getElementById('fleetProtectedAddAnotherBtn').addEventListener('click', () => {
+    if(saveFleetProtectedEntry()) showFleetToast(t('msg_protected_interaction_saved'));
+  });
+  document.getElementById('fleetProtectedSaveBtn').addEventListener('click', () => {
+    const editingClosedTrip = fleetProtectedIsClosedTripContext();
+    if(saveFleetProtectedEntry()) showFleetToast(t('msg_protected_interaction_saved'));
+    fleetGoTo(editingClosedTrip ? 'trip-detail' : 'trip');
+  });
+  // Deletes one interaction record — used by both the active Trip screen
+  // and the closed-trip Trip Detail list, same "click × to remove, no
+  // confirm" pattern the individual catches list already uses.
+  function deleteFleetProtectedInteraction(interactionId){
+    save(PROTECTED_KEY, load(PROTECTED_KEY).filter(p => p.interaction_id !== interactionId));
+  }
 
   // ===== Close trip =====
   // Crew checked for the trip currently being closed — only meaningful
@@ -9358,14 +9623,16 @@
   }
   document.getElementById('fleetCloseAddCrewBtn').addEventListener('click', () => {
     const input = document.getElementById('fleetCloseNewCrewName');
+    const docInput = document.getElementById('fleetCloseNewCrewDoc');
     const name = input.value.trim();
     if(!name){ showFleetToast(t('msg_enter_name_first'), true); return; }
     const crew = load(CREW_KEY);
-    const newMember = { crew_id: uid(), name };
+    const newMember = { crew_id: uid(), name, doc_number: (docInput ? docInput.value.trim() : '') };
     crew.push(newMember);
     save(CREW_KEY, crew);
     fleetCloseSelectedCrewIds.push(newMember.crew_id);
     input.value = '';
+    if(docInput) docInput.value = '';
     renderFleetCloseCrewChecklist();
   });
 
@@ -9414,6 +9681,7 @@
     document.getElementById('fleetCloseTripType').value = '';
     document.getElementById('fleetCloseAnglers').value = '';
     document.getElementById('fleetCloseEuSalesNote').value = '';
+    document.getElementById('fleetCloseEuFaoArea').value = '';
     document.getElementById('fleetCloseThPiNo').value = '';
     document.getElementById('fleetCloseThProvince').value = '';
     document.getElementById('fleetCloseThZone').value = '';
@@ -9517,6 +9785,7 @@
     trips[idx].trip_type_us = document.getElementById('fleetCloseTripType').value;
     trips[idx].anglers_us = document.getElementById('fleetCloseAnglers').value || '';
     trips[idx].eu_sales_note_number = document.getElementById('fleetCloseEuSalesNote').value.trim();
+    trips[idx].eu_fao_area = document.getElementById('fleetCloseEuFaoArea').value.trim();
     trips[idx].th_pi_no = document.getElementById('fleetCloseThPiNo').value.trim();
     trips[idx].th_province = document.getElementById('fleetCloseThProvince').value.trim();
     trips[idx].th_zone = document.getElementById('fleetCloseThZone').value.trim();
@@ -9706,6 +9975,24 @@
     const totalActualKg = landingGroups.reduce((s,g)=>s+(g.hasActual?g.actualKg:0),0);
     const hasActuals = landingGroups.some(g => g.hasActual);
 
+    // Captain's Logbook — a universal, comprehensive voyage record (FAO
+    // logbook-style: identification, trip, gear, crew, haul-by-haul,
+    // catch estimate) distinct from the country-specific compliance
+    // forms below. Kept as its own card, not squeezed into that already
+    // crowded button list, per Israel's explicit request.
+    document.getElementById('fleetCaptainLogbookCard').innerHTML =
+      '<div class="card" style="border-left:3px solid #0a5c8c;">'
+      + '<div class="insight-card-label" style="margin-bottom:6px;">'+t('flcaptainlog_card_title')+'</div>'
+      + '<div style="font-family:var(--data); font-size:11.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:12px;">'+t('flcaptainlog_card_desc')+'</div>'
+      + '<button class="exportbtn" id="fleetExportCaptainLogBtn" style="padding:10px 16px;font-size:12px;">'+t('flcaptainlog_export_btn')+'</button>'
+      + '</div>';
+    const exportCaptainLogBtn = document.getElementById('fleetExportCaptainLogBtn');
+    if(exportCaptainLogBtn){
+      exportCaptainLogBtn.addEventListener('click', () => {
+        generateFleetCaptainLogbookPdf({ vessel, captain, trip, catches, landingGroups, totalEstKg, hasActuals });
+      });
+    }
+
     document.getElementById('fleetTripDetailLanding').innerHTML =
       '<div class="card">'
       + '<div class="insight-card-label" style="margin-bottom:10px;">'+t('fltripdet_landing_report_label')+'</div>'
@@ -9852,13 +10139,24 @@
     // is closed and the report above is grouped by species, without
     // reopening the trip itself or its settlement.
     const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const tripProtectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
     const haulListEl = document.getElementById('fleetTripDetailHaulList');
     haulListEl.innerHTML = tripHauls.length === 0
       ? '<div class="empty">'+t('fltripdet_no_hauls')+'</div>'
-      : tripHauls.slice().reverse().map(h => '<div class="entry"><div><div class="sp" style="font-style:normal;">'+(h.gear_type||t('flcatch_haul'))+'</div>'
+      : tripHauls.slice().reverse().map(h => {
+          const nProtected = tripProtectedInteractions.filter(p => p.haul_id === h.haul_id).length;
+          return '<div class="entry entry-clickable" data-add-protected-for-haul="'+h.haul_id+'"><div><div class="sp" style="font-style:normal;">'+(h.gear_type||t('flcatch_haul'))+'</div>'
           + '<div class="meta">'+(h.haul_start||'—')+(h.depth?' · '+h.depth+'m':'')+(h.duration_min?' · '+h.duration_min+' min':'')+'</div>'
+          + (nProtected > 0 ? '<div class="entry-chips" style="margin-top:5px;"><span class="chip chip-amber">'+nProtected+' '+(nProtected===1?t('flprotected_chip_one'):t('flprotected_chip_other'))+'</span></div>' : '')
           + (h.notes ? '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:4px; line-height:1.4;">'+h.notes+'</div>' : '')
-          + '</div></div>').join('');
+          + '</div></div>';
+        }).join('');
+    haulListEl.querySelectorAll('[data-add-protected-for-haul]').forEach(el => {
+      el.addEventListener('click', () => {
+        currentTripDetailId = trip.trip_id;
+        enterFleetLogProtected(el.dataset.addProtectedForHaul, trip.trip_id);
+      });
+    });
     const detailHaulLabel = hId => {
       if(!hId) return t('flcatch_no_haul_short');
       const h = tripHauls.find(x => x.haul_id === hId);
@@ -9872,6 +10170,23 @@
           + '<div class="duration-line" style="margin:0;">'+(c.kg||0)+' kg</div></div>').join('');
     catchListEl.querySelectorAll('[data-catch-edit]').forEach(el => {
       el.addEventListener('click', () => openFleetCatchEdit(el.dataset.catchEdit));
+    });
+
+    // Protected species interactions logged this trip, editable/deletable
+    // individually — same collapsed-by-default pattern as Individual
+    // Catches above, since correcting one record shouldn't require
+    // reopening the trip.
+    const protectedListEl = document.getElementById('fleetTripDetailProtectedList');
+    protectedListEl.innerHTML = tripProtectedInteractions.length === 0
+      ? '<div class="empty">'+t('fltripdet_no_protected')+'</div>'
+      : tripProtectedInteractions.slice().reverse().map(p => '<div class="entry"><div><div class="sp">'+p.species+'</div>'
+          + '<div class="meta">'+detailHaulLabel(p.haul_id)+(p.count ? ' · ×'+p.count : '')+(p.status ? ' · '+(p.status==='alive'?t('flhaul_protected_alive'):t('flhaul_protected_dead')) : '')+'</div></div>'
+          + '<button class="del" data-del-protected="'+p.interaction_id+'">×</button></div>').join('');
+    protectedListEl.querySelectorAll('[data-del-protected]').forEach(el => {
+      el.addEventListener('click', () => {
+        deleteFleetProtectedInteraction(el.dataset.delProtected);
+        renderFleetTripDetail();
+      });
     });
 
     // Settlement: real income (scale weight and actual sale price where
@@ -10320,6 +10635,290 @@
       ny += gLines.length * 11;
     }
     return ny;
+  }
+
+  // Captain's Logbook — a universal voyage record modeled on FAO's
+  // recommended logbook-page entries (vessel/gear/trip identification,
+  // haul-by-haul position/catch, port of landing) plus what Israel asked
+  // for directly: permit numbers, authorized fishing zone, gear
+  // characteristics, hold capacity, port dates/times, trip number, and
+  // arrival folio. Unlike the country-specific bitácoras (MX/US/EU/TH),
+  // this one is NOT a transcription aid for a specific government form —
+  // it's Fish Pulse's own comprehensive record, so any field the app
+  // doesn't currently capture (flag, call sign, hold capacity, arrival
+  // folio) is shown as a blank to fill by hand, never guessed.
+  function generateFleetCaptainLogbookPdf(data){
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
+    const { vessel, captain, trip, catches, landingGroups, totalEstKg, hasActuals } = data;
+    const c = (vessel && vessel.compliance) || {};
+    const country = c.reporting_country;
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const useThaiFont = window.getFishPulseLang && window.getFishPulseLang() === 'th';
+    if(useThaiFont) registerThaiPdfFont(doc);
+    const pdfFont = useThaiFont ? 'NotoSansThai' : 'helvetica';
+    const NC = t('flcaptainlog_not_captured');
+    const fmtDT = (v) => v ? new Date(v).toLocaleString(window.fishPulseLocale(), { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+
+    // MX bitácoras require lat/long as degrees-minutes-seconds, not
+    // decimal — everywhere else keeps decimal (3dp), which is both the
+    // international norm and what the app already stores internally.
+    const toDMS = (decimal, isLat) => {
+      const dir = isLat ? (decimal >= 0 ? 'N' : 'S') : (decimal >= 0 ? 'E' : 'W');
+      const abs = Math.abs(decimal);
+      const deg = Math.floor(abs);
+      const minFull = (abs - deg) * 60;
+      const min = Math.floor(minFull);
+      const sec = ((minFull - min) * 60).toFixed(1);
+      return deg + '°' + min + "'" + sec + '"' + dir;
+    };
+    const fmtPosition = (lat, lon) => {
+      if(lat == null || lat === '' || lon == null || lon === '') return NC;
+      const latN = parseFloat(lat), lonN = parseFloat(lon);
+      return country === 'mx' ? (toDMS(latN, true) + ' ' + toDMS(lonN, false)) : (latN.toFixed(3) + ', ' + lonN.toFixed(3));
+    };
+
+    const hauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const crewAll = load(CREW_KEY);
+    const tripCrew = (trip.crew_ids || []).map(id => crewAll.find(cc => cc.crew_id === id)).filter(Boolean);
+    const seasonNo = computeMxSeasonTripNumber(vessel, trip);
+    const fuelInitial = (trip.fuel_loaded_l != null && trip.fuel_loaded_l !== '') ? parseFloat(trip.fuel_loaded_l) : null;
+    const fuelConsumed = (trip.fuel_consumed_l != null && trip.fuel_consumed_l !== '') ? parseFloat(trip.fuel_consumed_l) : null;
+
+    const permitNumber = country === 'mx' ? c.mx_permit_no
+      : country === 'us' ? c.us_permit_number
+      : country === 'eu' ? c.eu_cfr_number
+      : country === 'th' ? c.th_gear_license_number
+      : null;
+    const captainCert = country === 'th' ? c.th_captain_certificate_number : null;
+
+    // Gear description — pull whichever country-specific gear fields
+    // this vessel has captured, rather than assuming one country's set.
+    const gearParts = [];
+    if(c.mx_net_type) gearParts.push(c.mx_net_type);
+    if(c.mx_mesh_body_cm) gearParts.push('mesh ' + c.mx_mesh_body_cm + 'cm');
+    if(c.mx_hooks) gearParts.push(c.mx_hooks + ' hooks');
+    if(c.mx_longline_type) gearParts.push(c.mx_longline_type);
+    if(c.mx_headrope_m) gearParts.push('headrope ' + c.mx_headrope_m + 'm');
+    if(c.mx_ted) gearParts.push('TED: ' + c.mx_ted);
+    if(c.th_codend_mesh_cm) gearParts.push('cod-end mesh ' + c.th_codend_mesh_cm + 'cm');
+    if(c.th_codend_length_m) gearParts.push('cod-end ' + c.th_codend_length_m + 'm');
+    const gearDesc = gearParts.length ? gearParts.join(' · ') : null;
+
+    const zoneLabels = { litoral: 'Litoral', bahia: 'Bahía', estuarina: 'Estuarina', continental: 'Continental' };
+    const fishingZone = country === 'eu' && trip.eu_fao_area ? trip.eu_fao_area
+      : trip.fishing_zone_mx ? (zoneLabels[trip.fishing_zone_mx] || trip.fishing_zone_mx)
+      : (trip.fishing_ground_mx || null);
+
+    drawPdfWatermark(doc);
+    let y = drawPdfLetterhead(doc, {
+      pdfFont, eyebrow: pdfT('mode_fleet_title'), title: t('flcaptainlog_title'),
+      subtitle: (vessel ? vessel.name : '—') + (seasonNo != null ? ' · #' + seasonNo : ''),
+      docRef: new Date(trip.started_at).toLocaleDateString()
+    });
+
+    // Dense label:value field list — same pattern as the country
+    // bitácoras, since the field count here doesn't fit a 3-column
+    // meta row cleanly. Each writeField call auto-paginates.
+    const margin = 48;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const lineHeight = 15;
+    const writeField = (label, value, labelWidth) => {
+      labelWidth = labelWidth || 190;
+      if(y > pageHeight - 70){ pdfAddPage(doc); y = 54; }
+      doc.setFont(pdfFont, 'bold'); doc.setFontSize(9.5); doc.setTextColor(...PDF_COLORS.textPrimary);
+      doc.text(label + ':', margin, y, { maxWidth: labelWidth });
+      doc.setFont(pdfFont, 'normal');
+      const valueX = margin + labelWidth + 8;
+      doc.text(String(value), valueX, y, { maxWidth: pageWidth - margin - valueX });
+      y += lineHeight;
+    };
+
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_id') });
+    writeField(t('flcaptainlog_f_vessel'), vessel ? vessel.name : NC);
+    writeField(t('flcaptainlog_f_registration'), c.vessel_registration_no || NC);
+    writeField(t('flcaptainlog_f_permit_holder'), c.permit_holder_name || NC);
+    writeField(t('flcaptainlog_f_permit_number'), permitNumber || NC);
+    writeField(t('flcaptainlog_f_captain'), (captain ? captain.name : NC) + (captainCert ? ' · ' + captainCert : ''));
+    writeField(t('flcaptainlog_f_flag'), NC);
+    writeField(t('flcaptainlog_f_callsign'), NC);
+    writeField(t('flcaptainlog_f_hold_capacity'), NC);
+    y += 6;
+
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_trip') });
+    writeField(t('flcaptainlog_f_trip_number'), seasonNo != null ? String(seasonNo) : NC);
+    writeField(t('flcaptainlog_f_departure_port'), trip.departure_port || NC);
+    writeField(t('flcaptainlog_f_departure_dt'), fmtDT(trip.started_at));
+    writeField(t('flcaptainlog_f_arrival_port'), trip.landing_site || NC);
+    writeField(t('flcaptainlog_f_arrival_dt'), trip.ended_at ? fmtDT(trip.ended_at) : '—');
+    writeField(t('flcaptainlog_f_arrival_folio'), NC);
+    writeField(t('flcaptainlog_f_fishing_zone'), fishingZone || NC);
+    y += 6;
+
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_gear') });
+    writeField(t('flcaptainlog_f_gear_desc'), gearDesc || NC);
+    y += 10;
+
+    // KPIs
+    const haulDates = new Set(hauls.filter(h => h.haul_start).map(h => h.haul_start.slice(0,10)));
+    let daysAtSea;
+    if(haulDates.size > 0) daysAtSea = String(haulDates.size);
+    else if(trip.started_at && trip.ended_at) daysAtSea = String(Math.max(1, Math.round((new Date(trip.ended_at) - new Date(trip.started_at)) / 86400000) + 1));
+    else daysAtSea = '—';
+    y = drawPdfKpiRow(doc, { pdfFont, y, kpis: [
+      { label: t('flcaptainlog_kpi_days'), value: daysAtSea },
+      { label: t('flcaptainlog_kpi_hauls'), value: String(hauls.length) },
+      { label: t('flcaptainlog_kpi_fuel'), value: fuelConsumed != null ? fuelConsumed.toFixed(0) + ' L' : '—' },
+      { label: t('flcaptainlog_kpi_catch'), value: totalEstKg.toFixed(1) + ' kg' }
+    ]});
+
+    // Crew aboard — name plus passport/Seaman Book No. when captured
+    // (Thailand PIPO centers cross-check this list against the crew
+    // physically on deck before authorizing landing).
+    if(tripCrew.length > 0){
+      y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_crew') });
+      doc.setFont(pdfFont, 'normal'); doc.setFontSize(9.5); doc.setTextColor(...PDF_COLORS.textPrimary);
+      const crewLine = tripCrew.map(cw => cw.name + (cw.doc_number ? ' (' + cw.doc_number + ')' : '')).join(' · ');
+      const crewLines = doc.splitTextToSize(crewLine, pageWidth - margin*2);
+      if(y > pageHeight - 70 - crewLines.length*13){ pdfAddPage(doc); y = 54; }
+      doc.text(crewLines, margin, y);
+      y += crewLines.length * 13 + 10;
+    }
+
+    // Haul-by-haul log — MX shows position in D°M'S", everyone else in
+    // decimal degrees. Block number (US NOAA statistical subzone) only
+    // shown as its own column when captured, since it's US-specific.
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_hauls') });
+    if(hauls.length === 0){
+      doc.setFont(pdfFont, 'normal'); doc.setFontSize(9.5); doc.setTextColor(...PDF_COLORS.textSecondary);
+      doc.text('—', margin, y); y += 18;
+    } else {
+      const showBlockCol = hauls.some(h => h.block_number);
+      const blockColW = showBlockCol ? 55 : 0;
+      const posColW = country === 'mx' ? 170 : 130;
+      const notesColW = pageWidth - margin*2 - 130 - posColW - 60 - blockColW;
+      const haulCols = [
+        { label: t('flcaptainlog_col_hauldate'), width: 130 },
+        { label: t('flcaptainlog_col_position'), width: posColW },
+        { label: t('flcaptainlog_col_depth'), width: 60 }
+      ].concat(showBlockCol ? [{ label: t('flcaptainlog_col_block'), width: blockColW }] : [])
+       .concat([{ label: t('flcaptainlog_col_notes'), width: notesColW }]);
+      y = drawPdfTable(doc, {
+        pdfFont, y, cols: haulCols,
+        rows: hauls.map(h => {
+          const row = [
+            fmtDT(h.haul_start) + (h.haul_end ? ' – ' + h.haul_end.slice(11,16) : ''),
+            fmtPosition(h.lat, h.lon),
+            h.depth ? String(h.depth) : '—'
+          ];
+          if(showBlockCol) row.push(h.block_number || '—');
+          row.push(h.notes || '—');
+          return row;
+        })
+      });
+    }
+
+    // Bycatch kept/discarded — only rendered when at least one haul
+    // captured it, so trips without bycatch data don't show an empty
+    // table.
+    const bycatchHauls = hauls.filter(h => h.bycatch_kept_kg || h.bycatch_discarded_kg);
+    if(bycatchHauls.length > 0){
+      y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_bycatch') });
+      y = drawPdfTable(doc, {
+        pdfFont, y,
+        cols: [
+          { label: t('flcaptainlog_col_hauldate'), width: 220 },
+          { label: t('flcaptainlog_col_kept'), width: 139, align: 'right' },
+          { label: t('flcaptainlog_col_discarded'), width: 140, align: 'right' }
+        ],
+        rows: bycatchHauls.map(h => [
+          fmtDT(h.haul_start),
+          h.bycatch_kept_kg ? String(h.bycatch_kept_kg) : '—',
+          h.bycatch_discarded_kg ? String(h.bycatch_discarded_kg) : '—'
+        ])
+      });
+    }
+
+    // Protected species interactions — mammals/turtles/seabirds. Kept
+    // as its own highlighted section (not folded into the haul table)
+    // since this is the single most scrutinized field in a US eVTR. Own
+    // data table (fleet_protected_interactions_v1), so a haul can have
+    // more than one row here — including interactions logged with no
+    // haul at all (haul_id null).
+    const protectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
+    if(protectedInteractions.length > 0){
+      y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_protected') });
+      y = drawPdfTable(doc, {
+        pdfFont, y,
+        cols: [
+          { label: t('flcaptainlog_col_hauldate'), width: 130 },
+          { label: t('flhaul_protected_species'), width: 200 },
+          { label: t('flhaul_protected_count'), width: 60, align: 'right' },
+          { label: t('flhaul_protected_status'), width: pageWidth - margin*2 - 390 }
+        ],
+        rows: protectedInteractions.map(p => {
+          const haul = p.haul_id ? hauls.find(h => h.haul_id === p.haul_id) : null;
+          return [
+            haul ? fmtDT(haul.haul_start) : NC,
+            p.species,
+            p.count || '—',
+            p.status === 'alive' ? t('flhaul_protected_alive') : p.status === 'dead' ? t('flhaul_protected_dead') : '—'
+          ];
+        })
+      });
+    }
+
+    // Onboard catch estimate — adds the EU alpha-3 FAO species code
+    // (pulled from the same per-vessel species-code table the app
+    // already uses for the EU e-Logbook) and flags any species where
+    // the scale weight differs from the logged estimate by more than
+    // the EU's 10% tolerance, once actuals exist to compare against.
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flcaptainlog_sec_catch') });
+    const presentationLabels = { fresh_whole: 'Fresh, Whole', fresh_gutted: 'Fresh, Gutted', frozen: 'Frozen', other: 'Other' };
+    const preservation = trip.catch_presentation ? (presentationLabels[trip.catch_presentation] || trip.catch_presentation) : NC;
+    const showFaoCol = country === 'eu';
+    const faoColW = showFaoCol ? 70 : 0;
+    const preservColW = pageWidth - margin*2 - 260 - 100 - faoColW;
+    const catchCols = [
+      { label: t('flcaptainlog_col_species'), width: 260 }
+    ].concat(showFaoCol ? [{ label: t('flcaptainlog_col_fao'), width: faoColW }] : [])
+     .concat([
+      { label: t('flcaptainlog_col_estkg'), width: 100 },
+      { label: t('flcaptainlog_col_preservation'), width: preservColW, align: 'right' }
+    ]);
+    y = drawPdfTable(doc, {
+      pdfFont, y, cols: catchCols,
+      rows: landingGroups.length > 0
+        ? landingGroups.map(g => {
+            const row = [g.species];
+            if(showFaoCol){
+              const code = (typeof findSpeciesCode === 'function' ? findSpeciesCode(g.species) : null);
+              row.push(code && code.fao_code ? code.fao_code : '—');
+            }
+            let estCell = g.estKg.toFixed(1) + ' kg';
+            if(showFaoCol && g.hasActual && g.actualKg > 0){
+              const diffPct = Math.abs(g.actualKg - g.estKg) / g.actualKg * 100;
+              if(diffPct > 10) estCell = { text: estCell + ' ⚠', tone: 'bad' };
+            }
+            row.push(estCell, preservation);
+            return row;
+          })
+        : [showFaoCol ? ['—', '—', '—', '—'] : ['—', '—', '—']]
+    });
+    if(showFaoCol && landingGroups.some(g => g.hasActual && g.actualKg > 0 && Math.abs(g.actualKg - g.estKg) / g.actualKg > 0.1)){
+      doc.setFont(pdfFont, 'normal'); doc.setFontSize(8); doc.setTextColor(...PDF_COLORS.bad);
+      const warnLines = doc.splitTextToSize('⚠ ' + t('flcaptainlog_tolerance_warning'), pageWidth - margin*2);
+      if(y > pageHeight - 60){ pdfAddPage(doc); y = 54; }
+      doc.text(warnLines, margin, y);
+      y += warnLines.length * 10 + 8;
+    }
+
+    drawPdfDisclaimerFooter(doc, { pdfFont, y: y + 8, text: t('flcaptainlog_disclaimer') });
+
+    const filename = 'captain-logbook-' + (vessel?vessel.name.replace(/\s+/g,'-').toLowerCase():'vessel') + '-' + new Date(trip.started_at).toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('flcaptainlog_title'));
   }
 
   function generateFleetLandingReportPdf(data){
@@ -11170,6 +11769,7 @@
     const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : '—';
     const fmtDT = (v) => v ? new Date(v).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) + ' ' + v.slice(11,16) : '—';
     const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const protectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
 
     drawPdfWatermark(doc);
     y = drawPdfLetterhead(doc, { pdfFont: 'helvetica', eyebrow: 'Compliance — United States (Pacific)',
@@ -11248,12 +11848,12 @@
           y += 13;
         });
       }
-      if(h.protected_species){
+      protectedInteractions.filter(p => p.haul_id === h.haul_id).forEach(p => {
         doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(160, 60, 40);
-        doc.text('Protected species interaction: ' + h.protected_species + (h.protected_count ? ' × ' + h.protected_count : '') + (h.protected_status ? ' — ' + (h.protected_status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
+        doc.text('Protected species interaction: ' + p.species + (p.count ? ' × ' + p.count : '') + (p.status ? ' — ' + (p.status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
         y += 14;
         doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
-      }
+      });
       y += 6;
     });
 
@@ -11320,6 +11920,7 @@
     const fmtKgAsLb = (kg) => (kg * KG_TO_LB).toFixed(1) + ' lb (' + kg.toFixed(1) + ' kg)';
     const fmtDT = (v) => v ? new Date(v).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) + ' ' + v.slice(11,16) : '—';
     const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const protectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
     const tripTypeLabels = { commercial: 'Commercial', party: 'Party', charter: 'Charter' };
 
     drawPdfWatermark(doc);
@@ -11429,12 +12030,12 @@
         });
       }
       segHauls.forEach(h => {
-        if(h.protected_species){
+        protectedInteractions.filter(p => p.haul_id === h.haul_id).forEach(p => {
           doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(160, 60, 40);
-          doc.text('Protected species interaction: ' + h.protected_species + (h.protected_count ? ' × ' + h.protected_count : '') + (h.protected_status ? ' — ' + (h.protected_status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
+          doc.text('Protected species interaction: ' + p.species + (p.count ? ' × ' + p.count : '') + (p.status ? ' — ' + (p.status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
           y += 13;
           doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
-        }
+        });
       });
       y += 6;
     });
@@ -11481,6 +12082,7 @@
     const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : '—';
     const fmtDT = (v) => v ? new Date(v).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) + ' ' + v.slice(11,16) : '—';
     const tripHauls = load(HAULS_KEY).filter(h => h.trip_id === trip.trip_id);
+    const protectedInteractions = load(PROTECTED_KEY).filter(p => p.trip_id === trip.trip_id);
     const reasonLabels = { undersize: 'below min. size', regulatory: 'regulatory', predation: 'damaged/predation', market: 'market condition', other: 'other' };
 
     drawPdfWatermark(doc);
@@ -11552,12 +12154,12 @@
             y += 13;
           });
         }
-        if(h.protected_species){
+        protectedInteractions.filter(p => p.haul_id === h.haul_id).forEach(p => {
           doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(160, 60, 40);
-          doc.text('Protected species interaction: ' + h.protected_species + (h.protected_count ? ' × ' + h.protected_count : '') + (h.protected_status ? ' — ' + (h.protected_status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
+          doc.text('Protected species interaction: ' + p.species + (p.count ? ' × ' + p.count : '') + (p.status ? ' — ' + (p.status === 'alive' ? 'released alive' : 'dead') : ''), margin + 14, y, { maxWidth: pageWidth - margin*2 - 14 });
           y += 14;
           doc.setTextColor(20, 20, 20); doc.setFontSize(9.5);
-        }
+        });
         y += 6;
       });
     } else {
