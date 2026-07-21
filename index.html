@@ -2106,6 +2106,10 @@
   body.fleet-role-captain .fleet-captain-only{ display:flex !important; }
   body.fleet-role-operations .fleet-operations-only{ display:flex !important; }
   body.mode-sport .sport-only{ display:flex !important; }
+  /* Documents is shared between roles, but its Ops navigation strip
+     (Fleet/Trips/Reconcile/Vessels/Stats) isn't meant for the captain
+     role — same reasoning as the dedicated Captain's Logbook screen. */
+  body.fleet-role-captain #fleetDocumentsTabStrip{ display:none !important; }
 </style>
 </head>
 <body>
@@ -5043,7 +5047,12 @@
     <h1 data-i18n="fldocs_h1">Licenses & Certificates</h1>
     <div class="site-line">&nbsp;</div>
   </div>
-  <div class="fleet-tab-strip">
+  <!-- Ops-only navigation strip — hidden for the captain role (see the
+       body.fleet-role-captain rule near .fleet-captain-only) since this
+       screen is shared, but Fleet/Trips/Reconcile/Vessels/Stats are not:
+       a captain account should never get a back door into them from
+       here. Operations still sees the full strip as before. -->
+  <div class="fleet-tab-strip" id="fleetDocumentsTabStrip">
     <button type="button" data-go="fleet-dashboard"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="4" height="8" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="13" rx="1" fill="currentColor"/><rect x="16" y="10" width="4" height="10" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_fleet">Fleet</span></button>
     <button type="button" data-go="fleet-trip-log"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="10.5" width="16" height="3" rx="1" fill="currentColor"/><rect x="4" y="16" width="10" height="3" rx="1" fill="currentColor"/></svg><span data-i18n="fltab_trips">Trips</span></button>
     <button type="button" data-go="fleet-reconciliation"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M13 8l4 4-4 4M11 8L7 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="fltab_reconcile">Reconcile</span></button>
