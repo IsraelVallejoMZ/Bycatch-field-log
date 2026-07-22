@@ -20513,7 +20513,7 @@
     const q = aquaNormalizeSearch(query.trim());
     if(!q) return [];
     return AQUA_SPECIES.filter(sp =>
-      aquaNormalizeSearch(sp.common).includes(q) || aquaNormalizeSearch(sp.sci).includes(q)
+      aquaNormalizeSearch(sp.common).includes(q) || (sp.en && sp.en.common && aquaNormalizeSearch(sp.en.common).includes(q)) || aquaNormalizeSearch(sp.sci).includes(q)
     ).slice(0, 6);
   }
   function renderAquaSpeciesSearchResults(query){
@@ -20525,12 +20525,13 @@
       resultsEl.innerHTML = '';
       return;
     }
-    resultsEl.innerHTML = matches.map(sp =>
-      '<div class="aqua-species-search-row" data-species-id="' + sp.id + '" data-species-name="' + escapeHtmlAqua(sp.common) + '" style="padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--line,#eee);">'
-        + '<div style="color:var(--ink);">' + escapeHtmlAqua(sp.common) + '</div>'
+    resultsEl.innerHTML = matches.map(sp => {
+      const commonName = window.spField(sp, sp.common, 'common');
+      return '<div class="aqua-species-search-row" data-species-id="' + sp.id + '" data-species-name="' + escapeHtmlAqua(commonName) + '" style="padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--line,#eee);">'
+        + '<div style="color:var(--ink);">' + escapeHtmlAqua(commonName) + '</div>'
         + '<div style="color:var(--ink-soft);font-size:11px;font-style:italic;">' + escapeHtmlAqua(sp.sci) + '</div>'
-      + '</div>'
-    ).join('');
+      + '</div>';
+    }).join('');
     resultsEl.style.display = '';
   }
 
@@ -21576,6 +21577,16 @@
         { name:'IHHNV (deformidad enana)', agent:'Parvovirus sistémico', type:'Virus', syndrome:'Reduce alimentación, crecimiento y eficiencia alimenticia; rostro curvo en <30% de la población infectada.', treatment:'Reproductores libres de patógenos; desinfección cuidadosa de huevos y nauplios.' }
       ],
       diseases:'Mancha blanca (WSSV) y síndrome de mortalidad temprana (AHPND) — bioseguridad de agua, control de densidad, probióticos; consultar veterinario acuícola.',
+      en:{ common:'Pacific white shrimp', habitat:'Marine/brackish',
+        temp:'28-32°C', ph:'7.5-8.5', salinity:'15-25 ppt (tolerates 1-50 ppt)', density:'50-333 org/m² depending on intensity',
+        feeding:'~5% of biomass/day, 3-4 feedings', cycle:'90-120 days',
+        growth:'1.0-1.5 g/week in commercial Asian pond culture; harvested at 80-100 days at 12-15 g or more.',
+        diseaseDetail:[
+          { name:'White spot disease (WSD/WSSV)', agent:'White spot syndrome baculovirus complex', type:'Virus', syndrome:'Mortality up to 100% within 3-10 days; white spots 0.5-2mm on the carapace.', treatment:'Pathogen-free broodstock; disinfect eggs/nauplii; avoid abrupt water changes; 30ppm chlorine in infected ponds.' },
+          { name:'Taura syndrome (TSV)', agent:'RNA virus (Picornaviridae)', type:'Virus', syndrome:'Weakness, soft carapace, 5-95% mortality in juveniles.', treatment:'Pathogen-free broodstock; disinfection of equipment and vehicles; deter bird vectors.' },
+          { name:'IHHNV (runt-deformity syndrome)', agent:'Systemic parvovirus', type:'Virus', syndrome:'Reduces feeding, growth, and feed efficiency; bent rostrum in <30% of the infected population.', treatment:'Pathogen-free broodstock; careful disinfection of eggs and nauplii.' }
+        ],
+        diseases:'White spot disease (WSSV) and early mortality syndrome (AHPND) — water biosecurity, density control, probiotics; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; FAO Fisheries and Aquaculture Technical Paper No. 583; FAO ad505e.' },
     { id:'tilapia', common:'Mojarra / tilapia nilótica', sci:'Oreochromis niloticus', regions:['mx','th'], habitat:'Dulceacuícola',
       temp:'25-27°C (tolera 11-42°C)', ph:'6-9', salinity:'—', density:'20-35 org/m³ en jaulas; menor en estanque de tierra',
@@ -21590,6 +21601,17 @@
         { name:'Edwardsielosis', agent:'Edwardsiella tarda', type:'Bacteria', syndrome:'Pocos signos externos; fluido sanguinolento en cavidad corporal, hígado moteado, bazo/riñón inflamados.', treatment:'Antibiótico en alimento, bajo indicación veterinaria.' }
       ],
       diseases:'Estreptococosis, toxicidad por amonio elevado — manejo de calidad de agua y densidad; consultar veterinario acuícola.',
+      en:{ common:'Nile tilapia', habitat:'Freshwater',
+        temp:'25-27°C (tolerates 11-42°C)', ph:'6-9', salinity:'—', density:'20-35 org/m³ in cages; lower in earthen ponds',
+        feeding:'Based on biomass, 3 feedings/day, diet ~30% protein', cycle:'180 days',
+        growth:'Study with real data at 7/30/60/90/120 days, three commercial strains, exponential/Gompertz fit — temperature accelerates or delays the curve. FAO also documents the full sequence: sex reversal at 0.2g (3 wks) and 0.4g (4 wks) → nursery 30-40g (2-3 months) → commercial grow-out 400-500g in 5-8 months.',
+        diseaseDetail:[
+          { name:'Motile Aeromonas septicemia (MAS)', agent:'Aeromonas hydrophila and related species', type:'Bacteria', syndrome:'Loss of balance, lethargic swimming, swollen eyes/fins, low chronic mortality.', treatment:'Potassium permanganate immersion; antibiotics in feed (requires veterinary prescription).' },
+          { name:'Vibriosis', agent:'Vibrio anguillarum and other species', type:'Bacteria', syndrome:'Similar to MAS; caused by stress and poor water quality.', treatment:'Antibiotic in feed, under veterinary guidance.' },
+          { name:'Columnaris', agent:'Flavobacterium columnare', type:'Bacteria', syndrome:'Frayed fins, whitish-grey patches on skin/fins, necrotic gill lesions.', treatment:'Potassium permanganate; copper sulfate according to water alkalinity.' },
+          { name:'Edwardsiellosis', agent:'Edwardsiella tarda', type:'Bacteria', syndrome:'Few external signs; blood-tinged fluid in body cavity, mottled liver, swollen spleen/kidney.', treatment:'Antibiotic in feed, under veterinary guidance.' }
+        ],
+        diseases:'Streptococcosis, high-ammonia toxicity — water quality and density management; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme (Rakocy); Acta Scientiarum Animal Sciences (2013).' },
     { id:'ostion', common:'Ostión', sci:'Crassostrea virginica / C. gigas', regions:['mx','us','eu'], habitat:'Marina',
       temp:'20-28°C (larval óptimo 24-30°C)', ph:'—', salinity:'20-30 ppt', density:'20-40 org/canasta o 4-12 kg/bolsa (cultivo en bolsa intermareal)',
@@ -21603,12 +21625,27 @@
         { name:'Enfermedad juvenil del ostión (JOD)', agent:'Desconocido', type:'Desconocido', syndrome:'Crecimiento de tejido/concha reducido, márgenes de concha frágiles, puede diezmar la semilla cultivada.', treatment:'Sin prevención conocida; crecer la semilla rápido hasta >30mm; aumentar flujo de agua y filtrar a 25µm.' }
       ],
       diseases:'Mortalidad masiva estival asociada a estrés térmico/OsHV-1 — manejo de calendario de inmersión según temperatura; consultar veterinario acuícola.',
+      en:{ common:'Eastern oyster / Pacific oyster', habitat:'Marine',
+        temp:'20-28°C (larval optimum 24-30°C)', ph:'—', salinity:'20-30 ppt', density:'20-40 org/basket or 4-12 kg/bag (intertidal bag culture)',
+        feeding:'No artificial feed (filter feeder)', cycle:'12-18 months to market size',
+        growth:'Size curve (mm) by temperature documented in bag/basket culture studies — same sigmoid pattern, in mm instead of weight.',
+        diseaseDetail:[
+          { name:'Malpeque Bay disease', agent:'Unknown', type:'Unknown', syndrome:'Mantle regression, cream/yellow abscesses up to 1cm on the body wall.', treatment:'Do not introduce oysters from historically affected areas.' },
+          { name:'Dermo (Perkinsosis)', agent:'Perkinsus marinus', type:'Protozoan', syndrome:'Severe emaciation, mantle retraction, stunted growth; associated with warm water (>15-20°C).', treatment:'No known cure; reduce density, relocate to lower-salinity areas, UV-filter hatchery water.' },
+          { name:'Juvenile oyster disease (JOD)', agent:'Unknown', type:'Unknown', syndrome:'Reduced tissue/shell growth, fragile shell margins, can decimate cultured seed.', treatment:'No known prevention; grow seed quickly past 30mm; increase water flow and filter to 25µm.' }
+        ],
+        diseases:'Summer mass mortality associated with thermal stress/OsHV-1 — manage immersion schedule by temperature; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; USGS — Tolerance of Gulf of Mexico eastern oysters; PMC OsHV-1 production calendar study.' },
     { id:'atun', common:'Atún aleta azul (engorda)', sci:'Thunnus orientalis / T. thynnus', regions:['mx','eu'], habitat:'Marina',
       temp:'—', ph:'—', salinity:'37.1-37.8 (Mediterráneo)', density:'—',
       feeding:'—', cycle:'3-5 meses (México) / 3 meses a 2 años (Mediterráneo) de engorda',
       growth:'No aplica curva de siembra tradicional: es captura de ejemplares silvestres + engorda en jaula, no ciclo de vida completo.',
       diseases:'Se sabe poco de la patología de esta especie en cautiverio — los adultos parecen bastante resistentes incluso bajo estrés y trauma. Mortalidades importantes se han asociado a tormentas de viento fuerte (mucosidad excesiva en agallas) y a floraciones de algas nocivas (Chattonella spp. en B.C.), turbidez o hipoxia — monitoreo de calidad de agua costera.',
+      en:{ common:'Bluefin tuna (ranching)', habitat:'Marine',
+        salinity:'37.1-37.8 (Mediterranean)',
+        cycle:'3-5 months (Mexico) / 3 months to 2 years (Mediterranean) fattening',
+        growth:'No conventional stocking curve applies: this is wild-caught fish + cage fattening, not a full life cycle.',
+        diseases:'Little is known about this species\' pathology in captivity — adults appear fairly resilient even under stress and trauma. Significant mortalities have been linked to strong wind storms (excess gill mucus) and harmful algal blooms (Chattonella spp. in Baja California), turbidity, or hypoxia — coastal water quality monitoring.' },
       source:'Seafood Watch — Farmed Bluefin Tuna Mexico; Frontiers in Marine Science (2018); ResearchGate — Bluefin fattening Mediterranean.' },
     { id:'carpa', common:'Carpa común / herbívora', sci:'Cyprinus carpio / Ctenopharyngodon idella', regions:['mx','eu'], habitat:'Dulceacuícola',
       temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'Extensiva/policultivo, variable según sistema',
@@ -21623,6 +21660,17 @@
         { name:'Enfermedad Columnaris', agent:'Flexibacter columnaris', type:'Bacteria', syndrome:'Puntos gris-blancuzcos con halo rojizo en cabeza/agallas/piel, aparece sobre 15°C.', treatment:'Cloruro de benzalkonio, sulfato de cobre o antibióticos (furazolidona, neomicina, oxitetraciclina).' }
       ],
       diseases:'Parásitos externos, hidropesía en aguas de mala calidad — manejo general de calidad de agua; consultar veterinario acuícola.',
+      en:{ common:'Common carp / Grass carp', habitat:'Freshwater',
+        temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'Extensive/polyculture, variable by system',
+        feeding:'Omnivorous — natural forage + supplement', cycle:'8-12 months',
+        growth:'Larva-to-fingerling stage documented day by day (Mojer et al. 2021, Basrah): 0.002g→26.9g in 90 days in earthen pond. FAO reports commercial size of 0.6-1.0kg in one season in subtropical/tropical polyculture ponds — the grow-out stage is projected using typical growth rates for that phase (2.5-4 g/day) reported across multiple semi-intensive pond studies.',
+        diseaseDetail:[
+          { name:'Saprolegniasis', agent:'Saprolegnia spp.', type:'Fungus', syndrome:'White fungal colonies on the body, wounded areas or ulcers, and on the egg surface.', treatment:'Single or repeated doses of malachite green.' },
+          { name:'Branchiomycosis (gill rot)', agent:'Branchiomyces sanguinis', type:'Fungus', syndrome:'Mosaic-like gill discoloration, hemorrhages, mass mortality; secondary Saprolegnia infection.', treatment:'Pond treatment with quicklime; repeated copper sulfate.' },
+          { name:'Erythrodermatitis (ulcer disease)', agent:'Aeromonas salmonicida achromogenes', type:'Bacteria', syndrome:'Nodules and ulcers, exophthalmia, swollen abdomen, gill hemorrhages.', treatment:'Avoid stress; antibiotics in diet or by injection; vaccination.' },
+          { name:'Columnaris disease', agent:'Flexibacter columnaris', type:'Bacteria', syndrome:'Grey-whitish spots with a reddish halo on head/gills/skin, appears above 15°C.', treatment:'Benzalkonium chloride, copper sulfate, or antibiotics (furazolidone, neomycin, oxytetracycline).' }
+        ],
+        diseases:'External parasites, dropsy in poor-quality water — general water quality management; consult an aquaculture veterinarian.' },
       source:'Mojer et al. 2021, Basrah J. Agric. Sci. (etapa larva-alevín); FAO Cultured Aquatic Species Information Programme (talla comercial).' },
     { id:'lobina', common:'Lobina / black bass', sci:'Micropterus salmoides', regions:['mx'], habitat:'Dulceacuícola',
       temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'~1,000-3,000 org/ha en sistema extensivo (estimación técnica general)',
@@ -21632,6 +21680,11 @@
         points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
       diseaseNoFaoData:true,
       diseases:'Susceptible a estrés por manejo — cuidado en transporte y densidad; consultar veterinario acuícola.',
+      en:{ common:'Largemouth bass', habitat:'Freshwater',
+        temp:'20-28°C', ph:'6.5-9', salinity:'—', density:'~1,000-3,000 org/ha in extensive systems (general technical estimate)',
+        feeding:'Carnivorous — high-protein diet', cycle:'8-10 months',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied.',
+        diseases:'Susceptible to handling stress — care during transport and at high density; consult an aquaculture veterinarian.' },
       source:'Conocimiento técnico general de la especie (FAO) — pendiente de fuente específica de cultivo en México.' },
     { id:'bagre', common:'Bagre de canal', sci:'Ictalurus punctatus', regions:['mx','us'], habitat:'Dulceacuícola',
       temp:'27-31°C', ph:'6.5-9', salinity:'—', density:'90-720 org/m³ en tanques circulares experimentales',
@@ -21646,6 +21699,17 @@
         { name:'Septicemia por Aeromonas', agent:'Aeromonas hydrophila; A. sobria', type:'Bacteria', syndrome:'Deshilache y enrojecimiento de aletas, despigmentación, úlceras.', treatment:'Oxitetraciclina; sulfametoxina; ormetoprim.' }
       ],
       diseases:'Estrés por transporte/manejo, toxicidad por amonio — manejo de densidad y calidad de agua; consultar veterinario acuícola.',
+      en:{ common:'Channel catfish', habitat:'Freshwater',
+        temp:'27-31°C', ph:'6.5-9', salinity:'—', density:'90-720 org/m³ in experimental circular tanks',
+        feeding:'Feed intake increases linearly between 15.7-31.7°C', cycle:'6-9 months',
+        growth:'Comparative study with pangasius under commercial conditions, with documented weight-length relationship.',
+        diseaseDetail:[
+          { name:'Channel catfish virus disease', agent:'Not identified', type:'Virus', syndrome:'Reduced feeding, erratic (sometimes spiral) swimming, swollen abdomen, hemorrhages.', treatment:'No treatment; good management practices.' },
+          { name:'Enteric septicemia', agent:'Edwardsiella ictaluri', type:'Bacteria', syndrome:'External hemorrhages on belly and mouth, focal white lesions on the body.', treatment:'Oxytetracycline; sulfamethoxine; ormetoprim.' },
+          { name:'Columnaris disease', agent:'Flavobacterium columnare', type:'Bacteria', syndrome:'White spots on mouth/scales/fins, cottony growth, fin edges disintegrate.', treatment:'Oxytetracycline; sulfamethoxine; ormetoprim.' },
+          { name:'Aeromonas septicemia', agent:'Aeromonas hydrophila; A. sobria', type:'Bacteria', syndrome:'Fraying and reddening of fins, depigmentation, ulcers.', treatment:'Oxytetracycline; sulfamethoxine; ormetoprim.' }
+        ],
+        diseases:'Transport/handling stress, ammonia toxicity — density and water quality management; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; ScienceDirect — Water temperature/DO effects on feed consumption; PanamJAS growth comparison study.' },
     { id:'trucha', common:'Trucha arcoíris', sci:'Oncorhynchus mykiss', regions:['mx','us','eu'], habitat:'Dulceacuícola (agua fría)',
       temp:'15-18°C (estrés crítico 25-28°C)', ph:'6.5-8', salinity:'—', density:'15-40 kg/m³ (máximo 60 kg/m³)',
@@ -21660,6 +21724,17 @@
         { name:'Enfermedad bacteriana del riñón (BKD)', agent:'Corynebacterium', type:'Bacteria', syndrome:'Lesiones blanquecinas en riñón, sangrado de riñón e hígado, pérdida de apetito.', treatment:'Igual que furunculosis.' }
       ],
       diseases:'Estrés térmico y por hacinamiento — control de densidad y oxigenación; consultar veterinario acuícola.',
+      en:{ common:'Rainbow trout', habitat:'Freshwater (cold water)',
+        temp:'15-18°C (critical stress at 25-28°C)', ph:'6.5-8', salinity:'—', density:'15-40 kg/m³ (maximum 60 kg/m³)',
+        feeding:'Based on biomass', cycle:'8-10 months',
+        growth:'Floating-cage study: 100 g → 266 g in 106 days, specific growth rate 0.915%/day. FAO confirms that "pan-size" market weight (280-400g) is typically reached at 9 months — this study already gets very close to that point in less time.',
+        diseaseDetail:[
+          { name:'Furunculosis', agent:'Aeromonas salmonicida', type:'Bacteria', syndrome:'Intestinal inflammation, reddened fins, boils on the body, pectoral fin tissue dies.', treatment:'Antibiotic mixed with feed (e.g. oxytetracycline).' },
+          { name:'Furunculosis-like disease', agent:'Aeromonas liquefaciens', type:'Bacteria', syndrome:'Small lesions that open into sores, reddened fins, tissue breaks down.', treatment:'Same treatment as furunculosis.' },
+          { name:'Vibriosis', agent:'Vibrio anguillarum', type:'Bacteria', syndrome:'Loss of appetite, reddening of mouth/fins, sometimes bleeding, potentially high mortality.', treatment:'Same as furunculosis, plus vaccine for extra protection.' },
+          { name:'Bacterial kidney disease (BKD)', agent:'Corynebacterium', type:'Bacteria', syndrome:'Whitish kidney lesions, kidney and liver bleeding, loss of appetite.', treatment:'Same as furunculosis.' }
+        ],
+        diseases:'Thermal and crowding stress — density control and oxygenation; consult an aquaculture veterinarian.' },
       source:'PMC — Low Stocking Densities on Rainbow Trout Juveniles; Kayim et al. — Net Cages Almus Dam Lake; FAO CASIP (referencia de talla comercial).' },
     { id:'crawfish', common:'Crawfish / acocil de Luisiana', sci:'Procambarus clarkii', regions:['us'], habitat:'Dulceacuícola',
       temp:'19-25°C', ph:'7.5-8.0', salinity:'—', density:'5-20 org/m² en estanque comercial',
@@ -21674,6 +21749,17 @@
         { name:'Enfermedad de porcelana', agent:'Thelohania', type:'Microsporidio', syndrome:'Apariencia blanco-lechosa del abdomen.', treatment:'Mejorar manejo y condiciones de cultivo.' }
       ],
       diseases:'Sensible a mala calidad de agua y hacinamiento — manejo de densidad; consultar veterinario acuícola.',
+      en:{ common:'Red swamp crawfish', habitat:'Freshwater',
+        temp:'19-25°C', ph:'7.5-8.0', salinity:'—', density:'5-20 org/m² in commercial ponds',
+        feeding:'Omnivorous — rice/soy forage in pond', cycle:'3-4 months (seasonal)',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied.',
+        diseaseDetail:[
+          { name:'Shell disease', agent:'Chitinoclastic bacteria', type:'Bacteria', syndrome:'Black or dark brown lesions on the exoskeleton.', treatment:'Improve management and culture conditions.' },
+          { name:'Bacterial septicemia', agent:'Vibrio mimicus; V. cholerae', type:'Bacteria', syndrome:'Lethargic individuals.', treatment:'Improve management and culture conditions.' },
+          { name:'Fungal infections', agent:'Aphanomyces laevis, Fusarium and Ramularia spp.', type:'Fungus', syndrome:'Wound parasites that infect cuticle and flesh.', treatment:'Improve management and culture conditions.' },
+          { name:'Porcelain disease', agent:'Thelohania', type:'Microsporidian', syndrome:'Milky-white appearance of the abdomen.', treatment:'Improve management and culture conditions.' }
+        ],
+        diseases:'Sensitive to poor water quality and crowding — density management; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; ResearchGate — Stocking densities effect on crawfish growth; LSU AgCenter Crawfish Production Manual.' },
     { id:'almeja', common:'Almeja dura', sci:'Mercenaria mercenaria', regions:['us'], habitat:'Marina',
       temp:'18-25°C (rango 10-30°C)', ph:'—', salinity:'20-30 ppt', density:'500-2,220 semillas/m² en vivero comercial',
@@ -21686,6 +21772,15 @@
         { name:'Enfermedad QPX (tipo chytrid)', agent:'Desconocido', type:'Desconocido', syndrome:'Nódulos amarillo-tostado en el manto, crecimiento de concha reducido, mortalidad severa.', treatment:'Sin control conocido, salvo sembrar cepas resistentes.' }
       ],
       diseases:'Estrés por caída brusca de salinidad (lluvias) — monitoreo tras eventos de precipitación; consultar veterinario acuícola.',
+      en:{ common:'Hard clam (northern quahog)', habitat:'Marine',
+        temp:'18-25°C (range 10-30°C)', ph:'—', salinity:'20-30 ppt', density:'500-2,220 seed/m² in commercial nursery',
+        feeding:'No artificial feed (filter feeder)', cycle:'18-24 months',
+        growth:'Size curve documented in commercial nursery studies — sigmoid pattern in mm.',
+        diseaseDetail:[
+          { name:'Vibriosis', agent:'Vibrio anguillarum; V. alginolyticus', type:'Bacteria', syndrome:'Systemic infection of larval soft tissue; necrosis and death from bacterial exotoxin.', treatment:'Good management; sterilization of water used in algae culture and batches.' },
+          { name:'QPX disease (chytrid-like)', agent:'Unknown', type:'Unknown', syndrome:'Tan-yellow nodules in the mantle, reduced shell growth, severe mortality.', treatment:'No known control, other than seeding resistant strains.' }
+        ],
+        diseases:'Stress from sudden salinity drops (rainfall) — monitor after precipitation events; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; Smithsonian NEMESIS species profile; University of Florida IFAS.' },
     { id:'mejillon_azul', common:'Mejillón azul', sci:'Mytilus edulis', regions:['us'], habitat:'Marina',
       temp:'8.8-17.8°C', ph:'—', salinity:'21-40 ppt', density:'~4-12 kg de semilla/bolsa o cuerda',
@@ -21697,9 +21792,24 @@
         { name:'Infección parasitaria', agent:'Marteilia maurini', type:'Protozoario', syndrome:'Potencialmente letal; infiltración de hemocitos y destrucción de la glándula digestiva.', treatment:'Sin cura; selección de sitio y monitoreo de traslados de mejillón.' },
         { name:'Enfermedad viral', agent:'Virus tipo Picornaviridae', type:'Virus', syndrome:'Mortalidades severas.', treatment:'Sin tratamiento conocido.' },
         { name:'Vibriosis', agent:'Vibrio spp.', type:'Bacteria', syndrome:'Sin detalle específico documentado.', treatment:'Sin tratamiento conocido.' },
-        { name:'Rickettsiosis', agent:'Organismos tipo Rickettsia/Chlamydia', type:'Bacteria', syndrome:'Microcolonias en las células epiteliales de agallas y glándula digestiva.', treatment:'Sin cura; selección de sitio y monitoreo de traslados.' }
+        { name:'Rickettsiosis', agent:'Organismos tipo Rickettsia/Chlamydia', type:'Bacteria', syndrome:'Microcolonias en las células epiteliales de agallas y glándula digestiva.', treatment:'Sin cura; selección de sitio y monitoreo de traslados.' },
+        { name:'Diversas infecciones parasitarias', agent:'Steinhausia mytilovum', type:'Microsporidio', syndrome:'Infecta el citoplasma de óvulos maduros del mejillón; provoca una fuerte respuesta de infiltración de hemocitos.', treatment:'Sin cura; selección de sitio y monitoreo de traslados de mejillón.' },
+        { name:'Esponja perforadora (Cliona)', agent:'Cliona', type:'Esponja', syndrome:'Penetra el periostraco formando orificios en la superficie externa y una red de túneles en toda la concha.', treatment:'Ninguna medida de control conocida.' }
       ],
       diseases:'Sensible a temperaturas extremas y desprendimiento por oleaje fuerte; consultar veterinario acuícola.',
+      en:{ common:'Blue mussel', habitat:'Marine',
+        temp:'8.8-17.8°C', ph:'—', salinity:'21-40 ppt', density:'~4-12 kg of seed/bag or rope',
+        feeding:'No artificial feed (filter feeder)', cycle:'12-18 months',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied, in mm.',
+        diseaseDetail:[
+          { name:'Parasitic infection', agent:'Marteilia maurini', type:'Protozoan', syndrome:'Potentially lethal; hemocyte infiltration and destruction of the digestive gland.', treatment:'No cure; site selection and monitoring of mussel transfers.' },
+          { name:'Viral disease', agent:'Picornaviridae-like virus', type:'Virus', syndrome:'Severe mortalities.', treatment:'No known treatment.' },
+          { name:'Vibriosis', agent:'Vibrio spp.', type:'Bacteria', syndrome:'No specific detail documented.', treatment:'No known treatment.' },
+          { name:'Rickettsiosis', agent:'Rickettsia/Chlamydia-like organisms', type:'Bacteria', syndrome:'Microcolonies in the epithelial cells of gills and digestive gland.', treatment:'No cure; site selection and monitoring of transfers.' },
+          { name:'Various parasitic infections', agent:'Steinhausia mytilovum', type:'Microsporidian', syndrome:'Infects the cytoplasm of mature mussel ova; incites a strong haemocyte infiltration response.', treatment:'No cure; site selection and monitoring of mussel transfers.' },
+          { name:'Boring sponge (Cliona)', agent:'Cliona', type:'Sponge', syndrome:'Penetrates the periostracum, forming holes in the outer surface and a tunnel network throughout the shell.', treatment:'No known control measure.' }
+        ],
+        diseases:'Sensitive to temperature extremes and detachment from heavy wave action; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; ScienceDirect — Integrated mussel-salmon culture study, Tasmania.' },
     { id:'salmon', common:'Salmón atlántico', sci:'Salmo salar', regions:['us'], habitat:'Marina (jaulas costeras)',
       temp:'8-14°C (evita >20°C)', ph:'—', salinity:'Marina completa', density:'Máximo recomendado 50 kg/m³ para bienestar',
@@ -21714,6 +21824,17 @@
         { name:'Enfermedad del páncreas del salmón (SPDV)', agent:'Togavirus', type:'Virus', syndrome:'Pérdida de peso, emaciación, mortalidad.', treatment:'Sin tratamiento; retiro de alimento; vacunación.' }
       ],
       diseases:'Estrés térmico por olas de calor marino, hipoxia — monitoreo de temperatura y OD; consultar veterinario acuícola.',
+      en:{ common:'Atlantic salmon', habitat:'Marine (coastal cages)',
+        temp:'8-14°C (avoid >20°C)', ph:'—', salinity:'Full marine', density:'Recommended maximum 50 kg/m³ for welfare',
+        feeding:'Based on biomass', cycle:'12-18 months freshwater (smolt) + 18-24 months at sea to ~5.5 kg',
+        growth:'Post-smolt growth is nearly linear: ~386-413 g/month, from 0.3-0.75 kg to 4-5.5 kg. FAO confirms smolts are transferred to sea at 40-120g and harvested from 2kg upward, with up to 2 years of sea grow-out.',
+        diseaseDetail:[
+          { name:'Infectious salmon anemia (ISA)', agent:'Orthomyxovirus', type:'Virus', syndrome:'Lethargy, loss of appetite, pale gills/heart, dark liver, internal hemorrhages.', treatment:'No treatment; mandatory health controls; biosecurity.' },
+          { name:'Viral hemorrhagic septicemia (VHS)', agent:'Rhabdovirus', type:'Virus', syndrome:'Bulging and sometimes bleeding eyes, pale gills, swollen abdomen, lethargy.', treatment:'No treatment; health controls; vaccines in development.' },
+          { name:'Infectious pancreatic necrosis (IPN)', agent:'Birnavirus', type:'Virus', syndrome:'Erratic swimming until dying at the bottom of the tank.', treatment:'No treatment; biosecurity; broodstock screening; vaccines in development.' },
+          { name:'Salmon pancreas disease (SPDV)', agent:'Togavirus', type:'Virus', syndrome:'Weight loss, emaciation, mortality.', treatment:'No treatment; feed withdrawal; vaccination.' }
+        ],
+        diseases:'Thermal stress from marine heatwaves, hypoxia — temperature and DO monitoring; consult an aquaculture veterinarian.' },
       source:'PMC — Summer is Coming: Ocean Warming Salmon Cage Farming; ScienceDirect — Stocking density limits post-smolt; FAO CASIP.' },
     { id:'mejillon_med', common:'Mejillón mediterráneo', sci:'Mytilus galloprovincialis', regions:['eu'], habitat:'Marina',
       temp:'10-20°C (estrés >26-27°C)', ph:'—', salinity:'34-39 ppt', density:'~4-12 kg de semilla/bolsa o cuerda',
@@ -21726,6 +21847,15 @@
         { name:'Enfermedad del "gusano rojo"', agent:'Mytilicola intestinalis', type:'Copépodo', syndrome:'Organismo comensal; los mejillones aparentemente no se ven afectados.', treatment:'Sin medidas conocidas.' }
       ],
       diseases:'Mortalidad por olas de calor marino — monitoreo de temperatura en verano; consultar veterinario acuícola.',
+      en:{ common:'Mediterranean mussel', habitat:'Marine',
+        temp:'10-20°C (stress above 26-27°C)', ph:'—', salinity:'34-39 ppt', density:'~4-12 kg of seed/bag or rope',
+        feeding:'No artificial feed (filter feeder)', cycle:'12-18 months',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied, in mm.',
+        diseaseDetail:[
+          { name:'Marteiliasis (Aber disease)', agent:'Marteilia maurini; M. refringens', type:'Protozoan', syndrome:'Tissues lose pigmentation, mantle sometimes translucent, shell growth stops.', treatment:'No treatment available; avoid moving mussels from infected areas.' },
+          { name:'"Red worm" disease', agent:'Mytilicola intestinalis', type:'Copepod', syndrome:'Commensal organism; mussels appear unaffected.', treatment:'No known measures.' }
+        ],
+        diseases:'Mortality from marine heatwaves — summer temperature monitoring; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; The Fish Site — How to Farm Mediterranean Mussel; PMC — Mediterranean mussel climate change responses.' },
     { id:'dorada', common:'Dorada / gilthead seabream', sci:'Sparus aurata', regions:['eu'], habitat:'Marina',
       temp:'18-25°C (tolera 10-30°C)', ph:'—', salinity:'28-38 ppt', density:'~15 kg/m³ en jaula/tanque',
@@ -21740,6 +21870,17 @@
         { name:'Acuareovirus', agent:'Aquareovirus', type:'Virus', syndrome:'Generalmente sin síntomas notables.', treatment:'Baja patogenicidad, sin tratamiento.' }
       ],
       diseases:'Estrés por manejo/densidad — control de densidad y calidad de agua; consultar veterinario acuícola.',
+      en:{ common:'Gilthead seabream', habitat:'Marine',
+        temp:'18-25°C (tolerates 10-30°C)', ph:'—', salinity:'28-38 ppt', density:'~15 kg/m³ in cage/tank',
+        feeding:'Based on biomass', cycle:'12-18 months',
+        growth:'FAO documents an intensive system: pre-grown 5g fingerlings reach commercial size (350-400g) in ~1 year in tanks. In marine cages the same process takes somewhat longer (up to 16 months from 5g juveniles). Additional offshore-cage studies (Dakhla Bay) document rates by season and density.',
+        diseaseDetail:[
+          { name:'Pasteurellosis (pseudotuberculosis)', agent:'Photobacterium damselae subsp. piscicida', type:'Bacteria', syndrome:'Anorexia, focal gill necrosis.', treatment:'Vaccination of broodstock/juveniles; immunostimulants and vitamins; good hygiene; antibiotics.' },
+          { name:'Vibriosis', agent:'Photobacterium damselae subsp. damselae; Vibrio alginolyticus; V. anguillarum', type:'Bacteria', syndrome:'Dark skin, lethargy, distended abdomen, hemorrhages and skin lesions.', treatment:'Avoid very high-lipid diets; good hygiene; antibiotics.' },
+          { name:'Lymphocystis', agent:'Iridoviridae', type:'Virus', syndrome:'Whitish pseudotumor.', treatment:'Reduce feed rate and biomass; low pathogenicity, generally no treatment.' },
+          { name:'Aquareovirus', agent:'Aquareovirus', type:'Virus', syndrome:'Usually no notable symptoms.', treatment:'Low pathogenicity, no treatment.' }
+        ],
+        diseases:'Handling/density stress — density and water quality control; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; ResearchGate — Stocking density effect on gilthead seabream growth; PMC — Allostatic load seabass/seabream.' },
     { id:'lubina', common:'Lubina / róbalo europeo', sci:'Dicentrarchus labrax', regions:['eu'], habitat:'Marina',
       temp:'15-25°C (tolera hasta 28°C con estrés)', ph:'—', salinity:'Marina completa, tolera salobre', density:'~16 kg/m³ en tanque/jaula',
@@ -21751,9 +21892,22 @@
         { name:'Encefalo-retinopatía viral', agent:'Nodavirus', type:'Virus', syndrome:'Síntomas nerviosos.', treatment:'Buena profilaxis y buenas condiciones de manejo.' },
         { name:'Vibriosis', agent:'Vibrio anguillarum; V. ordali y otras', type:'Bacteria', syndrome:'Anorexia, oscurecimiento, úlceras en piel, distensión abdominal.', treatment:'Vacunación de alevines; tratamiento antibiótico.' },
         { name:'Fotobacteriosis (Pseudotuberculosis)', agent:'Photobacterium damsela subsp. piscicida', type:'Bacteria', syndrome:'Anorexia, oscurecimiento, lesiones miliares en bazo.', treatment:'Tratamiento antibiótico.' },
+        { name:'Mixobacteriosis', agent:'Flexibacter maritimus', type:'Bacteria', syndrome:'Úlceras en la piel, necrosis, erosión de aletas.', treatment:'Tratamiento antibiótico.' },
         { name:'Micobacteriosis', agent:'Mycobacterium marinum', type:'Bacteria', syndrome:'Emaciación, crecimiento pobre, riñón y bazo hipertrofiados con granulomas.', treatment:'Buena profilaxis; sin tratamiento efectivo conocido.' }
       ],
       diseases:'Estrés térmico por encima de 28°C — monitoreo en verano; consultar veterinario acuícola.',
+      en:{ common:'European seabass', habitat:'Marine',
+        temp:'15-25°C (tolerates up to 28°C with stress)', ph:'—', salinity:'Full marine, tolerates brackish', density:'~16 kg/m³ in tank/cage',
+        feeding:'Based on biomass', cycle:'18-24 months',
+        growth:'FAO documents the full intensive cycle: 1.5-2.5g juveniles (purchased for grow-out) reach 400-450g in 18-24 months. Continuous-flow tank studies also document specific growth rate and seasonal curve.',
+        diseaseDetail:[
+          { name:'Viral encephalo-retinopathy', agent:'Nodavirus', type:'Virus', syndrome:'Nervous-system symptoms.', treatment:'Good prophylaxis and good management conditions.' },
+          { name:'Vibriosis', agent:'Vibrio anguillarum; V. ordalii and others', type:'Bacteria', syndrome:'Anorexia, darkening, skin ulcers, abdominal distension.', treatment:'Vaccination of fry; antibiotic treatment.' },
+          { name:'Photobacteriosis (pseudotuberculosis)', agent:'Photobacterium damsela subsp. piscicida', type:'Bacteria', syndrome:'Anorexia, darkening, miliary lesions in the spleen.', treatment:'Antibiotic treatment.' },
+          { name:'Myxobacteriosis', agent:'Flexibacter maritimus', type:'Bacteria', syndrome:'Skin ulcers, necrosis, fin erosion.', treatment:'Antibiotic treatment.' },
+          { name:'Mycobacteriosis', agent:'Mycobacterium marinum', type:'Bacteria', syndrome:'Emaciation, poor growth, enlarged kidney and spleen with granulomas.', treatment:'Good prophylaxis; no known effective treatment.' }
+        ],
+        diseases:'Thermal stress above 28°C — summer monitoring; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; PLOS One — Metabolic scope of juvenile seabass; ScienceDirect — energy/protein efficiency comparison.' },
     { id:'tigre', common:'Camarón tigre gigante', sci:'Penaeus monodon', regions:['th'], habitat:'Marina',
       temp:'28-33°C (mortalidad <13°C o >33°C)', ph:'—', salinity:'2-30 ppt', density:'Estanque de tierra, alimentador de fondo',
@@ -21767,6 +21921,16 @@
         { name:'Necrosis del intestino medio (BMN)', agent:'Baculovirus', type:'Virus', syndrome:'Afecta larvas y postlarvas tempranas; turbidez blanca del hepatopáncreas.', treatment:'Lavar huevos fértiles con agua de mar limpia; desinfectar instalación si hay brote.' }
       ],
       diseases:'Igual que camarón blanco — bioseguridad, manejo de densidad; consultar veterinario acuícola.',
+      en:{ common:'Giant tiger prawn', habitat:'Marine',
+        temp:'28-33°C (mortality <13°C or >33°C)', ph:'—', salinity:'2-30 ppt', density:'Earthen pond, bottom feeder',
+        feeding:'Based on biomass', cycle:'Up to commercial size of 40-60 g',
+        growth:'Rate of 1.0-1.2 g/week under Thai commercial conditions, same FAO report used for whiteleg shrimp. FAO also documents the full cycle: PL15 postlarvae stocked in intensive ponds reach 30-35g in 4-5 months.',
+        diseaseDetail:[
+          { name:'White spot disease (WSD/WSSV)', agent:'White spot syndrome baculovirus complex', type:'Virus', syndrome:'Mortality up to 100% within 3-10 days; white spots on the carapace.', treatment:'Screening at all life stages; avoid abrupt water changes; 30ppm chlorine in infected ponds.' },
+          { name:'Yellowhead disease (YHD)', agent:'Baculovirus (agent not yet fully described)', type:'Virus', syndrome:'Mortality up to 100% within 3-5 days; yellow, swollen cephalothorax.', treatment:'Broodstock and postlarvae screening; disinfection of ponds and hatcheries.' },
+          { name:'Baculoviral midgut gland necrosis (BMN)', agent:'Baculovirus', type:'Virus', syndrome:'Affects larvae and early postlarvae; white turbidity of the hepatopancreas.', treatment:'Wash fertilized eggs with clean seawater; disinfect facility if an outbreak occurs.' }
+        ],
+        diseases:'Same as Pacific white shrimp — biosecurity, density management; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; The Fish Site — How to Farm Giant Tiger Prawn; USGS Species Profile — Penaeus monodon.' },
     { id:'bagre_hibrido', common:'Bagre híbrido / pla duk', sci:'Clarias spp.', regions:['th'], habitat:'Dulceacuícola',
       temp:'25-30°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~50-100 org/m² en estanque intensivo (estimación técnica general)',
@@ -21776,6 +21940,11 @@
         points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
       diseaseNoFaoData:true,
       diseases:'Generalmente resistente — infecciones bacterianas en agua de mala calidad; consultar veterinario acuícola.',
+      en:{ common:'Hybrid catfish (walking catfish)', habitat:'Freshwater',
+        temp:'25-30°C (general reference, pending a specific quantitative source)', ph:'—', salinity:'—', density:'~50-100 org/m² in intensive ponds (general technical estimate)',
+        feeding:'Omnivorous, tolerant of low dissolved oxygen', cycle:'4-6 months',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied.',
+        diseases:'Generally hardy — bacterial infections in poor-quality water; consult an aquaculture veterinarian.' },
       source:'International Aquafeed — Aquafeed industry in Thailand (contexto de especie, densidad y temperatura sin cifra exacta citable).' },
     { id:'langostino', common:'Langostino gigante de río', sci:'Macrobrachium rosenbergii', regions:['th'], habitat:'Dulceacuícola',
       temp:'26-31°C (tolera 14-35°C)', ph:'—', salinity:'Dulce, tolera hasta 25 ppt en adultos', density:'4-20 postlarvas/m²',
@@ -21785,6 +21954,11 @@
         points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
       diseaseNoFaoData:true,
       diseases:'Estrés por temperatura baja, infecciones bacterianas oportunistas — manejo de densidad y temperatura; consultar veterinario acuícola.',
+      en:{ common:'Giant river prawn', habitat:'Freshwater',
+        temp:'26-31°C (tolerates 14-35°C)', ph:'—', salinity:'Freshwater, adults tolerate up to 25 ppt', density:'4-20 postlarvae/m²',
+        feeding:'~3-5% of biomass/day, 2 feedings', cycle:'5-7 months',
+        growth:'Growth rate documented in salinity and thermal-tolerance studies, without a full weight-vs-time curve — generic sigmoid model applied.',
+        diseases:'Cold-temperature stress, opportunistic bacterial infections — density and temperature management; consult an aquaculture veterinarian.' },
       source:'ScienceDirect — Salinity effect on growth of giant freshwater prawn; PMC — Low-temperature tolerance mechanism.' },
     { id:'robalo_asiatico', common:'Róbalo asiático / barramundi', sci:'Lates calcarifer', regions:['th'], habitat:'Marina/salobre/dulceacuícola',
       temp:'15-28°C', ph:'—', salinity:'Eurihalina — marina, salobre y dulce', density:'—',
@@ -21799,6 +21973,17 @@
         { name:'Septicemia hemorrágica bacteriana', agent:'Aeromonas spp.; Pseudomonas sp.', type:'Bacteria', syndrome:'Úlceras rojizas irregulares en piel, letargo, anorexia.', treatment:'Mejorar ambiente de cultivo; tratamiento antibiótico.' }
       ],
       diseases:'Streptococcus iniae, virus emergentes (Megalocytivirus) en alta densidad — manejo de densidad y bioseguridad; consultar veterinario acuícola.',
+      en:{ common:'Asian seabass (barramundi)', habitat:'Marine/brackish/freshwater',
+        temp:'15-28°C', ph:'—', salinity:'Euryhaline — marine, brackish, and fresh',
+        feeding:'Based on biomass', cycle:'8-10 months',
+        growth:'FAO documents free grow-out juveniles (20-100g) in brackish ponds, growing quickly to a harvestable size of 350g-3kg in 6 months to 2 years depending on the system — in Southeast Asian cages (more relevant to Thailand) typical sale size is 500-900g.',
+        diseaseDetail:[
+          { name:'Viral nervous necrosis (VNN)', agent:'Betanodavirus (LcEV)', type:'Virus', syndrome:'Erratic or spiral swimming, pale or dark coloration, "fainting"; common at the hatchery stage.', treatment:'Broodstock screening; low larval density; good hatchery nutrition and hygiene.' },
+          { name:'Lymphocystis', agent:'Lymphocystis virus', type:'Virus', syndrome:'Wart-like growths on skin and fins.', treatment:'Remove infected fish; improve the culture environment.' },
+          { name:'Vibriosis', agent:'Vibrio harveyi and other species', type:'Bacteria', syndrome:'Darkening, lethargy, anorexia, reddish ulcers on the body.', treatment:'Improve culture environment; antibiotic treatment.' },
+          { name:'Bacterial hemorrhagic septicemia', agent:'Aeromonas spp.; Pseudomonas sp.', type:'Bacteria', syndrome:'Irregular reddish skin ulcers, lethargy, anorexia.', treatment:'Improve culture environment; antibiotic treatment.' }
+        ],
+        diseases:'Streptococcus iniae, emerging viruses (Megalocytivirus) at high density — density management and biosecurity; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; FishBase — Lates calcarifer species profile; PMC — Streptococcus iniae in barramundi.' },
     { id:'mejillon_verde', common:'Mejillón verde', sci:'Perna viridis', regions:['th'], habitat:'Marina',
       temp:'26-32°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~4-12 kg de semilla/bolsa o cuerda',
@@ -21808,6 +21993,11 @@
         points:[{d:0,v:0},{d:20,v:13.6},{d:40,v:54.8},{d:60,v:83.5},{d:80,v:94.7},{d:100,v:98.4}] },
       diseaseNoFaoData:true,
       diseases:'Filtrador, generalmente resistente — sensible a variaciones bruscas de salinidad y temperatura; consultar veterinario acuícola.',
+      en:{ common:'Green mussel (Asian green mussel)', habitat:'Marine',
+        temp:'26-32°C (general reference, pending a specific quantitative source)', density:'~4-12 kg of seed/bag or rope',
+        feeding:'No artificial feed (filter feeder)', cycle:'8-12 months',
+        growth:'No species-specific quantitative study found — generic sigmoid model applied, in mm.',
+        diseases:'Filter feeder, generally hardy — sensitive to abrupt salinity and temperature swings; consult an aquaculture veterinarian.' },
       source:'BIOTROPIA — Review of Aquaculture Genetic Researches (menciona la especie sin parámetros cuantitativos específicos — pendiente).' },
     { id:'pangasio', common:'Pangasio / pez gato rayado', sci:'Pangasianodon hypophthalmus', regions:['th'], habitat:'Dulceacuícola',
       temp:'26-30°C (referencia general, pendiente de fuente cuantitativa específica)', ph:'—', salinity:'—', density:'~40-60 org/m³ en jaula (estimación técnica general)',
@@ -21821,6 +22011,16 @@
         { name:'Enfermedad de la ictericia', agent:'No confirmado', type:'No confirmado', syndrome:'Amarillamiento de la carne.', treatment:'Mejorar manejo y nutrición; antibióticos.' }
       ],
       diseases:'Bacterianas en agua de mala calidad — manejo de densidad; consultar veterinario acuícola.',
+      en:{ common:'Striped catfish (pangasius)', habitat:'Freshwater',
+        temp:'26-30°C (general reference, pending a specific quantitative source)', density:'~40-60 org/m³ in cages (general technical estimate)',
+        feeding:'Based on biomass', cycle:'6-8 months',
+        growth:'Comparative study with channel catfish under commercial conditions, with documented weight-length relationship.',
+        diseaseDetail:[
+          { name:'Bacillary necrosis of pangasius (BNP)', agent:'Edwardsiella ictaluri', type:'Bacteria', syndrome:'Petechial hemorrhages in eyes and fin bases, white spots in kidney/spleen/liver.', treatment:'Antibiotics.' },
+          { name:'Motile Aeromonas septicemia (MAS)', agent:'Aeromonas spp. (A. hydrophila, A. sobria, A. caviae)', type:'Bacteria', syndrome:'Hemorrhages in eyes/body/fins, blood-tinged ascites with swollen abdomen.', treatment:'Improve water quality and nutrition; antibiotics.' },
+          { name:'Jaundice disease', agent:'Not confirmed', type:'Not confirmed', syndrome:'Yellowing of the flesh.', treatment:'Improve management and nutrition; antibiotics.' }
+        ],
+        diseases:'Bacterial issues in poor-quality water — density management; consult an aquaculture veterinarian.' },
       source:'FAO Cultured Aquatic Species Information Programme; PanamJAS — Growth rates and weight-length relationship Ictalurus punctatus and Pangasius hypophthalmus.' }
   ];
   const AQUA_REGIONS = [ ['mx','México'], ['us','EUA'], ['eu','Unión Europea'], ['th','Tailandia'] ];
@@ -21842,7 +22042,7 @@
 
     const q = aquaSpeciesSearchQuery.trim().toLowerCase();
     const filtered = AQUA_SPECIES.filter(s => s.regions.includes(aquaSpeciesRegionFilter)
-      && (!q || s.common.toLowerCase().indexOf(q) !== -1 || s.sci.toLowerCase().indexOf(q) !== -1));
+      && (!q || s.common.toLowerCase().indexOf(q) !== -1 || (s.en && s.en.common && s.en.common.toLowerCase().indexOf(q) !== -1) || s.sci.toLowerCase().indexOf(q) !== -1));
 
     if(subEl) subEl.textContent = filtered.length + ' ' + t('aqua_species_sub_count');
 
@@ -21855,10 +22055,10 @@
       '<div class="aqua-species-row" data-species-id="' + s.id + '">'
         + '<div class="aqua-species-row-icon">' + fishIcon + '</div>'
         + '<div style="flex:1;min-width:0;">'
-          + '<div class="aqua-species-row-name">' + aquaChartEscape(s.common) + '</div>'
+          + '<div class="aqua-species-row-name">' + aquaChartEscape(window.spField(s, s.common, 'common')) + '</div>'
           + '<div class="aqua-species-row-sci">' + aquaChartEscape(s.sci) + '</div>'
         + '</div>'
-        + '<div class="aqua-species-tag">' + aquaChartEscape(s.habitat) + '</div>'
+        + '<div class="aqua-species-tag">' + aquaChartEscape(window.spField(s, s.habitat, 'habitat')) + '</div>'
       + '</div>'
     ).join('');
     listEl.querySelectorAll('[data-species-id]').forEach(el => {
@@ -21941,14 +22141,16 @@
   }
 
   function aquaSpeciesDiseaseSectionHtml(s){
-    const hasDetail = s.diseaseDetail && s.diseaseDetail.length;
-    const hasText = s.diseases && s.diseases !== '—';
+    const diseaseDetail = window.spField(s, s.diseaseDetail, 'diseaseDetail');
+    const diseasesText = window.spField(s, s.diseases, 'diseases');
+    const hasDetail = diseaseDetail && diseaseDetail.length;
+    const hasText = diseasesText && diseasesText !== '—';
     if(!hasDetail && !hasText) return '';
     let inner = '';
     if(hasDetail){
-      inner += s.diseaseDetail.map(aquaSpeciesDiseaseCardHtml).join('');
+      inner += diseaseDetail.map(aquaSpeciesDiseaseCardHtml).join('');
     } else {
-      inner += '<div style="font-size:13px;color:var(--ink);line-height:1.5;margin-bottom:6px;">' + aquaChartEscape(s.diseases) + '</div>';
+      inner += '<div style="font-size:13px;color:var(--ink);line-height:1.5;margin-bottom:6px;">' + aquaChartEscape(diseasesText) + '</div>';
     }
     if(s.diseaseNoFaoData){
       inner += '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:4px;">' + t('aqua_species_disease_no_fao_data') + '</div>';
@@ -21963,7 +22165,7 @@
     const bodyEl = document.getElementById('aquaSpeciesDetailBody');
     if(!bodyEl) return;
     const s = AQUA_SPECIES.find(x => x.id === aquaSpeciesSelectedId) || AQUA_SPECIES[0];
-    nameEl.textContent = s.common;
+    nameEl.textContent = window.spField(s, s.common, 'common');
     sciEl.textContent = s.sci;
 
     function row(labelKey, value){
@@ -21975,12 +22177,12 @@
     }
 
     bodyEl.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">'
-      + row('aqua_species_temp', s.temp) + row('aqua_species_ph', s.ph) + row('aqua_species_salinity', s.salinity)
-      + row('aqua_species_density', s.density) + row('aqua_species_feeding', s.feeding) + row('aqua_species_cycle', s.cycle)
+      + row('aqua_species_temp', window.spField(s, s.temp, 'temp')) + row('aqua_species_ph', window.spField(s, s.ph, 'ph')) + row('aqua_species_salinity', window.spField(s, s.salinity, 'salinity'))
+      + row('aqua_species_density', window.spField(s, s.density, 'density')) + row('aqua_species_feeding', window.spField(s, s.feeding, 'feeding')) + row('aqua_species_cycle', window.spField(s, s.cycle, 'cycle'))
       + '</div>'
       + '<div class="insight-card-label" style="margin-bottom:6px;">' + t('aqua_species_growth_label') + '</div>'
       + aquaSpeciesGrowthChartSvg(s.growthCurve)
-      + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(s.growth) + '</div>'
+      + '<div style="font-size:13px;color:var(--ink);margin-bottom:16px;line-height:1.5;">' + aquaChartEscape(window.spField(s, s.growth, 'growth')) + '</div>'
       + aquaSpeciesDiseaseSectionHtml(s)
       + '<div style="font-size:11px;color:var(--ink-soft);font-style:italic;">' + t('aqua_species_source_label') + ': ' + aquaChartEscape(s.source) + '</div>';
   }
