@@ -2794,6 +2794,7 @@
       <span class="mb-dot" id="mapModeDot"></span>
       <span id="mapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
+    <div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-top:6px;" data-i18n="map_navigation_disclaimer">Reference map — not fit for navigation. Use official nautical charts.</div>
   </div>
   <main>
     <div class="map-view-wrap" id="mapViewWrap">
@@ -4917,6 +4918,7 @@
       <span class="mb-dot"></span>
       <span id="fleetMapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
+    <div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-top:6px;" data-i18n="map_navigation_disclaimer">Reference map — not fit for navigation. Use official nautical charts.</div>
 
     <div class="map-view-wrap" id="fleetMapViewWrap">
       <div class="map-layer-toggle" id="fleetMapLayerToggle" style="display:none;">
@@ -5714,6 +5716,7 @@
       <span class="mb-dot" id="sportMapModeDot"></span>
       <span id="sportMapModeText" data-i18n="map_checking">Checking connection…</span>
     </div>
+    <div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:8px;" data-i18n="map_navigation_disclaimer">Reference map — not fit for navigation. Use official nautical charts.</div>
     <div class="map-view-wrap" id="sportMapViewWrap">
       <div class="map-layer-toggle" id="sportMapLayerToggle">
         <button class="mlt-btn active" id="sportMltStreet" data-i18n="map_street">Street</button>
@@ -5960,6 +5963,7 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Total ammonia — TAN (mg/L)', aqua_water_add_btn: 'Save reading', aqua_water_history_label: 'Recent readings',
       aqua_water_do_am: 'DO (AM)', aqua_water_do_pm: 'DO (PM)', aqua_water_logged: 'Logged', aqua_water_pending: 'Pending',
       aqua_water_toxic_title: 'Ammonia is toxic at this pH', aqua_water_toxic_body: 'Turn on aerators and pause feeding', aqua_water_empty: 'No readings logged yet.',
+      aqua_water_ammonia_disclaimer: 'NH₃ calculated from pH/temperature/TAN (un-ionized fraction) — not a substitute for a direct ammonia test kit reading.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'watch', aqua_water_status_alert: 'alert',
       aqua_water_gauge_do: 'OXYGEN', aqua_water_gauge_temp: 'TEMP', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinity (ppt)',
@@ -5992,6 +5996,7 @@
       aqua_financial_kpi_total: 'Total cost', aqua_financial_kpi_costkg: 'Cost / kg', aqua_financial_breakdown_label: 'Breakdown',
       aqua_financial_breakeven_title: 'Break-even', aqua_financial_breakeven_value: 'Estimated value today', aqua_financial_breakeven_cost: 'Accumulated cost',
       aqua_financial_breakeven_ahead: "You're ahead by", aqua_financial_breakeven_behind: "You're behind by",
+      aqua_financial_breakeven_disclaimer: "Break-even projected using the recorded sale price — doesn't account for market fluctuations.",
       aqua_financial_col_cycle: 'Cycle', aqua_financial_col_cost: 'Cost', aqua_financial_col_costkg: 'Cost/kg', aqua_financial_col_status: 'Status',
       aqua_financial_status_active: 'Active', aqua_financial_mixed_currency: 'Multiple currencies in this scope — shown separately, not blended.',
       aqua_cycle_species_matched: '✓ Matched to catalog — tuned water alerts', aqua_cycle_species_other: 'Other (not in catalog)',
@@ -6019,7 +6024,7 @@
       aqua_species_search_placeholder: 'Search species...', aqua_species_sub_count: 'species · tap to select', aqua_species_empty: 'No species match your search.',
       aqua_species_temp: 'Ideal temperature', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinity', aqua_species_density: 'Stocking density', aqua_species_feeding: 'Feeding', aqua_species_cycle: 'Typical cycle',
       aqua_species_growth_label: 'Growth curve', aqua_species_diseases_label: 'Common diseases', aqua_species_source_label: 'Source',
-      aqua_species_growth_chart_real: 'Based on data from the cited study', aqua_species_growth_chart_model: 'Illustrative model — no specific study data found',
+      aqua_species_growth_chart_real: 'Based on data from the cited study', aqua_species_growth_chart_model: 'Illustrative model — no specific study data found', aqua_species_growth_model_disclaimer: 'Generic model, not specific to this species or your local conditions — use as reference, not as a harvest projection.',
       aqua_species_growth_axis_day: 'day', aqua_species_growth_axis_weight: 'weight', aqua_species_growth_axis_pct_cycle: '% of cycle', aqua_species_growth_axis_pct_weight: '% of final weight',
       aqua_species_disease_syndrome: 'Symptoms', aqua_species_disease_treatment: 'Treatment',
       aqua_species_disease_disclaimer: 'Reference information (FAO). Not a substitute for veterinary diagnosis — before using any medication, or in case of an outbreak or mortality event, consult an aquaculture veterinarian.',
@@ -6093,6 +6098,7 @@
       rec_save: 'Save record', rec_clear: 'Clear form',
       hist_title: 'History', hist_all_records: 'All Records', hist_search_placeholder: 'Search species…', hist_empty: 'No records yet.', hist_all_sites: 'All sites', hist_photos: 'Photos', hist_all: 'All',
       map_title: 'Survey Locations', map_brand: 'Map', map_checking: 'Checking connection…', map_street: 'Street', map_satellite: 'Satellite',
+      map_navigation_disclaimer: 'Reference map — not fit for navigation. Use official nautical charts.',
       map_offline_areas: 'Offline map areas', map_pan_zoom: 'Pan and zoom to your survey area, then download for offline use.', map_download_area: 'Download this area',
       rec_cond_alive: 'Alive', rec_cond_dead: 'Dead', rec_cond_released: 'Released',
       track_title: 'Vessel Track Recorder', track_brand: 'Track', track_gps_not_active: 'GPS not active', track_start: 'Start tracking', track_stop: 'Stop & save track',
@@ -6115,6 +6121,7 @@
       adv_lw_footnote: "a, b fit by OLS on ln(W) vs ln(L). K = Fulton's condition factor, mean of 100000·W(kg)/L(cm)³ per species (Le Cren 1951).",
       adv_maturity_ogive: 'Maturity ogive by size', adv_maturity_empty: 'Not enough records with both length and gonad stage yet — need 15+ for one species.',
       adv_maturity_footnote: 'Dots = % mature per length bin. Immature vs mature+ from gonad stage. Curve fit by logistic regression (IRLS). L50 = length at 50% predicted maturity.',
+      adv_stats_disclaimer: 'Calculated from your own logged records — not a census; interpret with caution if the sample size is small.',
       adv_species_accumulation: 'Species accumulation', adv_accumulation_empty: 'Need at least 2 timestamped records to plot this.',
       adv_records: 'records', adv_species_lc: 'species',
       adv_accumulation_footnote: 'Cumulative distinct species vs. records added, ordered by timestamp. Observed order only, not a randomized rarefaction curve — a flattening curve suggests sampling effort is nearing saturation for this scope.',
@@ -6259,7 +6266,7 @@
       flstats_financial_profile_all_vessels_label: 'All Vessels',
       flstats_financial_profile_mixed_currency_notice: 'This fleet uses more than one currency — totals are shown separately per currency below rather than blended into one misleading number.',
       fltab_fleet: 'Fleet', fltab_trips: 'Trips', fltab_reconcile: 'Reconcile', fltab_vessels: 'Vessels',
-      sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today',
+      sp_brand: 'Fish Pulse · Sport', sp_session: 'Session', sp_no_spot: 'No Spot Selected', sp_solunar_today: 'Solunar Forecast · Today', sp_solunar_disclaimer: "Estimate based on lunar/solar position — doesn't guarantee fishing activity; combine with your own local experience.",
       sp_forecast_label: 'Forecast', sp_saved: 'saved', sp_this_month: 'this month', sp_new_spot_short: 'New', sp_enable_location: 'Enable location for forecast', sp_spots_lc: 'spots', sp_catches_lc: 'catches', sp_weather_detail_title: 'Weather',
       sp_water_temp: 'Water Temperature', sp_example_species: 'Example Species', sp_row_sky: 'Sky', sp_row_trend: 'Trend', sp_row_temp: 'Temp', sp_row_precip: 'Rain', sp_row_humidity: 'Humid.', sp_row_pressure: 'Pressure', sp_row_wind: 'Wind', sp_row_uv: 'UV',
       sp_water_unavailable: 'Water temperature isn\'t available right now — could be a connection issue, try again in a moment.', sp_water_no_coverage: 'No sea temperature data for this location — Open-Meteo Marine only covers open water, so inland spots won\'t show a reading here.', sp_now: 'Now',
@@ -6290,7 +6297,7 @@
       sp_tide_rising: 'Rising tide', sp_tide_falling: 'Falling tide', sp_tide_unavailable: 'Tide data unavailable',
       sp_great_day: 'Great day to fish', sp_good_day: 'Good day to fish', sp_slow_day: 'Slow day to fish',
       sp_score_caption: 'Based on pressure, moon, weather, tide, and wind',
-      sp_uv_legend: 'UV Index (WHO/EPA): 0-2 low · 3-5 moderate · 6-7 high · 8-10 very high · 11+ extreme',
+      sp_uv_legend: 'UV Index (WHO/EPA): 0-2 low · 3-5 moderate · 6-7 high · 8-10 very high · 11+ extreme', sp_uv_disclaimer: "Satellite model estimate — check the local UV index if you'll be exposed for several hours.",
       sp_ready_to_fish: 'Ready to fish?', sp_start_session_hint: 'Tap to pick a spot and method', sp_best_catch: 'Best',
       sp_stats_this_session: 'This session', sp_stats_all_time: 'All time', sp_stats_no_session_catches: 'No catches logged in this session yet.',
       sp_show_off_catch: 'Show off your catch 📸', sp_fight_rating: 'How was the fight?',
@@ -6348,7 +6355,7 @@
       msg_sites_selected: 'sites selected', msg_update_record: 'Update record', msg_edit_record: 'Edit Record',
       msg_unspecified_site: 'Unspecified site', msg_area_saved: 'Area saved for offline use', msg_area_saved_partial: 'Area saved',
       msg_tiles_failed: 'tiles failed — retry if needed', msg_catches_lc: 'catches',
-      msg_duration: 'Duration', msg_fetching_conditions: 'Fetching conditions…', msg_fetch_conditions_failed: 'Could not fetch conditions — check your connection.',
+      msg_duration: 'Duration', msg_fetching_conditions: 'Fetching conditions…', msg_fetch_conditions_failed: 'Could not fetch conditions — check your connection.', fl_forecast_disclaimer: 'Model forecast (~8km resolution) — reference only, not a substitute for the official marine forecast before departure.',
       msg_locating: 'locating…', msg_no_gps_signal: 'no GPS signal — try again', msg_suggested: 'Suggested', msg_avg_of: 'avg. of', msg_past_sales: 'past sales', msg_use_this: 'Use This',
       msg_estimated_value: 'Estimated Value', msg_fuel_consumed: 'Fuel Consumed', msg_consumed_since_last: 'Consumed Since Last Reading',
       msg_live_map: 'Live map · tiles loaded from connection', msg_offline_mode: 'Offline mode · schematic coordinate plot',
@@ -6363,6 +6370,8 @@
       sp_status_open: 'Open', sp_status_verify: 'Verify', sp_status_protected: 'Protected', sp_status_closed_now: 'Closed now', sp_status_quota: 'Quota-managed',
       sp_card_regulatory: 'Regulatory', sp_card_visual: 'Visual ID', sp_card_biology: 'Biology', sp_card_source: 'Source & update',
       sp_min_size: 'Min. size', sp_max_size: 'Max. size', sp_closed_season: 'Closed season',
+      sp_legal_notice: 'This information is for guidance/educational purposes only and does not constitute legal advice, nor does it replace direct consultation of current fisheries regulations with the competent authority. Always verify the applicable regulation before making capture decisions.',
+      sp_min_size_absence_note: 'This species does not have a specific minimum catch size under the federal fisheries regulations consulted — it is managed under a general finfish fishing permit. We recommend verifying applicable state or local regulations before assuming no restriction exists.',
       sp_permanent_ban: 'Permanent — capture prohibited', sp_verify_dates: 'Dates vary each year — verify',
       sp_special_permit: 'Special permit', sp_nom059: 'NOM-059 status', sp_nom059_amenazada: 'Threatened',
       sp_nom059_en_peligro: 'Endangered', sp_nom059_proteccion_especial: 'Special protection', sp_cites_appendix: 'CITES Appendix',
@@ -6406,6 +6415,7 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Amonio total — TAN (mg/L)', aqua_water_add_btn: 'Guardar medición', aqua_water_history_label: 'Mediciones recientes',
       aqua_water_do_am: 'OD (AM)', aqua_water_do_pm: 'OD (PM)', aqua_water_logged: 'Registrado', aqua_water_pending: 'Pendiente',
       aqua_water_toxic_title: 'Amonio tóxico a este pH', aqua_water_toxic_body: 'Enciende aireadores y suspende alimentación', aqua_water_empty: 'Aún no hay mediciones registradas.',
+      aqua_water_ammonia_disclaimer: 'NH₃ calculado a partir de pH/temperatura/TAN (fracción no ionizada) — no reemplaza una lectura directa con kit de amonio.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'atención', aqua_water_status_alert: 'alerta',
       aqua_water_gauge_do: 'OXÍGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinidad (ppt)',
@@ -6438,6 +6448,7 @@
       aqua_financial_kpi_total: 'Costo total', aqua_financial_kpi_costkg: 'Costo / kg', aqua_financial_breakdown_label: 'Desglose',
       aqua_financial_breakeven_title: 'Punto de equilibrio', aqua_financial_breakeven_value: 'Valor estimado hoy', aqua_financial_breakeven_cost: 'Costo acumulado',
       aqua_financial_breakeven_ahead: 'Vas arriba por', aqua_financial_breakeven_behind: 'Vas abajo por',
+      aqua_financial_breakeven_disclaimer: 'Punto de equilibrio proyectado con el precio de venta capturado — no considera fluctuaciones de mercado.',
       aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Estado',
       aqua_financial_status_active: 'Activo', aqua_financial_mixed_currency: 'Hay varias monedas en este alcance — se muestran por separado, no mezcladas.',
       aqua_cycle_species_matched: '✓ Conectada al catálogo — alertas de agua ajustadas', aqua_cycle_species_other: 'Otra (no está en el catálogo)',
@@ -6465,7 +6476,7 @@
       aqua_species_search_placeholder: 'Buscar especie...', aqua_species_sub_count: 'especies · toca para elegir', aqua_species_empty: 'Ninguna especie coincide con tu búsqueda.',
       aqua_species_temp: 'Temperatura ideal', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinidad', aqua_species_density: 'Densidad de siembra', aqua_species_feeding: 'Alimentación', aqua_species_cycle: 'Ciclo típico',
       aqua_species_growth_label: 'Curva de crecimiento', aqua_species_diseases_label: 'Enfermedades comunes', aqua_species_source_label: 'Fuente',
-      aqua_species_growth_chart_real: 'Basado en datos del estudio citado', aqua_species_growth_chart_model: 'Modelo ilustrativo — sin datos cuantitativos de estudio',
+      aqua_species_growth_chart_real: 'Basado en datos del estudio citado', aqua_species_growth_chart_model: 'Modelo ilustrativo — sin datos cuantitativos de estudio', aqua_species_growth_model_disclaimer: 'Modelo genérico, no específico de esta especie/condiciones locales — usa como referencia, no como proyección de cosecha.',
       aqua_species_growth_axis_day: 'día', aqua_species_growth_axis_weight: 'peso', aqua_species_growth_axis_pct_cycle: '% del ciclo', aqua_species_growth_axis_pct_weight: '% del peso final',
       aqua_species_disease_syndrome: 'Síntomas', aqua_species_disease_treatment: 'Tratamiento',
       aqua_species_disease_disclaimer: 'Información de referencia (FAO). No sustituye un diagnóstico veterinario — antes de usar cualquier medicamento, o ante un brote o mortalidad, consulta a un veterinario acuícola.',
@@ -6539,6 +6550,7 @@
       rec_save: 'Guardar registro', rec_clear: 'Limpiar formulario',
       hist_title: 'Historial', hist_all_records: 'Todos los Registros', hist_search_placeholder: 'Buscar especie…', hist_empty: 'Aún no hay registros.', hist_all_sites: 'Todos los sitios', hist_photos: 'Fotos', hist_all: 'Todos',
       map_title: 'Ubicaciones de Muestreo', map_brand: 'Mapa', map_checking: 'Verificando conexión…', map_street: 'Calle', map_satellite: 'Satélite',
+      map_navigation_disclaimer: 'Mapa de referencia — no apto para navegación. Usa cartas náuticas oficiales.',
       map_offline_areas: 'Áreas de mapa sin conexión', map_pan_zoom: 'Desplaza y haz zoom a tu área de muestreo, luego descarga para uso sin conexión.', map_download_area: 'Descargar esta área',
       rec_cond_alive: 'Vivo', rec_cond_dead: 'Muerto', rec_cond_released: 'Liberado',
       track_title: 'Grabador de Ruta del Barco', track_brand: 'Ruta', track_gps_not_active: 'GPS no activo', track_start: 'Iniciar grabación', track_stop: 'Detener y guardar ruta',
@@ -6561,6 +6573,7 @@
       adv_lw_footnote: "a, b ajustados por MCO en ln(W) vs ln(L). K = factor de condición de Fulton, media de 100000·W(kg)/L(cm)³ por especie (Le Cren 1951).",
       adv_maturity_ogive: 'Ojiva de madurez por talla', adv_maturity_empty: 'Aún no hay suficientes registros con longitud y estadio gonadal juntos — se necesitan 15+ de una especie.',
       adv_maturity_footnote: 'Puntos = % maduro por clase de talla. Inmaduro vs maduro+ según estadio gonadal. Curva ajustada por regresión logística (IRLS). L50 = talla al 50% de madurez predicha.',
+      adv_stats_disclaimer: 'Calculado con tus registros capturados — no es un censo; interpreta con cautela si la muestra es pequeña.',
       adv_species_accumulation: 'Acumulación de especies', adv_accumulation_empty: 'Se necesitan al menos 2 registros con fecha/hora para graficar esto.',
       adv_records: 'registros', adv_species_lc: 'especies',
       adv_accumulation_footnote: 'Especies distintas acumuladas vs. registros agregados, ordenados por fecha/hora. Solo el orden observado, no es una curva de rarefacción aleatorizada — una curva que se aplana sugiere que el esfuerzo de muestreo se acerca a la saturación en este alcance.',
@@ -6705,7 +6718,7 @@
       flstats_financial_profile_all_vessels_label: 'Todos los Barcos',
       flstats_financial_profile_mixed_currency_notice: 'Esta flota usa más de una moneda — los totales se muestran por separado para cada moneda en vez de mezclarse en un solo número engañoso.',
       fltab_fleet: 'Flota', fltab_trips: 'Viajes', fltab_reconcile: 'Reconciliar', fltab_vessels: 'Embarcaciones',
-      sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy',
+      sp_brand: 'Fish Pulse · Deportiva', sp_session: 'Sesión', sp_no_spot: 'Ningún Spot Seleccionado', sp_solunar_today: 'Pronóstico Solunar · Hoy', sp_solunar_disclaimer: 'Estimación basada en posición lunar/solar — no garantiza actividad de pesca; combina con tu propia experiencia local.',
       sp_forecast_label: 'Pronóstico', sp_saved: 'guardados', sp_this_month: 'este mes', sp_new_spot_short: 'Nuevo', sp_enable_location: 'Activar ubicación para el pronóstico', sp_spots_lc: 'spots', sp_catches_lc: 'capturas', sp_weather_detail_title: 'Clima',
       sp_water_temp: 'Temperatura del Agua', sp_example_species: 'Especies de Ejemplo', sp_row_sky: 'Cielo', sp_row_trend: 'Tendencia', sp_row_temp: 'Temp.', sp_row_precip: 'Lluvia', sp_row_humidity: 'Humedad', sp_row_pressure: 'Presión', sp_row_wind: 'Viento', sp_row_uv: 'UV',
       sp_water_unavailable: 'La temperatura del agua no está disponible ahorita — puede ser un problema de conexión, intenta de nuevo en un momento.', sp_water_no_coverage: 'No hay dato de temperatura marina para esta ubicación — Open-Meteo Marine solo cubre mar abierto, así que en tierra adentro no va a aparecer una lectura aquí.', sp_now: 'Ahora',
@@ -6736,7 +6749,7 @@
       sp_tide_rising: 'Marea creciente', sp_tide_falling: 'Marea menguante', sp_tide_unavailable: 'Sin datos de marea',
       sp_great_day: 'Buen día para pescar', sp_good_day: 'Día decente para pescar', sp_slow_day: 'Día flojo para pescar',
       sp_score_caption: 'Basado en presión, luna, clima, marea y viento',
-      sp_uv_legend: 'Índice UV (OMS/EPA): 0-2 bajo · 3-5 moderado · 6-7 alto · 8-10 muy alto · 11+ extremo',
+      sp_uv_legend: 'Índice UV (OMS/EPA): 0-2 bajo · 3-5 moderado · 6-7 alto · 8-10 muy alto · 11+ extremo', sp_uv_disclaimer: 'Estimado por modelo satelital — verifica el índice UV local si vas a exponerte varias horas.',
       sp_ready_to_fish: '¿Listo para pescar?', sp_start_session_hint: 'Toca para elegir spot y método', sp_best_catch: 'Mejor',
       sp_stats_this_session: 'Esta sesión', sp_stats_all_time: 'Todo el tiempo', sp_stats_no_session_catches: 'Todavía no hay capturas registradas en esta sesión.',
       sp_show_off_catch: 'Presume tu captura 📸', sp_fight_rating: '¿Cómo estuvo la pelea?',
@@ -6794,7 +6807,7 @@
       msg_sites_selected: 'sitios seleccionados', msg_update_record: 'Actualizar registro', msg_edit_record: 'Editar Registro',
       msg_unspecified_site: 'Sitio no especificado', msg_area_saved: 'Área guardada para uso sin conexión', msg_area_saved_partial: 'Área guardada',
       msg_tiles_failed: 'tiles fallaron — reintenta si hace falta', msg_catches_lc: 'capturas',
-      msg_duration: 'Duración', msg_fetching_conditions: 'Obteniendo condiciones…', msg_fetch_conditions_failed: 'No se pudieron obtener las condiciones — revisa tu conexión.',
+      msg_duration: 'Duración', msg_fetching_conditions: 'Obteniendo condiciones…', msg_fetch_conditions_failed: 'No se pudieron obtener las condiciones — revisa tu conexión.', fl_forecast_disclaimer: 'Pronóstico de modelo (~8km de resolución) — referencia, no sustituye el parte meteorológico oficial antes de zarpar.',
       msg_locating: 'localizando…', msg_no_gps_signal: 'sin señal GPS — intenta de nuevo', msg_suggested: 'Sugerido', msg_avg_of: 'promedio de', msg_past_sales: 'ventas anteriores', msg_use_this: 'Usar Este',
       msg_estimated_value: 'Valor Estimado', msg_fuel_consumed: 'Combustible Consumido', msg_consumed_since_last: 'Consumido Desde la Última Lectura',
       msg_live_map: 'Mapa en vivo · tiles cargados de la conexión', msg_offline_mode: 'Modo sin conexión · gráfico esquemático de coordenadas',
@@ -6809,6 +6822,8 @@
       sp_status_open: 'Libre', sp_status_verify: 'Verificar', sp_status_protected: 'Protegida', sp_status_closed_now: 'En veda', sp_status_quota: 'Por cuota',
       sp_card_regulatory: 'Regulatorio', sp_card_visual: 'Identificación visual', sp_card_biology: 'Biología', sp_card_source: 'Fuente y actualización',
       sp_min_size: 'Talla mínima', sp_max_size: 'Talla máxima', sp_closed_season: 'Veda',
+      sp_legal_notice: 'Esta información es de carácter orientativo/educativo y no constituye asesoría legal ni sustituye la consulta directa de la normativa pesquera vigente ante la autoridad competente. Verifica siempre la regulación aplicable antes de tomar decisiones de captura.',
+      sp_min_size_absence_note: 'Esta especie no cuenta con una talla mínima de captura específica en la normativa pesquera federal consultada — se maneja bajo permiso general de pesca de escama. Se recomienda verificar regulaciones estatales o locales vigentes antes de asumir que no existe restricción.',
       sp_permanent_ban: 'Permanente — captura prohibida', sp_verify_dates: 'Fechas varían cada año — verificar',
       sp_special_permit: 'Permiso especial', sp_nom059: 'Estatus NOM-059', sp_nom059_amenazada: 'Amenazada',
       sp_nom059_en_peligro: 'En peligro', sp_nom059_proteccion_especial: 'Protección especial', sp_cites_appendix: 'Apéndice CITES',
@@ -6852,6 +6867,7 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Ammoniaca totale — TAN (mg/L)', aqua_water_add_btn: 'Salva misurazione', aqua_water_history_label: 'Misurazioni recenti',
       aqua_water_do_am: 'OD (mattina)', aqua_water_do_pm: 'OD (sera)', aqua_water_logged: 'Registrato', aqua_water_pending: 'In sospeso',
       aqua_water_toxic_title: 'Ammoniaca tossica a questo pH', aqua_water_toxic_body: 'Accendi gli aeratori e sospendi l\'alimentazione', aqua_water_empty: 'Nessuna misurazione registrata.',
+      aqua_water_ammonia_disclaimer: 'NH₃ calcolato da pH/temperatura/TAN (frazione non ionizzata) — non sostituisce una lettura diretta con kit per l\'ammoniaca.',
       aqua_water_status_ok: 'ok', aqua_water_status_watch: 'attenzione', aqua_water_status_alert: 'allarme',
       aqua_water_gauge_do: 'OSSIGENO', aqua_water_gauge_temp: 'TEMP.', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'SAL',
       aqua_water_salinity_label: 'Salinità (ppt)',
@@ -6884,6 +6900,7 @@
       aqua_financial_kpi_total: 'Costo totale', aqua_financial_kpi_costkg: 'Costo / kg', aqua_financial_breakdown_label: 'Ripartizione',
       aqua_financial_breakeven_title: 'Punto di pareggio', aqua_financial_breakeven_value: 'Valore stimato oggi', aqua_financial_breakeven_cost: 'Costo accumulato',
       aqua_financial_breakeven_ahead: 'Sei in vantaggio di', aqua_financial_breakeven_behind: 'Sei in svantaggio di',
+      aqua_financial_breakeven_disclaimer: 'Punto di pareggio proiettato con il prezzo di vendita registrato — non considera le fluttuazioni di mercato.',
       aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Stato',
       aqua_financial_status_active: 'Attivo', aqua_financial_mixed_currency: 'Più valute in questo ambito — mostrate separatamente, non unite.',
       aqua_cycle_species_matched: '✓ Collegata al catalogo — avvisi acqua calibrati', aqua_cycle_species_other: 'Altra (non a catalogo)',
@@ -6911,7 +6928,7 @@
       aqua_species_search_placeholder: 'Cerca specie...', aqua_species_sub_count: 'specie · tocca per scegliere', aqua_species_empty: 'Nessuna specie corrisponde alla ricerca.',
       aqua_species_temp: 'Temperatura ideale', aqua_species_ph: 'pH', aqua_species_salinity: 'Salinità', aqua_species_density: 'Densità di semina', aqua_species_feeding: 'Alimentazione', aqua_species_cycle: 'Ciclo tipico',
       aqua_species_growth_label: 'Curva di crescita', aqua_species_diseases_label: 'Malattie comuni', aqua_species_source_label: 'Fonte',
-      aqua_species_growth_chart_real: 'Basato sui dati dello studio citato', aqua_species_growth_chart_model: 'Modello illustrativo — nessun dato specifico dello studio',
+      aqua_species_growth_chart_real: 'Basato sui dati dello studio citato', aqua_species_growth_chart_model: 'Modello illustrativo — nessun dato specifico dello studio', aqua_species_growth_model_disclaimer: 'Modello generico, non specifico per questa specie/condizioni locali — usa come riferimento, non come proiezione del raccolto.',
       aqua_species_growth_axis_day: 'giorno', aqua_species_growth_axis_weight: 'peso', aqua_species_growth_axis_pct_cycle: '% del ciclo', aqua_species_growth_axis_pct_weight: '% del peso finale',
       aqua_species_disease_syndrome: 'Sintomi', aqua_species_disease_treatment: 'Trattamento',
       aqua_species_disease_disclaimer: 'Informazione di riferimento (FAO). Non sostituisce una diagnosi veterinaria — prima di usare qualsiasi farmaco, o in caso di focolaio o mortalità, consulta un veterinario acquicolo.',
@@ -6985,6 +7002,7 @@
       rec_save: 'Salva scheda', rec_clear: 'Svuota modulo',
       hist_title: 'Cronologia', hist_all_records: 'Tutte le Schede', hist_search_placeholder: 'Cerca specie…', hist_empty: 'Nessuna scheda ancora.', hist_all_sites: 'Tutti i siti', hist_photos: 'Foto', hist_all: 'Tutte',
       map_title: 'Posizioni di Rilevamento', map_brand: 'Mappa', map_checking: 'Verifica connessione…', map_street: 'Strada', map_satellite: 'Satellite',
+      map_navigation_disclaimer: 'Mappa di riferimento — non adatta alla navigazione. Usa carte nautiche ufficiali.',
       map_offline_areas: 'Aree mappa offline', map_pan_zoom: 'Sposta e ingrandisci sulla tua area di rilevamento, poi scarica per l\'uso offline.', map_download_area: 'Scarica quest\'area',
       rec_cond_alive: 'Vivo', rec_cond_dead: 'Morto', rec_cond_released: 'Rilasciato',
       track_title: 'Registratore Rotta Imbarcazione', track_brand: 'Rotta', track_gps_not_active: 'GPS non attivo', track_start: 'Avvia registrazione', track_stop: 'Ferma e salva rotta',
@@ -7007,6 +7025,7 @@
       adv_lw_footnote: "a, b stimati con OLS su ln(W) vs ln(L). K = fattore di condizione di Fulton, media di 100000·W(kg)/L(cm)³ per specie (Le Cren 1951).",
       adv_maturity_ogive: 'Ogiva di maturità per taglia', adv_maturity_empty: 'Non ci sono ancora abbastanza record con lunghezza e stadio gonadico insieme — servono 15+ per una specie.',
       adv_maturity_footnote: 'Punti = % matura per classe di lunghezza. Immatura vs matura+ dallo stadio gonadico. Curva stimata con regressione logistica (IRLS). L50 = lunghezza al 50% di maturità prevista.',
+      adv_stats_disclaimer: 'Calcolato dai tuoi dati registrati — non è un censimento; interpreta con cautela se il campione è piccolo.',
       adv_species_accumulation: 'Curva di accumulo delle specie', adv_accumulation_empty: 'Servono almeno 2 record con data/ora per tracciare questo grafico.',
       adv_records: 'record', adv_species_lc: 'specie',
       adv_accumulation_footnote: 'Specie distinte cumulative vs. record aggiunti, ordinati per data/ora. Solo ordine osservato, non una curva di rarefazione randomizzata — una curva che si appiattisce suggerisce che lo sforzo di campionamento si sta avvicinando alla saturazione in questo ambito.',
@@ -7151,7 +7170,7 @@
       flstats_financial_profile_all_vessels_label: 'Tutte le Imbarcazioni',
       flstats_financial_profile_mixed_currency_notice: 'Questa flotta usa più di una valuta — i totali sono mostrati separatamente per valuta invece di essere uniti in un unico numero fuorviante.',
       fltab_fleet: 'Flotta', fltab_trips: 'Viaggi', fltab_reconcile: 'Riconcilia', fltab_vessels: 'Imbarcazioni',
-      sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi',
+      sp_brand: 'Fish Pulse · Sportiva', sp_session: 'Sessione', sp_no_spot: 'Nessuno Spot Selezionato', sp_solunar_today: 'Previsione Lunare · Oggi', sp_solunar_disclaimer: "Stima basata sulla posizione lunare/solare — non garantisce l'attività di pesca; combina con la tua esperienza locale.",
       sp_forecast_label: 'Previsioni', sp_saved: 'salvati', sp_this_month: 'questo mese', sp_new_spot_short: 'Nuovo', sp_enable_location: 'Attiva posizione per le previsioni', sp_spots_lc: 'spot', sp_catches_lc: 'catture', sp_weather_detail_title: 'Meteo',
       sp_water_temp: 'Temperatura dell\'Acqua', sp_example_species: 'Specie di Esempio', sp_row_sky: 'Cielo', sp_row_trend: 'Tendenza', sp_row_temp: 'Temp.', sp_row_precip: 'Pioggia', sp_row_humidity: 'Umidità', sp_row_pressure: 'Pressione', sp_row_wind: 'Vento', sp_row_uv: 'UV',
       sp_water_unavailable: 'La temperatura dell\'acqua non è disponibile ora — potrebbe essere un problema di connessione, riprova tra poco.', sp_water_no_coverage: 'Nessun dato di temperatura marina per questa posizione — Open-Meteo Marine copre solo il mare aperto, quindi nell\'entroterra non comparirà nessuna lettura qui.', sp_now: 'Ora',
@@ -7163,6 +7182,8 @@
       sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mer', sp_day_thu: 'Gio', sp_day_fri: 'Ven', sp_day_sat: 'Sab',
       sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
       sp_method: 'Metodo', sp_method_shore: 'Da Riva', sp_method_boat: 'Da Barca', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca sul Ghiaccio',
+      sp_legal_notice: 'Questa informazione ha carattere orientativo/educativo e non costituisce consulenza legale né sostituisce la consultazione diretta della normativa sulla pesca vigente presso l\'autorità competente. Verifica sempre la normativa applicabile prima di prendere decisioni di cattura.',
+      sp_min_size_absence_note: 'Questa specie non ha una taglia minima di cattura specifica secondo la normativa federale sulla pesca consultata — è gestita sotto permesso generale di pesca. Si raccomanda di verificare le normative statali o locali vigenti prima di presumere che non esista alcuna restrizione.',
       sp_weather_tide: 'Meteo e Marea', sp_current_location: 'nella tua posizione attuale', sp_get_conditions: 'Ottieni Condizioni',
       sp_conditions: 'Condizioni', sp_conditions_hint: 'opzionale — acqua, note', sp_start_session: 'Avvia Sessione',
       sp_session_duration: 'Durata sessione', sp_open_water: 'Acqua Libera', sp_end_session: 'Termina Sessione', sp_catches_this_session: 'Catture di questa sessione',
@@ -7182,7 +7203,7 @@
       sp_tide_rising: 'Marea in crescita', sp_tide_falling: 'Marea in calo', sp_tide_unavailable: 'Dati marea non disponibili',
       sp_great_day: 'Ottimo giorno per pescare', sp_good_day: 'Buon giorno per pescare', sp_slow_day: 'Giorno fiacco per pescare',
       sp_score_caption: 'Basato su pressione, luna, meteo, marea e vento',
-      sp_uv_legend: 'Indice UV (OMS/EPA): 0-2 basso · 3-5 moderato · 6-7 alto · 8-10 molto alto · 11+ estremo',
+      sp_uv_legend: 'Indice UV (OMS/EPA): 0-2 basso · 3-5 moderato · 6-7 alto · 8-10 molto alto · 11+ estremo', sp_uv_disclaimer: "Stima da modello satellitare — verifica l'indice UV locale se sarai esposto per diverse ore.",
       sp_ready_to_fish: 'Pronto a pescare?', sp_start_session_hint: 'Tocca per scegliere spot e metodo', sp_best_catch: 'Migliore',
       sp_stats_this_session: 'Questa sessione', sp_stats_all_time: 'Sempre', sp_stats_no_session_catches: 'Nessuna cattura registrata in questa sessione.',
       sp_show_off_catch: 'Mostra la tua cattura 📸', sp_fight_rating: 'Come è andata la lotta?',
@@ -7240,7 +7261,7 @@
       msg_sites_selected: 'siti selezionati', msg_update_record: 'Aggiorna scheda', msg_edit_record: 'Modifica Scheda',
       msg_unspecified_site: 'Sito non specificato', msg_area_saved: 'Area salvata per uso offline', msg_area_saved_partial: 'Area salvata',
       msg_tiles_failed: 'tile non riuscite — riprova se necessario', msg_catches_lc: 'catture',
-      msg_duration: 'Durata', msg_fetching_conditions: 'Recupero condizioni…', msg_fetch_conditions_failed: 'Impossibile recuperare le condizioni — controlla la connessione.',
+      msg_duration: 'Durata', msg_fetching_conditions: 'Recupero condizioni…', msg_fetch_conditions_failed: 'Impossibile recuperare le condizioni — controlla la connessione.', fl_forecast_disclaimer: 'Previsione da modello (~8km di risoluzione) — solo riferimento, non sostituisce il bollettino meteomarino ufficiale prima della partenza.',
       msg_locating: 'localizzazione…', msg_no_gps_signal: 'nessun segnale GPS — riprova', msg_suggested: 'Suggerito', msg_avg_of: 'media di', msg_past_sales: 'vendite passate', msg_use_this: 'Usa Questo',
       msg_estimated_value: 'Valore Stimato', msg_fuel_consumed: 'Carburante Consumato', msg_consumed_since_last: "Consumato Dall'Ultima Lettura",
       msg_live_map: 'Mappa live · tile caricate dalla connessione', msg_offline_mode: 'Modalità offline · grafico schematico delle coordinate',
@@ -7277,6 +7298,7 @@
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'แอมโมเนียรวม — TAN (มก./ล.)', aqua_water_add_btn: 'บันทึกค่า', aqua_water_history_label: 'ค่าที่บันทึกล่าสุด',
       aqua_water_do_am: 'DO (เช้า)', aqua_water_do_pm: 'DO (เย็น)', aqua_water_logged: 'บันทึกแล้ว', aqua_water_pending: 'ยังไม่ได้บันทึก',
       aqua_water_toxic_title: 'แอมโมเนียเป็นพิษที่ pH นี้', aqua_water_toxic_body: 'เปิดเครื่องเติมอากาศและหยุดให้อาหารทันที', aqua_water_empty: 'ยังไม่มีค่าที่บันทึกไว้',
+      aqua_water_ammonia_disclaimer: 'NH₃ คำนวณจากค่า pH/อุณหภูมิ/TAN (สัดส่วนที่ไม่แตกตัว) — ไม่ทดแทนการตรวจวัดแอมโมเนียโดยตรงด้วยชุดทดสอบ',
       aqua_water_status_ok: 'ปกติ', aqua_water_status_watch: 'เฝ้าระวัง', aqua_water_status_alert: 'แจ้งเตือน',
       aqua_water_gauge_do: 'ออกซิเจน', aqua_water_gauge_temp: 'อุณหภูมิ', aqua_water_gauge_ph: 'PH', aqua_water_gauge_tan: 'TAN', aqua_water_gauge_salinity: 'เค็ม',
       aqua_water_salinity_label: 'ความเค็ม (ppt)',
@@ -7309,6 +7331,7 @@
       aqua_financial_kpi_total: 'ต้นทุนรวม', aqua_financial_kpi_costkg: 'ต้นทุน/กก.', aqua_financial_breakdown_label: 'รายละเอียด',
       aqua_financial_breakeven_title: 'จุดคุ้มทุน', aqua_financial_breakeven_value: 'มูลค่าประเมินวันนี้', aqua_financial_breakeven_cost: 'ต้นทุนสะสม',
       aqua_financial_breakeven_ahead: 'คุณกำไรอยู่', aqua_financial_breakeven_behind: 'คุณขาดทุนอยู่',
+      aqua_financial_breakeven_disclaimer: 'จุดคุ้มทุนคาดการณ์จากราคาขายที่บันทึกไว้ — ไม่ได้คำนึงถึงความผันผวนของตลาด',
       aqua_financial_col_cycle: 'รอบการผลิต', aqua_financial_col_cost: 'ต้นทุน', aqua_financial_col_costkg: 'ต้นทุน/กก.', aqua_financial_col_status: 'สถานะ',
       aqua_financial_status_active: 'กำลังดำเนินการ', aqua_financial_mixed_currency: 'มีหลายสกุลเงินในขอบเขตนี้ — แสดงแยกกัน ไม่รวมกัน',
       aqua_cycle_species_matched: '✓ เชื่อมกับแคตตาล็อกแล้ว — ปรับการแจ้งเตือนคุณภาพน้ำ', aqua_cycle_species_other: 'อื่นๆ (ไม่มีในแคตตาล็อก)',
@@ -7336,7 +7359,7 @@
       aqua_species_search_placeholder: 'ค้นหาชนิดพันธุ์...', aqua_species_sub_count: 'ชนิดพันธุ์ · แตะเพื่อเลือก', aqua_species_empty: 'ไม่พบชนิดพันธุ์ที่ตรงกับการค้นหา',
       aqua_species_temp: 'อุณหภูมิที่เหมาะสม', aqua_species_ph: 'pH', aqua_species_salinity: 'ความเค็ม', aqua_species_density: 'ความหนาแน่นการปล่อยเลี้ยง', aqua_species_feeding: 'การให้อาหาร', aqua_species_cycle: 'รอบการผลิตทั่วไป',
       aqua_species_growth_label: 'เส้นการเจริญเติบโต', aqua_species_diseases_label: 'โรคที่พบบ่อย', aqua_species_source_label: 'แหล่งข้อมูล',
-      aqua_species_growth_chart_real: 'อ้างอิงจากข้อมูลของงานวิจัยที่อ้างถึง', aqua_species_growth_chart_model: 'แบบจำลองประกอบ — ไม่พบข้อมูลเฉพาะจากงานวิจัย',
+      aqua_species_growth_chart_real: 'อ้างอิงจากข้อมูลของงานวิจัยที่อ้างถึง', aqua_species_growth_chart_model: 'แบบจำลองประกอบ — ไม่พบข้อมูลเฉพาะจากงานวิจัย', aqua_species_growth_model_disclaimer: 'แบบจำลองทั่วไป ไม่เจาะจงสำหรับชนิดพันธุ์นี้หรือสภาพท้องถิ่นของคุณ — ใช้เป็นข้อมูลอ้างอิง ไม่ใช่การคาดการณ์ผลผลิต',
       aqua_species_growth_axis_day: 'วัน', aqua_species_growth_axis_weight: 'น้ำหนัก', aqua_species_growth_axis_pct_cycle: '% ของรอบการเลี้ยง', aqua_species_growth_axis_pct_weight: '% ของน้ำหนักสุดท้าย',
       aqua_species_disease_syndrome: 'อาการ', aqua_species_disease_treatment: 'การรักษา',
       aqua_species_disease_disclaimer: 'ข้อมูลอ้างอิง (FAO) ไม่ใช่การวินิจฉัยของสัตวแพทย์ — ก่อนใช้ยาใดๆ หรือกรณีมีการระบาดหรือสัตว์ตาย ควรปรึกษาสัตวแพทย์ด้านการเพาะเลี้ยงสัตว์น้ำ',
@@ -7410,6 +7433,7 @@
       rec_save: 'บันทึกข้อมูล', rec_clear: 'ล้างแบบฟอร์ม',
       hist_title: 'ประวัติ', hist_all_records: 'บันทึกทั้งหมด', hist_search_placeholder: 'ค้นหาชนิดพันธุ์…', hist_empty: 'ยังไม่มีบันทึก', hist_all_sites: 'ทุกสถานที่', hist_photos: 'รูปภาพ', hist_all: 'ทั้งหมด',
       map_title: 'ตำแหน่งการสำรวจ', map_brand: 'แผนที่', map_checking: 'กำลังตรวจสอบการเชื่อมต่อ…', map_street: 'ถนน', map_satellite: 'ดาวเทียม',
+      map_navigation_disclaimer: 'แผนที่อ้างอิง — ไม่เหมาะสำหรับการเดินเรือ ควรใช้แผนที่เดินเรืออย่างเป็นทางการ',
       map_offline_areas: 'พื้นที่แผนที่ออฟไลน์', map_pan_zoom: 'เลื่อนและซูมไปยังพื้นที่สำรวจของคุณ แล้วดาวน์โหลดเพื่อใช้งานแบบออฟไลน์', map_download_area: 'ดาวน์โหลดพื้นที่นี้',
       rec_cond_alive: 'มีชีวิต', rec_cond_dead: 'ตาย', rec_cond_released: 'ปล่อยคืน',
       track_title: 'เครื่องบันทึกเส้นทางเรือ', track_brand: 'เส้นทาง', track_gps_not_active: 'จีพีเอสไม่ทำงาน', track_start: 'เริ่มบันทึกเส้นทาง', track_stop: 'หยุดและบันทึกเส้นทาง',
@@ -7432,6 +7456,7 @@
       adv_lw_footnote: "a, b ปรับด้วยวิธี OLS บน ln(W) เทียบ ln(L) K = ค่าดัชนีสภาพฟุลตัน ค่าเฉลี่ยของ 100000·W(กก.)/L(ซม.)³ ต่อชนิดพันธุ์ (Le Cren 1951)",
       adv_maturity_ogive: 'เส้นโค้งความสมบูรณ์เพศตามขนาด', adv_maturity_empty: 'ยังมีข้อมูลความยาวคู่กับระยะความสมบูรณ์เพศไม่พอ — ต้องการอย่างน้อย 15 รายการต่อชนิดพันธุ์',
       adv_maturity_footnote: 'จุด = % ที่สมบูรณ์เพศต่อช่วงความยาว ไม่สมบูรณ์เพศ เทียบกับ สมบูรณ์เพศขึ้นไป จากระยะความสมบูรณ์เพศ เส้นโค้งปรับด้วยการถดถอยโลจิสติก (IRLS) L50 = ความยาวที่ความสมบูรณ์เพศ 50%',
+      adv_stats_disclaimer: 'คำนวณจากข้อมูลที่คุณบันทึกเอง — ไม่ใช่การสำรวจสำมะโน ควรตีความอย่างระมัดระวังหากตัวอย่างมีขนาดเล็ก',
       adv_species_accumulation: 'เส้นโค้งการสะสมชนิดพันธุ์', adv_accumulation_empty: 'ต้องการอย่างน้อย 2 บันทึกที่มีวันที่/เวลาเพื่อสร้างกราฟนี้',
       adv_records: 'บันทึก', adv_species_lc: 'ชนิดพันธุ์',
       adv_accumulation_footnote: 'จำนวนชนิดพันธุ์ที่แตกต่างกันสะสม เทียบกับบันทึกที่เพิ่มเข้ามา เรียงตามวันที่/เวลา เป็นลำดับที่สังเกตได้เท่านั้น ไม่ใช่เส้นโค้งการสุ่มตัวอย่างแบบสุ่ม — เส้นโค้งที่แบนราบแสดงว่าความพยายามในการสุ่มตัวอย่างใกล้ถึงจุดอิ่มตัวในขอบเขตนี้',
@@ -7576,7 +7601,7 @@
       flstats_financial_profile_all_vessels_label: 'เรือทั้งหมด',
       flstats_financial_profile_mixed_currency_notice: 'กองเรือนี้ใช้สกุลเงินมากกว่าหนึ่งสกุล — ยอดรวมแสดงแยกตามสกุลเงินด้านล่าง แทนที่จะรวมกันเป็นตัวเลขเดียวที่อาจทำให้เข้าใจผิด',
       fltab_fleet: 'กองเรือ', fltab_trips: 'ทริป', fltab_reconcile: 'กระทบยอด', fltab_vessels: 'เรือ',
-      sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้',
+      sp_brand: 'Fish Pulse · ตกปลากีฬา', sp_session: 'เซสชัน', sp_no_spot: 'ยังไม่ได้เลือกจุดตกปลา', sp_solunar_today: 'พยากรณ์สุริยะจันทรคติ · วันนี้', sp_solunar_disclaimer: 'ประมาณการจากตำแหน่งดวงจันทร์/ดวงอาทิตย์ — ไม่รับประกันว่าปลาจะกินเหยื่อ ควรใช้ร่วมกับประสบการณ์ในพื้นที่ของคุณเอง',
       sp_forecast_label: 'พยากรณ์อากาศ', sp_saved: 'บันทึกไว้', sp_this_month: 'เดือนนี้', sp_new_spot_short: 'ใหม่', sp_enable_location: 'เปิดตำแหน่งเพื่อดูพยากรณ์', sp_spots_lc: 'จุด', sp_catches_lc: 'ครั้งที่จับได้', sp_weather_detail_title: 'สภาพอากาศ',
       sp_water_temp: 'อุณหภูมิน้ำ', sp_example_species: 'ตัวอย่างชนิดปลา', sp_row_sky: 'ท้องฟ้า', sp_row_trend: 'แนวโน้ม', sp_row_temp: 'อุณหภูมิ', sp_row_precip: 'ฝน', sp_row_humidity: 'ความชื้น', sp_row_pressure: 'ความกดอากาศ', sp_row_wind: 'ลม', sp_row_uv: 'UV',
       sp_water_unavailable: 'ขณะนี้ไม่มีข้อมูลอุณหภูมิน้ำ — อาจเป็นปัญหาการเชื่อมต่อ ลองใหม่อีกครั้งในอีกสักครู่', sp_water_no_coverage: 'ไม่มีข้อมูลอุณหภูมิทะเลสำหรับตำแหน่งนี้ — Open-Meteo Marine ครอบคลุมเฉพาะพื้นที่ทะเลเปิดเท่านั้น ตำแหน่งในแผ่นดินจะไม่แสดงค่าที่นี่', sp_now: 'ตอนนี้',
@@ -7588,6 +7613,8 @@
       sp_day_sun: 'อา', sp_day_mon: 'จ', sp_day_tue: 'อ', sp_day_wed: 'พ', sp_day_thu: 'พฤ', sp_day_fri: 'ศ', sp_day_sat: 'ส',
       sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
       sp_method: 'วิธีการ', sp_method_shore: 'ตกจากฝั่ง', sp_method_boat: 'ตกจากเรือ', sp_method_kayak: 'คายัค', sp_method_fly: 'ตกปลาด้วยเหยื่อปลอมลอย', sp_method_ice: 'ตกปลาน้ำแข็ง',
+      sp_legal_notice: 'ข้อมูลนี้มีไว้เพื่อเป็นแนวทาง/การศึกษาเท่านั้น ไม่ถือเป็นคำแนะนำทางกฎหมายและไม่ทดแทนการตรวจสอบกฎระเบียบประมงที่บังคับใช้กับหน่วยงานที่มีอำนาจโดยตรง ควรตรวจสอบกฎระเบียบที่บังคับใช้เสมอก่อนตัดสินใจจับสัตว์น้ำ',
+      sp_min_size_absence_note: 'ชนิดพันธุ์นี้ไม่มีขนาดจับขั้นต่ำเฉพาะตามกฎระเบียบประมงของรัฐบาลกลางที่ตรวจสอบ — อยู่ภายใต้ใบอนุญาตจับปลาทั่วไป ขอแนะนำให้ตรวจสอบกฎระเบียบระดับรัฐหรือท้องถิ่นที่บังคับใช้ก่อนสันนิษฐานว่าไม่มีข้อจำกัด',
       sp_weather_tide: 'สภาพอากาศและน้ำขึ้นน้ำลง', sp_current_location: 'ที่ตำแหน่งปัจจุบันของคุณ', sp_get_conditions: 'ดูสภาพอากาศ',
       sp_conditions: 'สภาพ', sp_conditions_hint: 'ไม่บังคับ — น้ำ บันทึกย่อ', sp_start_session: 'เริ่มเซสชัน',
       sp_session_duration: 'ระยะเวลาเซสชัน', sp_open_water: 'น้ำเปิด', sp_end_session: 'จบเซสชัน', sp_catches_this_session: 'การจับปลาในเซสชันนี้',
@@ -7607,7 +7634,7 @@
       sp_tide_rising: 'น้ำขึ้น', sp_tide_falling: 'น้ำลง', sp_tide_unavailable: 'ไม่มีข้อมูลน้ำขึ้นน้ำลง',
       sp_great_day: 'วันที่ดีมากสำหรับตกปลา', sp_good_day: 'วันที่ดีสำหรับตกปลา', sp_slow_day: 'วันที่ปลากัดน้อย',
       sp_score_caption: 'คำนวณจากความกดอากาศ ดวงจันทร์ สภาพอากาศ น้ำขึ้นน้ำลง และลม',
-      sp_uv_legend: 'ดัชนี UV (WHO/EPA): 0-2 ต่ำ · 3-5 ปานกลาง · 6-7 สูง · 8-10 สูงมาก · 11+ รุนแรง',
+      sp_uv_legend: 'ดัชนี UV (WHO/EPA): 0-2 ต่ำ · 3-5 ปานกลาง · 6-7 สูง · 8-10 สูงมาก · 11+ รุนแรง', sp_uv_disclaimer: 'ประมาณการจากแบบจำลองดาวเทียม — ตรวจสอบดัชนี UV ในพื้นที่หากต้องอยู่กลางแจ้งเป็นเวลาหลายชั่วโมง',
       sp_ready_to_fish: 'พร้อมตกปลาหรือยัง', sp_start_session_hint: 'แตะเพื่อเลือกจุดตกปลาและวิธีการ', sp_best_catch: 'ดีที่สุด',
       sp_stats_this_session: 'เซสชันนี้', sp_stats_all_time: 'ทั้งหมด', sp_stats_no_session_catches: 'ยังไม่มีการบันทึกการจับปลาในเซสชันนี้',
       sp_show_off_catch: 'อวดปลาที่จับได้ 📸', sp_fight_rating: 'การต่อสู้เป็นอย่างไรบ้าง',
@@ -7665,7 +7692,7 @@
       msg_sites_selected: 'สถานที่ที่เลือก', msg_update_record: 'อัปเดตบันทึก', msg_edit_record: 'แก้ไขบันทึก',
       msg_unspecified_site: 'สถานที่ไม่ระบุ', msg_area_saved: 'บันทึกพื้นที่เพื่อใช้งานออฟไลน์แล้ว', msg_area_saved_partial: 'บันทึกพื้นที่แล้ว',
       msg_tiles_failed: 'ไทล์ล้มเหลว — ลองใหม่หากจำเป็น', msg_catches_lc: 'การจับปลา',
-      msg_duration: 'ระยะเวลา', msg_fetching_conditions: 'กำลังดึงสภาพอากาศ…', msg_fetch_conditions_failed: 'ไม่สามารถดึงสภาพอากาศได้ — ตรวจสอบการเชื่อมต่อของคุณ',
+      msg_duration: 'ระยะเวลา', msg_fetching_conditions: 'กำลังดึงสภาพอากาศ…', msg_fetch_conditions_failed: 'ไม่สามารถดึงสภาพอากาศได้ — ตรวจสอบการเชื่อมต่อของคุณ', fl_forecast_disclaimer: 'พยากรณ์จากแบบจำลอง (ความละเอียด ~8 กม.) — ใช้อ้างอิงเท่านั้น ไม่ทดแทนประกาศพยากรณ์อากาศทางทะเลอย่างเป็นทางการก่อนออกเรือ',
       msg_locating: 'กำลังระบุตำแหน่ง…', msg_no_gps_signal: 'ไม่มีสัญญาณจีพีเอส — ลองอีกครั้ง', msg_suggested: 'แนะนำ', msg_avg_of: 'เฉลี่ยจาก', msg_past_sales: 'การขายที่ผ่านมา', msg_use_this: 'ใช้ค่านี้',
       msg_estimated_value: 'มูลค่าประมาณ', msg_fuel_consumed: 'เชื้อเพลิงที่ใช้ไป', msg_consumed_since_last: 'ใช้ไปตั้งแต่การอ่านครั้งล่าสุด',
       msg_live_map: 'แผนที่สด · โหลดไทล์จากการเชื่อมต่อ', msg_offline_mode: 'โหมดออฟไลน์ · แผนภาพพิกัดแบบแผนผัง',
@@ -7705,6 +7732,27 @@
 
   window.tEnglish = function(key){ return I18N.en[key] || key; };
   window.t = t;
+
+  // Shared "leyenda de deslinde" (disclaimer) renderer, reused across all
+  // four segments instead of each screen hand-copying its own inline
+  // style. Two variants already existed before this helper did — 'inline'
+  // (small italic note directly under a content block, first used by the
+  // aquaculture disease disclaimer) and 'footer' (centered, monospace,
+  // first used by the species catalog's regulatory notice at the bottom
+  // of the sheet). opts.tone:'warn' tints the text for placement inside
+  // an already-colored alert banner (e.g. the NH3 toxicity banner), where
+  // the default ink-soft grey would be unreadable.
+  function disclaimerHtml(type, textKey, opts){
+    opts = opts || {};
+    const text = t(textKey);
+    const color = opts.tone === 'warn' ? (opts.warnColor || 'var(--coral)') : 'var(--ink-soft)';
+    if(type === 'footer'){
+      return '<div class="sp-legal">' + text + '</div>';
+    }
+    return '<div style="font-size:11px;color:' + color + ';font-style:italic;margin-top:6px;' + (opts.tone === 'warn' ? 'opacity:0.8;' : '') + '">' + text + '</div>';
+  }
+  window.disclaimerHtml = disclaimerHtml;
+
   window.getFishPulseLang = getLang;
   window.setFishPulseLang = setLang;
   window.applyI18n = applyI18n;
@@ -8360,11 +8408,16 @@
       fecha_inicio: p.fecha_inicio, fecha_fin: p.fecha_fin
     }));
   }
+  // Migrated off SPECIES_CATALOG._meta (which only ever carried ES/EN
+  // text) to the standard 4-language t() dictionary — IT/TH readers now
+  // get this in their own language too, same as every other disclaimer
+  // in the app, even though the underlying species data itself is still
+  // ES/EN only.
   function metaDefaultMinSizeNote(){
-    return speciesLang() === 'en' ? SPECIES_CATALOG._meta.en.nota_ausencia_talla_minima_default : SPECIES_CATALOG._meta.nota_ausencia_talla_minima_default;
+    return t('sp_min_size_absence_note');
   }
   function metaLegalNotice(){
-    return speciesLang() === 'en' ? SPECIES_CATALOG._meta.en.aviso_legal_fijo : SPECIES_CATALOG._meta.aviso_legal_fijo;
+    return t('sp_legal_notice');
   }
 
   // ----- Jurisdiction anchor: each vessel already declares a reporting
@@ -9333,7 +9386,7 @@
           + (m.sea_surface_temperature!=null?Math.round(m.sea_surface_temperature)+'°C water':'water —') + ' · '
           + (m.wave_height!=null?m.wave_height.toFixed(1)+'m waves':'waves —') + '</div>';
       }
-      html += '<div style="margin-top:6px; font-size:10.5px; opacity:0.75;">Tide/wave data is an estimate (model resolution ~8km) — reference only.</div>';
+      html += disclaimerHtml('inline', 'fl_forecast_disclaimer');
       box.innerHTML = html;
     } catch(err){
       box.textContent = t('msg_fetch_conditions_failed');
@@ -15069,6 +15122,7 @@
       + '<br>' + t('sp_minor_peaks') + ': ' + minorTimes.join(' · ')
       + '</div>'
       + '<div style="font-family:var(--data);font-size:9px;opacity:.6;margin-top:8px;">' + t('sp_score_caption') + '</div>'
+      + '<div style="font-family:var(--data);font-size:9px;opacity:.6;margin-top:4px;font-style:italic;">' + t('sp_solunar_disclaimer') + '</div>'
       + '</div>';
   }
 
@@ -15512,7 +15566,8 @@
       + '<div style="flex-shrink:0; width:36px;">' + labelHtml + '</div>'
       + '<div style="flex:1; min-width:0; overflow-x:auto;">' + dataHtml + '</div>'
       + '</div>'
-      + '<div style="font-family:var(--data); font-size:9.5px; color:var(--ink-soft); margin-top:6px; padding:0 4px; line-height:1.6;">' + t('sp_uv_legend') + '</div>';
+      + '<div style="font-family:var(--data); font-size:9.5px; color:var(--ink-soft); margin-top:6px; padding:0 4px; line-height:1.6;">' + t('sp_uv_legend') + '</div>'
+      + '<div style="padding:0 4px;">' + disclaimerHtml('inline', 'sp_uv_disclaimer') + '</div>';
 
     box.innerHTML = sportWaterCardHtml(indices) + html;
     const waterCard = document.getElementById('sportWaterCard');
@@ -19251,6 +19306,7 @@
       }
       html += '</div>';
     }
+    if(insightsView === 'charts') html += disclaimerHtml('inline', 'adv_stats_disclaimer');
 
     main.innerHTML = html;
     if(insightsView === 'advanced'){
@@ -20082,6 +20138,7 @@
         bannerEl.innerHTML = '<div style="border:0.5px solid var(--coral);background:var(--chip-red-bg);border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;">'
           + '<div style="font-size:13px;color:var(--coral);font-weight:500;">' + t('aqua_water_toxic_title') + '</div>'
           + '<div style="font-size:12px;color:var(--coral);margin-top:4px;">' + t('aqua_water_toxic_body') + '</div>'
+          + disclaimerHtml('inline', 'aqua_water_ammonia_disclaimer', { tone: 'warn' })
         + '</div>';
       } else { bannerEl.innerHTML = ''; }
     } else { bannerEl.innerHTML = ''; }
@@ -20348,6 +20405,20 @@
     }
     if(cancelBtn && panel) cancelBtn.addEventListener('click', () => { panel.style.display = 'none'; });
     if(saveBtn) saveBtn.addEventListener('click', saveAquaCycleEdits);
+    // Same action Reports' QR unlock already used (markCycleHarvested) —
+    // reachable here too, right where the cycle is actually managed, so
+    // closing it and freeing the unit for a new cycle doesn't require a
+    // detour through Reports first.
+    const markHarvestedBtn = document.getElementById('aquaCycleMarkHarvestedBtn');
+    if(markHarvestedBtn){
+      markHarvestedBtn.addEventListener('click', () => {
+        const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
+        const cycle = unitId ? activeCycleForUnit(unitId) : null;
+        if(!cycle) return;
+        markCycleHarvested(cycle);
+        renderAquaCycle();
+      });
+    }
     if(currencyEl && noteEl){
       currencyEl.addEventListener('change', () => {
         const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
@@ -21847,6 +21918,7 @@
     return '<div class="aqua-species-stat-card" style="margin-bottom:16px;">'
       + svg
       + '<div style="font-size:10.5px;color:var(--ink-soft);font-style:italic;margin-top:2px;text-align:center;">'+aquaChartEscape(caption)+'</div>'
+      + (isReal ? '' : '<div style="text-align:center;">' + disclaimerHtml('inline', 'aqua_species_growth_model_disclaimer') + '</div>')
     + '</div>';
   }
 
@@ -22186,6 +22258,7 @@
           + '<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;"><span style="color:var(--ink-soft);">' + t('aqua_financial_breakeven_value') + '</span><span>' + aquaFmtMoney(be.value, cur) + '</span></div>'
           + '<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;"><span style="color:var(--ink-soft);">' + t('aqua_financial_breakeven_cost') + '</span><span>' + aquaFmtMoney(be.cost, cur) + '</span></div>'
           + '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0 0;font-weight:700;color:' + (ahead ? 'var(--released)' : 'var(--coral)') + ';"><span>' + t(ahead ? 'aqua_financial_breakeven_ahead' : 'aqua_financial_breakeven_behind') + '</span><span>' + aquaFmtMoney(Math.abs(be.diff), cur) + '</span></div>'
+          + disclaimerHtml('inline', 'aqua_financial_breakeven_disclaimer')
         + '</div>';
       }
 
