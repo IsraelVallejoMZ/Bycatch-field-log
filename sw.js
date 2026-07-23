@@ -1,6 +1,6 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v9';
+const CACHE_NAME = 'bycatch-log-v10';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -23,25 +23,41 @@ const APP_SHELL = [
   'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_0_countries.geojson'
 ];
 
+// index.html/manifest/icons are load-bearing — without them offline is a
+// blank screen, not a degraded feature. They used to share the same
+// catch-and-ignore as the optional externals below, so a single flaky
+// precache of index.html itself would silently "succeed" the whole
+// install while leaving nothing to serve the next time someone opened the
+// app offline. Retried once (covers a transient blip); if it still fails,
+// let it throw so the install fails loudly instead of activating a
+// service worker that can't actually do its one job.
+const CRITICAL_SHELL = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      // cache.addAll() is all-or-nothing — if a single URL in APP_SHELL
-      // fails (a flaky external CDN, a CORS quirk, whatever), the entire
-      // install rejects and the browser silently keeps running the old
-      // service worker, with no visible error to the user. That's exactly
-      // the kind of failure that looks like "nothing happened" from the
-      // outside. Fetching each file individually means one bad resource
-      // only costs that one resource, not the whole offline app.
-      Promise.all(
-        APP_SHELL.map((url) =>
-          cache.add(url).catch((err) => {
-            console.warn('[sw] failed to precache', url, err);
-          })
-        )
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    for (const url of CRITICAL_SHELL) {
+      try {
+        await cache.add(url);
+      } catch (err) {
+        await cache.add(url); // one retry; a second failure propagates and fails the install
+      }
+    }
+    // cache.addAll() is all-or-nothing — if a single URL here fails (a
+    // flaky external CDN, a CORS quirk, whatever), the entire install
+    // rejects and the browser silently keeps running the old service
+    // worker, with no visible error to the user. Fetching each file
+    // individually means one bad optional resource only costs that one
+    // resource, not the critical shell above.
+    const optional = APP_SHELL.filter((url) => !CRITICAL_SHELL.includes(url));
+    await Promise.all(
+      optional.map((url) =>
+        cache.add(url).catch((err) => {
+          console.warn('[sw] failed to precache', url, err);
+        })
       )
-    )
-  );
+    );
+  })());
   self.skipWaiting();
 });
 
