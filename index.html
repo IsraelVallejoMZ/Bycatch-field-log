@@ -299,6 +299,11 @@
     border-radius:14px; padding:10px 12px; cursor:pointer;
   }
   .aqua-unit-swatch{ width:38px; height:38px; border-radius:11px; flex-shrink:0; border:2px solid var(--blue); background:var(--blue-mist); }
+  .aqua-unit-delete-btn{
+    flex-shrink:0; width:30px; height:30px; border-radius:9999px; border:none; background:transparent;
+    color:var(--ink-soft); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .aqua-unit-delete-btn:active{ background:var(--chip-red-bg); color:var(--coral); }
   .aqua-unit-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
   .aqua-unit-meta{ font-family:var(--data); font-size:10px; color:var(--ink-soft); font-weight:600; margin-top:1px; }
 
@@ -3838,6 +3843,7 @@
       </div>
     </div>
   </div>
+  <div class="aqua-chip-row" id="aquaReportsUnitChips"></div>
   <main>
     <div id="aquaReportsNoActive" class="card" style="display:none;text-align:center;color:var(--ink-soft);font-size:13px;padding:24px 12px;" data-i18n="aqua_stats_no_cycle">No active cycle for this unit.</div>
     <div id="aquaReportsBody" style="display:none;">
@@ -6047,6 +6053,7 @@
       aqua_units_type_earthen: 'Earthen pond', aqua_units_type_lined: 'Lined pond', aqua_units_type_cage: 'Floating cage', aqua_units_type_tank: 'Tank', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastructure', aqua_units_infra_manual: 'Manual / gravity-fed', aqua_units_infra_tech: 'Aerated / biofloc',
       aqua_units_capacity_label: 'Capacity (m³ or m²)', aqua_units_add_btn: 'Add unit', aqua_units_list_label: 'Your units', aqua_units_empty: 'No culture units yet. Add your first one above.',
+      aqua_units_delete: 'Delete unit', aqua_units_delete_confirm: 'Delete "{name}"? This removes all its water readings, cycles, biometry, mortality, feeding and cost history. This cannot be undone.', aqua_units_delete_done: 'Unit deleted',
       aqua_units_status_active: 'Active', aqua_units_status_inactive: 'Inactive',
       aqua_water_h1: 'Water quality', aqua_water_add: 'Log a reading', aqua_water_do_label: 'Dissolved oxygen (mg/L)', aqua_water_temp_label: 'Temperature (°C)',
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Total ammonia — TAN (mg/L)', aqua_water_add_btn: 'Save reading', aqua_water_history_label: 'Recent readings',
@@ -6552,6 +6559,7 @@
       aqua_units_type_earthen: 'Estanque de tierra', aqua_units_type_lined: 'Estanque revestido', aqua_units_type_cage: 'Jaula flotante', aqua_units_type_tank: 'Tanque', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infraestructura', aqua_units_infra_manual: 'Manual / llenado por gravedad', aqua_units_infra_tech: 'Aireación / biofloc',
       aqua_units_capacity_label: 'Capacidad (m³ o m²)', aqua_units_add_btn: 'Agregar unidad', aqua_units_list_label: 'Tus unidades', aqua_units_empty: 'Aún no hay unidades de cultivo. Agrega la primera arriba.',
+      aqua_units_delete: 'Eliminar unidad', aqua_units_delete_confirm: '¿Eliminar "{name}"? Esto borra todas sus lecturas de agua, ciclos, biometría, mortalidad, alimentación e historial de costos. No se puede deshacer.', aqua_units_delete_done: 'Unidad eliminada',
       aqua_units_status_active: 'Activa', aqua_units_status_inactive: 'Inactiva',
       aqua_water_h1: 'Calidad de agua', aqua_water_add: 'Registrar medición', aqua_water_do_label: 'Oxígeno disuelto (mg/L)', aqua_water_temp_label: 'Temperatura (°C)',
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Amonio total — TAN (mg/L)', aqua_water_add_btn: 'Guardar medición', aqua_water_history_label: 'Mediciones recientes',
@@ -7057,6 +7065,7 @@
       aqua_units_type_earthen: 'Stagno di terra', aqua_units_type_lined: 'Stagno rivestito', aqua_units_type_cage: 'Gabbia galleggiante', aqua_units_type_tank: 'Vasca', aqua_units_type_raceway: 'Raceway',
       aqua_units_infra_label: 'Infrastruttura', aqua_units_infra_manual: 'Manuale / a gravità', aqua_units_infra_tech: 'Aerazione / biofloc',
       aqua_units_capacity_label: 'Capacità (m³ o m²)', aqua_units_add_btn: 'Aggiungi unità', aqua_units_list_label: 'Le tue unità', aqua_units_empty: 'Nessuna unità di coltura ancora. Aggiungine una sopra.',
+      aqua_units_delete: 'Elimina unità', aqua_units_delete_confirm: 'Eliminare "{name}"? Questo cancella tutte le sue letture dell\'acqua, cicli, biometria, mortalità, alimentazione e storico dei costi. Non può essere annullato.', aqua_units_delete_done: 'Unità eliminata',
       aqua_units_status_active: 'Attiva', aqua_units_status_inactive: 'Inattiva',
       aqua_water_h1: 'Qualità dell\'acqua', aqua_water_add: 'Registra una misurazione', aqua_water_do_label: 'Ossigeno disciolto (mg/L)', aqua_water_temp_label: 'Temperatura (°C)',
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'Ammoniaca totale — TAN (mg/L)', aqua_water_add_btn: 'Salva misurazione', aqua_water_history_label: 'Misurazioni recenti',
@@ -7562,6 +7571,7 @@
       aqua_units_type_earthen: 'บ่อดิน', aqua_units_type_lined: 'บ่อปูพื้น', aqua_units_type_cage: 'กระชังลอยน้ำ', aqua_units_type_tank: 'ถัง', aqua_units_type_raceway: 'ราง',
       aqua_units_infra_label: 'โครงสร้างพื้นฐาน', aqua_units_infra_manual: 'แบบแมนนวล / ไหลด้วยแรงโน้มถ่วง', aqua_units_infra_tech: 'มีอากาศ / ไบโอฟล็อค',
       aqua_units_capacity_label: 'ความจุ (ลบ.ม. หรือ ตร.ม.)', aqua_units_add_btn: 'เพิ่มหน่วย', aqua_units_list_label: 'หน่วยของคุณ', aqua_units_empty: 'ยังไม่มีหน่วยเพาะเลี้ยง เพิ่มหน่วยแรกด้านบน',
+      aqua_units_delete: 'ลบหน่วย', aqua_units_delete_confirm: 'ลบ "{name}" ใช่หรือไม่? การดำเนินการนี้จะลบข้อมูลคุณภาพน้ำ รอบการเลี้ยง ชีวมาตร การตาย การให้อาหาร และประวัติต้นทุนทั้งหมด ไม่สามารถย้อนกลับได้', aqua_units_delete_done: 'ลบหน่วยแล้ว',
       aqua_units_status_active: 'ใช้งานอยู่', aqua_units_status_inactive: 'ไม่ได้ใช้งาน',
       aqua_water_h1: 'คุณภาพน้ำ', aqua_water_add: 'บันทึกค่าที่วัดได้', aqua_water_do_label: 'ออกซิเจนละลายน้ำ (มก./ล.)', aqua_water_temp_label: 'อุณหภูมิ (°C)',
       aqua_water_ph_label: 'pH', aqua_water_tan_label: 'แอมโมเนียรวม — TAN (มก./ล.)', aqua_water_add_btn: 'บันทึกค่า', aqua_water_history_label: 'ค่าที่บันทึกล่าสุด',
@@ -20821,11 +20831,47 @@
           + '<div class="aqua-unit-meta">' + typeLabel(u.type) + (u.capacity ? ' · ' + u.capacity + ' m³/m²' : '') + '</div>'
         + '</div>'
         + '<span class="chip ' + statusClass + '" style="font-size:11px;padding:3px 8px;border-radius:var(--radius-sm);">' + t(statusKey) + '</span>'
+        + '<button type="button" class="aqua-unit-delete-btn" data-delete-unit="' + u.unit_id + '" aria-label="' + t('aqua_units_delete') + '">'
+          + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m3 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7"/></svg>'
+        + '</button>'
       + '</div>';
     }).join('');
     listEl.querySelectorAll('[data-open-unit]').forEach(el => {
       el.addEventListener('click', () => openAquaWaterScreen(el.dataset.openUnit));
     });
+    listEl.querySelectorAll('[data-delete-unit]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const unit = units.find(u => u.unit_id === el.dataset.deleteUnit);
+        const name = unit ? unit.name : '';
+        if(!confirm(t('aqua_units_delete_confirm').replace('{name}', name))) return;
+        deleteAquaUnit(el.dataset.deleteUnit);
+        renderAquaUnits();
+        showToast(t('aqua_units_delete_done'));
+      });
+    });
+  }
+
+  // Cascades to every table that references this unit — directly (water
+  // readings carry unit_id) or through its cycles (cost config, treatments,
+  // biometry, mortality, feeding all key off cycle_id, and a unit can have
+  // had more than one cycle over time, not just its current one) — so a
+  // deleted cage doesn't leave orphaned rows behind for a future Supabase
+  // sync to trip over.
+  function deleteAquaUnit(unitId){
+    saveUnits(loadUnits().filter(u => u.unit_id !== unitId));
+    saveWater(loadWater().filter(r => r.unit_id !== unitId));
+    const allCycles = loadCycles();
+    const cycleIds = new Set(allCycles.filter(c => c.unit_id === unitId).map(c => c.cycle_id));
+    saveCycles(allCycles.filter(c => c.unit_id !== unitId));
+    if(cycleIds.size){
+      saveAquaCostConfig(loadAquaCostConfig().filter(l => !cycleIds.has(l.cycle_id)));
+      saveAquaTreatments(loadAquaTreatments().filter(tr => !cycleIds.has(tr.cycle_id)));
+      saveBiometryAqua(loadBiometryAqua().filter(b => !cycleIds.has(b.cycle_id)));
+      saveMortalityAqua(loadMortalityAqua().filter(m => !cycleIds.has(m.cycle_id)));
+      saveFeedingAqua(loadFeedingAqua().filter(f => !cycleIds.has(f.cycle_id)));
+    }
+    if(localStorage.getItem(AQUA_SELECTED_UNIT_KEY) === unitId) localStorage.removeItem(AQUA_SELECTED_UNIT_KEY);
   }
 
   function escapeHtmlAqua(str){
@@ -22293,6 +22339,25 @@
       + '</svg>';
   }
 
+  // Decorative per-cage identity color, cycling through 5 hues by the
+  // unit's position in loadUnits() (stable regardless of filtering/sorting
+  // in whichever screen renders it) — separate from the ok/watch/alert
+  // status color, which stays on its own dot/border since that one is
+  // meaningful and must not get overloaded with two jobs. Chosen to avoid
+  // the exact hues already used for status (--released green, --amber,
+  // --coral) so a cage's color is never mistaken for an alert state.
+  const AQUA_CAGE_PALETTE = [
+    ['#0d2b4a', '#2f7fd1'], // navy -> azure (existing default)
+    ['#0a4a45', '#3fb8c9'], // teal -> cyan
+    ['#3b2354', '#8a5bc9'], // violet -> orchid
+    ['#2b3a4a', '#6b8aa8'], // slate -> steel
+    ['#4a2338', '#c97a8a']  // plum -> rose
+  ];
+  function aquaCageGradient(index){
+    const pair = AQUA_CAGE_PALETTE[index % AQUA_CAGE_PALETTE.length];
+    return 'linear-gradient(135deg, ' + pair[0] + ', ' + pair[1] + ')';
+  }
+
   // Shared per-unit summary — one real cage's status/species/biomass/note,
   // computed from the same data (cycles, mortality, biometry, water) that
   // already drives Home's alerts and Stats. Used by the Cages grid screen;
@@ -22376,10 +22441,11 @@
       return;
     }
     const dot = { ok: 'var(--released,#159871)', watch: 'var(--amber,#cf9a3c)', alert: 'var(--coral,#d9825a)' };
+    const unitIndexById = {}; units.forEach((u,i) => { unitIndexById[u.unit_id] = i; });
     gridEl.innerHTML = filtered.map(s => {
       const noteColor = s.status === 'alert' ? 'var(--coral)' : (s.status === 'watch' ? 'var(--amber)' : 'var(--released)');
       return '<div class="aqua-cage-photo-card" data-unit-id="' + s.unit.unit_id + '">'
-        + '<div class="aqua-cage-photo-banner">'
+        + '<div class="aqua-cage-photo-banner" style="background-image:' + aquaCageGradient(unitIndexById[s.unit.unit_id]) + ', repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 8px, transparent 8px, transparent 16px);">'
           + '<div class="aqua-cage-photo-tag">' + t('aqua_cages_photo_tag') + '</div>'
           + '<div class="aqua-cage-photo-dot" style="background:' + dot[s.status] + ';"></div>'
         + '</div>'
@@ -22412,7 +22478,7 @@
     let activeCycleCount = 0;
     const cageRows = [];
 
-    units.forEach(unit => {
+    units.forEach((unit, unitIndex) => {
       const cycle = cycles.find(c => c.unit_id === unit.unit_id && c.status === 'active');
       let status = 'ok', speciesLabel = typeLabel(unit.type);
 
@@ -22453,7 +22519,7 @@
         if(nh3 > 0.05){ status = 'alert'; alerts++; }
       }
 
-      cageRows.push({ unit, speciesLabel, status });
+      cageRows.push({ unit, speciesLabel, status, colorIndex: unitIndex });
     });
 
     const survivalPct = totalSeeded ? (totalLive / totalSeeded) * 100 : null;
@@ -22493,7 +22559,7 @@
       listEl.innerHTML = cageRows.map(row => {
         const c = dot[row.status];
         return '<div class="aqua-cage-row" data-unit-id="' + row.unit.unit_id + '">'
-          + '<div class="aqua-cage-swatch" style="border-color:' + c + '; background:repeating-linear-gradient(135deg,' + c + '22 0px,' + c + '22 6px,transparent 6px,transparent 12px);"></div>'
+          + '<div class="aqua-cage-swatch" style="border-color:' + c + '; background-image:' + aquaCageGradient(row.colorIndex) + ';"></div>'
           + '<div style="flex:1;"><div class="aqua-cage-name">' + escapeHtmlAqua(row.unit.name) + '</div><div class="aqua-cage-species">' + escapeHtmlAqua(row.speciesLabel) + '</div></div>'
           + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-90deg);"><path d="M6 9l6 6 6-6"/></svg>'
         + '</div>';
@@ -23142,20 +23208,53 @@
   // ----- Reports: audit PDF, cycle logbook PDF, and traceability QR -----
   // (QR only activates once the cycle is marked harvested, matching the
   // boceto — a cycle still in the water has nothing to trace to a plate.)
+  //
+  // Own unit chip-switcher (like Stats' aquaStatsFilterUnitId) rather than
+  // silently trusting whatever AQUA_SELECTED_UNIT_KEY happens to hold —
+  // that was the actual bug: with 2+ units, Reports only ever showed
+  // whichever one was last opened elsewhere, so a harvested unit's QR was
+  // unreachable from here if a different (still-active) unit was "selected".
+  // No "all units" option, unlike Stats — a report/QR is inherently
+  // per-cycle, there's nothing meaningful to aggregate.
+  let aquaReportsFilterUnitId = null;
+
   function renderAquaReports(){
     const nameEl = document.getElementById('aquaReportsUnitName');
     const noActiveEl = document.getElementById('aquaReportsNoActive');
     const bodyEl = document.getElementById('aquaReportsBody');
+    const chipsEl = document.getElementById('aquaReportsUnitChips');
     if(!bodyEl) return;
-    const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
-    const unit = loadUnits().find(u => u.unit_id === unitId);
+
+    const units = loadUnits();
+    const cyclesAll = loadCycles();
+    if(aquaReportsFilterUnitId === null || !units.some(u => u.unit_id === aquaReportsFilterUnitId)){
+      aquaReportsFilterUnitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY) || (units[0] ? units[0].unit_id : null);
+    }
+    if(chipsEl){
+      chipsEl.innerHTML = units.map(u => {
+        const mostRecent = cyclesAll.filter(c => c.unit_id === u.unit_id).sort((a,b) => b.started_at - a.started_at)[0];
+        const harvested = !!(mostRecent && mostRecent.status === 'harvested');
+        return '<div class="aqua-chip' + (aquaReportsFilterUnitId === u.unit_id ? ' active' : '') + '" data-unit="' + u.unit_id + '">'
+          + escapeHtmlAqua(u.name) + (harvested ? ' ✓' : '') + '</div>';
+      }).join('');
+      chipsEl.querySelectorAll('[data-unit]').forEach(el => {
+        el.addEventListener('click', () => {
+          aquaReportsFilterUnitId = el.dataset.unit;
+          localStorage.setItem(AQUA_SELECTED_UNIT_KEY, aquaReportsFilterUnitId);
+          renderAquaReports();
+        });
+      });
+    }
+
+    const unitId = aquaReportsFilterUnitId;
+    const unit = units.find(u => u.unit_id === unitId);
     if(nameEl) nameEl.textContent = unit ? unit.name : t('aqua_units_brand');
 
     // Reports work off the unit's most recent cycle, active or already
     // harvested — unlike Cycle/Stats (which only show an *active* cycle),
     // because a harvested cycle is exactly when the audit PDF and QR
     // actually get used.
-    const cycles = loadCycles().filter(c => c.unit_id === unitId).sort((a,b) => b.started_at - a.started_at);
+    const cycles = cyclesAll.filter(c => c.unit_id === unitId).sort((a,b) => b.started_at - a.started_at);
     const cycle = cycles[0] || null;
     if(!cycle){
       noActiveEl.style.display = 'block';
