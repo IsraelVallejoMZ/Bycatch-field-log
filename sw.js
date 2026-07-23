@@ -1,6 +1,6 @@
 // Bump this on every deploy so old clients detect the change and refresh
 // their cache instead of being stuck on a stale cached app shell.
-const CACHE_NAME = 'bycatch-log-v8';
+const CACHE_NAME = 'bycatch-log-v9';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
