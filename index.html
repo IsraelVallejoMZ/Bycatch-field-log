@@ -3278,7 +3278,7 @@
     </div>
     <div class="aqua-field-group">
       <span class="aqua-field-label" data-i18n="aqua_water_temp_label">Temperature (°C)</span>
-      <input type="number" class="aqua-input" id="aquaWaterTemp" step="0.1" placeholder="28">
+      <input type="number" class="aqua-input" id="aquaWaterTemp" step="0.1" min="0" placeholder="28">
     </div>
     <div class="aqua-field-group">
       <span class="aqua-field-label" data-i18n="aqua_water_ph_label">pH</span>
@@ -6087,7 +6087,8 @@
       aqua_financial_breakeven_ahead: "You're ahead by", aqua_financial_breakeven_behind: "You're behind by",
       aqua_financial_breakeven_disclaimer: "Break-even projected using the recorded sale price — doesn't account for market fluctuations.",
       aqua_financial_col_cycle: 'Cycle', aqua_financial_col_cost: 'Cost', aqua_financial_col_costkg: 'Cost/kg', aqua_financial_col_status: 'Status',
-      aqua_financial_status_active: 'Active', aqua_financial_mixed_currency: 'Multiple currencies in this scope — shown separately, not blended.',
+      aqua_financial_status_active: 'Active', aqua_financial_status_harvested: 'Harvested', aqua_financial_mixed_currency: 'Multiple currencies in this scope — shown separately, not blended.',
+      aqua_msg_negative_value: 'Values cannot be negative',
       aqua_cycle_species_matched: '✓ Matched to catalog — tuned water alerts', aqua_cycle_species_other: 'Other (not in catalog)',
       aqua_coming_soon: 'Coming in the next update',
       aqua_biometry_h1: 'New biometry', aqua_biometry_sample_label: 'Sample size', aqua_biometry_avg_label: 'Average weight (g)', aqua_biometry_minmax_label: 'Min / max weight (g, optional)',
@@ -6591,7 +6592,8 @@
       aqua_financial_breakeven_ahead: 'Vas arriba por', aqua_financial_breakeven_behind: 'Vas abajo por',
       aqua_financial_breakeven_disclaimer: 'Punto de equilibrio proyectado con el precio de venta capturado — no considera fluctuaciones de mercado.',
       aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Estado',
-      aqua_financial_status_active: 'Activo', aqua_financial_mixed_currency: 'Hay varias monedas en este alcance — se muestran por separado, no mezcladas.',
+      aqua_financial_status_active: 'Activo', aqua_financial_status_harvested: 'Cosechado', aqua_financial_mixed_currency: 'Hay varias monedas en este alcance — se muestran por separado, no mezcladas.',
+      aqua_msg_negative_value: 'Los valores no pueden ser negativos',
       aqua_cycle_species_matched: '✓ Conectada al catálogo — alertas de agua ajustadas', aqua_cycle_species_other: 'Otra (no está en el catálogo)',
       aqua_coming_soon: 'Disponible en la próxima actualización',
       aqua_biometry_h1: 'Nueva biometría', aqua_biometry_sample_label: 'Tamaño de muestra', aqua_biometry_avg_label: 'Peso promedio (g)', aqua_biometry_minmax_label: 'Peso mín. / máx. (g, opcional)',
@@ -7095,7 +7097,8 @@
       aqua_financial_breakeven_ahead: 'Sei in vantaggio di', aqua_financial_breakeven_behind: 'Sei in svantaggio di',
       aqua_financial_breakeven_disclaimer: 'Punto di pareggio proiettato con il prezzo di vendita registrato — non considera le fluttuazioni di mercato.',
       aqua_financial_col_cycle: 'Ciclo', aqua_financial_col_cost: 'Costo', aqua_financial_col_costkg: 'Costo/kg', aqua_financial_col_status: 'Stato',
-      aqua_financial_status_active: 'Attivo', aqua_financial_mixed_currency: 'Più valute in questo ambito — mostrate separatamente, non unite.',
+      aqua_financial_status_active: 'Attivo', aqua_financial_status_harvested: 'Raccolto', aqua_financial_mixed_currency: 'Più valute in questo ambito — mostrate separatamente, non unite.',
+      aqua_msg_negative_value: 'I valori non possono essere negativi',
       aqua_cycle_species_matched: '✓ Collegata al catalogo — avvisi acqua calibrati', aqua_cycle_species_other: 'Altra (non a catalogo)',
       aqua_coming_soon: 'Disponibile nel prossimo aggiornamento',
       aqua_biometry_h1: 'Nuova biometria', aqua_biometry_sample_label: 'Dimensione campione', aqua_biometry_avg_label: 'Peso medio (g)', aqua_biometry_minmax_label: 'Peso min / max (g, opzionale)',
@@ -7599,7 +7602,8 @@
       aqua_financial_breakeven_ahead: 'คุณกำไรอยู่', aqua_financial_breakeven_behind: 'คุณขาดทุนอยู่',
       aqua_financial_breakeven_disclaimer: 'จุดคุ้มทุนคาดการณ์จากราคาขายที่บันทึกไว้ — ไม่ได้คำนึงถึงความผันผวนของตลาด',
       aqua_financial_col_cycle: 'รอบการผลิต', aqua_financial_col_cost: 'ต้นทุน', aqua_financial_col_costkg: 'ต้นทุน/กก.', aqua_financial_col_status: 'สถานะ',
-      aqua_financial_status_active: 'กำลังดำเนินการ', aqua_financial_mixed_currency: 'มีหลายสกุลเงินในขอบเขตนี้ — แสดงแยกกัน ไม่รวมกัน',
+      aqua_financial_status_active: 'กำลังดำเนินการ', aqua_financial_status_harvested: 'เก็บเกี่ยวแล้ว', aqua_financial_mixed_currency: 'มีหลายสกุลเงินในขอบเขตนี้ — แสดงแยกกัน ไม่รวมกัน',
+      aqua_msg_negative_value: 'ค่าต้องไม่ติดลบ',
       aqua_cycle_species_matched: '✓ เชื่อมกับแคตตาล็อกแล้ว — ปรับการแจ้งเตือนคุณภาพน้ำ', aqua_cycle_species_other: 'อื่นๆ (ไม่มีในแคตตาล็อก)',
       aqua_coming_soon: 'จะมาในอัปเดตถัดไป',
       aqua_biometry_h1: 'บันทึกชีวมาตรใหม่', aqua_biometry_sample_label: 'ขนาดตัวอย่าง', aqua_biometry_avg_label: 'น้ำหนักเฉลี่ย (ก.)', aqua_biometry_minmax_label: 'น้ำหนักต่ำสุด / สูงสุด (ก., ไม่บังคับ)',
@@ -20780,8 +20784,16 @@
   function saveUnits(list){
     localStorage.setItem(AQUA_UNITS_KEY, JSON.stringify(list));
   }
+  // Random tail draws from crypto.randomUUID() (32 bits of real entropy)
+  // rather than Math.random() (~20 bits) so two records created in the
+  // same millisecond can't collide — matters once this id becomes the
+  // sync primary key against Supabase. Falls back to Math.random() only
+  // if crypto.randomUUID isn't available (older WebViews).
   function uidAqua(){
-    return 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+    const rand = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase()
+      : Math.random().toString(36).slice(2,6).toUpperCase();
+    return 'A-' + Date.now().toString(36).toUpperCase() + '-' + rand;
   }
 
   function typeLabel(type){
@@ -20829,13 +20841,15 @@
     const capEl = document.getElementById('aquaUnitNewCapacity');
     const name = (nameEl.value || '').trim();
     if(!name){ nameEl.focus(); return; }
+    const capacity = capEl.value ? Number(capEl.value) : null;
+    if(capacity != null && capacity < 0){ showToast(t('aqua_msg_negative_value')); return; }
     const units = loadUnits();
     units.push({
       unit_id: uidAqua(),
       name: name,
       type: typeEl.value,
       infrastructure: infraEl.value, // 'manual' | 'tech' — drives the pricing tier
-      capacity: capEl.value ? Number(capEl.value) : null,
+      capacity: capacity,
       status: 'active',
       created_at: Date.now()
     });
@@ -21144,6 +21158,7 @@
     const tanV = tanEl.value !== '' ? Number(tanEl.value) : null;
     const salV = salEl.value !== '' ? Number(salEl.value) : null;
     if(doV == null && tempV == null && phV == null && tanV == null && salV == null) return;
+    if([doV, tempV, phV, tanV, salV].some(v => v != null && v < 0)){ showToast(t('aqua_msg_negative_value')); return; }
     const readings = loadWater();
     readings.push({ reading_id: uidAqua(), unit_id: unitId, ts: Date.now(), do: doV, temp: tempV, ph: phV, tan: tanV, salinity: salV });
     saveWater(readings);
@@ -21685,6 +21700,8 @@
     const costEl = document.getElementById('aquaTreatCost');
     const disease = (diseaseEl.value || '').trim();
     if(!disease){ diseaseEl.focus(); return; }
+    const cost = costEl.value ? Number(costEl.value) : null;
+    if(cost != null && cost < 0){ showToast(t('aqua_msg_negative_value')); return; }
     const entries = loadAquaTreatments();
     entries.push({
       treatment_id: uidAqua(),
@@ -21693,7 +21710,7 @@
       disease: disease,
       medication: (medEl.value || '').trim() || null,
       dose_note: (doseEl.value || '').trim() || null,
-      cost: costEl.value ? Number(costEl.value) : null
+      cost: cost
     });
     saveAquaTreatments(entries);
     diseaseEl.value = ''; medEl.value = ''; doseEl.value = ''; costEl.value = '';
@@ -21716,6 +21733,26 @@
   function currentCycleForActiveScreen(){
     const unitId = localStorage.getItem(AQUA_SELECTED_UNIT_KEY);
     return unitId ? activeCycleForUnit(unitId) : null;
+  }
+
+  // FCR = feed consumed / biomass gained. The "starting biomass" needs a
+  // real population count at the moment of the first biometry sample —
+  // using the original seeded_qty there (as this used to) overstates it
+  // whenever any mortality happened before that first sample, which
+  // understates the real gain and makes FCR read worse than it actually
+  // was. This reconstructs the population still alive at that sample's
+  // timestamp from the mortality log instead of assuming nothing had died
+  // yet. Shared by every screen/PDF that reports FCR so they can't diverge.
+  function aquaLiveCountAt(cycle, mortalityEventsForCycle, atTs){
+    const deadByThen = mortalityEventsForCycle.filter(m => m.ts <= atTs).reduce((s,m) => s + (m.qty||0), 0);
+    return Math.max(0, (cycle.seeded_qty || 0) - deadByThen);
+  }
+  function aquaComputeFcr(cycle, mortalityEventsForCycle, firstBio, lastBio, biomassNowKg, totalFeedKg){
+    if(!firstBio || !lastBio || !(totalFeedKg > 0) || biomassNowKg == null) return null;
+    const liveAtFirstBio = aquaLiveCountAt(cycle, mortalityEventsForCycle, firstBio.ts);
+    const biomassStartKg = (liveAtFirstBio * firstBio.avg_weight_g) / 1000;
+    const gainKg = biomassNowKg - biomassStartKg;
+    return gainKg > 0 ? (totalFeedKg / gainKg) : null;
   }
 
   function renderAquaBiometry(){
@@ -21753,17 +21790,28 @@
     const sample = sampleEl.value ? Number(sampleEl.value) : null;
     const avg = avgEl.value ? Number(avgEl.value) : null;
     if(!sample || !avg){ (!sample ? sampleEl : avgEl).focus(); return; }
+    const minV = minEl.value ? Number(minEl.value) : null;
+    const maxV = maxEl.value ? Number(maxEl.value) : null;
+    if(sample < 0 || avg < 0 || (minV != null && minV < 0) || (maxV != null && maxV < 0)){ showToast(t('aqua_msg_negative_value')); return; }
     const entries = loadBiometryAqua();
     entries.push({
       biometry_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(),
       sample_size: sample, avg_weight_g: avg,
-      min_weight_g: minEl.value ? Number(minEl.value) : null,
-      max_weight_g: maxEl.value ? Number(maxEl.value) : null
+      min_weight_g: minV,
+      max_weight_g: maxV
     });
     saveBiometryAqua(entries);
     sampleEl.value = ''; avgEl.value = ''; minEl.value = ''; maxEl.value = '';
     renderAquaBiometry();
     showToast(t('aqua_biometry_saved'));
+  }
+
+  // Shared so the mortality history list and the logbook PDF always show
+  // the same translated label for a cause instead of the PDF leaking the
+  // raw internal code (e.g. "water_quality") like it used to.
+  const AQUA_MORTALITY_CAUSE_KEYS = { water_quality: 'aqua_mortality_cause_water', disease: 'aqua_mortality_cause_disease', predation: 'aqua_mortality_cause_predation', handling: 'aqua_mortality_cause_handling', unknown: 'aqua_mortality_cause_unknown' };
+  function aquaMortalityCauseLabel(cause){
+    return t(AQUA_MORTALITY_CAUSE_KEYS[cause] || 'aqua_mortality_cause_unknown');
   }
 
   function renderAquaMortality(){
@@ -21778,12 +21826,11 @@
       histEl.innerHTML = '<div class="empty-state" style="padding:24px 12px;text-align:center;color:var(--ink-soft);font-size:13px;">' + t('aqua_mortality_empty') + '</div>';
       return;
     }
-    const causeKeys = { water_quality: 'aqua_mortality_cause_water', disease: 'aqua_mortality_cause_disease', predation: 'aqua_mortality_cause_predation', handling: 'aqua_mortality_cause_handling', unknown: 'aqua_mortality_cause_unknown' };
     histEl.innerHTML = entries.slice(0, 20).map(e => {
       const d = new Date(e.ts);
       return '<div class="aqua-feed-row">'
         + '<div class="aqua-feed-row-date">' + d.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</div>'
-        + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + e.qty + ' · ' + t(causeKeys[e.cause] || 'aqua_mortality_cause_unknown') + '</div>'
+        + '<div class="aqua-feed-row-main"><div class="aqua-feed-row-title">' + e.qty + ' · ' + aquaMortalityCauseLabel(e.cause) + '</div>'
           + (e.note ? ('<div class="aqua-feed-row-sub">' + escapeHtmlAqua(e.note) + '</div>') : '')
         + '</div>'
       + '</div>';
@@ -21798,6 +21845,7 @@
     const noteEl = document.getElementById('aquaMortNote');
     const qty = qtyEl.value ? Number(qtyEl.value) : null;
     if(!qty){ qtyEl.focus(); return; }
+    if(qty < 0){ showToast(t('aqua_msg_negative_value')); return; }
     const entries = loadMortalityAqua();
     entries.push({ mortality_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(), qty: qty, cause: causeEl.value, note: (noteEl.value || '').trim() });
     saveMortalityAqua(entries);
@@ -21881,12 +21929,9 @@
       const liveCount = Math.max(0, (cycle.seeded_qty||0) - totalDead);
       const bioEvents = loadBiometryAqua().filter(b => b.cycle_id === cycle.cycle_id).sort((a,b) => a.ts - b.ts);
       const firstBio = bioEvents[0] || null, lastBio = bioEvents[bioEvents.length-1] || null;
-      if(firstBio && lastBio && cycleTotalKg > 0){
-        const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
-        const biomassNowKg = (liveCount * lastBio.avg_weight_g) / 1000;
-        const gainKg = biomassNowKg - biomassStartKg;
-        if(gainKg > 0) fcrText = (cycleTotalKg / gainKg).toFixed(2);
-      }
+      const biomassNowKg = lastBio ? (liveCount * lastBio.avg_weight_g) / 1000 : null;
+      const fcr = aquaComputeFcr(cycle, mortEvents, firstBio, lastBio, biomassNowKg, cycleTotalKg);
+      if(fcr != null) fcrText = fcr.toFixed(2);
     }
     document.getElementById('aquaFeedingKpiFcr').textContent = fcrText;
 
@@ -21952,6 +21997,7 @@
     const tempC = Number(document.getElementById('aquaFeedTemp').value);
     const mortality = Number(document.getElementById('aquaFeedMortality').value) || 0;
     if(!weightG){ document.getElementById('aquaFeedWeight').focus(); return; }
+    if(weightG < 0 || mortality < 0){ showToast(t('aqua_msg_negative_value')); return; }
     const liveCount = Math.max(0, (cycle.seeded_qty || 0) - mortality);
     const biomassKg = (liveCount * weightG) / 1000;
     const ratePct = feedingRatePct(weightG) * tempAdjustment(tempC);
@@ -21973,8 +22019,10 @@
     const costEl = document.getElementById('aquaFeedCost');
     const kg = kgEl.value ? Number(kgEl.value) : null;
     if(!kg){ kgEl.focus(); return; }
+    const cost = costEl.value ? Number(costEl.value) : null;
+    if(kg < 0 || (cost != null && cost < 0)){ showToast(t('aqua_msg_negative_value')); return; }
     const entries = loadFeedingAqua();
-    entries.push({ feeding_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(), kg: kg, type: (typeEl.value||'').trim(), cost: costEl.value ? Number(costEl.value) : null });
+    entries.push({ feeding_id: uidAqua(), cycle_id: cycle.cycle_id, ts: Date.now(), kg: kg, type: (typeEl.value||'').trim(), cost: cost });
     saveFeedingAqua(entries);
     kgEl.value = ''; typeEl.value = ''; costEl.value = '';
     document.getElementById('aquaFeedingResult').innerHTML = '';
@@ -22056,22 +22104,13 @@
     const firstBio = biometryEvents[0] || null;
     const lastBio = biometryEvents[biometryEvents.length - 1] || null;
     const biomassNowKg = lastBio ? (liveCount * lastBio.avg_weight_g) / 1000 : null;
-    const biomassStartKg = firstBio ? (cycle.seeded_qty * firstBio.avg_weight_g) / 1000 : 0;
 
     const feedingEvents = loadFeedingAqua().filter(f => f.cycle_id === cycle.cycle_id);
     const totalFeedKg = feedingEvents.reduce((s,f) => s + (f.kg||0), 0);
     const totalFeedCost = feedingEvents.reduce((s,f) => s + (f.cost||0), 0);
 
-    // FCR = total feed / biomass gained. Needs at least one biometry to
-    // have any gain reference; with only one sample, gain is measured
-    // against the seeded weight assumption at t0 (0 g), so FCR reads as
-    // an approximation until a second biometry exists — noted below.
-    let fcrText = '—';
-    if(lastBio && totalFeedKg > 0){
-      const gainKg = biomassNowKg - biomassStartKg;
-      if(gainKg > 0) fcrText = (totalFeedKg / gainKg).toFixed(2);
-    }
-    document.getElementById('aquaStatsFcr').textContent = fcrText;
+    const fcr = aquaComputeFcr(cycle, mortalityEvents, firstBio, lastBio, biomassNowKg, totalFeedKg);
+    document.getElementById('aquaStatsFcr').textContent = fcr != null ? fcr.toFixed(2) : '—';
 
     document.getElementById('aquaStatsCostKg').textContent = (biomassNowKg && totalFeedCost > 0) ? (totalFeedCost / biomassNowKg).toFixed(2) : '—';
     document.getElementById('aquaStatsSurvival').textContent = survivalPct != null ? survivalPct + '%' : '—';
@@ -22130,11 +22169,8 @@
       const feedKg = feedEvents.reduce((s,f) => s + (f.kg||0), 0);
       totalFeedCost += feedEvents.reduce((s,f) => s + (f.cost||0), 0);
 
-      if(firstBio && lastBio && feedKg > 0){
-        const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
-        const gainKg = biomassNowKg - biomassStartKg;
-        if(gainKg > 0){ fcrSum += feedKg / gainKg; fcrCount++; }
-      }
+      const fcr = aquaComputeFcr(cycle, mortEvents, firstBio, lastBio, biomassNowKg, feedKg);
+      if(fcr != null){ fcrSum += fcr; fcrCount++; }
       if(cycle.goal_kg && biomassNowKg != null){ hasGoal = true; goalSum += cycle.goal_kg; goalBiomassSum += biomassNowKg; }
     });
 
@@ -22398,11 +22434,8 @@
         }
         const feedEvents = feeding.filter(f => f.cycle_id === cycle.cycle_id);
         const totalFeedKg = feedEvents.reduce((s, f) => s + (f.kg || 0), 0);
-        if(firstBio && lastBio && totalFeedKg > 0){
-          const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
-          const gainKg = biomassNowKg - biomassStartKg;
-          if(gainKg > 0){ fcrSum += totalFeedKg / gainKg; fcrCount++; }
-        }
+        const fcr = aquaComputeFcr(cycle, mortEvents, firstBio, lastBio, biomassNowKg, totalFeedKg);
+        if(fcr != null){ fcrSum += fcr; fcrCount++; }
 
         // Recent mortality spike heuristic: >2% of the live stock lost
         // in the last 48h is flagged as an alert, same order of
@@ -23144,13 +23177,8 @@
     const feedEvents = loadFeedingAqua().filter(f => f.cycle_id === cycle.cycle_id);
     const totalFeedKg = feedEvents.reduce((s,f) => s + (f.kg||0), 0);
 
-    let fcrText = '—';
-    if(lastBio && firstBio && totalFeedKg > 0){
-      const biomassStartKg = (cycle.seeded_qty * firstBio.avg_weight_g) / 1000;
-      const gainKg = biomassNowKg - biomassStartKg;
-      if(gainKg > 0) fcrText = (totalFeedKg / gainKg).toFixed(2);
-    }
-    document.getElementById('aquaReportsKpiFcr').textContent = fcrText;
+    const fcr = aquaComputeFcr(cycle, mortEvents, firstBio, lastBio, biomassNowKg, totalFeedKg);
+    document.getElementById('aquaReportsKpiFcr').textContent = fcr != null ? fcr.toFixed(2) : '—';
     document.getElementById('aquaReportsKpiSurvival').textContent = survivalPct != null ? survivalPct.toFixed(1) + '%' : '—';
 
     let biomassTrendText = '—';
@@ -23400,7 +23428,7 @@
     const sortedItems = perCycle.slice().sort((a,b) => b.cycle.started_at - a.cycle.started_at);
     tableEl.innerHTML = sortedItems.map(f => {
       const c = f.cycle;
-      const statusLabel = c.status === 'active' ? t('aqua_financial_status_active') : c.status;
+      const statusLabel = c.status === 'active' ? t('aqua_financial_status_active') : t('aqua_financial_status_harvested');
       return '<div class="aqua-unit-row">'
         + '<div style="flex:1;">'
           + '<div class="aqua-unit-name">' + escapeHtmlAqua(c.species) + '</div>'
@@ -23551,7 +23579,7 @@
       y += 12;
     }
     section(t('aqua_biometry_h1'), data.biometryEvents, e => e.avg_weight_g + ' g (n=' + e.sample_size + ')');
-    section(t('aqua_mortality_h1'), data.mortalityEvents, e => String(e.qty) + ' · ' + e.cause);
+    section(t('aqua_mortality_h1'), data.mortalityEvents, e => String(e.qty) + ' · ' + aquaMortalityCauseLabel(e.cause));
     section(t('aqua_feeding_history_label'), data.feedingEvents, e => e.kg + ' kg' + (e.type ? ' · ' + e.type : ''));
 
     const filename = 'aqua-logbook-' + (unit?unit.name.replace(/\s+/g,'-').toLowerCase():'unit') + '-' + new Date().toISOString().slice(0,10) + '.pdf';
