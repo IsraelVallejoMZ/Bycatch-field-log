@@ -5862,11 +5862,12 @@
     </div>
   </div>
   <main>
-    <div id="sportStatsScopeToggle" style="display:flex; gap:8px; margin-bottom:14px;">
-      <button type="button" class="sport-stats-scope-btn" data-scope="session" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_this_session">This session</button>
-      <button type="button" class="sport-stats-scope-btn" data-scope="all" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_all_time">All time</button>
+    <div id="sportStatsScopeToggle" style="display:flex; gap:6px; margin-bottom:14px;">
+      <button type="button" class="sport-stats-scope-btn" data-scope="session" style="flex:1; border:none; border-radius:14px; padding:11px 2px; font-family:var(--display); font-weight:600; font-size:12px; cursor:pointer;" data-i18n="sp_stats_this_session">This session</button>
+      <button type="button" class="sport-stats-scope-btn" data-scope="all" style="flex:1; border:none; border-radius:14px; padding:11px 2px; font-family:var(--display); font-weight:600; font-size:12px; cursor:pointer;" data-i18n="sp_stats_all_time">All time</button>
+      <button type="button" class="sport-stats-scope-btn" data-scope="achievements" style="flex:1; border:none; border-radius:14px; padding:11px 2px; font-family:var(--display); font-weight:600; font-size:12px; cursor:pointer;" data-i18n="sp_ach_title">Achievements</button>
     </div>
-    <div class="card" id="sportAchievementsCard"></div>
+    <div class="card" id="sportAchievementsCard" style="display:none;"></div>
     <div id="sportStatsBody"></div>
   </main>
 </section>
@@ -17516,12 +17517,22 @@
     return sessions.length ? sessions[0].session_id : null;
   }
   function renderSportStats(){
-    renderSportAchievementsCard();
     document.querySelectorAll('.sport-stats-scope-btn').forEach(btn => {
       const active = btn.dataset.scope === sportStatsScope;
       btn.style.background = active ? 'var(--sport-coral, #EE6C4D)' : '#EEF3F0';
       btn.style.color = active ? '#fff' : 'var(--ink-soft)';
     });
+    const achCard = document.getElementById('sportAchievementsCard');
+    const body = document.getElementById('sportStatsBody');
+    if(sportStatsScope === 'achievements'){
+      achCard.style.display = '';
+      body.style.display = 'none';
+      renderSportAchievementsCard();
+      return;
+    }
+    achCard.style.display = 'none';
+    body.style.display = '';
+
     const allCatches = load(CATCHES_KEY);
     const allSessions = load(SESSIONS_KEY);
     let catches = allCatches;
@@ -17531,7 +17542,6 @@
       catches = sid ? allCatches.filter(c => c.session_id === sid) : [];
       sessions = sid ? allSessions.filter(s => s.session_id === sid) : [];
     }
-    const body = document.getElementById('sportStatsBody');
     if(catches.length === 0){
       body.innerHTML = '<div class="empty">' + (sportStatsScope === 'session' ? t('sp_stats_no_session_catches') : t('sp_stats_no_catches_alltime')) + '</div>';
       return;
