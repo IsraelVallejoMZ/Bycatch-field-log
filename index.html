@@ -113,6 +113,7 @@
   body.mode-sport #sportEndSessionBtn{ background: var(--paper); color: var(--ink-soft, #5E7168); border: none; box-shadow: none; }
   body.mode-sport #sportKeptBtn.active{ box-shadow: inset 0 0 0 2px #6B2412; }
   body.mode-sport #sportReleasedBtn.active{ box-shadow: inset 0 0 0 2px #0F8A7E; }
+  body.mode-sport #sportEscapedBtn.active{ box-shadow: inset 0 0 0 2px #7A5A1F; }
 
   /* ===== Field Research palette override — "Ocean Bright" =====
      Exact token values ported from Israel's Claude-Design reference
@@ -1860,6 +1861,38 @@
     background: rgba(255,255,255,0.12); color: var(--paper);
   }
 
+  /* ===== Sport: Achievements card + badge detail/share sheet ===== */
+  .sport-ach-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .sport-ach-title{ font-family:var(--display,inherit); font-weight:700; font-size:15px; color:var(--ink); }
+  .sport-ach-count{ font-family:ui-monospace,monospace; font-size:11px; color:#B8842A; background:#FBEFD8; padding:3px 9px; border-radius:20px; font-weight:600; }
+  .sport-ach-sub{ font-size:11.5px; color:var(--ink-soft); margin-bottom:14px; }
+  .sport-ach-cat-label{ font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:14px 0 8px; }
+  .sport-ach-cat-label:first-of-type{ margin-top:0; }
+  .sport-ach-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .sport-badge-tile{ display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; padding:8px 4px; border-radius:14px; transition:background .15s; border:none; background:none; font-family:inherit; }
+  .sport-badge-tile:active{ background:#FBEFD8; }
+  .sport-badge-icon-wrap{ width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
+  .sport-badge-icon-wrap.unlocked{ background:linear-gradient(160deg,#FCE7BE,#F6D089); box-shadow:0 3px 8px rgba(217,164,65,.35), inset 0 0 0 2px #fff; }
+  .sport-badge-icon-wrap.locked{ background:#F2EFE9; box-shadow:inset 0 0 0 2px #fff; }
+  .sport-badge-icon-wrap svg{ width:26px; height:26px; fill:none; stroke:#B8842A; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .sport-badge-icon-wrap.locked svg{ stroke:#C9C2B8; }
+  .sport-badge-name{ font-size:10.5px; font-weight:600; color:var(--ink); text-align:center; line-height:1.25; }
+  .sport-badge-name.locked{ color:var(--ink-soft); }
+  .sport-badge-progress{ font-family:ui-monospace,monospace; font-size:9px; color:var(--ink-soft); }
+  .sport-lock-pin{ position:absolute; bottom:-2px; right:-2px; width:17px; height:17px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+  .sport-lock-pin svg{ width:9px; height:9px; stroke:#B0A99C; }
+
+  .sport-badge-overlay{ position:fixed; inset:0; z-index:75; background:rgba(30,20,10,.5); display:none; align-items:flex-end; justify-content:center; }
+  .sport-badge-overlay.open{ display:flex; }
+  .sport-badge-sheet{ width:100%; max-width:400px; background:var(--paper,#FFF9F2); border-radius:22px 22px 0 0; padding:22px 20px calc(26px + env(safe-area-inset-bottom, 0px)); text-align:center; }
+  .sport-share-card{ width:220px; height:220px; margin:0 auto 16px; border-radius:20px; background:var(--sport-sunrise, linear-gradient(135deg,#F9B45C 0%,#EE6C4D 58%,#E0556A 100%)); display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; box-shadow:0 8px 20px rgba(238,108,77,.35); }
+  .sport-share-card .sport-badge-icon-wrap{ background:rgba(255,255,255,.92); width:70px; height:70px; }
+  .sport-share-card .sport-badge-icon-wrap svg{ width:34px; height:34px; }
+  .sport-share-card .ssc-name{ font-weight:700; font-size:15px; margin-top:10px; }
+  .sport-share-card .ssc-brand{ font-family:ui-monospace,monospace; font-size:9px; letter-spacing:.08em; opacity:.85; margin-top:5px; }
+  .sport-badge-modal-title{ font-weight:700; font-size:16px; color:var(--ink); margin-bottom:4px; }
+  .sport-badge-modal-desc{ font-size:12.5px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5; }
+
   /* ===== Mode select screen ===== */
   #screen-mode-select,
   #screen-fleet-role-select{ background: #0e1b26; }
@@ -2596,11 +2629,11 @@
       <div class="grid2">
         <div>
           <label for="length" data-i18n="rec_length_label">Length (cm)</label>
-          <input type="number" id="length" inputmode="decimal" placeholder="0.0">
+          <input type="number" id="length" inputmode="decimal" min="0" placeholder="0.0">
         </div>
         <div>
           <label for="weight" data-i18n="rec_weight_label">Weight (kg)</label>
-          <input type="number" id="weight" inputmode="decimal" step="0.001" placeholder="e.g. 0.085">
+          <input type="number" id="weight" inputmode="decimal" step="0.001" min="0" placeholder="e.g. 0.085">
         </div>
       </div>
 
@@ -2845,9 +2878,9 @@
   <div class="topbar">
     <div class="back-row">
       <button class="back-btn" data-go="home">←</button>
-      <span class="brand">Insights</span>
+      <span class="brand" data-i18n="ins_brand">Insights</span>
     </div>
-    <h1>Survey Statistics</h1>
+    <h1 data-i18n="ins_title">Survey Statistics</h1>
     <div class="site-line" id="siteLineInsights">&nbsp;</div>
   </div>
   <main>
@@ -2862,9 +2895,9 @@
     <div class="hist-condition-chips" id="insightsCampaignTabs" style="margin:0 0 4px;"></div>
     <div id="insightsSiteFilterWrap" style="margin-top:8px;"></div>
     <div class="insights-view-toggle on-light" id="insightsViewToggle" style="display:none; margin-top:10px; margin-bottom:14px;">
-      <button class="ivt-btn active" id="ivtStats">Stats</button>
-      <button class="ivt-btn" id="ivtCharts">Charts</button>
-      <button class="ivt-btn" id="ivtAdvanced">Advanced</button>
+      <button class="ivt-btn active" id="ivtStats" data-i18n="ins_tab_stats">Stats</button>
+      <button class="ivt-btn" id="ivtCharts" data-i18n="ins_tab_charts">Charts</button>
+      <button class="ivt-btn" id="ivtAdvanced" data-i18n="ins_tab_advanced">Advanced</button>
     </div>
     <div id="insightsMain">
       <!-- populated dynamically by renderInsights() -->
@@ -3997,9 +4030,13 @@
           </div>
           <div>
             <label for="fleetFuelLoaded" style="margin-top:0;" data-i18n="fltrip_fuel_loaded">Fuel Loaded (L)</label>
-            <input type="number" id="fleetFuelLoaded" inputmode="decimal" placeholder="e.g. 180">
+            <input type="number" id="fleetFuelLoaded" inputmode="decimal" min="0" placeholder="e.g. 180">
           </div>
         </div>
+
+        <label for="fleetFuelPricePerLiter"><span data-i18n="fltrip_fuel_price_per_liter">Fuel Price / Liter</span> <span class="optional-tag" data-i18n="fltrip_goal_kg_optional">— optional</span></label>
+        <input type="number" id="fleetFuelPricePerLiter" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 24.50">
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:4px;" data-i18n="fltrip_fuel_price_per_liter_hint">Used to calculate the real fuel cost automatically when you close the trip</div>
 
         <label for="fleetGoalKg" data-i18n="fltrip_goal_kg">Catch Goal (kg) <span class="optional-tag" data-i18n="fltrip_goal_kg_optional">— optional</span></label>
         <input type="number" id="fleetGoalKg" inputmode="decimal" placeholder="e.g. 5000">
@@ -5635,11 +5672,11 @@
       <div class="grid2">
         <div>
           <label for="sportCatchWeight"><span data-i18n="sp_weight_kg">Weight (kg)</span> <span class="optional-tag" data-i18n="sp_opt">opt.</span></label>
-          <input type="number" id="sportCatchWeight" inputmode="decimal" placeholder="0.0">
+          <input type="number" id="sportCatchWeight" inputmode="decimal" min="0" placeholder="0.0">
         </div>
         <div>
           <label for="sportCatchLength"><span data-i18n="sp_length_cm">Length (cm)</span> <span class="optional-tag" data-i18n="sp_opt">opt.</span></label>
-          <input type="number" id="sportCatchLength" inputmode="decimal" placeholder="0.0">
+          <input type="number" id="sportCatchLength" inputmode="decimal" min="0" placeholder="0.0">
         </div>
       </div>
 
@@ -5651,9 +5688,10 @@
       <div id="sportFightRatingTiles" style="display:flex; gap:8px; margin-bottom:6px;"></div>
 
       <label style="margin-top:14px;" data-i18n="sp_outcome">Outcome</label>
-      <div class="grid2">
-        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#F3C9BC;color:#6B2412;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;" data-i18n="sp_kept">🐟 Kept</button>
-        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#DDEFE7;color:#0F8A7E;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;" data-i18n="rec_cond_released">↩ Released</button>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+        <button type="button" class="btn btn-clear" id="sportKeptBtn" style="background:#F3C9BC;color:#6B2412;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 4px; font-size:12.5px;" data-i18n="sp_kept">🐟 Kept</button>
+        <button type="button" class="btn btn-clear" id="sportReleasedBtn" style="background:#DDEFE7;color:#0F8A7E;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 4px; font-size:12.5px;" data-i18n="rec_cond_released">↩ Released</button>
+        <button type="button" class="btn btn-clear" id="sportEscapedBtn" style="background:#EFE7DD;color:#7A5A1F;font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 4px; font-size:12.5px;" data-i18n="sp_escaped">💨 Escaped</button>
       </div>
 
       <label style="margin-top:14px;" data-i18n="sp_gps">GPS</label>
@@ -5692,6 +5730,9 @@
   <main>
     <div class="hist-meta-row">
       <span class="count" id="sportCatchLogCountLine">0 catches</span>
+      <div class="export-btn-row">
+        <button class="exportbtn" id="sportExportPhotosBtn" data-i18n="hist_photos">Photos</button>
+      </div>
     </div>
     <div id="sportCatchLogList"></div>
   </main>
@@ -5825,6 +5866,7 @@
       <button type="button" class="sport-stats-scope-btn" data-scope="session" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_this_session">This session</button>
       <button type="button" class="sport-stats-scope-btn" data-scope="all" style="flex:1; border:none; border-radius:14px; padding:11px 0; font-family:var(--display); font-weight:600; font-size:13px; cursor:pointer;" data-i18n="sp_stats_all_time">All time</button>
     </div>
+    <div class="card" id="sportAchievementsCard"></div>
     <div id="sportStatsBody"></div>
   </main>
 </section>
@@ -5872,6 +5914,20 @@
     <span data-i18n="ins_tab_stats">Stats</span>
   </button>
 </nav>
+
+<div class="sport-badge-overlay" id="sportBadgeOverlay">
+  <div class="sport-badge-sheet">
+    <div class="sport-share-card" id="sportBadgeShareCard">
+      <div class="sport-badge-icon-wrap" id="sportBadgeShareIconWrap"></div>
+      <div class="ssc-name" id="sportBadgeShareName"></div>
+      <div class="ssc-brand">FISH PULSE · SPORT</div>
+    </div>
+    <div class="sport-badge-modal-title" id="sportBadgeModalTitle"></div>
+    <div class="sport-badge-modal-desc" id="sportBadgeModalDesc"></div>
+    <button class="btn btn-save" id="sportBadgeShareBtn" style="width:100%; margin-bottom:8px; display:none;" data-i18n="sp_badge_share">Share badge</button>
+    <button class="btn btn-clear" id="sportBadgeCloseBtn" style="width:100%;" data-i18n="sp_badge_close">Close</button>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -6111,6 +6167,20 @@
       camp_past: 'Past campaigns',
       ins_title: 'Survey Statistics', ins_all_taxon: 'All taxon groups', ins_all_campaigns: 'All campaigns',
       ins_tab_stats: 'Stats', ins_tab_charts: 'Charts', ins_tab_advanced: 'Advanced',
+      ins_brand: 'Insights', ins_filtered_to: ' (filtered to {taxon})',
+      ins_kpi_records: 'Records', ins_kpi_species: 'Species', ins_kpi_sites: 'Sites', ins_kpi_gps: 'GPS',
+      ins_empty_no_records: 'No records yet.<br>Log a few specimens to see counts, length ranges, and condition breakdown here.',
+      ins_empty_no_filter_match: 'No records match this filter combination.', ins_site_filter_clear: 'Clear', ins_site_filter_done: 'Done',
+      ins_stat_condition_breakdown: 'Condition breakdown', ins_stat_by_taxon: 'Records by taxon group', ins_stat_by_species: 'Records by species',
+      ins_stat_length_range: 'Length range (cm)', ins_stat_no_length: 'No length measurements recorded yet.', ins_stat_length_by_species: 'Length by species (cm)',
+      ins_th_species: 'Species', ins_th_mean: 'Mean', ins_th_min: 'Min', ins_th_max: 'Max',
+      ins_stat_catch_volume: 'Catch volume (kg)', ins_stat_no_weight: 'No weight measurements recorded yet.', ins_stat_total_kg: 'Total kg ({n} weighed records)', ins_th_total_kg: 'Total kg',
+      ins_stat_by_gear: 'Records by gear type', ins_stat_cpue: 'CPUE', ins_cpue_empty: 'No haul duration or hook count recorded yet.',
+      ins_cpue_by_time: 'By time · specimens / hour', ins_th_site: 'Site', ins_th_hauls: 'Hauls', ins_th_spec: 'Spec.', ins_th_cpue_hr: 'CPUE /hr',
+      ins_cpue_by_hooks: 'By hooks · specimens / 100 hooks', ins_th_sets: 'Sets', ins_th_cpue_100hk: 'CPUE /100hk',
+      ins_cpue_footnote: 'Quick field reference only. Use the exported CSV in R for formal analysis.',
+      ins_chart_condition: 'Condition', ins_chart_species_freq: 'Species frequency', ins_chart_length_dist: 'Length distribution (cm)',
+      hist_chip_bycatch: 'Bycatch', hist_delete_tooltip: 'Delete', msg_confirm_delete_record: "Delete this record? This can't be undone.",
       adv_diversity_indices: 'Diversity indices', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Evenness J'",
       adv_dominant: 'Dominant', adv_rarest: 'Rarest', adv_by_site: 'By site within this scope', adv_site: 'Site',
       adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Shown as 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proportion of species i, S = species richness (Pielou 1966).",
@@ -6134,6 +6204,9 @@
       fltrip_captain: 'Captain', fltrip_select_captain: '— Select Captain —', fltrip_new_captain: '+ New Captain', fltrip_captain_name: 'Captain Name',
       fltrip_vessel: 'Vessel', fltrip_select_vessel: '— Select Vessel —', fltrip_new_vessel: '+ New Vessel', fltrip_vessel_name: 'Vessel Name',
       fltrip_default_currency: 'Default Currency', fltrip_crew_count: 'Crew Count', fltrip_fuel_loaded: 'Fuel Loaded (L)', fltrip_start_trip: 'Start Trip',
+      fltrip_fuel_price_per_liter: 'Fuel Price / Liter', fltrip_fuel_price_per_liter_hint: 'Used to calculate the real fuel cost automatically when you close the trip',
+      flclose_fuel_cost_line: 'Fuel Cost', flclose_fuel_no_price: 'No fuel price set for this trip — logged as 0 cost',
+      msg_crew_percent_invalid: 'Percentage must be between 0 and 100', msg_crew_percent_exceeds_100: 'That would put the crew share total over 100% (currently {pct}%)',
       fltrip_new_vessel_country_hint: 'This decides which country-specific fields show up for this vessel — you can change it anytime from Vessels → Compliance.',
       fltrip_duration_label: 'Trip duration', fltrip_log_haul: 'Log Haul', fltrip_log_catch: 'Log Catch', fltrip_log_protected: 'Protected', fltrip_close_trip: 'Close Trip', fltrip_quick_log: 'Quick log', fltrip_position: 'Position', fltrip_goal_kg: 'Catch Goal (kg)', fltrip_goal_kg_optional: '— optional', fltrip_nautical_charts: 'Nautical charts available', fltrip_nautical_charts_sub: 'Confirms the vessel has up-to-date nautical charts for this area before departure.', fltrip_day_label: 'Day {n}', fltrip_goal_meta: 'of goal · {goal} kg', fltrip_no_goal_set: 'No goal set for this trip', flrole_captain_short: 'Capt.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catches this trip', fltrip_hauls_this_trip: 'Hauls this trip', fltrip_view_map: 'View Map',
@@ -6299,7 +6372,38 @@
       sp_score_caption: 'Based on pressure, moon, weather, tide, and wind',
       sp_uv_legend: 'UV Index (WHO/EPA): 0-2 low · 3-5 moderate · 6-7 high · 8-10 very high · 11+ extreme', sp_uv_disclaimer: "Satellite model estimate — check the local UV index if you'll be exposed for several hours.",
       sp_ready_to_fish: 'Ready to fish?', sp_start_session_hint: 'Tap to pick a spot and method', sp_best_catch: 'Best',
+      sp_escaped: '💨 Escaped', sp_chip_kept: 'Kept', sp_chip_released: 'Released', sp_chip_escaped: 'Escaped',
+      sp_no_catches_this_session: 'No catches logged yet this session.', sp_no_catches_logged_yet: 'No catches logged yet.',
+      sp_badge_released: 'RELEASED ↩', sp_badge_escaped: 'ESCAPED 💨', sp_no_documents_yet: 'No documents added yet.',
+      sp_ach_title: 'Achievements', sp_ach_sub: 'Tap a badge to see the detail or share it',
+      sp_ach_cat_start: 'Getting started', sp_ach_cat_species: 'By species', sp_ach_cat_size: 'By size & weight', sp_ach_cat_consistency: 'By consistency', sp_ach_cat_secret: 'Secret',
+      sp_badge_share: 'Share badge', sp_badge_close: 'Close', sp_badge_secret_locked_desc: 'Keep exploring the app to unlock this one.',
+      sp_badge_share_text: 'I just unlocked "{name}" on Fish Pulse!', sp_no_photos: 'No photos to export yet', sp_photos_exported: 'photo(s) exported',
+      sp_badge_first_catch_name: 'First Cast', sp_badge_first_catch_desc: 'Log your first catch in the app.',
+      sp_badge_first_photo_name: 'Official Photographer', sp_badge_first_photo_desc: 'Add a photo to your very first logged catch.',
+      sp_badge_first_share_name: 'Good Company', sp_badge_first_share_desc: 'Share a catch or badge from the app.',
+      sp_badge_first_gps_name: 'Explorer', sp_badge_first_gps_desc: 'Log a catch using geolocation (GPS).',
+      sp_badge_species_3_name: 'Scale Baptism', sp_badge_species_3_desc: 'Catch 3 different fish species.',
+      sp_badge_species_10_name: 'Marine Biologist', sp_badge_species_10_desc: 'Catch 10 different fish species.',
+      sp_badge_species_top5_name: 'Local Specialist', sp_badge_species_top5_desc: 'Catch your most frequent species 5 times.',
+      sp_badge_solunar_catch_name: 'Under the Perfect Moon', sp_badge_solunar_catch_desc: 'Log a catch during a major or minor solunar peak.',
+      sp_badge_rare_catch_name: 'Surprise Catch', sp_badge_rare_catch_desc: "Log a species you've only caught once in your log.",
+      sp_badge_top_fight_name: 'Five-Star Fight', sp_badge_top_fight_desc: 'Log a catch with the maximum fight rating (5 stars).',
+      sp_badge_double_digit_name: 'Double Digits', sp_badge_double_digit_desc: 'Catch a fish of 10 kg or more.',
+      sp_badge_new_record_name: 'River/Sea Monster', sp_badge_new_record_desc: 'Land a catch that breaks your previous personal record.',
+      sp_badge_early_bird_name: 'Early Bird', sp_badge_early_bird_desc: 'Log a successful catch before 6:30 AM.',
+      sp_badge_night_fishing_name: 'Night Fishing', sp_badge_night_fishing_desc: 'Log a catch between 9:00 PM and 4:00 AM.',
+      sp_badge_weekend_double_name: 'Weekend Fever', sp_badge_weekend_double_desc: 'Log catches on a Saturday and the following Sunday.',
+      sp_badge_four_seasons_name: 'Four Seasons', sp_badge_four_seasons_desc: 'Log at least one catch in every season of the year.',
+      sp_badge_globetrotter_name: 'Globetrotter', sp_badge_globetrotter_desc: 'Log catches at 3 different saved spots.',
+      sp_badge_patience_secret_name: 'Golden Patience', sp_badge_patience_secret_desc: 'You logged 3 fishing outings in a row with no catches.',
+      sp_badge_escaped_secret_name: 'The One That Got Away', sp_badge_escaped_secret_desc: "Log a catch marked 'Escaped'.",
       sp_stats_this_session: 'This session', sp_stats_all_time: 'All time', sp_stats_no_session_catches: 'No catches logged in this session yet.',
+      sp_stats_no_catches_alltime: 'Log a few catches to see your personal stats.',
+      sp_stats_kpi_catches: 'Catches', sp_stats_kpi_released: 'Released', sp_stats_kpi_avg_kg: 'Avg kg', sp_stats_kpi_sessions: 'Sessions',
+      sp_stats_by_species: 'Catches by species', sp_stats_best_hours: 'Best fishing hours · Peak {h1}:00–{h2}:00',
+      sp_stats_personal_bests: 'Personal bests (by weight)', sp_stats_lure_effectiveness: 'Lure / bait effectiveness', sp_stats_top_spots: 'Top spots',
+      sp_catchlog_count_one: '{n} catch', sp_catchlog_count_other: '{n} catches', sp_catchlog_filtered_suffix: ' (filtered)',
       sp_show_off_catch: 'Show off your catch 📸', sp_fight_rating: 'How was the fight?',
       sp_row_lbl_sky: 'SKY', sp_row_lbl_trend: 'TREND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'RAIN',
       sp_row_lbl_humidity: 'HUM', sp_row_lbl_pressure: 'PRES', sp_row_lbl_wind: 'WIND', sp_row_lbl_uv: 'UV',
@@ -6319,6 +6423,7 @@
       msg_maintenance_logged: 'Maintenance logged — hour counter reset', msg_enter_fuel_reading: 'Enter a fuel reading', msg_scale_weights_saved: 'Scale weights saved',
       msg_vessel_expiry_required: 'Vessel and expiry date are required', msg_document_added: 'Document added', msg_enter_lat_lon: 'Enter both latitude and longitude',
       msg_lat_lon_range: 'Latitude must be -90 to 90, longitude -180 to 180', msg_coords_applied: 'Manual coordinates applied', msg_observer_required: 'Observer name is required',
+      msg_length_weight_negative: 'Length and weight cannot be negative',
       msg_species_name_required: 'Species name is required', msg_record_updated: 'Record updated', msg_record_saved: 'Record saved', msg_edit_cancelled: 'Edit cancelled',
       msg_zip_not_loaded: 'Zip library not loaded — check your connection', msg_no_photos: 'No photos in this set of records', msg_building_zip: 'Building zip of',
       msg_photos_lc: 'photos', msg_zip_failed: 'Could not build zip — try again', msg_no_records_export: 'No records to export', msg_csv_exported: 'CSV exported',
@@ -6341,6 +6446,8 @@
       msg_all_backed_up: 'All records backed up', msg_last: 'last', msg_records_not_backed_up: 'record(s) not backed up yet', msg_fishpulse_backup: 'Fish Pulse backup',
       msg_records_lc: 'records', msg_backup_shared: 'Backup shared', msg_backup_downloaded: 'Backup downloaded',
       flg_unknown_vessel: 'Unknown Vessel', flg_recently: 'recently', flg_expires: 'Expires', flg_tap_view_photo: 'tap to view photo',
+      fltrip_no_hauls_yet: 'No hauls logged yet this trip.', fltrip_no_catch_yet: 'No catch logged yet this trip.',
+      fltrip_catch_singular: 'catch', fltrip_catch_plural: 'catches', flcatch_ref_label: 'Ref.',
       msg_unspecified_gear: 'Unspecified gear', flcatch_no_haul_short: 'No haul', msg_no_species_logged_haul: 'No species logged yet for this haul',
       msg_species_logged_so_far: 'species logged so far for this haul', msg_edit_catch: 'Edit Catch', msg_save_changes: 'Save Changes', msg_save_return_session: 'Save & Return To Session',
       msg_profitable_trip: 'Profitable trip', msg_trip_at_loss: 'Trip operated at a loss', msg_final_margin: 'Final Margin', msg_preliminary_margin: 'Preliminary Margin',
@@ -6563,6 +6670,20 @@
       camp_past: 'Campañas anteriores',
       ins_title: 'Estadísticas de Muestreo', ins_all_taxon: 'Todos los grupos taxonómicos', ins_all_campaigns: 'Todas las campañas',
       ins_tab_stats: 'Estadísticos', ins_tab_charts: 'Gráficas', ins_tab_advanced: 'Avanzado',
+      ins_brand: 'Estadísticas', ins_filtered_to: ' (filtrado a {taxon})',
+      ins_kpi_records: 'Registros', ins_kpi_species: 'Especies', ins_kpi_sites: 'Sitios', ins_kpi_gps: 'GPS',
+      ins_empty_no_records: 'Aún no hay registros.<br>Registra algunos especímenes para ver conteos, rangos de talla y desglose de condición aquí.',
+      ins_empty_no_filter_match: 'Ningún registro coincide con esta combinación de filtros.', ins_site_filter_clear: 'Limpiar', ins_site_filter_done: 'Listo',
+      ins_stat_condition_breakdown: 'Desglose de condición', ins_stat_by_taxon: 'Registros por grupo taxonómico', ins_stat_by_species: 'Registros por especie',
+      ins_stat_length_range: 'Rango de talla (cm)', ins_stat_no_length: 'Aún no hay medidas de talla registradas.', ins_stat_length_by_species: 'Talla por especie (cm)',
+      ins_th_species: 'Especie', ins_th_mean: 'Media', ins_th_min: 'Mín', ins_th_max: 'Máx',
+      ins_stat_catch_volume: 'Volumen de captura (kg)', ins_stat_no_weight: 'Aún no hay medidas de peso registradas.', ins_stat_total_kg: 'Total kg ({n} registros pesados)', ins_th_total_kg: 'Total kg',
+      ins_stat_by_gear: 'Registros por tipo de arte', ins_stat_cpue: 'CPUE', ins_cpue_empty: 'Aún no hay duración de lance ni número de anzuelos registrados.',
+      ins_cpue_by_time: 'Por tiempo · especímenes / hora', ins_th_site: 'Sitio', ins_th_hauls: 'Lances', ins_th_spec: 'Espec.', ins_th_cpue_hr: 'CPUE /hr',
+      ins_cpue_by_hooks: 'Por anzuelos · especímenes / 100 anzuelos', ins_th_sets: 'Calas', ins_th_cpue_100hk: 'CPUE /100anz',
+      ins_cpue_footnote: 'Solo referencia rápida de campo. Usa el CSV exportado en R para análisis formal.',
+      ins_chart_condition: 'Condición', ins_chart_species_freq: 'Frecuencia de especies', ins_chart_length_dist: 'Distribución de tallas (cm)',
+      hist_chip_bycatch: 'Captura incidental', hist_delete_tooltip: 'Eliminar', msg_confirm_delete_record: '¿Eliminar este registro? Esta acción no se puede deshacer.',
       adv_diversity_indices: 'Índices de diversidad', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Equitatividad J'",
       adv_dominant: 'Dominante', adv_rarest: 'Más rara', adv_by_site: 'Por sitio dentro de este alcance', adv_site: 'Sitio',
       adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Se muestra como 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proporción de la especie i, S = riqueza de especies (Pielou 1966).",
@@ -6586,6 +6707,9 @@
       fltrip_captain: 'Capitán', fltrip_select_captain: '— Seleccionar Capitán —', fltrip_new_captain: '+ Nuevo Capitán', fltrip_captain_name: 'Nombre del Capitán',
       fltrip_vessel: 'Embarcación', fltrip_select_vessel: '— Seleccionar Embarcación —', fltrip_new_vessel: '+ Nueva Embarcación', fltrip_vessel_name: 'Nombre de la Embarcación',
       fltrip_default_currency: 'Moneda Predeterminada', fltrip_crew_count: 'Número de Tripulantes', fltrip_fuel_loaded: 'Combustible Cargado (L)', fltrip_start_trip: 'Iniciar Viaje',
+      fltrip_fuel_price_per_liter: 'Precio Combustible / Litro', fltrip_fuel_price_per_liter_hint: 'Se usa para calcular automáticamente el costo real de combustible al cerrar el viaje',
+      flclose_fuel_cost_line: 'Costo de Combustible', flclose_fuel_no_price: 'No se registró precio de combustible para este viaje — se contabilizó como costo 0',
+      msg_crew_percent_invalid: 'El porcentaje debe estar entre 0 y 100', msg_crew_percent_exceeds_100: 'Eso dejaría el total de reparto por encima de 100% (actualmente {pct}%)',
       fltrip_new_vessel_country_hint: 'Esto decide qué campos específicos de país aparecen para este barco — lo puedes cambiar cuando quieras desde Vessels → Compliance.',
       fltrip_duration_label: 'Duración del viaje', fltrip_log_haul: 'Registrar Lance', fltrip_log_catch: 'Registrar Captura', fltrip_log_protected: 'Protegida', fltrip_close_trip: 'Cerrar Viaje', fltrip_quick_log: 'Registro rápido', fltrip_position: 'Posición', fltrip_goal_kg: 'Meta de Captura (kg)', fltrip_goal_kg_optional: '— opcional', fltrip_nautical_charts: 'Cartas náuticas disponibles', fltrip_nautical_charts_sub: 'Confirma si la embarcación cuenta con cartas náuticas actualizadas para esta zona antes de zarpar.', fltrip_day_label: 'Día {n}', fltrip_goal_meta: 'de meta · {goal} kg', fltrip_no_goal_set: 'Sin meta definida para este viaje', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Capturas de este viaje', fltrip_hauls_this_trip: 'Lances de este viaje', fltrip_view_map: 'Ver Mapa',
@@ -6751,7 +6875,38 @@
       sp_score_caption: 'Basado en presión, luna, clima, marea y viento',
       sp_uv_legend: 'Índice UV (OMS/EPA): 0-2 bajo · 3-5 moderado · 6-7 alto · 8-10 muy alto · 11+ extremo', sp_uv_disclaimer: 'Estimado por modelo satelital — verifica el índice UV local si vas a exponerte varias horas.',
       sp_ready_to_fish: '¿Listo para pescar?', sp_start_session_hint: 'Toca para elegir spot y método', sp_best_catch: 'Mejor',
+      sp_escaped: '💨 Se escapó', sp_chip_kept: 'Retenido', sp_chip_released: 'Liberado', sp_chip_escaped: 'Se escapó',
+      sp_no_catches_this_session: 'Todavía no hay capturas registradas en esta sesión.', sp_no_catches_logged_yet: 'Todavía no hay capturas registradas.',
+      sp_badge_released: 'LIBERADO ↩', sp_badge_escaped: 'SE ESCAPÓ 💨', sp_no_documents_yet: 'Aún no hay documentos agregados.',
+      sp_ach_title: 'Logros', sp_ach_sub: 'Toca una medalla para ver el detalle o compartirla',
+      sp_ach_cat_start: 'Primeros pasos', sp_ach_cat_species: 'Por especies', sp_ach_cat_size: 'Por tamaño y peso', sp_ach_cat_consistency: 'Por constancia', sp_ach_cat_secret: 'Secretos',
+      sp_badge_share: 'Compartir medalla', sp_badge_close: 'Cerrar', sp_badge_secret_locked_desc: 'Sigue explorando la app para desbloquear esta.',
+      sp_badge_share_text: '¡Acabo de desbloquear "{name}" en Fish Pulse!', sp_no_photos: 'Aún no hay fotos para exportar', sp_photos_exported: 'foto(s) exportada(s)',
+      sp_badge_first_catch_name: 'Primer Lance', sp_badge_first_catch_desc: 'Registra tu primera captura en la app.',
+      sp_badge_first_photo_name: 'Fotógrafo Oficial', sp_badge_first_photo_desc: 'Añade una foto a tu primera captura registrada.',
+      sp_badge_first_share_name: 'Buen Compañero', sp_badge_first_share_desc: 'Comparte una captura o medalla desde la app.',
+      sp_badge_first_gps_name: 'Explorador', sp_badge_first_gps_desc: 'Registra una captura usando geolocalización (GPS).',
+      sp_badge_species_3_name: 'Bautizo de Escamas', sp_badge_species_3_desc: 'Captura 3 especies de peces diferentes.',
+      sp_badge_species_10_name: 'Biólogo Marino', sp_badge_species_10_desc: 'Captura 10 especies de peces diferentes.',
+      sp_badge_species_top5_name: 'Especialista Local', sp_badge_species_top5_desc: 'Captura tu especie más frecuente 5 veces.',
+      sp_badge_solunar_catch_name: 'Bajo la Luna Perfecta', sp_badge_solunar_catch_desc: 'Registra una captura durante un pico solunar mayor o menor.',
+      sp_badge_rare_catch_name: 'Captura Sorpresa', sp_badge_rare_catch_desc: 'Registra una especie que solo has capturado una vez en tu bitácora.',
+      sp_badge_top_fight_name: 'Pelea de Cinco Estrellas', sp_badge_top_fight_desc: 'Registra una captura con calificación máxima de pelea (5 estrellas).',
+      sp_badge_double_digit_name: 'Doble Dígito', sp_badge_double_digit_desc: 'Captura un pez de 10 kg o más.',
+      sp_badge_new_record_name: 'Monstruo de Río/Mar', sp_badge_new_record_desc: 'Logra una captura que rompa tu récord personal anterior.',
+      sp_badge_early_bird_name: 'Madrugador', sp_badge_early_bird_desc: 'Registra una captura exitosa antes de las 6:30 AM.',
+      sp_badge_night_fishing_name: 'Pesca Nocturna', sp_badge_night_fishing_desc: 'Registra una captura entre las 9:00 PM y las 4:00 AM.',
+      sp_badge_weekend_double_name: 'Fiebre de Fin de Semana', sp_badge_weekend_double_desc: 'Registra capturas un sábado y el domingo siguiente.',
+      sp_badge_four_seasons_name: 'Cuatro Estaciones', sp_badge_four_seasons_desc: 'Registra al menos una captura en cada estación del año.',
+      sp_badge_globetrotter_name: 'Trotamundos', sp_badge_globetrotter_desc: 'Registra capturas en 3 spots guardados diferentes.',
+      sp_badge_patience_secret_name: 'Paciencia de Oro', sp_badge_patience_secret_desc: 'Registraste 3 salidas de pesca seguidas sin capturas.',
+      sp_badge_escaped_secret_name: 'El que se Escapó', sp_badge_escaped_secret_desc: "Registra una captura marcada como 'Se escapó'.",
       sp_stats_this_session: 'Esta sesión', sp_stats_all_time: 'Todo el tiempo', sp_stats_no_session_catches: 'Todavía no hay capturas registradas en esta sesión.',
+      sp_stats_no_catches_alltime: 'Registra algunas capturas para ver tus estadísticas personales.',
+      sp_stats_kpi_catches: 'Capturas', sp_stats_kpi_released: 'Liberadas', sp_stats_kpi_avg_kg: 'Prom. kg', sp_stats_kpi_sessions: 'Sesiones',
+      sp_stats_by_species: 'Capturas por especie', sp_stats_best_hours: 'Mejores horas de pesca · Pico {h1}:00–{h2}:00',
+      sp_stats_personal_bests: 'Récords personales (por peso)', sp_stats_lure_effectiveness: 'Efectividad de señuelo / carnada', sp_stats_top_spots: 'Mejores sitios',
+      sp_catchlog_count_one: '{n} captura', sp_catchlog_count_other: '{n} capturas', sp_catchlog_filtered_suffix: ' (filtrado)',
       sp_show_off_catch: 'Presume tu captura 📸', sp_fight_rating: '¿Cómo estuvo la pelea?',
       sp_row_lbl_sky: 'CIELO', sp_row_lbl_trend: 'TEND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'LLUVIA',
       sp_row_lbl_humidity: 'HUM', sp_row_lbl_pressure: 'PRES', sp_row_lbl_wind: 'VIENTO', sp_row_lbl_uv: 'UV',
@@ -6771,6 +6926,7 @@
       msg_maintenance_logged: 'Mantenimiento registrado — contador de horas reiniciado', msg_enter_fuel_reading: 'Ingresa una lectura de combustible', msg_scale_weights_saved: 'Pesos de báscula guardados',
       msg_vessel_expiry_required: 'La embarcación y la fecha de vencimiento son obligatorias', msg_document_added: 'Documento agregado', msg_enter_lat_lon: 'Ingresa latitud y longitud',
       msg_lat_lon_range: 'La latitud debe ser de -90 a 90, la longitud de -180 a 180', msg_coords_applied: 'Coordenadas manuales aplicadas', msg_observer_required: 'El nombre del observador es obligatorio',
+      msg_length_weight_negative: 'La talla y el peso no pueden ser negativos',
       msg_species_name_required: 'El nombre de la especie es obligatorio', msg_record_updated: 'Registro actualizado', msg_record_saved: 'Registro guardado', msg_edit_cancelled: 'Edición cancelada',
       msg_zip_not_loaded: 'La librería de zip no cargó — revisa tu conexión', msg_no_photos: 'No hay fotos en este conjunto de registros', msg_building_zip: 'Armando zip de',
       msg_photos_lc: 'fotos', msg_zip_failed: 'No se pudo crear el zip — intenta de nuevo', msg_no_records_export: 'No hay registros para exportar', msg_csv_exported: 'CSV exportado',
@@ -6793,6 +6949,8 @@
       msg_all_backed_up: 'Todos los registros respaldados', msg_last: 'último', msg_records_not_backed_up: 'registro(s) sin respaldar', msg_fishpulse_backup: 'Respaldo de Fish Pulse',
       msg_records_lc: 'registros', msg_backup_shared: 'Respaldo compartido', msg_backup_downloaded: 'Respaldo descargado',
       flg_unknown_vessel: 'Embarcación Desconocida', flg_recently: 'recientemente', flg_expires: 'Vence', flg_tap_view_photo: 'toca para ver la foto',
+      fltrip_no_hauls_yet: 'Aún no hay lances registrados en este viaje.', fltrip_no_catch_yet: 'Aún no hay capturas registradas en este viaje.',
+      fltrip_catch_singular: 'captura', fltrip_catch_plural: 'capturas', flcatch_ref_label: 'Ref.',
       msg_unspecified_gear: 'Arte no especificado', flcatch_no_haul_short: 'Sin lance', msg_no_species_logged_haul: 'Aún no hay especies registradas para este lance',
       msg_species_logged_so_far: 'especies registradas hasta ahora para este lance', msg_edit_catch: 'Editar Captura', msg_save_changes: 'Guardar Cambios', msg_save_return_session: 'Guardar y Volver a la Sesión',
       msg_profitable_trip: 'Viaje rentable', msg_trip_at_loss: 'Viaje operó con pérdida', msg_final_margin: 'Margen Final', msg_preliminary_margin: 'Margen Preliminar',
@@ -7015,6 +7173,20 @@
       camp_past: 'Campagne passate',
       ins_title: 'Statistiche di Rilevamento', ins_all_taxon: 'Tutti i gruppi tassonomici', ins_all_campaigns: 'Tutte le campagne',
       ins_tab_stats: 'Statistiche', ins_tab_charts: 'Grafici', ins_tab_advanced: 'Avanzate',
+      ins_brand: 'Statistiche', ins_filtered_to: ' (filtrato a {taxon})',
+      ins_kpi_records: 'Schede', ins_kpi_species: 'Specie', ins_kpi_sites: 'Siti', ins_kpi_gps: 'GPS',
+      ins_empty_no_records: 'Ancora nessuna scheda.<br>Registra alcuni esemplari per vedere qui conteggi, intervalli di lunghezza e ripartizione per condizione.',
+      ins_empty_no_filter_match: 'Nessuna scheda corrisponde a questa combinazione di filtri.', ins_site_filter_clear: 'Cancella', ins_site_filter_done: 'Fatto',
+      ins_stat_condition_breakdown: 'Ripartizione per condizione', ins_stat_by_taxon: 'Schede per gruppo tassonomico', ins_stat_by_species: 'Schede per specie',
+      ins_stat_length_range: 'Intervallo di lunghezza (cm)', ins_stat_no_length: 'Ancora nessuna misura di lunghezza registrata.', ins_stat_length_by_species: 'Lunghezza per specie (cm)',
+      ins_th_species: 'Specie', ins_th_mean: 'Media', ins_th_min: 'Min', ins_th_max: 'Max',
+      ins_stat_catch_volume: 'Volume di cattura (kg)', ins_stat_no_weight: 'Ancora nessuna misura di peso registrata.', ins_stat_total_kg: 'Totale kg ({n} schede pesate)', ins_th_total_kg: 'Totale kg',
+      ins_stat_by_gear: 'Schede per tipo di attrezzo', ins_stat_cpue: 'CPUE', ins_cpue_empty: 'Ancora nessuna durata di calata o numero di ami registrato.',
+      ins_cpue_by_time: 'Per tempo · esemplari / ora', ins_th_site: 'Sito', ins_th_hauls: 'Calate', ins_th_spec: 'Esemp.', ins_th_cpue_hr: 'CPUE /ora',
+      ins_cpue_by_hooks: 'Per ami · esemplari / 100 ami', ins_th_sets: 'Cale', ins_th_cpue_100hk: 'CPUE /100ami',
+      ins_cpue_footnote: 'Solo riferimento rapido sul campo. Usa il CSV esportato in R per analisi formali.',
+      ins_chart_condition: 'Condizione', ins_chart_species_freq: 'Frequenza delle specie', ins_chart_length_dist: 'Distribuzione delle lunghezze (cm)',
+      hist_chip_bycatch: 'Cattura accessoria', hist_delete_tooltip: 'Elimina', msg_confirm_delete_record: 'Eliminare questa scheda? Non si può annullare.',
       adv_diversity_indices: 'Indici di diversità', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Equiripartizione J'",
       adv_dominant: 'Dominante', adv_rarest: 'Più rara', adv_by_site: 'Per sito in questo ambito', adv_site: 'Sito',
       adv_diversity_footnote: "H' = −Σpᵢ·ln(pᵢ) (Shannon 1948). Mostrato come 1−D, D=Σpᵢ² (Simpson 1949). J' = H'/ln(S), pᵢ = proporzione della specie i, S = ricchezza di specie (Pielou 1966).",
@@ -7038,6 +7210,9 @@
       fltrip_captain: 'Capitano', fltrip_select_captain: '— Seleziona Capitano —', fltrip_new_captain: '+ Nuovo Capitano', fltrip_captain_name: 'Nome del Capitano',
       fltrip_vessel: 'Imbarcazione', fltrip_select_vessel: '— Seleziona Imbarcazione —', fltrip_new_vessel: '+ Nuova Imbarcazione', fltrip_vessel_name: 'Nome Imbarcazione',
       fltrip_default_currency: 'Valuta Predefinita', fltrip_crew_count: "Numero dell'Equipaggio", fltrip_fuel_loaded: 'Carburante Caricato (L)', fltrip_start_trip: 'Avvia Viaggio',
+      fltrip_fuel_price_per_liter: 'Prezzo Carburante / Litro', fltrip_fuel_price_per_liter_hint: 'Usato per calcolare automaticamente il costo reale del carburante alla chiusura del viaggio',
+      flclose_fuel_cost_line: 'Costo Carburante', flclose_fuel_no_price: 'Nessun prezzo del carburante impostato per questo viaggio — registrato come costo 0',
+      msg_crew_percent_invalid: 'La percentuale deve essere tra 0 e 100', msg_crew_percent_exceeds_100: 'Questo porterebbe il totale della ripartizione oltre il 100% (attualmente {pct}%)',
       fltrip_new_vessel_country_hint: 'Questo decide quali campi specifici del paese appaiono per questa imbarcazione — puoi cambiarlo in qualsiasi momento da Vessels → Compliance.',
       fltrip_duration_label: 'Durata viaggio', fltrip_log_haul: 'Registra Calata', fltrip_log_catch: 'Registra Cattura', fltrip_log_protected: 'Protetta', fltrip_close_trip: 'Chiudi Viaggio', fltrip_quick_log: 'Registro rapido', fltrip_position: 'Posizione', fltrip_goal_kg: 'Obiettivo di Cattura (kg)', fltrip_goal_kg_optional: '— opzionale', fltrip_nautical_charts: 'Carte nautiche disponibili', fltrip_nautical_charts_sub: 'Conferma se la barca dispone di carte nautiche aggiornate per questa zona prima della partenza.', fltrip_day_label: 'Giorno {n}', fltrip_goal_meta: "dell'obiettivo · {goal} kg", fltrip_no_goal_set: 'Nessun obiettivo impostato per questo viaggio', flrole_captain_short: 'Cap.', flrole_ops_short: 'Ops',
       fltrip_catches_this_trip: 'Catture di questo viaggio', fltrip_hauls_this_trip: 'Calate di questo viaggio', fltrip_view_map: 'Vedi Mappa',
@@ -7182,6 +7357,27 @@
       sp_day_sun: 'Dom', sp_day_mon: 'Lun', sp_day_tue: 'Mar', sp_day_wed: 'Mer', sp_day_thu: 'Gio', sp_day_fri: 'Ven', sp_day_sat: 'Sab',
       sp_start_new_session: 'Avvia una nuova sessione', sp_spot: 'Spot', sp_no_spot_open_water: '— Nessuno Spot / Acqua Libera —', sp_new_spot: '+ Nuovo Spot', sp_spot_name: 'Nome dello Spot',
       sp_method: 'Metodo', sp_method_shore: 'Da Riva', sp_method_boat: 'Da Barca', sp_method_kayak: 'Kayak', sp_method_fly: 'Mosca', sp_method_ice: 'Pesca sul Ghiaccio',
+      sp_hero_eyebrow: 'Riferimento', sp_hero_title: 'Consulta specie', sp_catalog_title: 'Specie',
+      sp_search_placeholder: 'Cerca per nome...', sp_filter_all: 'Tutte', sp_filter_pacifico: 'Pacifico',
+      sp_filter_golfo_caribe: 'Golfo/Caraibi', sp_filter_proteccion: 'Protezione speciale', sp_filter_atlantico_eu: 'Atlantico', sp_filter_mediterraneo: 'Mediterraneo', sp_filter_golfo_tailandia: 'Golfo di Thailandia', sp_filter_andaman: 'Mare delle Andamane', sp_no_results: 'Nessuna specie corrisponde alla tua ricerca.',
+      sp_no_catalog_for_country: 'Il catalogo delle specie per %s è in arrivo — per ora copriamo solo il Messico.',
+      sp_country_mx: 'Messico', sp_country_us: 'Stati Uniti', sp_country_eu: 'Unione Europea', sp_country_th: 'Thailandia',
+      sp_status_open: 'Libera', sp_status_verify: 'Verificare', sp_status_protected: 'Protetta', sp_status_closed_now: 'In fermo ora', sp_status_quota: 'A quota',
+      sp_card_regulatory: 'Normativa', sp_card_visual: 'Identificazione visiva', sp_card_biology: 'Biologia', sp_card_source: 'Fonte e aggiornamento',
+      sp_min_size: 'Taglia minima', sp_max_size: 'Taglia massima', sp_closed_season: 'Fermo biologico',
+      sp_permanent_ban: 'Permanente — cattura vietata', sp_verify_dates: "Le date variano ogni anno — verificare",
+      sp_special_permit: 'Permesso speciale', sp_nom059: 'Stato NOM-059', sp_nom059_amenazada: 'Minacciata',
+      sp_nom059_en_peligro: 'In pericolo', sp_nom059_proteccion_especial: 'Protezione speciale', sp_cites_appendix: 'Appendice CITES',
+      sp_incidental_protocol: 'Se catturata accidentalmente', sp_protocol_reportar: 'Segnalare immediatamente — non trattenere', sp_protocol_liberar: 'Rilasciare immediatamente',
+      sp_method_longitud_total: 'lunghezza totale', sp_method_longitud_manto: 'lunghezza del mantello', sp_method_cefalotorax: 'lunghezza del cefalotorace', sp_method_ancho_caparazon: 'larghezza del carapace', sp_method_longitud_abdominal: "lunghezza dell'addome", sp_method_conteo_por_libra: 'conteggio per libbra', sp_method_longitud_furcal: 'lunghezza alla forcatura', sp_method_otro: 'misurazione speciale — vedi nota',
+      sp_banner_verify_title: 'Verificare prima di pescare', sp_banner_verify_sub: "Le date del fermo biologico cambiano ogni anno — controlla l'avviso ufficiale vigente",
+      sp_banner_open_title: 'Nessun fermo in vigore', sp_banner_protected_title: 'Protetta — cattura vietata', sp_banner_closed_title: 'In fermo biologico ora',
+      sp_banner_quota_title: 'Pesca gestita a quota', sp_banner_quota_sub: 'Nessun fermo a data fissa — pesca entro la tua quota individuale/IFQ',
+      sp_filter_alaska: 'Alaska', sp_filter_hawaii: 'Hawaii', sp_filter_atlantico_norte: 'New England/Atlantico Centrale', sp_filter_atlantico_sur: 'Atlantico Meridionale', sp_filter_golfo: 'Golfo del Messico',
+      sp_habitat: 'Habitat', sp_typical_depth: 'Profondità tipica', sp_reproductive_season: 'Stagione riproduttiva',
+      sp_iucn_en_peligro_critico: 'In pericolo critico (IUCN)', sp_iucn_vulnerable: 'Vulnerabile (IUCN)',
+      sp_no_data: 'Nessun dato aggiuntivo per ora', sp_no_description: 'Nessuna descrizione visiva per ora', sp_updated: 'Aggiornato', sp_zone: 'Zona',
+      sp_no_match_toast: 'Digita il nome di una specie qui sopra per vedere la sua scheda rapida', sp_quick_view_full: 'Tocca per la scheda completa ›', sp_premium_badge: 'Pro',
       sp_legal_notice: 'Questa informazione ha carattere orientativo/educativo e non costituisce consulenza legale né sostituisce la consultazione diretta della normativa sulla pesca vigente presso l\'autorità competente. Verifica sempre la normativa applicabile prima di prendere decisioni di cattura.',
       sp_min_size_absence_note: 'Questa specie non ha una taglia minima di cattura specifica secondo la normativa federale sulla pesca consultata — è gestita sotto permesso generale di pesca. Si raccomanda di verificare le normative statali o locali vigenti prima di presumere che non esista alcuna restrizione.',
       sp_weather_tide: 'Meteo e Marea', sp_current_location: 'nella tua posizione attuale', sp_get_conditions: 'Ottieni Condizioni',
@@ -7205,7 +7401,38 @@
       sp_score_caption: 'Basato su pressione, luna, meteo, marea e vento',
       sp_uv_legend: 'Indice UV (OMS/EPA): 0-2 basso · 3-5 moderato · 6-7 alto · 8-10 molto alto · 11+ estremo', sp_uv_disclaimer: "Stima da modello satellitare — verifica l'indice UV locale se sarai esposto per diverse ore.",
       sp_ready_to_fish: 'Pronto a pescare?', sp_start_session_hint: 'Tocca per scegliere spot e metodo', sp_best_catch: 'Migliore',
+      sp_escaped: '💨 Fuggito', sp_chip_kept: 'Trattenuto', sp_chip_released: 'Rilasciato', sp_chip_escaped: 'Fuggito',
+      sp_no_catches_this_session: 'Ancora nessuna cattura registrata in questa sessione.', sp_no_catches_logged_yet: 'Ancora nessuna cattura registrata.',
+      sp_badge_released: 'RILASCIATO ↩', sp_badge_escaped: 'FUGGITO 💨', sp_no_documents_yet: 'Ancora nessun documento aggiunto.',
+      sp_ach_title: 'Traguardi', sp_ach_sub: 'Tocca una medaglia per vedere il dettaglio o condividerla',
+      sp_ach_cat_start: 'Primi passi', sp_ach_cat_species: 'Per specie', sp_ach_cat_size: 'Per taglia e peso', sp_ach_cat_consistency: 'Per costanza', sp_ach_cat_secret: 'Segreti',
+      sp_badge_share: 'Condividi medaglia', sp_badge_close: 'Chiudi', sp_badge_secret_locked_desc: "Continua a esplorare l'app per sbloccare questa.",
+      sp_badge_share_text: 'Ho appena sbloccato "{name}" su Fish Pulse!', sp_no_photos: 'Ancora nessuna foto da esportare', sp_photos_exported: 'foto esportate',
+      sp_badge_first_catch_name: 'Primo Lancio', sp_badge_first_catch_desc: "Registra la tua prima cattura nell'app.",
+      sp_badge_first_photo_name: 'Fotografo Ufficiale', sp_badge_first_photo_desc: 'Aggiungi una foto alla tua primissima cattura registrata.',
+      sp_badge_first_share_name: 'Buona Compagnia', sp_badge_first_share_desc: "Condividi una cattura o una medaglia dall'app.",
+      sp_badge_first_gps_name: 'Esploratore', sp_badge_first_gps_desc: 'Registra una cattura usando la geolocalizzazione (GPS).',
+      sp_badge_species_3_name: 'Battesimo di Squame', sp_badge_species_3_desc: 'Cattura 3 specie di pesci diverse.',
+      sp_badge_species_10_name: 'Biologo Marino', sp_badge_species_10_desc: 'Cattura 10 specie di pesci diverse.',
+      sp_badge_species_top5_name: 'Specialista Locale', sp_badge_species_top5_desc: 'Cattura la tua specie più frequente 5 volte.',
+      sp_badge_solunar_catch_name: 'Sotto la Luna Perfetta', sp_badge_solunar_catch_desc: 'Registra una cattura durante un picco solunare maggiore o minore.',
+      sp_badge_rare_catch_name: 'Cattura a Sorpresa', sp_badge_rare_catch_desc: 'Registra una specie che hai catturato una sola volta nel tuo diario.',
+      sp_badge_top_fight_name: 'Lotta a Cinque Stelle', sp_badge_top_fight_desc: 'Registra una cattura con la valutazione massima di lotta (5 stelle).',
+      sp_badge_double_digit_name: 'Doppia Cifra', sp_badge_double_digit_desc: 'Cattura un pesce di 10 kg o più.',
+      sp_badge_new_record_name: 'Mostro di Fiume/Mare', sp_badge_new_record_desc: 'Ottieni una cattura che batte il tuo record personale precedente.',
+      sp_badge_early_bird_name: 'Mattiniero', sp_badge_early_bird_desc: 'Registra una cattura riuscita prima delle 6:30.',
+      sp_badge_night_fishing_name: 'Pesca Notturna', sp_badge_night_fishing_desc: 'Registra una cattura tra le 21:00 e le 4:00.',
+      sp_badge_weekend_double_name: 'Febbre del Weekend', sp_badge_weekend_double_desc: 'Registra catture di sabato e la domenica successiva.',
+      sp_badge_four_seasons_name: 'Quattro Stagioni', sp_badge_four_seasons_desc: "Registra almeno una cattura in ogni stagione dell'anno.",
+      sp_badge_globetrotter_name: 'Giramondo', sp_badge_globetrotter_desc: 'Registra catture in 3 spot salvati diversi.',
+      sp_badge_patience_secret_name: "Pazienza d'Oro", sp_badge_patience_secret_desc: 'Hai registrato 3 uscite di pesca di fila senza catture.',
+      sp_badge_escaped_secret_name: 'Quello che è Scappato', sp_badge_escaped_secret_desc: "Registra una cattura segnata come 'Fuggito'.",
       sp_stats_this_session: 'Questa sessione', sp_stats_all_time: 'Sempre', sp_stats_no_session_catches: 'Nessuna cattura registrata in questa sessione.',
+      sp_stats_no_catches_alltime: 'Registra alcune catture per vedere le tue statistiche personali.',
+      sp_stats_kpi_catches: 'Catture', sp_stats_kpi_released: 'Rilasciate', sp_stats_kpi_avg_kg: 'Media kg', sp_stats_kpi_sessions: 'Sessioni',
+      sp_stats_by_species: 'Catture per specie', sp_stats_best_hours: 'Migliori ore di pesca · Picco {h1}:00–{h2}:00',
+      sp_stats_personal_bests: 'Record personali (per peso)', sp_stats_lure_effectiveness: 'Efficacia esca / richiamo', sp_stats_top_spots: 'Migliori spot',
+      sp_catchlog_count_one: '{n} cattura', sp_catchlog_count_other: '{n} catture', sp_catchlog_filtered_suffix: ' (filtrato)',
       sp_show_off_catch: 'Mostra la tua cattura 📸', sp_fight_rating: 'Come è andata la lotta?',
       sp_row_lbl_sky: 'CIELO', sp_row_lbl_trend: 'TREND', sp_row_lbl_temp: 'TEMP', sp_row_lbl_precip: 'PIOGGIA',
       sp_row_lbl_humidity: 'UMID', sp_row_lbl_pressure: 'PRESS', sp_row_lbl_wind: 'VENTO', sp_row_lbl_uv: 'UV',
@@ -7225,6 +7452,7 @@
       msg_maintenance_logged: 'Manutenzione registrata — contatore ore azzerato', msg_enter_fuel_reading: 'Inserisci una lettura di carburante', msg_scale_weights_saved: 'Pesi bilancia salvati',
       msg_vessel_expiry_required: "L'imbarcazione e la data di scadenza sono obbligatorie", msg_document_added: 'Documento aggiunto', msg_enter_lat_lon: 'Inserisci latitudine e longitudine',
       msg_lat_lon_range: 'La latitudine deve essere da -90 a 90, la longitudine da -180 a 180', msg_coords_applied: 'Coordinate manuali applicate', msg_observer_required: "Il nome dell'osservatore è obbligatorio",
+      msg_length_weight_negative: 'La lunghezza e il peso non possono essere negativi',
       msg_species_name_required: 'Il nome della specie è obbligatorio', msg_record_updated: 'Scheda aggiornata', msg_record_saved: 'Scheda salvata', msg_edit_cancelled: 'Modifica annullata',
       msg_zip_not_loaded: 'Libreria zip non caricata — controlla la connessione', msg_no_photos: 'Nessuna foto in questo gruppo di schede', msg_building_zip: 'Creazione zip di',
       msg_photos_lc: 'foto', msg_zip_failed: 'Impossibile creare lo zip — riprova', msg_no_records_export: 'Nessuna scheda da esportare', msg_csv_exported: 'CSV esportato',
@@ -7247,6 +7475,8 @@
       msg_all_backed_up: 'Tutte le schede salvate', msg_last: 'ultimo', msg_records_not_backed_up: 'scheda/e non salvate', msg_fishpulse_backup: 'Backup Fish Pulse',
       msg_records_lc: 'schede', msg_backup_shared: 'Backup condiviso', msg_backup_downloaded: 'Backup scaricato',
       flg_unknown_vessel: 'Imbarcazione Sconosciuta', flg_recently: 'di recente', flg_expires: 'Scade', flg_tap_view_photo: 'tocca per vedere la foto',
+      fltrip_no_hauls_yet: 'Ancora nessuna calata registrata in questo viaggio.', fltrip_no_catch_yet: 'Ancora nessuna cattura registrata in questo viaggio.',
+      fltrip_catch_singular: 'cattura', fltrip_catch_plural: 'catture', flcatch_ref_label: 'Rif.',
       msg_unspecified_gear: 'Attrezzo non specificato', flcatch_no_haul_short: 'Nessuna calata', msg_no_species_logged_haul: 'Nessuna specie registrata ancora per questa calata',
       msg_species_logged_so_far: 'specie registrate finora per questa calata', msg_edit_catch: 'Modifica Cattura', msg_save_changes: 'Salva Modifiche', msg_save_return_session: 'Salva e Torna alla Sessione',
       msg_profitable_trip: 'Viaggio redditizio', msg_trip_at_loss: 'Viaggio in perdita', msg_final_margin: 'Margine Finale', msg_preliminary_margin: 'Margine Preliminare',
@@ -7445,6 +7675,20 @@
       camp_active: 'แคมเปญที่ใช้งานอยู่', camp_none: 'ไม่มี — บันทึกจะไม่ถูกกำหนดแคมเปญ', camp_end: 'สิ้นสุดแคมเปญ',
       camp_past: 'แคมเปญที่ผ่านมา',
       ins_title: 'สถิติการสำรวจ', ins_all_taxon: 'ทุกกลุ่มอนุกรมวิธาน', ins_all_campaigns: 'ทุกแคมเปญ',
+      ins_brand: 'สถิติ', ins_filtered_to: ' (กรองเฉพาะ {taxon})',
+      ins_kpi_records: 'บันทึก', ins_kpi_species: 'ชนิดพันธุ์', ins_kpi_sites: 'สถานที่', ins_kpi_gps: 'จีพีเอส',
+      ins_empty_no_records: 'ยังไม่มีบันทึก<br>บันทึกตัวอย่างสองสามตัวเพื่อดูจำนวน ช่วงความยาว และสัดส่วนสภาพที่นี่',
+      ins_empty_no_filter_match: 'ไม่มีบันทึกที่ตรงกับตัวกรองชุดนี้', ins_site_filter_clear: 'ล้าง', ins_site_filter_done: 'เสร็จสิ้น',
+      ins_stat_condition_breakdown: 'สัดส่วนสภาพ', ins_stat_by_taxon: 'บันทึกแยกตามกลุ่มอนุกรมวิธาน', ins_stat_by_species: 'บันทึกแยกตามชนิดพันธุ์',
+      ins_stat_length_range: 'ช่วงความยาว (ซม.)', ins_stat_no_length: 'ยังไม่มีการบันทึกความยาว', ins_stat_length_by_species: 'ความยาวแยกตามชนิดพันธุ์ (ซม.)',
+      ins_th_species: 'ชนิดพันธุ์', ins_th_mean: 'เฉลี่ย', ins_th_min: 'ต่ำสุด', ins_th_max: 'สูงสุด',
+      ins_stat_catch_volume: 'ปริมาณจับ (กก.)', ins_stat_no_weight: 'ยังไม่มีการบันทึกน้ำหนัก', ins_stat_total_kg: 'รวม {n} กก. (บันทึกที่ชั่งน้ำหนัก)', ins_th_total_kg: 'รวม กก.',
+      ins_stat_by_gear: 'บันทึกแยกตามประเภทเครื่องมือ', ins_stat_cpue: 'CPUE', ins_cpue_empty: 'ยังไม่มีการบันทึกระยะเวลาการลากอวนหรือจำนวนเบ็ด',
+      ins_cpue_by_time: 'ตามเวลา · ตัวอย่าง/ชั่วโมง', ins_th_site: 'สถานที่', ins_th_hauls: 'จำนวนลาก', ins_th_spec: 'ตัวอย่าง', ins_th_cpue_hr: 'CPUE /ชม.',
+      ins_cpue_by_hooks: 'ตามเบ็ด · ตัวอย่าง/100 เบ็ด', ins_th_sets: 'จำนวนวาง', ins_th_cpue_100hk: 'CPUE /100เบ็ด',
+      ins_cpue_footnote: 'ใช้เป็นข้อมูลอ้างอิงภาคสนามอย่างย่อเท่านั้น ใช้ไฟล์ CSV ที่ส่งออกใน R สำหรับการวิเคราะห์อย่างเป็นทางการ',
+      ins_chart_condition: 'สภาพ', ins_chart_species_freq: 'ความถี่ของชนิดพันธุ์', ins_chart_length_dist: 'การกระจายความยาว (ซม.)',
+      hist_chip_bycatch: 'สัตว์น้ำพลอยได้', hist_delete_tooltip: 'ลบ', msg_confirm_delete_record: 'ลบบันทึกนี้หรือไม่? ไม่สามารถย้อนกลับได้',
       ins_tab_stats: 'สถิติ', ins_tab_charts: 'กราฟ', ins_tab_advanced: 'ขั้นสูง',
       adv_diversity_indices: 'ดัชนีความหลากหลาย', adv_shannon: "Shannon H'", adv_simpson: 'Simpson 1-D', adv_evenness: "Evenness J'",
       adv_dominant: 'เด่น', adv_rarest: 'หายาก', adv_by_site: 'แยกตามสถานที่ในขอบเขตนี้', adv_site: 'สถานที่',
@@ -7469,6 +7713,9 @@
       fltrip_captain: 'กัปตัน', fltrip_select_captain: '— เลือกกัปตัน —', fltrip_new_captain: '+ กัปตันใหม่', fltrip_captain_name: 'ชื่อกัปตัน',
       fltrip_vessel: 'เรือ', fltrip_select_vessel: '— เลือกเรือ —', fltrip_new_vessel: '+ เรือใหม่', fltrip_vessel_name: 'ชื่อเรือ',
       fltrip_default_currency: 'สกุลเงินเริ่มต้น', fltrip_crew_count: 'จำนวนลูกเรือ', fltrip_fuel_loaded: 'เชื้อเพลิงที่เติม (ลิตร)', fltrip_start_trip: 'เริ่มทริป',
+      fltrip_fuel_price_per_liter: 'ราคาเชื้อเพลิง / ลิตร', fltrip_fuel_price_per_liter_hint: 'ใช้คำนวณต้นทุนเชื้อเพลิงจริงโดยอัตโนมัติเมื่อปิดทริป',
+      flclose_fuel_cost_line: 'ต้นทุนเชื้อเพลิง', flclose_fuel_no_price: 'ไม่ได้ตั้งราคาเชื้อเพลิงสำหรับทริปนี้ — บันทึกเป็นต้นทุน 0',
+      msg_crew_percent_invalid: 'เปอร์เซ็นต์ต้องอยู่ระหว่าง 0 ถึง 100', msg_crew_percent_exceeds_100: 'การกระทำนี้จะทำให้สัดส่วนรวมเกิน 100% (ขณะนี้ {pct}%)',
       fltrip_new_vessel_country_hint: 'สิ่งนี้กำหนดว่าฟิลด์เฉพาะประเทศใดจะปรากฏสำหรับเรือลำนี้ — คุณสามารถเปลี่ยนได้ทุกเมื่อจาก Vessels → Compliance',
       fltrip_duration_label: 'ระยะเวลาทริป', fltrip_log_haul: 'บันทึกการลากอวน', fltrip_log_catch: 'บันทึกการจับปลา', fltrip_log_protected: 'คุ้มครอง', fltrip_close_trip: 'ปิดทริป', fltrip_quick_log: 'บันทึกด่วน', fltrip_position: 'ตำแหน่ง', fltrip_goal_kg: 'เป้าหมายการจับ (กก.)', fltrip_goal_kg_optional: '— ไม่บังคับ', fltrip_nautical_charts: 'มีแผนที่เดินเรือพร้อมใช้งาน', fltrip_nautical_charts_sub: 'ยืนยันว่าเรือมีแผนที่เดินเรือที่อัปเดตสำหรับพื้นที่นี้ก่อนออกเดินทาง', fltrip_day_label: 'วันที่ {n}', fltrip_goal_meta: 'ของเป้าหมาย · {goal} กก.', fltrip_no_goal_set: 'ยังไม่ได้ตั้งเป้าหมายสำหรับทริปนี้', flrole_captain_short: 'กัปตัน', flrole_ops_short: 'ฝ่ายปฏิบัติการ',
       fltrip_catches_this_trip: 'การจับปลาในทริปนี้', fltrip_hauls_this_trip: 'การลากอวนในทริปนี้', fltrip_view_map: 'ดูแผนที่',
@@ -7613,6 +7860,27 @@
       sp_day_sun: 'อา', sp_day_mon: 'จ', sp_day_tue: 'อ', sp_day_wed: 'พ', sp_day_thu: 'พฤ', sp_day_fri: 'ศ', sp_day_sat: 'ส',
       sp_start_new_session: 'เริ่มเซสชันใหม่', sp_spot: 'จุดตกปลา', sp_no_spot_open_water: '— ไม่มีจุด / น้ำเปิด —', sp_new_spot: '+ จุดตกปลาใหม่', sp_spot_name: 'ชื่อจุดตกปลา',
       sp_method: 'วิธีการ', sp_method_shore: 'ตกจากฝั่ง', sp_method_boat: 'ตกจากเรือ', sp_method_kayak: 'คายัค', sp_method_fly: 'ตกปลาด้วยเหยื่อปลอมลอย', sp_method_ice: 'ตกปลาน้ำแข็ง',
+      sp_hero_eyebrow: 'ข้อมูลอ้างอิง', sp_hero_title: 'ค้นหาชนิดพันธุ์', sp_catalog_title: 'ชนิดพันธุ์',
+      sp_search_placeholder: 'ค้นหาตามชื่อ...', sp_filter_all: 'ทั้งหมด', sp_filter_pacifico: 'แปซิฟิก',
+      sp_filter_golfo_caribe: 'อ่าว/แคริบเบียน', sp_filter_proteccion: 'คุ้มครองพิเศษ', sp_filter_atlantico_eu: 'แอตแลนติก', sp_filter_mediterraneo: 'เมดิเตอร์เรเนียน', sp_filter_golfo_tailandia: 'อ่าวไทย', sp_filter_andaman: 'ทะเลอันดามัน', sp_no_results: 'ไม่พบชนิดพันธุ์ที่ตรงกับการค้นหาของคุณ',
+      sp_no_catalog_for_country: 'แคตตาล็อกชนิดพันธุ์สำหรับ %s กำลังจะมาเร็วๆ นี้ — ขณะนี้ครอบคลุมเฉพาะเม็กซิโก',
+      sp_country_mx: 'เม็กซิโก', sp_country_us: 'สหรัฐอเมริกา', sp_country_eu: 'สหภาพยุโรป', sp_country_th: 'ประเทศไทย',
+      sp_status_open: 'เปิดให้จับ', sp_status_verify: 'ตรวจสอบ', sp_status_protected: 'คุ้มครอง', sp_status_closed_now: 'ปิดฤดูอยู่ขณะนี้', sp_status_quota: 'จัดการโดยโควตา',
+      sp_card_regulatory: 'กฎระเบียบ', sp_card_visual: 'การระบุด้วยภาพ', sp_card_biology: 'ชีววิทยา', sp_card_source: 'แหล่งข้อมูลและการปรับปรุง',
+      sp_min_size: 'ขนาดขั้นต่ำ', sp_max_size: 'ขนาดสูงสุด', sp_closed_season: 'ฤดูปิดอ่าว',
+      sp_permanent_ban: 'ห้ามจับถาวร', sp_verify_dates: 'วันที่เปลี่ยนแปลงทุกปี — ตรวจสอบ',
+      sp_special_permit: 'ใบอนุญาตพิเศษ', sp_nom059: 'สถานะ NOM-059', sp_nom059_amenazada: 'ถูกคุกคาม',
+      sp_nom059_en_peligro: 'ใกล้สูญพันธุ์', sp_nom059_proteccion_especial: 'คุ้มครองพิเศษ', sp_cites_appendix: 'บัญชี CITES',
+      sp_incidental_protocol: 'หากจับได้โดยไม่ตั้งใจ', sp_protocol_reportar: 'แจ้งทันที — ห้ามเก็บไว้', sp_protocol_liberar: 'ปล่อยคืนทันที',
+      sp_method_longitud_total: 'ความยาวลำตัวทั้งหมด', sp_method_longitud_manto: 'ความยาวลำตัว (แมนเทิล)', sp_method_cefalotorax: 'ความยาวส่วนหัวอก', sp_method_ancho_caparazon: 'ความกว้างกระดอง', sp_method_longitud_abdominal: 'ความยาวส่วนท้อง', sp_method_conteo_por_libra: 'จำนวนตัวต่อปอนด์', sp_method_longitud_furcal: 'ความยาวถึงง่ามหาง', sp_method_otro: 'วิธีวัดพิเศษ — ดูหมายเหตุ',
+      sp_banner_verify_title: 'ตรวจสอบก่อนออกจับ', sp_banner_verify_sub: 'วันที่ปิดฤดูเปลี่ยนแปลงทุกปี — ตรวจสอบประกาศทางการฉบับล่าสุด',
+      sp_banner_open_title: 'ไม่มีการปิดฤดูในขณะนี้', sp_banner_protected_title: 'คุ้มครอง — ห้ามจับ', sp_banner_closed_title: 'อยู่ในช่วงปิดฤดูขณะนี้',
+      sp_banner_quota_title: 'ประมงที่จัดการโดยโควตา', sp_banner_quota_sub: 'ไม่มีช่วงปิดฤดูตายตัว — จับได้ภายในโควตาส่วนบุคคล/IFQ ของคุณ',
+      sp_filter_alaska: 'อะแลสกา', sp_filter_hawaii: 'ฮาวาย', sp_filter_atlantico_norte: 'นิวอิงแลนด์/แอตแลนติกกลาง', sp_filter_atlantico_sur: 'แอตแลนติกใต้', sp_filter_golfo: 'อ่าวเม็กซิโก',
+      sp_habitat: 'ถิ่นอาศัย', sp_typical_depth: 'ความลึกโดยทั่วไป', sp_reproductive_season: 'ฤดูสืบพันธุ์',
+      sp_iucn_en_peligro_critico: 'ใกล้สูญพันธุ์อย่างยิ่ง (IUCN)', sp_iucn_vulnerable: 'เสี่ยงต่อการสูญพันธุ์ (IUCN)',
+      sp_no_data: 'ยังไม่มีข้อมูลเพิ่มเติม', sp_no_description: 'ยังไม่มีคำอธิบายลักษณะภายนอก', sp_updated: 'อัปเดตล่าสุด', sp_zone: 'เขต',
+      sp_no_match_toast: 'พิมพ์ชื่อชนิดพันธุ์ด้านบนเพื่อดูข้อมูลอย่างย่อ', sp_quick_view_full: 'แตะเพื่อดูข้อมูลฉบับเต็ม ›', sp_premium_badge: 'Pro',
       sp_legal_notice: 'ข้อมูลนี้มีไว้เพื่อเป็นแนวทาง/การศึกษาเท่านั้น ไม่ถือเป็นคำแนะนำทางกฎหมายและไม่ทดแทนการตรวจสอบกฎระเบียบประมงที่บังคับใช้กับหน่วยงานที่มีอำนาจโดยตรง ควรตรวจสอบกฎระเบียบที่บังคับใช้เสมอก่อนตัดสินใจจับสัตว์น้ำ',
       sp_min_size_absence_note: 'ชนิดพันธุ์นี้ไม่มีขนาดจับขั้นต่ำเฉพาะตามกฎระเบียบประมงของรัฐบาลกลางที่ตรวจสอบ — อยู่ภายใต้ใบอนุญาตจับปลาทั่วไป ขอแนะนำให้ตรวจสอบกฎระเบียบระดับรัฐหรือท้องถิ่นที่บังคับใช้ก่อนสันนิษฐานว่าไม่มีข้อจำกัด',
       sp_weather_tide: 'สภาพอากาศและน้ำขึ้นน้ำลง', sp_current_location: 'ที่ตำแหน่งปัจจุบันของคุณ', sp_get_conditions: 'ดูสภาพอากาศ',
@@ -7636,7 +7904,38 @@
       sp_score_caption: 'คำนวณจากความกดอากาศ ดวงจันทร์ สภาพอากาศ น้ำขึ้นน้ำลง และลม',
       sp_uv_legend: 'ดัชนี UV (WHO/EPA): 0-2 ต่ำ · 3-5 ปานกลาง · 6-7 สูง · 8-10 สูงมาก · 11+ รุนแรง', sp_uv_disclaimer: 'ประมาณการจากแบบจำลองดาวเทียม — ตรวจสอบดัชนี UV ในพื้นที่หากต้องอยู่กลางแจ้งเป็นเวลาหลายชั่วโมง',
       sp_ready_to_fish: 'พร้อมตกปลาหรือยัง', sp_start_session_hint: 'แตะเพื่อเลือกจุดตกปลาและวิธีการ', sp_best_catch: 'ดีที่สุด',
+      sp_escaped: '💨 หลุดไป', sp_chip_kept: 'เก็บไว้', sp_chip_released: 'ปล่อยคืน', sp_chip_escaped: 'หลุดไป',
+      sp_no_catches_this_session: 'ยังไม่มีการบันทึกการจับปลาในเซสชันนี้', sp_no_catches_logged_yet: 'ยังไม่มีการบันทึกการจับปลา',
+      sp_badge_released: 'ปล่อยคืนแล้ว ↩', sp_badge_escaped: 'หลุดไป 💨', sp_no_documents_yet: 'ยังไม่มีเอกสารที่เพิ่ม',
+      sp_ach_title: 'ความสำเร็จ', sp_ach_sub: 'แตะเหรียญตราเพื่อดูรายละเอียดหรือแชร์',
+      sp_ach_cat_start: 'เริ่มต้น', sp_ach_cat_species: 'ตามชนิดพันธุ์', sp_ach_cat_size: 'ตามขนาดและน้ำหนัก', sp_ach_cat_consistency: 'ตามความสม่ำเสมอ', sp_ach_cat_secret: 'ความลับ',
+      sp_badge_share: 'แชร์เหรียญตรา', sp_badge_close: 'ปิด', sp_badge_secret_locked_desc: 'สำรวจแอปต่อไปเพื่อปลดล็อกอันนี้',
+      sp_badge_share_text: 'ฉันเพิ่งปลดล็อก "{name}" ใน Fish Pulse!', sp_no_photos: 'ยังไม่มีรูปภาพให้ส่งออก', sp_photos_exported: 'รูปภาพที่ส่งออก',
+      sp_badge_first_catch_name: 'นักตกครั้งแรก', sp_badge_first_catch_desc: 'บันทึกการจับปลาครั้งแรกของคุณในแอป',
+      sp_badge_first_photo_name: 'ช่างภาพมืออาชีพ', sp_badge_first_photo_desc: 'เพิ่มรูปภาพให้กับการจับปลาครั้งแรกที่บันทึกไว้',
+      sp_badge_first_share_name: 'เพื่อนที่ดี', sp_badge_first_share_desc: 'แชร์การจับปลาหรือเหรียญตราจากแอป',
+      sp_badge_first_gps_name: 'นักสำรวจ', sp_badge_first_gps_desc: 'บันทึกการจับปลาโดยใช้ตำแหน่ง GPS',
+      sp_badge_species_3_name: 'พิธีบัพติศมาเกล็ดปลา', sp_badge_species_3_desc: 'จับปลา 3 ชนิดพันธุ์ที่แตกต่างกัน',
+      sp_badge_species_10_name: 'นักชีววิทยาทางทะเล', sp_badge_species_10_desc: 'จับปลา 10 ชนิดพันธุ์ที่แตกต่างกัน',
+      sp_badge_species_top5_name: 'ผู้เชี่ยวชาญท้องถิ่น', sp_badge_species_top5_desc: 'จับชนิดพันธุ์ที่พบบ่อยที่สุดของคุณ 5 ครั้ง',
+      sp_badge_solunar_catch_name: 'ใต้แสงจันทร์สมบูรณ์แบบ', sp_badge_solunar_catch_desc: 'บันทึกการจับปลาในช่วงพีคหลักหรือรองของโซลูนาร์',
+      sp_badge_rare_catch_name: 'การจับที่น่าประหลาดใจ', sp_badge_rare_catch_desc: 'บันทึกชนิดพันธุ์ที่คุณจับได้เพียงครั้งเดียวในบันทึกของคุณ',
+      sp_badge_top_fight_name: 'การต่อสู้ 5 ดาว', sp_badge_top_fight_desc: 'บันทึกการจับปลาด้วยคะแนนการต่อสู้สูงสุด (5 ดาว)',
+      sp_badge_double_digit_name: 'สองหลัก', sp_badge_double_digit_desc: 'จับปลาที่มีน้ำหนัก 10 กก. ขึ้นไป',
+      sp_badge_new_record_name: 'อสูรแห่งแม่น้ำ/ทะเล', sp_badge_new_record_desc: 'ทำลายสถิติส่วนตัวก่อนหน้าของคุณ',
+      sp_badge_early_bird_name: 'ตื่นเช้า', sp_badge_early_bird_desc: 'บันทึกการจับปลาสำเร็จก่อน 6:30 น.',
+      sp_badge_night_fishing_name: 'ตกปลากลางคืน', sp_badge_night_fishing_desc: 'บันทึกการจับปลาระหว่าง 21:00 น. ถึง 4:00 น.',
+      sp_badge_weekend_double_name: 'ไข้วันหยุดสุดสัปดาห์', sp_badge_weekend_double_desc: 'บันทึกการจับปลาในวันเสาร์และวันอาทิตย์ถัดไป',
+      sp_badge_four_seasons_name: 'สี่ฤดูกาล', sp_badge_four_seasons_desc: 'บันทึกการจับปลาอย่างน้อยหนึ่งครั้งในแต่ละฤดูกาล',
+      sp_badge_globetrotter_name: 'นักเดินทางรอบโลก', sp_badge_globetrotter_desc: 'บันทึกการจับปลาใน 3 จุดตกปลาที่บันทึกไว้ต่างกัน',
+      sp_badge_patience_secret_name: 'ความอดทนสีทอง', sp_badge_patience_secret_desc: 'คุณบันทึก 3 ทริปตกปลาติดต่อกันโดยไม่มีการจับปลา',
+      sp_badge_escaped_secret_name: 'ตัวที่หลุดไป', sp_badge_escaped_secret_desc: "บันทึกการจับปลาที่ทำเครื่องหมายว่า 'หลุดไป'",
       sp_stats_this_session: 'เซสชันนี้', sp_stats_all_time: 'ทั้งหมด', sp_stats_no_session_catches: 'ยังไม่มีการบันทึกการจับปลาในเซสชันนี้',
+      sp_stats_no_catches_alltime: 'บันทึกการจับปลาสองสามครั้งเพื่อดูสถิติส่วนตัวของคุณ',
+      sp_stats_kpi_catches: 'จำนวนที่จับ', sp_stats_kpi_released: 'ปล่อยคืน', sp_stats_kpi_avg_kg: 'เฉลี่ย กก.', sp_stats_kpi_sessions: 'เซสชัน',
+      sp_stats_by_species: 'จำนวนที่จับแยกตามชนิดพันธุ์', sp_stats_best_hours: 'ช่วงเวลาตกปลาที่ดีที่สุด · จุดสูงสุด {h1}:00–{h2}:00',
+      sp_stats_personal_bests: 'สถิติส่วนตัว (ตามน้ำหนัก)', sp_stats_lure_effectiveness: 'ประสิทธิภาพเหยื่อล่อ / เหยื่อ', sp_stats_top_spots: 'จุดตกปลายอดนิยม',
+      sp_catchlog_count_one: '{n} ตัว', sp_catchlog_count_other: '{n} ตัว', sp_catchlog_filtered_suffix: ' (กรองแล้ว)',
       sp_show_off_catch: 'อวดปลาที่จับได้ 📸', sp_fight_rating: 'การต่อสู้เป็นอย่างไรบ้าง',
       sp_row_lbl_sky: 'ท้องฟ้า', sp_row_lbl_trend: 'แนวโน้ม', sp_row_lbl_temp: 'อุณหภูมิ', sp_row_lbl_precip: 'ฝน',
       sp_row_lbl_humidity: 'ความชื้น', sp_row_lbl_pressure: 'ความกด', sp_row_lbl_wind: 'ลม', sp_row_lbl_uv: 'UV',
@@ -7656,6 +7955,7 @@
       msg_maintenance_logged: 'บันทึกการบำรุงรักษาแล้ว — รีเซ็ตตัวนับชั่วโมง', msg_enter_fuel_reading: 'กรุณากรอกค่าเชื้อเพลิง', msg_scale_weights_saved: 'บันทึกน้ำหนักจากตาชั่งแล้ว',
       msg_vessel_expiry_required: 'ต้องระบุเรือและวันหมดอายุ', msg_document_added: 'เพิ่มเอกสารแล้ว', msg_enter_lat_lon: 'กรุณากรอกละติจูดและลองจิจูด',
       msg_lat_lon_range: 'ละติจูดต้องอยู่ระหว่าง -90 ถึง 90 ลองจิจูดต้องอยู่ระหว่าง -180 ถึง 180', msg_coords_applied: 'ใช้พิกัดที่กรอกเองแล้ว', msg_observer_required: 'ต้องระบุชื่อผู้สังเกตการณ์',
+      msg_length_weight_negative: 'ความยาวและน้ำหนักต้องไม่ติดลบ',
       msg_species_name_required: 'ต้องระบุชื่อชนิดพันธุ์', msg_record_updated: 'อัปเดตบันทึกแล้ว', msg_record_saved: 'บันทึกข้อมูลแล้ว', msg_edit_cancelled: 'ยกเลิกการแก้ไขแล้ว',
       msg_zip_not_loaded: 'ไลบรารี zip ไม่โหลด — ตรวจสอบการเชื่อมต่อของคุณ', msg_no_photos: 'ไม่มีรูปภาพในชุดบันทึกนี้', msg_building_zip: 'กำลังสร้างไฟล์ zip จำนวน',
       msg_photos_lc: 'รูปภาพ', msg_zip_failed: 'ไม่สามารถสร้างไฟล์ zip ได้ — ลองอีกครั้ง', msg_no_records_export: 'ไม่มีบันทึกให้ส่งออก', msg_csv_exported: 'ส่งออก CSV แล้ว',
@@ -7678,6 +7978,8 @@
       msg_all_backed_up: 'สำรองข้อมูลบันทึกทั้งหมดแล้ว', msg_last: 'ล่าสุด', msg_records_not_backed_up: 'บันทึกที่ยังไม่ได้สำรอง', msg_fishpulse_backup: 'การสำรองข้อมูล Fish Pulse',
       msg_records_lc: 'บันทึก', msg_backup_shared: 'แชร์การสำรองข้อมูลแล้ว', msg_backup_downloaded: 'ดาวน์โหลดการสำรองข้อมูลแล้ว',
       flg_unknown_vessel: 'เรือไม่ทราบชื่อ', flg_recently: 'เมื่อเร็วๆ นี้', flg_expires: 'หมดอายุ', flg_tap_view_photo: 'แตะเพื่อดูรูปภาพ',
+      fltrip_no_hauls_yet: 'ยังไม่มีการบันทึกการลากอวนในทริปนี้', fltrip_no_catch_yet: 'ยังไม่มีการบันทึกการจับในทริปนี้',
+      fltrip_catch_singular: 'การจับ', fltrip_catch_plural: 'การจับ', flcatch_ref_label: 'อ้างอิง',
       msg_unspecified_gear: 'เครื่องมือประมงที่ไม่ระบุ', flcatch_no_haul_short: 'ไม่มีการลากอวน', msg_no_species_logged_haul: 'ยังไม่มีชนิดพันธุ์ที่บันทึกสำหรับการลากอวนนี้',
       msg_species_logged_so_far: 'ชนิดพันธุ์ที่บันทึกไว้แล้วสำหรับการลากอวนนี้', msg_edit_catch: 'แก้ไขการจับปลา', msg_save_changes: 'บันทึกการเปลี่ยนแปลง', msg_save_return_session: 'บันทึกและกลับไปที่เซสชัน',
       msg_profitable_trip: 'ทริปที่มีกำไร', msg_trip_at_loss: 'ทริปที่ขาดทุน', msg_final_margin: 'กำไรขั้นต้นสุดท้าย', msg_preliminary_margin: 'กำไรขั้นต้นเบื้องต้น',
@@ -8324,8 +8626,17 @@
   const CREW_KEY = 'fleet_crew_v1';
   const ACTIVE_TRIP_KEY = 'fleet_active_trip_id';
 
+  // The random tail draws from crypto.randomUUID() (32 bits of real
+  // entropy) rather than Math.random() (~20 bits) so two records created
+  // in the same millisecond can't collide — matters once this id becomes
+  // the sync primary key against Supabase, given how many ids Fleet mints
+  // per trip (hauls, catches, costs, crew shares, sales...). Falls back to
+  // Math.random() only if crypto.randomUUID isn't available (older WebViews).
   function uid(){
-    return 'F-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    const rand = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase()
+      : Math.random().toString(36).slice(2,6).toUpperCase();
+    return 'F-' + Date.now().toString(36).toUpperCase() + '-' + rand;
   }
   function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
   function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
@@ -8855,6 +9166,7 @@
     heroEl.dataset.captainId = lastCaptain ? lastCaptain.captain_id : '';
     heroEl.dataset.crewCount = lastTrip ? (lastTrip.crew_count || '') : '';
     heroEl.dataset.fuelLoaded = lastTrip ? (lastTrip.fuel_loaded_l || '') : '';
+    heroEl.dataset.fuelPricePerLiter = lastTrip ? (lastTrip.fuel_price_per_liter || '') : '';
 
     const list = document.getElementById('fleetVesselButtonList');
     list.innerHTML = vessels.map(v => {
@@ -8925,6 +9237,7 @@
     fleetSelectedCaptainId = heroEl.dataset.captainId;
     document.getElementById('fleetCrewCount').value = heroEl.dataset.crewCount || '';
     document.getElementById('fleetFuelLoaded').value = heroEl.dataset.fuelLoaded || '';
+    document.getElementById('fleetFuelPricePerLiter').value = heroEl.dataset.fuelPricePerLiter || '';
     renderVesselOptions();
     renderCaptainOptions();
     fleetUpdateStartTripReveal();
@@ -8959,6 +9272,7 @@
       ended_at: null,
       crew_count: document.getElementById('fleetCrewCount').value || '',
       fuel_loaded_l: document.getElementById('fleetFuelLoaded').value || '',
+      fuel_price_per_liter: document.getElementById('fleetFuelPricePerLiter').value || '',
       fuel_consumed_l: '',
       goal_kg: document.getElementById('fleetGoalKg').value || '',
       nautical_charts_available: document.getElementById('fleetNauticalCharts').checked
@@ -9074,7 +9388,7 @@
     const haulList = document.getElementById('fleetTripHaulList');
     const haulIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8c5 0 10 3 13 8" stroke="#0a5c8c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8l2 7h8l2-7" stroke="#0a5c8c" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12v3M11 10.5V15" stroke="#0a5c8c" stroke-width="1.4" stroke-linecap="round"/><circle cx="3" cy="8" r="1.5" fill="#0a5c8c"/></svg>`;
     haulList.innerHTML = hauls.length === 0
-      ? '<div class="empty">No hauls logged yet this trip.</div>'
+      ? '<div class="empty">'+t('fltrip_no_hauls_yet')+'</div>'
       : hauls.slice().reverse().map(hl => {
           const n = catches.filter(c => c.haul_id === hl.haul_id).length;
           const nProtected = protectedInteractions.filter(p => p.haul_id === hl.haul_id).length;
@@ -9085,7 +9399,7 @@
             + '<div class="entry-chips">'
             + (hl.depth ? '<span class="chip chip-blue">'+hl.depth+'m</span>' : '')
             + (hl.duration_min ? '<span class="chip chip-blue">'+hl.duration_min+' min</span>' : '')
-            + '<span class="chip chip-grey">'+n+' catch'+( n===1?'':'es')+'</span>'
+            + '<span class="chip chip-grey">'+n+' '+(n===1?t('fltrip_catch_singular'):t('fltrip_catch_plural'))+'</span>'
             + (nProtected > 0 ? '<span class="chip chip-amber">'+nProtected+' '+(nProtected===1?t('flprotected_chip_one'):t('flprotected_chip_other'))+'</span>' : '')
             + (hl.lat ? '<span class="chip chip-blue">📍 GPS</span>' : '')
             + '</div>'
@@ -9100,15 +9414,15 @@
     };
     const fishIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#0a5c8c"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#0a5c8c"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     catchList.innerHTML = catches.length === 0
-      ? '<div class="empty">No catch logged yet this trip.</div>'
+      ? '<div class="empty">'+t('fltrip_no_catch_yet')+'</div>'
       : catches.slice().reverse().map(c =>
           '<div class="entry entry-clickable" data-catch-edit="'+c.catch_id+'">'
           + '<div class="entry-icon">' + fishIconSvg + '</div>'
           + '<div class="entry-body">'
-          + '<div class="sp">'+(c.species||'Unspecified')+'</div>'
+          + '<div class="sp">'+(c.species||t('adv_unspecified'))+'</div>'
           + '<div class="entry-chips">'
           + (c.kg ? '<span class="chip chip-blue">'+c.kg+' kg</span>' : '')
-          + (c.ref_price ? '<span class="chip chip-grey">Ref. '+c.ref_price+' '+c.currency+'/kg</span>' : '')
+          + (c.ref_price ? '<span class="chip chip-grey">'+t('flcatch_ref_label')+' '+c.ref_price+' '+c.currency+'/kg</span>' : '')
           + '<span class="chip chip-grey">'+haulShortLabel(c.haul_id)+'</span>'
           + '</div>'
           + '</div></div>'
@@ -9617,6 +9931,7 @@
       catch_id: uid(),
       trip_id: trip.trip_id,
       haul_id: currentHaulIdForCatch,
+      logged_at: new Date().toISOString(),
       species,
       kg,
       specimen_count: specimenCount,
@@ -9883,7 +10198,16 @@
     const loaded = parseFloat(trip.fuel_loaded_l) || 0;
     const remaining = parseFloat(document.getElementById('fleetFuelRemaining').value);
     const line = document.getElementById('fleetFuelConsumedLine');
-    line.textContent = isNaN(remaining) ? 'Fuel Consumed: —' : 'Fuel Consumed: ' + Math.max(0, loaded - remaining).toFixed(1) + ' L';
+    if(isNaN(remaining)){
+      line.textContent = t('msg_fuel_consumed') + ': —';
+    } else {
+      const consumed = Math.max(0, loaded - remaining);
+      const price = parseFloat(trip.fuel_price_per_liter);
+      let text = t('msg_fuel_consumed') + ': ' + consumed.toFixed(1) + ' L';
+      if(price > 0) text += ' · ' + t('flclose_fuel_cost_line') + ': ' + fmtMoney(consumed * price, fleetCloseCurrency);
+      line.textContent = text;
+    }
+    updateFleetCloseSettlementBar();
   });
   document.getElementById('fleetCloseComplianceToggle').addEventListener('click', () => {
     const body = document.getElementById('fleetCloseComplianceBody');
@@ -9915,10 +10239,10 @@
 
   // Live settlement preview — mirrors the daysAtSea × provisions formula
   // the confirm handler actually saves with (see below), using Date.now()
-  // as a stand-in for the not-yet-set ended_at. Deliberately excludes the
-  // fuel-consumed cost line the confirm handler also logs, matching the
-  // reference design's simpler income-vs-logged-costs preview rather than
-  // trying to reproduce the full settlement math here.
+  // as a stand-in for the not-yet-set ended_at. Fuel is now included:
+  // fuel_price_per_liter is captured once at Start Trip, so consumed-liters
+  // × price gives a real cost figure here instead of the placeholder-liters
+  // bug this used to have (see fleetCloseTripConfirmed below).
   let fleetCloseEstValueRaw = 0;
   let fleetCloseCurrency = 'THB';
   function updateFleetCloseSettlementBar(){
@@ -9927,7 +10251,11 @@
     const crew = parseFloat(document.getElementById('fleetCostCrew').value) || 0;
     const ice = parseFloat(document.getElementById('fleetCostIce').value) || 0;
     const prov = parseFloat(document.getElementById('fleetCostProvisions').value) || 0;
-    const costs = crew + ice + prov * daysAtSea;
+    const loadedL = trip ? (parseFloat(trip.fuel_loaded_l) || 0) : 0;
+    const remainingL = parseFloat(document.getElementById('fleetFuelRemaining').value);
+    const fuelPrice = trip ? (parseFloat(trip.fuel_price_per_liter) || 0) : 0;
+    const fuelCost = (!isNaN(remainingL) && fuelPrice > 0) ? Math.max(0, loadedL - remainingL) * fuelPrice : 0;
+    const costs = crew + ice + prov * daysAtSea + fuelCost;
     const income = fleetCloseEstValueRaw;
     const net = income - costs;
     const costPct = income > 0 ? Math.min(100, (costs / income) * 100) : (costs > 0 ? 100 : 0);
@@ -9976,7 +10304,15 @@
     const costs = load(COSTS_KEY);
     const daysAtSea = Math.max(1, Math.ceil((new Date(trips[idx].ended_at) - new Date(trip.started_at)) / 86400000));
 
-    costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'fuel', basis: 'per_trip', amount: trips[idx].fuel_consumed_l, currency, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+    // Fuel is only recorded as a real cost when a price/liter was captured
+    // at Start Trip (fuel_price_per_liter) — before that field existed, and
+    // still today if the captain skips it, this used to push raw liters
+    // consumed as if they were a currency amount. Skipping the line entirely
+    // when there's no price is more honest than logging a bogus cost.
+    const fuelPricePerLiter = parseFloat(trip.fuel_price_per_liter);
+    if(fuelPricePerLiter > 0 && trips[idx].fuel_consumed_l > 0){
+      costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'fuel', basis: 'per_trip', amount: trips[idx].fuel_consumed_l * fuelPricePerLiter, currency, entered_by_role: 'captain', entered_at: new Date().toISOString() });
+    }
 
     const crew = document.getElementById('fleetCostCrew').value;
     if(crew) costs.push({ cost_id: uid(), trip_id: trip.trip_id, cost_type: 'crew', basis: 'per_trip', amount: parseFloat(crew), currency: document.getElementById('fleetCostCrewCurrency').value, entered_by_role: 'captain', entered_at: new Date().toISOString() });
@@ -10001,12 +10337,43 @@
   if(fleetCloseConfirmInlineBtn) fleetCloseConfirmInlineBtn.addEventListener('click', fleetCloseTripConfirmed);
 
   // ===== Trip log =====
+  // Shared per-trip income estimate — used by both computeTripMargin (Trip
+  // Log's preliminary glance, before settlement) and computeTripFinancials
+  // (Trip Detail/Stats' settled figure). Previously each had its own,
+  // disconnected income source: Trip Log only counted estimated_value
+  // (snapshotted when the catch was logged, often blank if no price was
+  // quoted at sea), while Trip Detail/Stats only counted actual sale price
+  // or ref_price. The same trip could show a loss in one screen and a
+  // profit in the other. Precedence here: actual sale price > ref_price >
+  // the estimated_value fallback, applied per species, scaled by actual
+  // (scale-reconciled) kg over estimated kg when available.
+  function estimateTripIncome(tripId){
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === tripId);
+    const sales = load(SALES_KEY).filter(s => s.trip_id === tripId);
+    const bySpecies = {};
+    catches.forEach(c => {
+      if(!bySpecies[c.species]) bySpecies[c.species] = { estKg:0, actualKg:0, hasActual:false, estimatedValueFallback:0 };
+      bySpecies[c.species].estKg += parseFloat(c.kg) || 0;
+      if(c.actual_kg != null && c.actual_kg !== ''){ bySpecies[c.species].actualKg += parseFloat(c.actual_kg); bySpecies[c.species].hasActual = true; }
+      bySpecies[c.species].estimatedValueFallback += parseFloat(c.estimated_value) || 0;
+    });
+    let income = 0, kg = 0;
+    Object.entries(bySpecies).forEach(([sp,g]) => {
+      const spKg = g.hasActual ? g.actualKg : g.estKg;
+      kg += spKg;
+      const sale = sales.find(s => s.species === sp);
+      const refCatch = catches.find(c => c.species === sp && c.ref_price);
+      const price = sale ? parseFloat(sale.unit_price) : (refCatch ? parseFloat(refCatch.ref_price) : 0);
+      income += price ? spKg * price : g.estimatedValueFallback;
+    });
+    return { income, kg };
+  }
+
   function computeTripMargin(trip){
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
     const currency = vessel ? vessel.default_currency : 'THB';
-    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
     const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
-    const estValue = catches.reduce((s,c) => s + (parseFloat(c.estimated_value)||0), 0);
+    const estValue = estimateTripIncome(trip.trip_id).income;
     const knownCosts = costs.reduce((s,c) => s + (parseFloat(c.amount)||0), 0);
 
     // Costs we expect to eventually exist for every trip, beyond what the
@@ -10523,7 +10890,7 @@
       + (totalPct !== 100 && crewShares.length > 0 ? '<div class="meta" style="margin-top:8px; color:var(--coral);">'+t('fltripdet_pct_mismatch_pre')+totalPct+t('fltripdet_pct_mismatch_post')+'</div>' : '')
       + '<div class="grid2" style="margin-top:14px;">'
       + '<input type="text" id="fleetCrewShareName" placeholder="'+t('fltripdet_crew_name_placeholder')+'">'
-      + '<input type="number" id="fleetCrewSharePercent" inputmode="decimal" placeholder="'+t('fltripdet_crew_percent_placeholder')+'">'
+      + '<input type="number" id="fleetCrewSharePercent" inputmode="decimal" min="0" max="100" placeholder="'+t('fltripdet_crew_percent_placeholder')+'">'
       + '</div>'
       + '<button class="btn btn-save" id="fleetCrewShareAddBtn" style="width:100%; margin-top:10px;">'+t('fltripdet_add_crew_member_btn')+'</button>'
       + '<div style="font-family:var(--data); font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5;">'+t('fltripdet_crew_share_hint')+'</div>'
@@ -10533,6 +10900,9 @@
       const name = document.getElementById('fleetCrewShareName').value.trim();
       const percent = parseFloat(document.getElementById('fleetCrewSharePercent').value);
       if(!name || isNaN(percent)){ showFleetToast(t('msg_name_percentage_required'), true); return; }
+      if(percent <= 0 || percent > 100){ showFleetToast(t('msg_crew_percent_invalid'), true); return; }
+      const currentTotal = crewShares.reduce((s,cs)=>s+(parseFloat(cs.percent)||0),0);
+      if(currentTotal + percent > 100.0001){ showFleetToast(t('msg_crew_percent_exceeds_100').replace('{pct}', currentTotal.toFixed(0)), true); return; }
       const all = load(CREW_SHARES_KEY);
       all.push({ share_id: uid(), trip_id: trip.trip_id, name, percent });
       save(CREW_SHARES_KEY, all);
@@ -14219,34 +14589,19 @@
   }
   document.getElementById('fleetDownloadAreaBtn').addEventListener('click', fleetDownloadCurrentMapArea);
 
-  // Full-precision per-trip result, reusing the same precedence Trip
-  // Detail's settlement uses: actual sale price over reference price,
-  // scale weight over estimated weight. Unlike computeTripMargin() (used
-  // for the quick pre-settlement glance in Trip Log), this doesn't pad
-  // for cost types that haven't been logged yet — it's meant for
-  // reporting on trips that are mostly or fully settled.
+  // Full-precision per-trip result. Income now comes from the shared
+  // estimateTripIncome() helper (same precedence as before: actual sale
+  // price > reference price > the field-logged estimate as a last resort)
+  // so this can never disagree with computeTripMargin()'s income side for
+  // the same trip. Unlike computeTripMargin() (used for the quick
+  // pre-settlement glance in Trip Log), this doesn't pad for cost types
+  // that haven't been logged yet — it's meant for reporting on trips that
+  // are mostly or fully settled.
   function computeTripFinancials(trip){
     const vessel = load(VESSELS_KEY).find(v => v.vessel_id === trip.vessel_id);
     const currency = vessel ? vessel.default_currency : '';
-    const catches = load(CATCHES_KEY).filter(c => c.trip_id === trip.trip_id);
     const costs = load(COSTS_KEY).filter(c => c.trip_id === trip.trip_id);
-    const sales = load(SALES_KEY).filter(s => s.trip_id === trip.trip_id);
-
-    const bySpecies = {};
-    catches.forEach(c => {
-      if(!bySpecies[c.species]) bySpecies[c.species] = { estKg:0, actualKg:0, hasActual:false };
-      bySpecies[c.species].estKg += parseFloat(c.kg) || 0;
-      if(c.actual_kg != null && c.actual_kg !== ''){ bySpecies[c.species].actualKg += parseFloat(c.actual_kg); bySpecies[c.species].hasActual = true; }
-    });
-    let income = 0, kg = 0;
-    Object.entries(bySpecies).forEach(([sp,g]) => {
-      const spKg = g.hasActual ? g.actualKg : g.estKg;
-      kg += spKg;
-      const sale = sales.find(s => s.species === sp);
-      const refCatch = catches.find(c => c.species === sp && c.ref_price);
-      const price = sale ? parseFloat(sale.unit_price) : (refCatch ? parseFloat(refCatch.ref_price) : 0);
-      income += spKg * price;
-    });
+    const { income, kg } = estimateTripIncome(trip.trip_id);
 
     const costsByType = {};
     let totalCosts = 0;
@@ -14664,7 +15019,17 @@
 
   function load(key){ try{ return JSON.parse(localStorage.getItem(key)) || []; } catch(e){ return []; } }
   function save(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
-  function uid(){ return 'S-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase(); }
+  // The random tail draws from crypto.randomUUID() (32 bits of real
+  // entropy) rather than Math.random() (~20 bits) so two records created
+  // in the same millisecond can't collide — matters once this id becomes
+  // the sync primary key against Supabase. Falls back to Math.random() only
+  // if crypto.randomUUID isn't available (older WebViews).
+  function uid(){
+    const rand = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase()
+      : Math.random().toString(36).slice(2,6).toUpperCase();
+    return 'S-' + Date.now().toString(36).toUpperCase() + '-' + rand;
+  }
 
   function getActiveSession(){
     const id = localStorage.getItem(ACTIVE_SESSION_KEY);
@@ -15585,7 +15950,7 @@
     document.getElementById('sportQuickSpotsCount').textContent = spots.length + ' ' + t('sp_spots_lc');
     const now = new Date();
     const monthCatches = load(CATCHES_KEY).filter(c => {
-      const d = new Date(c.caught_at || c.logged_at || 0);
+      const d = new Date(c.logged_at || 0);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     });
     document.getElementById('sportQuickCatchesCount').textContent = monthCatches.length + ' ' + t('sp_catches_lc');
@@ -15630,15 +15995,15 @@
     const list = document.getElementById('sportSessionCatchList');
     const fishSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z" fill="#EE6C4D"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1" fill="#EE6C4D"/><circle cx="6.5" cy="11" r="1" fill="white"/></svg>`;
     list.innerHTML = catches.length === 0
-      ? '<div class="empty">No catches logged yet this session.</div>'
+      ? '<div class="empty">'+t('sp_no_catches_this_session')+'</div>'
       : catches.slice().reverse().map(c =>
           '<div class="entry">'
           + '<div class="entry-icon">' + fishSvg + '</div>'
           + '<div class="entry-body">'
-          + '<div class="sp">' + (c.species||'Unspecified') + '</div>'
+          + '<div class="sp">' + (c.species||t('adv_unspecified')) + '</div>'
           + '<div class="entry-chips">'
           + (c.weight_kg ? '<span class="chip chip-blue">'+c.weight_kg+' kg</span>' : '')
-          + (c.kept_or_released === 'kept' ? '<span class="chip chip-green">Kept</span>' : '<span class="chip chip-blue">Released</span>')
+          + (c.kept_or_released === 'kept' ? '<span class="chip chip-green">'+t('sp_chip_kept')+'</span>' : c.kept_or_released === 'escaped' ? '<span class="chip chip-grey">'+t('sp_chip_escaped')+'</span>' : '<span class="chip chip-blue">'+t('sp_chip_released')+'</span>')
           + '</div></div></div>'
         ).join('');
   }
@@ -15727,6 +16092,7 @@
     localStorage.removeItem(ACTIVE_SESSION_KEY);
     sportTrackStop();
     showSportToast(t('msg_session_ended'));
+    queueSportBadgeToasts(evaluateSportBadges());
     renderSportSession();
   });
 
@@ -15736,6 +16102,7 @@
 
   // ===== Log catch =====
   let currentSportEditingCatchId = null;
+  let sportLastBadgeUnlocks = []; // set by saveSportCatch(), read once by whichever button handler called it
   let sportCatchCoords = null;
 
   function setSportCatchScreenMode(){
@@ -15760,6 +16127,7 @@
     document.getElementById('sportCatchNotes').value = '';
     document.getElementById('sportKeptBtn').classList.remove('active');
     document.getElementById('sportReleasedBtn').classList.remove('active');
+    document.getElementById('sportEscapedBtn').classList.remove('active');
     sportKeptOrReleased = null;
     sportFightRating = null;
     renderSportFightRatingTiles();
@@ -15772,10 +16140,10 @@
   function renderSportFightRatingTiles(){
     const wrap = document.getElementById('sportFightRatingTiles');
     if(!wrap) return;
-    wrap.innerHTML = [1,2,3].map(n => {
+    wrap.innerHTML = [1,2,3,4,5].map(n => {
       const active = sportFightRating === n;
       const stars = '⭐'.repeat(n);
-      return '<button type="button" class="sport-fight-tile" data-rating="'+n+'" style="flex:1; border:2px solid '+(active?'#EE6C4D':'#ECE0CD')+'; background:'+(active?'#FDECE5':'#fff')+'; border-radius:14px; padding:10px 0; text-align:center; cursor:pointer; font-size:15px;">'+stars+'</button>';
+      return '<button type="button" class="sport-fight-tile" data-rating="'+n+'" style="flex:1; border:2px solid '+(active?'#EE6C4D':'#ECE0CD')+'; background:'+(active?'#FDECE5':'#fff')+'; border-radius:12px; padding:8px 0; text-align:center; cursor:pointer; font-size:10px; letter-spacing:-1px;">'+stars+'</button>';
     }).join('');
     wrap.querySelectorAll('.sport-fight-tile').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -15789,11 +16157,19 @@
     sportKeptOrReleased = 'kept';
     document.getElementById('sportKeptBtn').classList.add('active');
     document.getElementById('sportReleasedBtn').classList.remove('active');
+    document.getElementById('sportEscapedBtn').classList.remove('active');
   });
   document.getElementById('sportReleasedBtn').addEventListener('click', () => {
     sportKeptOrReleased = 'released';
     document.getElementById('sportReleasedBtn').classList.add('active');
     document.getElementById('sportKeptBtn').classList.remove('active');
+    document.getElementById('sportEscapedBtn').classList.remove('active');
+  });
+  document.getElementById('sportEscapedBtn').addEventListener('click', () => {
+    sportKeptOrReleased = 'escaped';
+    document.getElementById('sportEscapedBtn').classList.add('active');
+    document.getElementById('sportKeptBtn').classList.remove('active');
+    document.getElementById('sportReleasedBtn').classList.remove('active');
   });
   document.getElementById('sportCaptureGpsBtn').addEventListener('click', () => {
     if(!navigator.geolocation){ showSportToast(t('msg_geo_not_supported'), true); return; }
@@ -15821,6 +16197,10 @@
     clearSportCatchForm();
     const session = getActiveSession();
     document.getElementById('sportCatchSessionLine').textContent = session ? t('sp_linked_current_session') : t('sp_not_linked_session');
+    if(window.populateDatalist){
+      window.populateDatalist('sport-species-list', 'sport_known_species');
+      window.populateDatalist('sport-lure-list', 'sport_known_lures');
+    }
     sportGoToScreenRaw('log-catch');
   }
   // Opens an existing catch for correction — used from the Catch Log
@@ -15839,6 +16219,7 @@
     sportKeptOrReleased = record.kept_or_released || 'released';
     document.getElementById('sportKeptBtn').classList.toggle('active', sportKeptOrReleased === 'kept');
     document.getElementById('sportReleasedBtn').classList.toggle('active', sportKeptOrReleased === 'released');
+    document.getElementById('sportEscapedBtn').classList.toggle('active', sportKeptOrReleased === 'escaped');
     sportFightRating = record.fight_rating || null;
     renderSportFightRatingTiles();
     if(record.lat){
@@ -15864,6 +16245,10 @@
     }
     const session = record.session_id ? load(SESSIONS_KEY).find(s => s.session_id === record.session_id) : null;
     document.getElementById('sportCatchSessionLine').textContent = session ? t('sp_linked_session_started') + new Date(session.started_at).toLocaleDateString() : t('sp_not_linked_session');
+    if(window.populateDatalist){
+      window.populateDatalist('sport-species-list', 'sport_known_species');
+      window.populateDatalist('sport-lure-list', 'sport_known_lures');
+    }
     sportGoToScreenRaw('log-catch');
   }
   // Direct screen swap without the tab-bar bookkeeping sportGoTo does,
@@ -15876,12 +16261,23 @@
   function saveSportCatch(){
     const species = document.getElementById('sportSpecies').value.trim();
     if(!species){ showSportToast(t('msg_species_required'), true); return false; }
+    const weightVal = document.getElementById('sportCatchWeight').value;
+    const lengthVal = document.getElementById('sportCatchLength').value;
+    if((weightVal !== '' && Number(weightVal) < 0) || (lengthVal !== '' && Number(lengthVal) < 0)){
+      showSportToast(t('msg_length_weight_negative'), true);
+      return false;
+    }
+    const lure = document.getElementById('sportLureUsed').value.trim();
+    if(window.rememberValue){
+      window.rememberValue('sport_known_species', species);
+      if(lure) window.rememberValue('sport_known_lures', lure);
+    }
     const catches = load(CATCHES_KEY);
     const fields = {
       species,
-      weight_kg: document.getElementById('sportCatchWeight').value || '',
-      length_cm: document.getElementById('sportCatchLength').value || '',
-      lure: document.getElementById('sportLureUsed').value.trim(),
+      weight_kg: weightVal || '',
+      length_cm: lengthVal || '',
+      lure,
       kept_or_released: sportKeptOrReleased || 'released',
       fight_rating: sportFightRating || null,
       notes: document.getElementById('sportCatchNotes').value.trim(),
@@ -15905,10 +16301,11 @@
       }, fields));
     }
     save(CATCHES_KEY, catches);
+    sportLastBadgeUnlocks = evaluateSportBadges();
     return true;
   }
   document.getElementById('sportCatchAddAnotherBtn').addEventListener('click', () => {
-    if(saveSportCatch()){ clearSportCatchForm(); showSportToast(t('msg_catch_saved')); renderSportSession(); }
+    if(saveSportCatch()){ clearSportCatchForm(); showSportToast(t('msg_catch_saved')); queueSportBadgeToasts(sportLastBadgeUnlocks); renderSportSession(); }
   });
   document.getElementById('sportCatchSaveBtn').addEventListener('click', () => {
     const wasEditing = !!currentSportEditingCatchId;
@@ -15916,6 +16313,7 @@
       clearSportCatchForm();
       currentSportEditingCatchId = null;
       showSportToast(wasEditing ? t('msg_catch_updated') : t('msg_catch_saved'));
+      queueSportBadgeToasts(sportLastBadgeUnlocks);
       sportGoTo(wasEditing ? 'catch-log' : 'session');
     }
   });
@@ -15962,14 +16360,14 @@
     const all = load(CATCHES_KEY);
     const catches = filterSpecies ? all.filter(c => c.species === filterSpecies) : all;
     const countEl = document.getElementById('sportCatchLogCountLine');
-    if(countEl) countEl.textContent = catches.length + (catches.length===1?' CATCH':' CATCHES') + (filterSpecies ? ' (filtered)' : '');
+    if(countEl) countEl.textContent = t(catches.length===1?'sp_catchlog_count_one':'sp_catchlog_count_other').replace('{n}', catches.length) + (filterSpecies ? t('sp_catchlog_filtered_suffix') : '');
     const sessions = load(SESSIONS_KEY);
     const spots = load(SPOTS_KEY);
     const sessionById = {}; sessions.forEach(s => { sessionById[s.session_id] = s; });
     const spotById = {}; spots.forEach(s => { spotById[s.spot_id] = s; });
     const list = document.getElementById('sportCatchLogList');
     list.innerHTML = catches.length === 0
-      ? '<div class="empty">No catches logged yet.</div>'
+      ? '<div class="empty">'+t('sp_no_catches_logged_yet')+'</div>'
       : catches.slice().reverse().map((c, i) => {
           const when = new Date(c.logged_at).toLocaleString(window.fishPulseLocale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
           const sess = c.session_id ? sessionById[c.session_id] : null;
@@ -15981,7 +16379,7 @@
           return '<div class="entry-clickable" data-sport-catch-edit="'+c.catch_id+'" style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid var(--line,#ECE0CD); box-shadow:0 4px 14px rgba(30,58,52,.06); margin-bottom:14px; cursor:pointer;">'
             + '<div style="height:140px; position:relative;">' + photoInner
             + (c.length_cm ? '<span style="position:absolute; top:8px; left:8px; background:rgba(255,255,255,.92); border-radius:999px; padding:3px 9px; font-family:var(--display); font-weight:700; font-size:11px; color:var(--ink);">'+c.length_cm+' cm</span>' : '')
-            + (c.kept_or_released === 'released' ? '<span style="position:absolute; top:8px; right:8px; background:#0F8A7E; color:#fff; border-radius:999px; padding:3px 9px; font-family:var(--data); font-size:8.5px; font-weight:600; letter-spacing:0.04em;">RELEASED ↩</span>' : '')
+            + (c.kept_or_released === 'released' ? '<span style="position:absolute; top:8px; right:8px; background:#0F8A7E; color:#fff; border-radius:999px; padding:3px 9px; font-family:var(--data); font-size:8.5px; font-weight:600; letter-spacing:0.04em;">'+t('sp_badge_released')+'</span>' : c.kept_or_released === 'escaped' ? '<span style="position:absolute; top:8px; right:8px; background:#7A5A1F; color:#fff; border-radius:999px; padding:3px 9px; font-family:var(--data); font-size:8.5px; font-weight:600; letter-spacing:0.04em;">'+t('sp_badge_escaped')+'</span>' : '')
             + '</div>'
             + '<div style="padding:11px 13px 13px;">'
             + '<div style="font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink);">' + (c.species||'Unspecified') + '</div>'
@@ -16714,7 +17112,7 @@
   function renderSportDocuments(){
     const docs = load(DOCS_KEY);
     const list = document.getElementById('sportDocumentsList');
-    if(docs.length === 0){ list.innerHTML = '<div class="empty">No documents added yet.</div>'; return; }
+    if(docs.length === 0){ list.innerHTML = '<div class="empty">'+t('sp_no_documents_yet')+'</div>'; return; }
     const now = Date.now();
     const sorted = docs.slice().sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
     const docSvg = (color) => `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v13l-4 3-4-3-4 3-4-3z" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 8h10M7 11h7" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/></svg>`;
@@ -16749,6 +17147,366 @@
     document.getElementById('photoViewerImg').src = '';
   });
 
+  // ===== Achievements / Badges =====
+  // Client-side only — every criterion is evaluated against the catches/
+  // sessions this device already has, no server round-trip. Unlocked
+  // badges are timestamped and kept forever once earned, even if the
+  // underlying data that triggered them changes later.
+  const SPORT_BADGES_KEY = 'sport_badges_v1'; // [{ badge_id, unlocked_at }]
+  const SPORT_SHARED_KEY = 'sport_has_shared_v1';
+  function loadSportBadges(){ try{ return JSON.parse(localStorage.getItem(SPORT_BADGES_KEY)) || []; } catch(e){ return []; } }
+  function saveSportBadgesList(list){ localStorage.setItem(SPORT_BADGES_KEY, JSON.stringify(list)); }
+  function hasSportShared(){ return localStorage.getItem(SPORT_SHARED_KEY) === '1'; }
+  function markSportShared(){
+    if(hasSportShared()) return;
+    localStorage.setItem(SPORT_SHARED_KEY, '1');
+    queueSportBadgeToasts(evaluateSportBadges());
+  }
+
+  function sportSeasonOf(date){
+    const m = date.getMonth();
+    if(m === 11 || m === 0 || m === 1) return 'winter';
+    if(m >= 2 && m <= 4) return 'spring';
+    if(m >= 5 && m <= 7) return 'summer';
+    return 'fall';
+  }
+
+  // Reuses the same major/minor peak distribution as the Solunar card
+  // (see getMoonPhase above) to test whether a catch's logged time falls
+  // inside a major (±60min) or minor (±30min) window for that same day.
+  function sportCatchInSolunarWindow(date){
+    const moon = getMoonPhase(date);
+    const lunarDayMin = 24*60+50;
+    const cycleOffset = (moon.age / 29.53058867) * lunarDayMin;
+    const majorOffsets = [cycleOffset % lunarDayMin, (cycleOffset + lunarDayMin/2) % lunarDayMin].map(m => m % 1440);
+    const minorOffsets = [(cycleOffset + lunarDayMin/4) % lunarDayMin, (cycleOffset + 3*lunarDayMin/4) % lunarDayMin].map(m => m % 1440);
+    const catchMin = date.getHours()*60 + date.getMinutes();
+    const within = (center, halfWidth) => Math.min(Math.abs(catchMin-center), 1440-Math.abs(catchMin-center)) <= halfWidth;
+    return majorOffsets.some(c => within(c, 60)) || minorOffsets.some(c => within(c, 30));
+  }
+
+  // Counts how many times a *new* all-time-max weight was set after the
+  // first weighed catch — the first weighed catch always trivially "sets"
+  // a record, so it doesn't count as "breaking" one.
+  function sportCountRecordBreaks(catches){
+    const sorted = catches.filter(c => c.logged_at && c.weight_kg).slice().sort((a,b) => new Date(a.logged_at)-new Date(b.logged_at));
+    let runningMax = null, breaks = 0;
+    sorted.forEach(c => {
+      const w = parseFloat(c.weight_kg);
+      if(isNaN(w)) return;
+      if(runningMax === null){ runningMax = w; return; }
+      if(w > runningMax){ breaks++; runningMax = w; }
+    });
+    return breaks;
+  }
+
+  function sportHasWeekendDouble(catches){
+    const days = new Set(catches.filter(c=>c.logged_at).map(c => new Date(c.logged_at).toDateString()));
+    for(const dayStr of days){
+      const d = new Date(dayStr);
+      if(d.getDay() === 6){
+        const nextDay = new Date(d.getTime() + 86400000);
+        if(days.has(nextDay.toDateString())) return true;
+      }
+    }
+    return false;
+  }
+
+  function sportLast3SessionsNoCatch(sessions, catches){
+    const ended = sessions.filter(s => s.ended_at).slice().sort((a,b) => new Date(b.started_at)-new Date(a.started_at));
+    if(ended.length < 3) return false;
+    return ended.slice(0,3).every(s => !catches.some(c => c.session_id === s.session_id));
+  }
+
+  function buildSportBadgeContext(){
+    const catches = load(CATCHES_KEY);
+    const sessions = load(SESSIONS_KEY);
+    const sortedByTime = catches.filter(c=>c.logged_at).slice().sort((a,b) => new Date(a.logged_at)-new Date(b.logged_at));
+    const bySpecies = {};
+    catches.forEach(c => { if(c.species) bySpecies[c.species] = (bySpecies[c.species]||0)+1; });
+    const maxSpeciesCount = Object.values(bySpecies).reduce((m,n) => Math.max(m,n), 0);
+    const seasonsSet = new Set(catches.filter(c=>c.logged_at).map(c => sportSeasonOf(new Date(c.logged_at))));
+    const sessionSpotMap = {};
+    sessions.forEach(s => { sessionSpotMap[s.session_id] = s.spot_id; });
+    const spotIdsWithCatches = new Set();
+    catches.forEach(c => { const sid = c.session_id && sessionSpotMap[c.session_id]; if(sid) spotIdsWithCatches.add(sid); });
+    return {
+      catches, sessions, sortedByTime, bySpecies,
+      speciesCount: Object.keys(bySpecies).length,
+      maxSpeciesCount,
+      seasonsCount: seasonsSet.size,
+      spotsCount: spotIdsWithCatches.size,
+      hasShared: hasSportShared(),
+      recordBreaks: sportCountRecordBreaks(catches),
+      hasWeekendDouble: sportHasWeekendDouble(catches),
+      last3SessionsNoCatch: sportLast3SessionsNoCatch(sessions, catches)
+    };
+  }
+
+  // Each badge: id (also the i18n key stem: sp_badge_<id>_name/_desc),
+  // category (groups tiles + the ⚠️ two skipped ones below), secret
+  // (name/desc stay "???" until unlocked), icon (see sportBadgeIconPath),
+  // and check(ctx) returning { unlocked, progress:{current,target}|null }.
+  //
+  // "Equipo Completo" and "David vs. Goliat" from the source list
+  // (Medallas Sport.docx) are intentionally not implemented yet — both
+  // require a rod/lure/line-test equipment inventory that doesn't exist
+  // in Sport today; confirmed with Israel to defer until that's built
+  // rather than bolt on as a side effect of this feature.
+  const SPORT_BADGE_DEFS = [
+    { id:'first_catch', category:'start', icon:'star', check: ctx => ({ unlocked: ctx.catches.length >= 1 }) },
+    { id:'first_photo', category:'start', icon:'camera', check: ctx => ({ unlocked: !!(ctx.sortedByTime[0] && ctx.sortedByTime[0].photo) }) },
+    { id:'first_share', category:'start', icon:'share', check: ctx => ({ unlocked: ctx.hasShared }) },
+    { id:'first_gps', category:'start', icon:'compass', check: ctx => ({ unlocked: ctx.catches.some(c => c.lat) }) },
+
+    { id:'species_3', category:'species', icon:'fish', check: ctx => ({ unlocked: ctx.speciesCount>=3, progress:{current:Math.min(ctx.speciesCount,3), target:3} }) },
+    { id:'species_10', category:'species', icon:'fish', check: ctx => ({ unlocked: ctx.speciesCount>=10, progress:{current:Math.min(ctx.speciesCount,10), target:10} }) },
+    { id:'species_top5', category:'species', icon:'target', check: ctx => ({ unlocked: ctx.maxSpeciesCount>=5, progress:{current:Math.min(ctx.maxSpeciesCount,5), target:5} }) },
+    { id:'solunar_catch', category:'species', icon:'moon', check: ctx => ({ unlocked: ctx.catches.some(c => c.logged_at && sportCatchInSolunarWindow(new Date(c.logged_at))) }) },
+    { id:'rare_catch', category:'species', icon:'sparkle', check: ctx => {
+        if(ctx.catches.length < 10) return { unlocked:false, progress:{current:ctx.catches.length, target:10} };
+        return { unlocked: Object.values(ctx.bySpecies).some(n => n===1) };
+      } },
+
+    { id:'top_fight', category:'size', icon:'trophy', check: ctx => ({ unlocked: ctx.catches.some(c => Number(c.fight_rating)===5) }) },
+    { id:'double_digit', category:'size', icon:'scale', check: ctx => ({ unlocked: ctx.catches.some(c => parseFloat(c.weight_kg)>=10) }) },
+    { id:'new_record', category:'size', icon:'ribbon', check: ctx => ({ unlocked: ctx.recordBreaks>=1 }) },
+
+    { id:'early_bird', category:'consistency', icon:'sunrise', check: ctx => ({ unlocked: ctx.catches.some(c => { if(!c.logged_at) return false; const d=new Date(c.logged_at); return d.getHours()<6 || (d.getHours()===6 && d.getMinutes()<30); }) }) },
+    { id:'night_fishing', category:'consistency', icon:'moon', check: ctx => ({ unlocked: ctx.catches.some(c => { if(!c.logged_at) return false; const h=new Date(c.logged_at).getHours(); return h>=21 || h<4; }) }) },
+    { id:'weekend_double', category:'consistency', icon:'calendar', check: ctx => ({ unlocked: ctx.hasWeekendDouble }) },
+    { id:'four_seasons', category:'consistency', icon:'seasons', check: ctx => ({ unlocked: ctx.seasonsCount>=4, progress:{current:ctx.seasonsCount, target:4} }) },
+    { id:'globetrotter', category:'consistency', icon:'map-pin', check: ctx => ({ unlocked: ctx.spotsCount>=3, progress:{current:Math.min(ctx.spotsCount,3), target:3} }) },
+
+    { id:'patience_secret', category:'secret', secret:true, icon:'lock', check: ctx => ({ unlocked: ctx.last3SessionsNoCatch }) },
+    { id:'escaped_secret', category:'secret', secret:true, icon:'lock', check: ctx => ({ unlocked: ctx.catches.some(c => c.kept_or_released==='escaped') }) }
+  ];
+
+  function sportBadgeIconPath(icon){
+    const paths = {
+      star: '<path d="M12 3l2.4 5.6 6.1.5-4.6 4 1.4 6-5.3-3.2-5.3 3.2 1.4-6-4.6-4 6.1-.5z"/>',
+      camera: '<rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3"/><path d="M9 6l1-2h4l1 2"/>',
+      share: '<circle cx="6" cy="12" r="2.3"/><circle cx="17" cy="6" r="2.3"/><circle cx="17" cy="18" r="2.3"/><path d="M8.1 10.8L14.9 7.2M8.1 13.2l6.8 3.6"/>',
+      compass: '<circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.3l-1.7 4-4 1.7 1.7-4z"/>',
+      fish: '<path d="M3 12c3.5-4.5 9-6.5 13.5-4.5-1 2-1 7 0 9-4.5 2-10 0-13.5-4.5z"/><path d="M16.5 9.5c2-1 4-1 4.5-1-.5 1.5-.5 4 0 5.5-.5 0-2.5 0-4.5-1"/>',
+      target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/>',
+      moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+      sparkle: '<path d="M12 3v5M12 16v5M3 12h5M16 12h5M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/>',
+      trophy: '<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/><path d="M12 14v3M9 20h6M10 17h4v3h-4z"/>',
+      scale: '<path d="M12 3v18M6 7h12M6 7l-3 6a3 3 0 0 0 6 0zM18 7l-3 6a3 3 0 0 0 6 0z"/>',
+      ribbon: '<circle cx="12" cy="8" r="5"/><path d="M9 12.5L7 21l5-3 5 3-2-8.5"/>',
+      sunrise: '<path d="M12 3v3M4.2 11H2.2M21.8 11h-2M6 6.5L4.5 5M18 6.5L19.5 5"/><path d="M4 16h16M6 16a6 6 0 0 1 12 0"/>',
+      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+      seasons: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/>',
+      'map-pin': '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/>',
+      lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
+    };
+    return paths[icon] || paths.star;
+  }
+
+  // Persists newly-unlocked badges but deliberately does NOT toast them
+  // itself — callers already show their own toast right after this returns
+  // (e.g. "Catch saved"), and toasts overwrite each other since they share
+  // one #toast element. Callers that care about the celebration moment
+  // should pass the result to queueSportBadgeToasts() instead, which
+  // schedules them to appear one at a time after the caller's own toast.
+  function evaluateSportBadges(){
+    const ctx = buildSportBadgeContext();
+    const unlocked = loadSportBadges();
+    const unlockedIds = new Set(unlocked.map(b => b.badge_id));
+    const newlyUnlocked = [];
+    SPORT_BADGE_DEFS.forEach(def => {
+      if(unlockedIds.has(def.id)) return;
+      const result = def.check(ctx);
+      if(result.unlocked){
+        unlocked.push({ badge_id: def.id, unlocked_at: new Date().toISOString() });
+        newlyUnlocked.push(def.id);
+      }
+    });
+    if(newlyUnlocked.length > 0) saveSportBadgesList(unlocked);
+    return newlyUnlocked;
+  }
+  function queueSportBadgeToasts(newlyUnlocked){
+    newlyUnlocked.forEach((id, i) => {
+      setTimeout(() => showSportToast('🏅 ' + t('sp_badge_' + id + '_name')), 1900 * (i+1));
+    });
+  }
+
+  function renderSportAchievementsCard(){
+    const card = document.getElementById('sportAchievementsCard');
+    if(!card) return;
+    evaluateSportBadges();
+    const ctx = buildSportBadgeContext();
+    const unlockedList = loadSportBadges();
+    const unlockedMap = {}; unlockedList.forEach(b => { unlockedMap[b.badge_id] = b.unlocked_at; });
+    const categories = [
+      { key:'start', label:t('sp_ach_cat_start') },
+      { key:'species', label:t('sp_ach_cat_species') },
+      { key:'size', label:t('sp_ach_cat_size') },
+      { key:'consistency', label:t('sp_ach_cat_consistency') },
+      { key:'secret', label:t('sp_ach_cat_secret') }
+    ];
+    const totalCount = SPORT_BADGE_DEFS.length;
+    const unlockedCount = SPORT_BADGE_DEFS.filter(d => unlockedMap[d.id]).length;
+
+    let html = '<div class="sport-ach-header"><span class="sport-ach-title">🏅 '+t('sp_ach_title')+'</span><span class="sport-ach-count">'+unlockedCount+' / '+totalCount+'</span></div>'
+      + '<div class="sport-ach-sub">'+t('sp_ach_sub')+'</div>';
+
+    categories.forEach(cat => {
+      const defs = SPORT_BADGE_DEFS.filter(d => d.category === cat.key);
+      if(defs.length === 0) return;
+      html += '<div class="sport-ach-cat-label">'+cat.label+'</div><div class="sport-ach-grid">';
+      defs.forEach(def => {
+        const isUnlocked = !!unlockedMap[def.id];
+        const isSecretLocked = def.secret && !isUnlocked;
+        const name = isSecretLocked ? '???' : t('sp_badge_'+def.id+'_name');
+        let progressHtml = '';
+        if(!isUnlocked && !isSecretLocked){
+          const result = def.check(ctx);
+          if(result.progress) progressHtml = '<div class="sport-badge-progress">'+result.progress.current+'/'+result.progress.target+'</div>';
+        }
+        html += '<button type="button" class="sport-badge-tile" data-badge-id="'+def.id+'">'
+          + '<div class="sport-badge-icon-wrap '+(isUnlocked?'unlocked':'locked')+'">'
+          + '<svg viewBox="0 0 24 24">'+sportBadgeIconPath(isSecretLocked ? 'lock' : def.icon)+'</svg>'
+          + (!isUnlocked && !isSecretLocked ? '<div class="sport-lock-pin"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>' : '')
+          + '</div>'
+          + '<div class="sport-badge-name'+(isUnlocked?'':' locked')+'">'+name+'</div>'
+          + progressHtml
+          + '</button>';
+      });
+      html += '</div>';
+    });
+
+    card.innerHTML = html;
+    card.querySelectorAll('[data-badge-id]').forEach(btn => {
+      btn.addEventListener('click', () => openSportBadgeDetail(btn.dataset.badgeId, unlockedMap[btn.dataset.badgeId] || null));
+    });
+  }
+
+  function openSportBadgeDetail(badgeId, unlockedAt){
+    const def = SPORT_BADGE_DEFS.find(d => d.id === badgeId);
+    if(!def) return;
+    const isSecretLocked = def.secret && !unlockedAt;
+    const name = isSecretLocked ? '???' : t('sp_badge_'+badgeId+'_name');
+    const desc = isSecretLocked ? t('sp_badge_secret_locked_desc') : t('sp_badge_'+badgeId+'_desc');
+    document.getElementById('sportBadgeShareIconWrap').innerHTML = '<svg viewBox="0 0 24 24" style="stroke:'+(unlockedAt?'#EE6C4D':'#C9C2B8')+';">'+sportBadgeIconPath(isSecretLocked ? 'lock' : def.icon)+'</svg>';
+    document.getElementById('sportBadgeShareName').textContent = name;
+    document.getElementById('sportBadgeModalTitle').textContent = name;
+    document.getElementById('sportBadgeModalDesc').textContent = unlockedAt
+      ? desc + ' — ' + new Date(unlockedAt).toLocaleDateString(window.fishPulseLocale(), {day:'2-digit', month:'short', year:'numeric'})
+      : desc;
+    const shareBtn = document.getElementById('sportBadgeShareBtn');
+    shareBtn.style.display = unlockedAt ? '' : 'none';
+    shareBtn.onclick = () => shareSportBadge(def, name);
+    document.getElementById('sportBadgeOverlay').classList.add('open');
+  }
+  document.getElementById('sportBadgeCloseBtn').addEventListener('click', () => {
+    document.getElementById('sportBadgeOverlay').classList.remove('open');
+  });
+
+  // Renders the same gradient share-card the sheet already shows into a
+  // canvas, then hands it to the OS share sheet (or downloads it if
+  // Web Share isn't available/declined). This is a fully local image
+  // today — no account or backend involved. Once Supabase adds a public
+  // profile/share-link endpoint, this is the natural place to switch to
+  // sharing a hosted URL instead of (or alongside) the raw image, without
+  // changing anything about how badges are earned or displayed.
+  async function shareSportBadge(def, name){
+    const canvas = document.createElement('canvas');
+    canvas.width = 600; canvas.height = 600;
+    const ctx2d = canvas.getContext('2d');
+    const grad = ctx2d.createLinearGradient(0, 0, 600, 600);
+    grad.addColorStop(0, '#F9B45C'); grad.addColorStop(0.58, '#EE6C4D'); grad.addColorStop(1, '#E0556A');
+    ctx2d.fillStyle = grad;
+    roundRectPath(ctx2d, 0, 0, 600, 600, 40);
+    ctx2d.fill();
+    ctx2d.fillStyle = '#ffffff';
+    ctx2d.beginPath();
+    ctx2d.arc(300, 250, 90, 0, Math.PI*2);
+    ctx2d.fill();
+    ctx2d.fillStyle = '#EE6C4D';
+    ctx2d.font = '700 44px sans-serif';
+    ctx2d.textAlign = 'center';
+    ctx2d.textBaseline = 'middle';
+    ctx2d.fillText(sportBadgeEmojiForCanvas(def.icon), 300, 255);
+    ctx2d.fillStyle = '#ffffff';
+    ctx2d.font = '700 34px sans-serif';
+    ctx2d.fillText(name, 300, 400);
+    ctx2d.font = '600 15px monospace';
+    ctx2d.globalAlpha = 0.85;
+    ctx2d.fillText('FISH PULSE · SPORT', 300, 440);
+    ctx2d.globalAlpha = 1;
+
+    canvas.toBlob(async (blob) => {
+      if(!blob) return;
+      const file = new File([blob], 'fishpulse-badge-' + def.id + '.png', { type:'image/png' });
+      if(navigator.share && navigator.canShare && navigator.canShare({ files:[file] })){
+        try{
+          await navigator.share({ files:[file], title:name, text:t('sp_badge_share_text').replace('{name}', name) });
+          markSportShared();
+          return;
+        } catch(err){ /* user cancelled the native share sheet — fall through to download */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'fishpulse-badge-' + def.id + '.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      markSportShared();
+    }, 'image/png');
+  }
+  function roundRectPath(ctx2d, x, y, w, h, r){
+    ctx2d.beginPath();
+    ctx2d.moveTo(x+r, y);
+    ctx2d.arcTo(x+w, y, x+w, y+h, r);
+    ctx2d.arcTo(x+w, y+h, x, y+h, r);
+    ctx2d.arcTo(x, y+h, x, y, r);
+    ctx2d.arcTo(x, y, x+w, y, r);
+    ctx2d.closePath();
+  }
+  // Canvas text can't render inline SVG, so the share image uses a plain
+  // emoji stand-in per icon rather than redrawing each SVG path by hand.
+  function sportBadgeEmojiForCanvas(icon){
+    const map = { star:'⭐', camera:'📸', share:'🔗', compass:'🧭', fish:'🐟', target:'🎯', moon:'🌙', sparkle:'✨', trophy:'🏆', scale:'⚖️', ribbon:'🎖️', sunrise:'🌅', calendar:'📅', seasons:'🍂', 'map-pin':'📍', lock:'🔒' };
+    return map[icon] || '⭐';
+  }
+
+  // ===== Photo export (mirrors Field Research's zip export) =====
+  function sportDataUrlToBlobParts(dataUrl){
+    const match = dataUrl.match(/^data:([^;]+);base64,(.*)$/);
+    if(!match) return null;
+    const mime = match[1];
+    const ext = mime === 'image/png' ? 'png' : (mime === 'image/webp' ? 'webp' : 'jpg');
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for(let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return { bytes, ext };
+  }
+  async function exportSportPhotosAsZip(){
+    if(typeof JSZip === 'undefined'){ showSportToast(t('msg_zip_not_loaded'), true); return; }
+    const withPhotos = load(CATCHES_KEY).filter(c => c.photo);
+    if(withPhotos.length === 0){ showSportToast(t('sp_no_photos'), true); return; }
+    const zip = new JSZip();
+    withPhotos.forEach(c => {
+      const parts = sportDataUrlToBlobParts(c.photo);
+      if(!parts) return;
+      zip.file((c.catch_id || 'unnamed') + '.' + parts.ext, parts.bytes);
+    });
+    try{
+      const blob = await zip.generateAsync({ type:'blob' });
+      const filename = 'sport-catch-photos-' + new Date().toISOString().slice(0,10) + '.zip';
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showSportToast(withPhotos.length + ' ' + t('sp_photos_exported'));
+    } catch(err){
+      showSportToast(t('msg_zip_failed'), true);
+    }
+  }
+  document.getElementById('sportExportPhotosBtn').addEventListener('click', exportSportPhotosAsZip);
+
   // ===== Stats (placeholder) =====
   let sportStatsScope = 'all';
   function sportStatsScopeSessionId(){
@@ -16758,6 +17516,7 @@
     return sessions.length ? sessions[0].session_id : null;
   }
   function renderSportStats(){
+    renderSportAchievementsCard();
     document.querySelectorAll('.sport-stats-scope-btn').forEach(btn => {
       const active = btn.dataset.scope === sportStatsScope;
       btn.style.background = active ? 'var(--sport-coral, #EE6C4D)' : '#EEF3F0';
@@ -16774,7 +17533,7 @@
     }
     const body = document.getElementById('sportStatsBody');
     if(catches.length === 0){
-      body.innerHTML = '<div class="empty">' + (sportStatsScope === 'session' ? t('sp_stats_no_session_catches') : 'Log a few catches to see your personal stats.') + '</div>';
+      body.innerHTML = '<div class="empty">' + (sportStatsScope === 'session' ? t('sp_stats_no_session_catches') : t('sp_stats_no_catches_alltime')) + '</div>';
       return;
     }
 
@@ -16785,14 +17544,14 @@
     const avgWeight = withWeight.length ? (withWeight.reduce((s,c)=>s+parseFloat(c.weight_kg),0)/withWeight.length).toFixed(2) : '—';
 
     const bySpecies = {};
-    catches.forEach(c => { const sp = c.species||'Unspecified'; bySpecies[sp]=(bySpecies[sp]||0)+1; });
+    catches.forEach(c => { const sp = c.species||t('adv_unspecified'); bySpecies[sp]=(bySpecies[sp]||0)+1; });
     const sortedSp = Object.entries(bySpecies).sort((a,b)=>b[1]-a[1]);
     const maxSp = sortedSp.length ? sortedSp[0][1] : 1;
 
     // Personal bests by species
     const bestBySpecies = {};
     catches.filter(c=>c.weight_kg).forEach(c => {
-      const sp = c.species||'Unspecified';
+      const sp = c.species||t('adv_unspecified');
       const w = parseFloat(c.weight_kg);
       if(!bestBySpecies[sp] || w > bestBySpecies[sp].weight){ bestBySpecies[sp] = { weight:w, length:c.length_cm||null, date:c.logged_at }; }
     });
@@ -16826,14 +17585,14 @@
 
     // KPI grid
     html += '<div class="kpi-grid" style="margin-bottom:10px;">'
-      + '<div class="kpi-cell"><div class="kn">'+catches.length+'</div><div class="kl">Catches</div></div>'
-      + '<div class="kpi-cell"><div class="kn" style="color:var(--sport-coral,#EE6C4D);">'+releaseRate+'%</div><div class="kl">Released</div></div>'
-      + '<div class="kpi-cell"><div class="kn">'+avgWeight+'</div><div class="kl">Avg kg</div></div>'
-      + '<div class="kpi-cell"><div class="kn">'+sessions.length+'</div><div class="kl">Sessions</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+catches.length+'</div><div class="kl">'+t('sp_stats_kpi_catches')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn" style="color:var(--sport-coral,#EE6C4D);">'+releaseRate+'%</div><div class="kl">'+t('sp_stats_kpi_released')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+avgWeight+'</div><div class="kl">'+t('sp_stats_kpi_avg_kg')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn">'+sessions.length+'</div><div class="kl">'+t('sp_stats_kpi_sessions')+'</div></div>'
       + '</div>';
 
     // Species frequency
-    html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Catches by species</div>';
+    html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">'+t('sp_stats_by_species')+'</div>';
     sortedSp.forEach(([sp,n]) => {
       const pct = (n/maxSp*100).toFixed(0);
       html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span>'+n+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
@@ -16850,11 +17609,12 @@
       bars += `<rect x="${x}" y="${60-bH}" width="${bW}" height="${bH}" rx="1" fill="${isPeak?'#F2A65A':'#EE6C4D'}" opacity="${0.35+cnt/maxHour*0.65}"/>`;
       if(i%6===0) xLabels += `<text x="${x+bW/2}" y="${svgH}" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${i===0?'0h':i+'h'}</text>`;
     });
-    html += `<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Best fishing hours · Peak ${peakHour}:00–${peakHour+1}:00</div><svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${bars}${xLabels}</svg></div>`;
+    const bestHoursLabel = t('sp_stats_best_hours').replace('{h1}', peakHour).replace('{h2}', peakHour+1);
+    html += `<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">${bestHoursLabel}</div><svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${bars}${xLabels}</svg></div>`;
 
     // Personal bests
     if(bests.length > 0){
-      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Personal bests (by weight)</div>';
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">'+t('sp_stats_personal_bests')+'</div>';
       bests.forEach(([sp,b],i) => {
         const medal = i===0?'🥇':i===1?'🥈':'🥉';
         html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span style="font-family:var(--data);font-size:11px;">'+b.weight.toFixed(2)+' kg'+(b.length?' · '+b.length+' cm':'')+'</span></div>'
@@ -16865,7 +17625,7 @@
 
     // Lure effectiveness
     if(sortedLure.length > 0){
-      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Lure / bait effectiveness</div>';
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">'+t('sp_stats_lure_effectiveness')+'</div>';
       sortedLure.forEach(([l,n]) => {
         const pct = (n/maxLure*100).toFixed(0);
         html += '<div class="bar-row"><div class="bar-row-top"><span>'+l+'</span><span>'+n+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
@@ -16875,7 +17635,7 @@
 
     // Best spots
     if(sortedSpots.length > 0){
-      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">Top spots</div>';
+      html += '<div class="insight-card" style="margin-bottom:10px;"><div class="insight-card-label">'+t('sp_stats_top_spots')+'</div>';
       sortedSpots.forEach(([spotId,n]) => {
         const spot = spots.find(s=>s.spot_id===spotId);
         const name = spot ? spot.name : t('msg_unknown_spot');
@@ -16951,11 +17711,18 @@
   function makeRecordId(){
     // Format: DEV-YYYYMMDD-HHMMSS-rand — sortable, unique across devices in practice,
     // and human-readable enough to cross-reference against a paper backup if needed.
+    // The random tail draws from crypto.randomUUID() (32 bits of real entropy)
+    // rather than Math.random() (~15 bits) so two records logged by the same
+    // device in the same second can't collide — matters once this id becomes
+    // the sync primary key against Supabase. Falls back to Math.random() only
+    // if crypto.randomUUID isn't available (older WebViews).
     const now = new Date();
     const pad = n => String(n).padStart(2,'0');
     const stamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate())
       + '-' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
-    const rand = Math.random().toString(36).slice(2,5).toUpperCase();
+    const rand = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase()
+      : Math.random().toString(36).slice(2,5).toUpperCase();
     return getDeviceId() + '-' + stamp + '-' + rand;
   }
 
@@ -17631,13 +18398,13 @@
     let chips = '';
     if(e.length) chips += '<span class="chip chip-blue">'+e.length+' cm</span>';
     if(e.weight) chips += '<span class="chip chip-grey">'+e.weight+' kg</span>';
-    if(e.condition === 'alive')    chips += '<span class="chip chip-blue">Alive</span>';
-    if(e.condition === 'dead')     chips += '<span class="chip chip-red">Dead</span>';
-    if(e.condition === 'released') chips += '<span class="chip chip-green">Released</span>';
-    if(e.is_bycatch === 'yes')     chips += '<span class="chip chip-red">Bycatch</span>';
+    if(e.condition === 'alive')    chips += '<span class="chip chip-blue">'+t('rec_cond_alive')+'</span>';
+    if(e.condition === 'dead')     chips += '<span class="chip chip-red">'+t('rec_cond_dead')+'</span>';
+    if(e.condition === 'released') chips += '<span class="chip chip-green">'+t('rec_cond_released')+'</span>';
+    if(e.is_bycatch === 'yes')     chips += '<span class="chip chip-red">'+t('hist_chip_bycatch')+'</span>';
     if(e.lat !== '' && e.lat != null) chips += '<span class="chip chip-blue">📍 GPS</span>';
 
-    const spName = hasSp ? e.species : 'Unspecified';
+    const spName = hasSp ? e.species : t('adv_unspecified');
     const cnPart = e.common_name ? ' <span class="cn">('+e.common_name+')</span>' : '';
     const metaLine = (e.site||'—')+' · '+when+(e.observer ? ' · '+e.observer : '');
 
@@ -17648,7 +18415,7 @@
       + (chips ? '<div class="entry-chips">'+chips+'</div>' : '')
       + '<div class="meta">'+metaLine+'</div>'
       + '</div>'
-      + (withDelete ? '<button class="del" data-idx="'+idx+'" title="delete">×</button>' : '')
+      + (withDelete ? '<button class="del" data-idx="'+idx+'" title="'+t('hist_delete_tooltip')+'">×</button>' : '')
       + '</div>';
   }
 
@@ -17910,6 +18677,7 @@
   document.getElementById('logList').addEventListener('click', (e)=>{
     const delBtn = e.target.closest('.del');
     if(delBtn){
+      if(!confirm(t('msg_confirm_delete_record'))) return;
       const idx = parseInt(delBtn.dataset.idx, 10);
       const list = loadEntries();
       list.splice(idx, 1);
@@ -17980,6 +18748,12 @@
       document.getElementById('species').focus();
       return;
     }
+    const lengthVal = document.getElementById('length').value;
+    const weightVal = document.getElementById('weight').value;
+    if((lengthVal !== '' && Number(lengthVal) < 0) || (weightVal !== '' && Number(weightVal) < 0)){
+      showToast(t('msg_length_weight_negative'), true);
+      return;
+    }
     const siteVal = document.getElementById('site').value.trim();
     rememberValue(LAST_OBSERVER_KEY, observer);
     rememberValue(LAST_SITE_KEY, siteVal);
@@ -17994,13 +18768,22 @@
     // Build the record timestamp from the editable survey date plus the
     // current time-of-day, so backfilling a past date doesn't get silently
     // overwritten by "now" — while still keeping a real time component
-    // instead of defaulting to midnight.
+    // instead of defaulting to midnight. When editing an existing record
+    // whose survey date hasn't changed, keep its original timestamp exactly
+    // as captured in the field — otherwise every edit (even a typo fix)
+    // would silently overwrite the real specimen time with the edit
+    // moment's clock time, corrupting chronological order downstream
+    // (species accumulation curve, exported CSV).
     const dateValue = document.getElementById('surveyDate').value || formatSurveyDate();
-    const now = new Date();
-    const recordTimestamp = new Date(dateValue + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0')).toISOString();
-
     const existingList = loadEntries();
     const editingOriginal = editingRecordIdx !== null ? existingList[editingRecordIdx] : null;
+    let recordTimestamp;
+    if(editingOriginal && editingOriginal.timestamp && editingOriginal.timestamp.slice(0,10) === dateValue){
+      recordTimestamp = editingOriginal.timestamp;
+    } else {
+      const now = new Date();
+      recordTimestamp = new Date(dateValue + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0')).toISOString();
+    }
 
     const entry = {
       record_id: editingOriginal ? editingOriginal.record_id : makeRecordId(),
@@ -18798,7 +19581,7 @@
   // records, plus the raw per-species counts they were computed from.
   function computeDiversity(list){
     const counts = {};
-    list.forEach(e => { const sp = e.species || 'Unspecified'; counts[sp] = (counts[sp]||0)+1; });
+    list.forEach(e => { const sp = e.species || t('adv_unspecified'); counts[sp] = (counts[sp]||0)+1; });
     const total = list.length;
     const species = Object.keys(counts);
     const S = species.length;
@@ -18812,14 +19595,13 @@
   function renderInsights(){
     const allRecords = loadEntries();
     const taxonFilter = document.getElementById('insightsTaxonFilter').value;
-    const taxonNote = taxonFilter ? ' (filtered to ' + taxonFilter + ')' : '';
     const taxonScoped = taxonFilter ? allRecords.filter(e => e.taxon_group === taxonFilter) : allRecords;
     const main = document.getElementById('insightsMain');
     const toggle = document.getElementById('insightsViewToggle');
 
     if(allRecords.length === 0){
       toggle.style.display = 'none';
-      main.innerHTML = '<div class="insight-empty">No records yet.<br>Log a few specimens to see counts, length ranges, and condition breakdown here.</div>';
+      main.innerHTML = '<div class="insight-empty">'+t('ins_empty_no_records')+'</div>';
       return;
     }
 
@@ -18860,7 +19642,7 @@
       if(insightsSiteDropdownOpen){
         sw += '<div class="site-filter-panel">'
           + sitesAvailable.map(s => '<label><input type="checkbox" data-site="'+s.replace(/"/g,'&quot;')+'"'+(insightsSiteFilter.includes(s)?' checked':'')+'> '+s+'</label>').join('')
-          + '<div class="site-filter-panel-footer"><span id="insightsSiteClearBtn">Clear</span><span id="insightsSiteDoneBtn">Done</span></div>'
+          + '<div class="site-filter-panel-footer"><span id="insightsSiteClearBtn">'+t('ins_site_filter_clear')+'</span><span id="insightsSiteDoneBtn">'+t('ins_site_filter_done')+'</span></div>'
           + '</div>';
       }
       siteWrap.innerHTML = sw;
@@ -18887,7 +19669,7 @@
 
     if(list.length === 0){
       toggle.style.display = 'none';
-      main.innerHTML = '<div class="insight-empty">No records match this filter combination.</div>';
+      main.innerHTML = '<div class="insight-empty">'+t('ins_empty_no_filter_match')+'</div>';
       return;
     }
     toggle.style.display = 'flex';
@@ -18899,10 +19681,10 @@
     const condCounts = { alive:0, dead:0, released:0, '':0 };
     list.forEach(e => { condCounts[e.condition||''] = (condCounts[e.condition||'']||0)+1; });
     const condColors = { alive:'var(--blue)', dead:'var(--coral)', released:'var(--released)', '':'#cdd6d6' };
-    const condLabels = { alive:'Alive', dead:'Dead', released:'Released', '':'Unspecified' };
+    const condLabels = { alive:t('rec_cond_alive'), dead:t('rec_cond_dead'), released:t('rec_cond_released'), '':t('adv_unspecified') };
 
     const speciesCount = {};
-    list.forEach(e => { const sp = e.species||'Unspecified'; speciesCount[sp]=(speciesCount[sp]||0)+1; });
+    list.forEach(e => { const sp = e.species||t('adv_unspecified'); speciesCount[sp]=(speciesCount[sp]||0)+1; });
     const sortedSpecies = Object.entries(speciesCount).sort((a,b)=>b[1]-a[1]);
     const maxSpeciesCount = sortedSpecies.length ? sortedSpecies[0][1] : 1;
 
@@ -18911,25 +19693,26 @@
     const taxonEntries = Object.entries(taxonCount).sort((a,b)=>b[1]-a[1]);
     const taxonLabels = {'Elasmobranchii':t('rec_taxon_elasmo'),'Teleostei':t('rec_taxon_teleost'),'Crustacea':t('rec_taxon_crustacea'),'Mollusca':t('rec_taxon_mollusca'),'Other':t('rec_gear_other')};
     const taxonRecorded = taxonEntries.reduce((s,[,c])=>s+c, 0);
+    const taxonNote = taxonFilter ? t('ins_filtered_to').replace('{taxon}', taxonLabels[taxonFilter] || taxonFilter) : '';
 
     const lengthStats = {};
-    list.forEach(e => { const sp=e.species||'Unspecified'; const len=num(e.length); if(len===null) return; if(!lengthStats[sp]) lengthStats[sp]=[]; lengthStats[sp].push(len); });
+    list.forEach(e => { const sp=e.species||t('adv_unspecified'); const len=num(e.length); if(len===null) return; if(!lengthStats[sp]) lengthStats[sp]=[]; lengthStats[sp].push(len); });
     const speciesWithLength = Object.keys(lengthStats);
     const allLengths = list.map(e=>num(e.length)).filter(v=>v!==null);
 
     const weightStats = {};
     let totalWeightKg=0, recordsWithWeight=0;
-    list.forEach(e => { const sp=e.species||'Unspecified'; const w=num(e.weight); if(w===null) return; weightStats[sp]=(weightStats[sp]||0)+w; totalWeightKg+=w; recordsWithWeight+=1; });
+    list.forEach(e => { const sp=e.species||t('adv_unspecified'); const w=num(e.weight); if(w===null) return; weightStats[sp]=(weightStats[sp]||0)+w; totalWeightKg+=w; recordsWithWeight+=1; });
     const sortedWeights = Object.entries(weightStats).sort((a,b)=>b[1]-a[1]);
 
     const gearCount = {};
-    list.forEach(e => { const g=e.gear_type||'Unspecified'; gearCount[g]=(gearCount[g]||0)+1; });
+    list.forEach(e => { const g=e.gear_type||t('adv_unspecified'); gearCount[g]=(gearCount[g]||0)+1; });
     const sortedGear = Object.entries(gearCount).sort((a,b)=>b[1]-a[1]);
     const maxGear = sortedGear.length ? sortedGear[0][1] : 1;
 
     const effortByHourSite = {}, effortByHookSite = {};
     list.forEach(e => {
-      const site=e.site||'Unspecified';
+      const site=e.site||t('adv_unspecified');
       const mins=num(e.haul_duration_min);
       if(mins!==null&&mins>0){ if(!effortByHourSite[site]) effortByHourSite[site]={specimens:0,minutes:0,hauls:0}; effortByHourSite[site].specimens+=1; effortByHourSite[site].minutes+=mins; effortByHourSite[site].hauls+=1; }
       const hooks=num(e.hook_count);
@@ -18940,15 +19723,15 @@
 
     // KPI grid (shared)
     let html = '<div class="kpi-grid">'
-      + '<div class="kpi-cell"><div class="kn">' + list.length + '</div><div class="kl">Records</div></div>'
-      + '<div class="kpi-cell"><div class="kn">' + speciesUsed + '</div><div class="kl">Species</div></div>'
-      + '<div class="kpi-cell"><div class="kn">' + sitesUsed + '</div><div class="kl">Sites</div></div>'
-      + '<div class="kpi-cell"><div class="kn accent">' + withGps + '</div><div class="kl">GPS</div></div>'
+      + '<div class="kpi-cell"><div class="kn">' + list.length + '</div><div class="kl">'+t('ins_kpi_records')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn">' + speciesUsed + '</div><div class="kl">'+t('ins_kpi_species')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn">' + sitesUsed + '</div><div class="kl">'+t('ins_kpi_sites')+'</div></div>'
+      + '<div class="kpi-cell"><div class="kn accent">' + withGps + '</div><div class="kl">'+t('ins_kpi_gps')+'</div></div>'
       + '</div>';
 
     if(insightsView === 'stats'){
       // Condition breakdown
-      html += '<div class="insight-card"><div class="insight-card-label">Condition breakdown</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_condition_breakdown')+'</div>';
       html += '<div class="cond-bar-stack">';
       Object.keys(condCounts).forEach(k => {
         if(!condCounts[k]) return;
@@ -18963,7 +19746,7 @@
       html += '</div></div>';
 
       if(taxonEntries.length > 0){
-        html += '<div class="insight-card"><div class="insight-card-label">Records by taxon group</div>';
+        html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_by_taxon')+'</div>';
         taxonEntries.forEach(([tg,count]) => {
           const pct = (count/taxonRecorded*100).toFixed(0);
           html += '<div class="bar-row"><div class="bar-row-top"><span>'+(taxonLabels[tg]||tg)+'</span><span>'+count+' ('+pct+'%)</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
@@ -18971,16 +19754,16 @@
         html += '</div>';
       }
 
-      html += '<div class="insight-card"><div class="insight-card-label">Records by species</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_by_species')+'</div>';
       sortedSpecies.forEach(([sp,count]) => {
         const pct = (count/maxSpeciesCount*100).toFixed(0);
         html += '<div class="bar-row"><div class="bar-row-top"><span class="bn">'+sp+'</span><span>'+count+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
       });
       html += '</div>';
 
-      html += '<div class="insight-card"><div class="insight-card-label">Length range (cm)</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_length_range')+'</div>';
       if(allLengths.length === 0){
-        html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('ins_stat_no_length')+'</div>';
       } else {
         const minL=Math.min(...allLengths), maxL=Math.max(...allLengths);
         const meanL=allLengths.reduce((a,b)=>a+b,0)/allLengths.length;
@@ -19000,11 +19783,11 @@
       }
       html += '</div>';
 
-      html += '<div class="insight-card"><div class="insight-card-label">Length by species (cm)</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_length_by_species')+'</div>';
       if(speciesWithLength.length === 0){
-        html += '<div class="insight-empty">No length measurements recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('ins_stat_no_length')+'</div>';
       } else {
-        html += '<table class="stat-table"><thead><tr><th>Species</th><th>n</th><th>Mean</th><th>Min</th><th>Max</th></tr></thead><tbody>';
+        html += '<table class="stat-table"><thead><tr><th>'+t('ins_th_species')+'</th><th>n</th><th>'+t('ins_th_mean')+'</th><th>'+t('ins_th_min')+'</th><th>'+t('ins_th_max')+'</th></tr></thead><tbody>';
         speciesWithLength.forEach(sp => {
           const vals=lengthStats[sp]; const mean=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1); const mn=Math.min(...vals).toFixed(1); const mx=Math.max(...vals).toFixed(1);
           html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+vals.length+'</td><td class="num">'+mean+'</td><td class="num">'+mn+'</td><td class="num">'+mx+'</td></tr>';
@@ -19013,28 +19796,28 @@
       }
       html += '</div>';
 
-      html += '<div class="insight-card"><div class="insight-card-label">Catch volume (kg)'+taxonNote+'</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_catch_volume')+taxonNote+'</div>';
       if(sortedWeights.length === 0){
-        html += '<div class="insight-empty">No weight measurements recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('ins_stat_no_weight')+'</div>';
       } else {
-        html += '<div style="margin-bottom:10px;"><div class="insight-stat"><div class="is-num">'+totalWeightKg.toFixed(2)+'</div><div class="is-label">Total kg ('+recordsWithWeight+' weighed records)</div></div></div>';
-        html += '<table class="stat-table"><thead><tr><th>Species</th><th>Total kg</th><th>%</th></tr></thead><tbody>';
+        html += '<div style="margin-bottom:10px;"><div class="insight-stat"><div class="is-num">'+totalWeightKg.toFixed(2)+'</div><div class="is-label">'+t('ins_stat_total_kg').replace('{n}', recordsWithWeight)+'</div></div></div>';
+        html += '<table class="stat-table"><thead><tr><th>'+t('ins_th_species')+'</th><th>'+t('ins_th_total_kg')+'</th><th>%</th></tr></thead><tbody>';
         sortedWeights.forEach(([sp,kg]) => { const pct=(kg/totalWeightKg*100).toFixed(1); html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+kg.toFixed(2)+'</td><td class="num">'+pct+'%</td></tr>'; });
         html += '</tbody></table>';
       }
       html += '</div>';
 
-      html += '<div class="insight-card"><div class="insight-card-label">Records by gear type</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_by_gear')+'</div>';
       sortedGear.forEach(([g,count]) => { const pct=(count/maxGear*100).toFixed(0); html += '<div class="bar-row"><div class="bar-row-top"><span>'+g+'</span><span>'+count+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>'; });
       html += '</div>';
 
-      html += '<div class="insight-card"><div class="insight-card-label">CPUE'+taxonNote+'</div>';
+      html += '<div class="insight-card"><div class="insight-card-label">'+t('ins_stat_cpue')+taxonNote+'</div>';
       if(sitesWithHourEffort.length===0 && sitesWithHookEffort.length===0){
-        html += '<div class="insight-empty">No haul duration or hook count recorded yet.</div>';
+        html += '<div class="insight-empty">'+t('ins_cpue_empty')+'</div>';
       } else {
-        if(sitesWithHourEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:0 0 6px;">By time · specimens / hour</p><table class="stat-table"><thead><tr><th>Site</th><th>Hauls</th><th>Spec.</th><th>CPUE /hr</th></tr></thead><tbody>'; sitesWithHourEffort.forEach(site => { const d=effortByHourSite[site]; const h=d.minutes/60; const c=h>0?(d.specimens/h).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.hauls+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
-        if(sitesWithHookEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:14px 0 6px;">By hooks · specimens / 100 hooks</p><table class="stat-table"><thead><tr><th>Site</th><th>Sets</th><th>Spec.</th><th>CPUE /100hk</th></tr></thead><tbody>'; sitesWithHookEffort.forEach(site => { const d=effortByHookSite[site]; const c=d.hooks>0?(d.specimens/d.hooks*100).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.sets+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
-        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">Quick field reference only. Use the exported CSV in R for formal analysis.</div>';
+        if(sitesWithHourEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:0 0 6px;">'+t('ins_cpue_by_time')+'</p><table class="stat-table"><thead><tr><th>'+t('ins_th_site')+'</th><th>'+t('ins_th_hauls')+'</th><th>'+t('ins_th_spec')+'</th><th>'+t('ins_th_cpue_hr')+'</th></tr></thead><tbody>'; sitesWithHourEffort.forEach(site => { const d=effortByHourSite[site]; const h=d.minutes/60; const c=h>0?(d.specimens/h).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.hauls+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
+        if(sitesWithHookEffort.length>0){ html += '<p style="font-family:var(--display);font-weight:600;font-size:12px;margin:14px 0 6px;">'+t('ins_cpue_by_hooks')+'</p><table class="stat-table"><thead><tr><th>'+t('ins_th_site')+'</th><th>'+t('ins_th_sets')+'</th><th>'+t('ins_th_spec')+'</th><th>'+t('ins_th_cpue_100hk')+'</th></tr></thead><tbody>'; sitesWithHookEffort.forEach(site => { const d=effortByHookSite[site]; const c=d.hooks>0?(d.specimens/d.hooks*100).toFixed(2):'—'; html += '<tr><td class="sp-name">'+site+'</td><td class="num">'+d.sets+'</td><td class="num">'+d.specimens+'</td><td class="num">'+c+'</td></tr>'; }); html += '</tbody></table>'; }
+        html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('ins_cpue_footnote')+'</div>';
       }
       html += '</div>';
 
@@ -19044,7 +19827,7 @@
       const condKeys = Object.keys(condCounts).filter(k=>condCounts[k]>0);
       let donutOff=0; let segs='';
       condKeys.forEach(k => { const frac=condCounts[k]/list.length; const dash=frac*circ; segs+=`<circle cx="40" cy="40" r="28" fill="none" stroke="${condColors[k]}" stroke-width="14" stroke-dasharray="${dash.toFixed(1)} ${(circ-dash).toFixed(1)}" stroke-dashoffset="${(-(donutOff)+circ*0.25).toFixed(1)}" />`; donutOff+=dash; });
-      html += '<div class="chart-card"><div class="chart-card-label">Condition</div><div class="donut-row">';
+      html += '<div class="chart-card"><div class="chart-card-label">'+t('ins_chart_condition')+'</div><div class="donut-row">';
       html += `<svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink:0;"><circle cx="40" cy="40" r="28" fill="none" stroke="#f1f3f3" stroke-width="14"/>${segs}<text x="40" y="44" text-anchor="middle" font-family="monospace" font-size="11" fill="var(--chrome)" font-weight="700">${list.length}</text></svg>`;
       html += '<div class="donut-legend">';
       condKeys.forEach(k => { const pct=(condCounts[k]/list.length*100).toFixed(0); html += `<div class="dl-item"><span style="width:9px;height:9px;border-radius:50%;background:${condColors[k]};display:inline-block;flex-shrink:0;"></span>${condLabels[k]}<span class="dlc">${condCounts[k]} · ${pct}%</span></div>`; });
@@ -19054,7 +19837,7 @@
       const bW=Math.floor(270/Math.max(topSp.length,1))-5;
       let bars='',bLabels='',bCounts='';
       topSp.forEach(([sp,count],i) => { const bH=Math.round((count/maxSp)*65); const x=10+i*(bW+5); const y=70-bH; const op=(1-i*0.12).toFixed(2); bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="var(--blue)" opacity="${op}"/>`; bCounts+=`<text x="${x+bW/2}" y="${y-4}" text-anchor="middle" font-family="monospace" font-size="9" fill="var(--chrome)">${count}</text>`; const sn=sp.length>9?sp.slice(0,8)+'.':sp; bLabels+=`<text x="${x+bW/2}" y="95" text-anchor="middle" font-family="monospace" font-size="8" fill="#7fa3b5">${sn}</text>`; });
-      html += `<div class="chart-card"><div class="chart-card-label">Species frequency</div><svg width="100%" height="100" viewBox="0 0 290 100">${bars}${bCounts}${bLabels}</svg></div>`;
+      html += `<div class="chart-card"><div class="chart-card-label">${t('ins_chart_species_freq')}</div><svg width="100%" height="100" viewBox="0 0 290 100">${bars}${bCounts}${bLabels}</svg></div>`;
 
       if(allLengths.length > 1){
         const minL=Math.min(...allLengths), maxL=Math.max(...allLengths), meanL=allLengths.reduce((a,b)=>a+b,0)/allLengths.length;
@@ -19064,7 +19847,7 @@
         let hBars='',hXl='';
         bins.forEach((c,i) => { const bH=Math.round((c/maxB)*60); const x=10+i*(hbW+3); hBars+=`<rect x="${x}" y="${65-bH}" width="${hbW}" height="${bH}" rx="2" fill="var(--blue)" opacity="${(0.35+c/maxB*0.65).toFixed(2)}"/>`; if(i%2===0) hXl+=`<text x="${x+hbW/2}" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#9aa6a6">${Math.round(minL+i*bSize)}</text>`; });
         const mX=10+((meanL-minL)/((maxL-minL)||1))*270;
-        html += `<div class="chart-card"><div class="chart-card-label">Length distribution (cm)</div><svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="var(--cyan)">μ ${meanL.toFixed(0)}</text>${hXl}</svg></div>`;
+        html += `<div class="chart-card"><div class="chart-card-label">${t('ins_chart_length_dist')}</div><svg width="100%" height="88" viewBox="0 0 290 88">${hBars}<line x1="${mX.toFixed(0)}" y1="4" x2="${mX.toFixed(0)}" y2="67" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="${(mX+3).toFixed(0)}" y="12" font-family="monospace" font-size="8" fill="var(--cyan)">μ ${meanL.toFixed(0)}</text>${hXl}</svg></div>`;
       }
 
     } else {
@@ -19202,7 +19985,7 @@
           const a = Math.exp(reg.intercept), b = reg.slope, r2 = reg.r2;
           const ks = d.L.map((L,i) => 100000*d.W[i]/Math.pow(L,3));
           const meanK = ks.reduce((s1,v)=>s1+v,0)/ks.length;
-          html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+a.toFixed(4)+'</td><td class="num">'+b.toFixed(2)+'</td><td class="num">'+r2.toFixed(2)+'</td><td class="num">'+meanK.toFixed(2)+'</td></tr>';
+          html += '<tr><td class="sp-name">'+sp+'</td><td class="num">'+a.toPrecision(3)+'</td><td class="num">'+b.toFixed(2)+'</td><td class="num">'+r2.toFixed(2)+'</td><td class="num">'+meanK.toFixed(2)+'</td></tr>';
         });
         html += '</tbody></table>';
         html += '<div class="insight-empty" style="text-align:left;padding:10px 2px;">'+t('adv_lw_footnote')+'</div>';
