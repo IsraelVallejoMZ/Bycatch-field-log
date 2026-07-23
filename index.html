@@ -410,6 +410,11 @@
   }
   .aqua-cage-photo-tag{ position:absolute; top:8px; right:8px; font-family:var(--data); font-size:8px; color:rgba(255,255,255,0.6); letter-spacing:0.05em; }
   .aqua-cage-photo-dot{ position:absolute; bottom:8px; left:8px; width:9px; height:9px; border-radius:9999px; border:2px solid #fff; }
+  .aqua-cage-photo-delete-btn{
+    position:absolute; top:6px; left:6px; width:24px; height:24px; border-radius:9999px; border:none;
+    background:rgba(0,0,0,0.28); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .aqua-cage-photo-delete-btn:active{ background:var(--coral); }
   .aqua-cage-photo-body{ padding:12px; display:flex; flex-direction:column; gap:3px; }
   .aqua-cage-photo-name{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink); }
   .aqua-cage-photo-species{ font-family:var(--data); font-size:9.5px; color:var(--ink-soft); font-weight:600; }
@@ -22446,6 +22451,9 @@
       const noteColor = s.status === 'alert' ? 'var(--coral)' : (s.status === 'watch' ? 'var(--amber)' : 'var(--released)');
       return '<div class="aqua-cage-photo-card" data-unit-id="' + s.unit.unit_id + '">'
         + '<div class="aqua-cage-photo-banner" style="background-image:' + aquaCageGradient(unitIndexById[s.unit.unit_id]) + ', repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 8px, transparent 8px, transparent 16px);">'
+          + '<button type="button" class="aqua-cage-photo-delete-btn" data-delete-unit="' + s.unit.unit_id + '" aria-label="' + t('aqua_units_delete') + '">'
+            + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m3 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7"/></svg>'
+          + '</button>'
           + '<div class="aqua-cage-photo-tag">' + t('aqua_cages_photo_tag') + '</div>'
           + '<div class="aqua-cage-photo-dot" style="background:' + dot[s.status] + ';"></div>'
         + '</div>'
@@ -22459,6 +22467,17 @@
     }).join('');
     gridEl.querySelectorAll('[data-unit-id]').forEach(el => {
       el.addEventListener('click', () => openAquaWaterScreen(el.dataset.unitId));
+    });
+    gridEl.querySelectorAll('[data-delete-unit]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const target = units.find(u => u.unit_id === el.dataset.deleteUnit);
+        const name = target ? target.name : '';
+        if(!confirm(t('aqua_units_delete_confirm').replace('{name}', name))) return;
+        deleteAquaUnit(el.dataset.deleteUnit);
+        renderAquaCagesScreen();
+        showToast(t('aqua_units_delete_done'));
+      });
     });
   }
 
