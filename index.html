@@ -1868,17 +1868,14 @@
      tap, radial progress ring in the detail sheet. All text/data below
      stays whatever the existing i18n keys and badge engine already
      produce — this block only restyles presentation. */
-  .sport-ach-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
-  .sport-ach-title{ font-family:var(--display,inherit); font-weight:700; font-size:15px; color:var(--ink); }
-  .sport-ach-count{ font-family:ui-monospace,monospace; font-size:11px; color:#B8842A; background:#FBEFD8; padding:3px 9px; border-radius:20px; font-weight:600; }
-  .sport-ach-sub{ font-size:11.5px; color:var(--ink-soft); margin-bottom:14px; }
-  .sport-ach-cat-label{ font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:14px 0 8px; }
-  .sport-ach-cat-label:first-of-type{ margin-top:0; }
-  .sport-ach-legend{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-  .sport-ach-legend span{ display:inline-flex; align-items:center; gap:5px; font-family:ui-monospace,monospace; font-size:9px; color:#5E7168; text-transform:uppercase; letter-spacing:0.04em; }
-  .sport-ach-legend i{ width:8px; height:8px; border-radius:50%; display:inline-block; }
-  .sport-ach-reef{ position:relative; border-radius:18px; padding:20px 12px 16px; overflow:hidden; background:linear-gradient(150deg,#0B6B61 0%,#0F8A7E 45%,#123B53 100%); margin-bottom:6px; }
+  .sport-ach-reef{ position:relative; border-radius:18px; padding:16px 14px 18px; overflow:hidden; background:linear-gradient(150deg,#0B6B61 0%,#0F8A7E 45%,#123B53 100%); }
   .sport-ach-reef::before{ content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(100deg,rgba(255,255,255,0.05) 0 3px,transparent 3px 16px); }
+  .sport-ach-header{ position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .sport-ach-title{ font-family:var(--display,inherit); font-weight:700; font-size:15px; color:#fff; }
+  .sport-ach-count{ font-family:ui-monospace,monospace; font-size:11px; color:#123B53; background:#FBEFD8; padding:3px 9px; border-radius:20px; font-weight:600; }
+  .sport-ach-sub{ position:relative; z-index:1; font-size:11.5px; color:#DDEFE7; margin-bottom:10px; }
+  .sport-ach-cat-label{ position:relative; z-index:1; font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:#9FCFC3; margin:14px 0 8px; }
+  .sport-ach-cat-label.first{ margin-top:0; }
   .sport-ach-grid{ position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:22px 8px; z-index:1; }
   .sport-badge-tile{ display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; border:none; background:none; font-family:inherit; -webkit-tap-highlight-color:transparent; padding:0; }
   .sport-badge-tile.pop .sport-gem{ animation:sportShatter .55s cubic-bezier(.34,1.56,.64,1); }
@@ -17414,20 +17411,16 @@
     const totalCount = SPORT_BADGE_DEFS.length;
     const unlockedCount = SPORT_BADGE_DEFS.filter(d => unlockedMap[d.id]).length;
 
-    let html = '<div class="sport-ach-header"><span class="sport-ach-title">🏅 '+t('sp_ach_title')+'</span><span class="sport-ach-count">'+unlockedCount+' / '+totalCount+'</span></div>'
-      + '<div class="sport-ach-sub">'+t('sp_ach_sub')+'</div>'
-      + '<div class="sport-ach-legend">'
-      + '<span><i style="background:#EE6C4D"></i>&lt;25%</span>'
-      + '<span><i style="background:#F2A65A"></i>25–49%</span>'
-      + '<span><i style="background:#0F8A7E"></i>50–74%</span>'
-      + '<span><i style="background:#7FE0CC"></i>75–99%</span>'
-      + '<span><i style="background:#b48cff"></i>'+t('sp_ach_cat_secret')+'</span>'
-      + '</div>';
+    let html = '<div class="sport-ach-reef">'
+      + '<div class="sport-ach-header"><span class="sport-ach-title">🏅 '+t('sp_ach_title')+'</span><span class="sport-ach-count">'+unlockedCount+' / '+totalCount+'</span></div>'
+      + '<div class="sport-ach-sub">'+t('sp_ach_sub')+'</div>';
 
+    let firstCat = true;
     categories.forEach(cat => {
       const defs = SPORT_BADGE_DEFS.filter(d => d.category === cat.key);
       if(defs.length === 0) return;
-      html += '<div class="sport-ach-cat-label">'+cat.label+'</div><div class="sport-ach-reef"><div class="sport-ach-grid">';
+      html += '<div class="sport-ach-cat-label'+(firstCat?' first':'')+'">'+cat.label+'</div><div class="sport-ach-grid">';
+      firstCat = false;
       defs.forEach(def => {
         const index = SPORT_BADGE_DEFS.indexOf(def);
         const isUnlocked = !!unlockedMap[def.id];
@@ -17437,6 +17430,7 @@
         let gemClass, glowAttr = '', barHtml = '';
         if(isSecretLocked){
           gemClass = 'secret';
+          barHtml = '<div class="sport-gbar secret"><i></i></div>';
         } else if(isUnlocked){
           const tier = sportGemTier(index);
           gemClass = 'unlocked tier-' + tier;
@@ -17458,8 +17452,9 @@
           + '<div class="sport-gem-label">'+name+barHtml+'</div>'
           + '</button>';
       });
-      html += '</div></div>';
+      html += '</div>';
     });
+    html += '</div>';
 
     card.innerHTML = html;
     card.querySelectorAll('[data-badge-id]').forEach(btn => {
