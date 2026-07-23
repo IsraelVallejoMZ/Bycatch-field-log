@@ -703,6 +703,46 @@
     font-family: var(--data); font-size:11px;
   }
 
+  /* ===== Fleet: dockside sales ledger + traceability QR (closed trips) =====
+     Only shown once a trip is closed (ended_at set) — a trip still at sea
+     has nothing to sell yet. Separate from the pre-existing scale-weight
+     reconciliation (fleet_sales_v1, one price per species) — this is a
+     running, immutable, kg-by-kg ledger of what's actually been handed to
+     buyers at the dock, so the remaining-inventory number can go out on a
+     QR code buyers scan. */
+  .fleet-sales-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:0.5px solid var(--line); }
+  .fleet-sales-row:last-child{ border-bottom:none; }
+  .fleet-sales-add-btn{
+    flex-shrink:0; width:28px; height:28px; border-radius:9999px; border:none;
+    background:var(--cyan); color:var(--paper); font-size:16px; font-weight:700; cursor:pointer;
+  }
+  .fleet-sales-add-btn:disabled{ background:var(--fleet-panel-2); color:var(--ink-soft); cursor:not-allowed; }
+  .fleet-sales-ghost-btn{
+    display:block; width:100%; padding:11px; border-radius:12px; border:1px solid var(--line);
+    background:none; color:var(--ink-soft); font-size:12.5px; font-weight:600; cursor:pointer; margin-top:10px;
+  }
+  .fleet-qr-tabs{ display:flex; gap:8px; margin-bottom:12px; }
+  .fleet-qr-tab{
+    flex:1; text-align:center; padding:9px; border-radius:10px; font-size:12px; font-weight:600;
+    cursor:pointer; border:1px solid var(--line); color:var(--ink-soft);
+  }
+  .fleet-qr-tab.active{ background:var(--cyan); color:var(--paper); border-color:var(--cyan); }
+  .fleet-qr-tab.locked{ opacity:0.5; cursor:not-allowed; }
+  .fleet-sale-modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:60; display:none;
+    align-items:flex-end; justify-content:center;
+  }
+  .fleet-sale-modal-overlay.open{ display:flex; }
+  .fleet-sale-modal-sheet{
+    width:100%; max-width:420px; background:var(--panel); border-radius:20px 20px 0 0;
+    padding:20px calc(20px + env(safe-area-inset-bottom, 0px)) 20px; box-sizing:border-box; color:var(--ink);
+  }
+  .fleet-sale-err{ color:var(--coral); font-size:11px; margin-top:6px; display:none; }
+  .fleet-ledger-row{
+    display:flex; justify-content:space-between; gap:10px; font-size:11.5px; padding:7px 0;
+    border-bottom:0.5px solid var(--line); font-family:var(--data); color:var(--ink);
+  }
+
   .fleet-sun-toggle{
     display:flex; align-items:center; gap:6px; cursor:pointer;
     background: var(--fleet-panel-2); border:1px solid var(--line); border-radius:14px;
@@ -4801,6 +4841,7 @@
   <main>
     <div id="fleetCaptainLogbookCard"></div>
     <div id="fleetTripDetailLanding"></div>
+    <div id="fleetSalesCard"></div>
 
     <div class="card">
       <div class="card-label collapsible" id="fleetHaulLogToggle"><span data-i18n="fltripdet_haul_log">Haul Log</span> <span id="fleetHaulLogChevron">▾</span></div>
@@ -4849,6 +4890,31 @@
     <div id="fleetTripDetailSettlement"></div>
   </main>
 </section>
+
+<div class="fleet-sale-modal-overlay" id="fleetSaleModalOverlay">
+  <div class="fleet-sale-modal-sheet">
+    <div class="card-label" id="fleetSaleModalTitle" style="margin-bottom:2px;">—</div>
+    <div style="font-family:var(--data);font-size:10px;color:var(--ink-soft);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.03em;" id="fleetSaleModalRemaining">—</div>
+    <label for="fleetSaleKg" data-i18n="flsales_kg_label">Kg sold</label>
+    <input type="number" id="fleetSaleKg" inputmode="decimal" min="0" placeholder="e.g. 20">
+    <div class="fleet-sale-err" id="fleetSaleErr" data-i18n="flsales_kg_exceeds">Can't exceed the remaining amount.</div>
+    <label for="fleetSalePrice"><span data-i18n="flsales_price_label">Price per kg</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+    <input type="number" id="fleetSalePrice" inputmode="decimal" min="0" placeholder="e.g. 90">
+    <label for="fleetSaleBuyer"><span data-i18n="flsales_buyer_label">Buyer / note</span> <span class="optional-tag" data-i18n="rec_optional">optional</span></label>
+    <input type="text" id="fleetSaleBuyer" placeholder="e.g. Ao Nang Fish Market">
+    <button type="button" class="btn btn-save" id="fleetSaleSaveBtn" style="width:100%;margin-top:14px;" data-i18n="flsales_save_btn">Save sale</button>
+    <button type="button" class="fleet-sales-ghost-btn" id="fleetSaleCancelBtn" data-i18n="flsales_cancel_btn">Cancel</button>
+  </div>
+</div>
+
+<div class="fleet-sale-modal-overlay" id="fleetLedgerModalOverlay">
+  <div class="fleet-sale-modal-sheet">
+    <div class="card-label" style="margin-bottom:2px;" data-i18n="flsales_ledger_title">Sales ledger</div>
+    <div style="font-family:var(--data);font-size:10px;color:var(--ink-soft);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.03em;" data-i18n="flsales_ledger_sub">Immutable — corrections are new entries, not edits</div>
+    <div id="fleetLedgerRows" style="max-height:50vh;overflow-y:auto;"></div>
+    <button type="button" class="fleet-sales-ghost-btn" id="fleetLedgerCloseBtn" data-i18n="flsales_close_btn">Close</button>
+  </div>
+</div>
 
 <!-- ================= FLEET: SPECIES CATALOG ================= -->
 <section class="screen" id="screen-fleet-species">
@@ -6298,7 +6364,8 @@
       fltripdet_generic_format_notice: 'Generic Fish Pulse format — it doesn\'t match the official layout of any specific authority. If your jurisdiction requires a particular format, set a Reporting Authority in this vessel\'s compliance settings.',
       fltripdet_export_pdf_btn: 'Export as PDF', fltripdet_no_hauls: 'No hauls logged.', fltripdet_no_catches: 'No catches logged.',
       fltripdet_protected_section: 'Protected Species Interactions', fltripdet_no_protected: 'No protected species interactions logged.',
-      flcaptainlog_card_title: 'Captain\'s Logbook', flcaptainlog_card_desc: 'A comprehensive voyage record — vessel &amp; permit identification, trip details, gear, crew, haul-by-haul log, and onboard catch estimate — in one exportable document.', flcaptainlog_export_btn: 'Generate Captain\'s Logbook', flcaptainlog_grid_export_btn: 'Generate Grid View', flcaptainlog_grid_title: 'Captain\'s Logbook — Grid View', flcaptainlog_title: 'Captain\'s Logbook', flcaptainlogscreen_past_trips: 'Past trips', flcaptainlogscreen_no_trips: 'No closed trips yet.', flcaptainlog_sec_id: 'Vessel &amp; Permit Identification', flcaptainlog_sec_trip: 'Trip Information', flcaptainlog_sec_gear: 'Gear Characteristics', flcaptainlog_sec_crew: 'Crew Aboard', flcaptainlog_sec_hauls: 'Haul-by-Haul Log', flcaptainlog_sec_catch: 'Onboard Catch Estimate', flcaptainlog_disclaimer: 'This logbook is generated from data self-reported in Fish Pulse and is not an official government logbook. Fields marked \'— complete by hand\' are not currently captured by the app; verify all entries against your vessel\'s documents and applicable regulations before relying on this record.', flcaptainlog_not_captured: '— complete by hand', flcaptainlog_f_vessel: 'Vessel Name', flcaptainlog_f_registration: 'Registration / Matrícula', flcaptainlog_f_permit_holder: 'Permit Holder', flcaptainlog_f_permit_number: 'Fishing Permit No.', flcaptainlog_f_captain: 'Captain', flcaptainlog_f_flag: 'Flag / Nationality', flcaptainlog_f_callsign: 'Radio Call Sign', flcaptainlog_f_hold_capacity: 'Hold Capacity', flcaptainlog_f_trip_number: 'Trip No. (season)', flcaptainlog_f_departure_port: 'Departure Port', flcaptainlog_f_departure_dt: 'Departure Date/Time', flcaptainlog_f_arrival_port: 'Arrival Port', flcaptainlog_f_arrival_dt: 'Arrival Date/Time', flcaptainlog_f_arrival_folio: 'Arrival Folio No.', flcaptainlog_f_fishing_zone: 'Authorized Fishing Zone', flcaptainlog_f_gear_desc: 'Gear Description', flcaptainlog_col_hauldate: 'Date / Time', flcaptainlog_col_position: 'Position', flcaptainlog_col_depth: 'Depth (m)', flcaptainlog_col_notes: 'Notes', flcaptainlog_col_species: 'Species', flcaptainlog_col_estkg: 'Est. Weight', flcaptainlog_col_preservation: 'Preservation', flcaptainlog_kpi_days: 'Days at Sea', flcaptainlog_kpi_hauls: 'Hauls', flcaptainlog_kpi_fuel: 'Fuel Consumed', flcaptainlog_kpi_catch: 'Total Catch', flcaptainlog_sec_bycatch: 'Bycatch — Kept / Discarded at Sea', flcaptainlog_col_kept: 'Kept (kg)', flcaptainlog_col_discarded: 'Discarded (kg)', flcaptainlog_sec_protected: 'Protected Species Interactions', flcaptainlog_col_block: 'Block #', flcaptainlog_col_fao: 'FAO Code', flcaptainlog_tolerance_warning: 'Marked species differ from the scale weight by more than the EU\'s 10% per-species tolerance \u2014 reconcile before submitting.',
+      flsales_card_title: 'Dockside sales', flsales_card_sub: '{n} species landed', flsales_caught_sold: 'Caught {caught} kg · Sold {sold} kg', flsales_remaining_label: 'remaining', flsales_view_ledger: 'View sales ledger ({n})', flsales_export_pdf_btn: 'Export sales PDF', flsales_qr_title: 'Traceability QR', flsales_qr_sub: 'Buyers scan this to see remaining catch', flsales_qr_offline_tab: 'QR offline', flsales_qr_online_tab: 'QR online', flsales_qr_online_locked: 'Requires a connection — coming soon with cloud sync.', flsales_qr_lib_missing: 'QR library not loaded', flsales_qr_generated_at: 'Generated {time} · re-open after each sale', flsales_modal_title: 'Register sale — {species}', flsales_modal_remaining: '{kg} kg remaining', flsales_kg_label: 'Kg sold', flsales_kg_exceeds: 'Cannot exceed the remaining {kg} kg', flsales_price_label: 'Price per kg', flsales_buyer_label: 'Buyer / note', flsales_save_btn: 'Save sale', flsales_cancel_btn: 'Cancel', flsales_saved: 'Sale saved — QR updated', flsales_ledger_title: 'Sales ledger', flsales_ledger_sub: 'Immutable — corrections are new entries, not edits', flsales_ledger_empty: 'No sales recorded yet.', flsales_close_btn: 'Close', flsales_pdf_title: 'Dockside Sales Report', flsales_pdf_kpi_caught: 'Total caught', flsales_pdf_kpi_sold: 'Total sold', flsales_pdf_kpi_remaining: 'Total remaining', flsales_pdf_section_ledger: 'Sale-by-sale ledger', flsales_pdf_col_datetime: 'Date/time', flsales_pdf_col_species: 'Species', flsales_pdf_col_kg: 'Kg', flsales_pdf_col_price: 'Price/kg', flsales_pdf_col_by: 'By', flsales_pdf_col_buyer: 'Buyer/note', flsales_pdf_disclaimer: 'Generated by Fish Pulse from data entered by the vessel crew. Not an official weighing, customs, or health-inspection certificate.',
+flcaptainlog_card_title: 'Captain\'s Logbook', flcaptainlog_card_desc: 'A comprehensive voyage record — vessel &amp; permit identification, trip details, gear, crew, haul-by-haul log, and onboard catch estimate — in one exportable document.', flcaptainlog_export_btn: 'Generate Captain\'s Logbook', flcaptainlog_grid_export_btn: 'Generate Grid View', flcaptainlog_grid_title: 'Captain\'s Logbook — Grid View', flcaptainlog_title: 'Captain\'s Logbook', flcaptainlogscreen_past_trips: 'Past trips', flcaptainlogscreen_no_trips: 'No closed trips yet.', flcaptainlog_sec_id: 'Vessel &amp; Permit Identification', flcaptainlog_sec_trip: 'Trip Information', flcaptainlog_sec_gear: 'Gear Characteristics', flcaptainlog_sec_crew: 'Crew Aboard', flcaptainlog_sec_hauls: 'Haul-by-Haul Log', flcaptainlog_sec_catch: 'Onboard Catch Estimate', flcaptainlog_disclaimer: 'This logbook is generated from data self-reported in Fish Pulse and is not an official government logbook. Fields marked \'— complete by hand\' are not currently captured by the app; verify all entries against your vessel\'s documents and applicable regulations before relying on this record.', flcaptainlog_not_captured: '— complete by hand', flcaptainlog_f_vessel: 'Vessel Name', flcaptainlog_f_registration: 'Registration / Matrícula', flcaptainlog_f_permit_holder: 'Permit Holder', flcaptainlog_f_permit_number: 'Fishing Permit No.', flcaptainlog_f_captain: 'Captain', flcaptainlog_f_flag: 'Flag / Nationality', flcaptainlog_f_callsign: 'Radio Call Sign', flcaptainlog_f_hold_capacity: 'Hold Capacity', flcaptainlog_f_trip_number: 'Trip No. (season)', flcaptainlog_f_departure_port: 'Departure Port', flcaptainlog_f_departure_dt: 'Departure Date/Time', flcaptainlog_f_arrival_port: 'Arrival Port', flcaptainlog_f_arrival_dt: 'Arrival Date/Time', flcaptainlog_f_arrival_folio: 'Arrival Folio No.', flcaptainlog_f_fishing_zone: 'Authorized Fishing Zone', flcaptainlog_f_gear_desc: 'Gear Description', flcaptainlog_col_hauldate: 'Date / Time', flcaptainlog_col_position: 'Position', flcaptainlog_col_depth: 'Depth (m)', flcaptainlog_col_notes: 'Notes', flcaptainlog_col_species: 'Species', flcaptainlog_col_estkg: 'Est. Weight', flcaptainlog_col_preservation: 'Preservation', flcaptainlog_kpi_days: 'Days at Sea', flcaptainlog_kpi_hauls: 'Hauls', flcaptainlog_kpi_fuel: 'Fuel Consumed', flcaptainlog_kpi_catch: 'Total Catch', flcaptainlog_sec_bycatch: 'Bycatch — Kept / Discarded at Sea', flcaptainlog_col_kept: 'Kept (kg)', flcaptainlog_col_discarded: 'Discarded (kg)', flcaptainlog_sec_protected: 'Protected Species Interactions', flcaptainlog_col_block: 'Block #', flcaptainlog_col_fao: 'FAO Code', flcaptainlog_tolerance_warning: 'Marked species differ from the scale weight by more than the EU\'s 10% per-species tolerance \u2014 reconcile before submitting.',
       flmx_aviso_export_btn: 'Export Aviso de Arribo (Mexico)',
       flmx_escama_export_btn: 'Export Bitácora de Escama (Mexico)', flmx_camaron_export_btn: 'Export Bitácora de Camarón (Mexico)', flmx_tiburon_export_btn: 'Export Bitácora de Tiburón (Mexico)',
       flus_nt_export_btn: 'Export Non-Trawl Logbook Worksheet (US)',
@@ -6804,7 +6871,8 @@
       fltripdet_generic_format_notice: 'Formato genérico de Fish Pulse — no coincide con el formato oficial de ninguna autoridad específica. Si tu jurisdicción requiere un formato particular, configura una Autoridad de Reporte en los ajustes de cumplimiento de este barco.',
       fltripdet_export_pdf_btn: 'Exportar como PDF', fltripdet_no_hauls: 'No hay lances registrados.', fltripdet_no_catches: 'No hay capturas registradas.',
       fltripdet_protected_section: 'Interacciones con Especies Protegidas', fltripdet_no_protected: 'No hay interacciones con especies protegidas registradas.',
-      flcaptainlog_card_title: 'Bitácora del Capitán', flcaptainlog_card_desc: 'Un registro completo del viaje — identificación de embarcación y permisos, datos del viaje, arte de pesca, tripulación, lances y estimación de captura a bordo — en un solo documento exportable.', flcaptainlog_export_btn: 'Generar Bitácora del Capitán', flcaptainlog_grid_export_btn: 'Generar Vista Grid', flcaptainlog_grid_title: 'Bitácora del Capitán — Vista Grid', flcaptainlog_title: 'Bitácora del Capitán', flcaptainlogscreen_past_trips: 'Viajes anteriores', flcaptainlogscreen_no_trips: 'Aún no hay viajes cerrados.', flcaptainlog_sec_id: 'Identificación de la Embarcación y Permisos', flcaptainlog_sec_trip: 'Datos del Viaje', flcaptainlog_sec_gear: 'Características del Arte de Pesca', flcaptainlog_sec_crew: 'Tripulación a Bordo', flcaptainlog_sec_hauls: 'Registro de Lances', flcaptainlog_sec_catch: 'Estimación de Captura a Bordo', flcaptainlog_disclaimer: 'Esta bitácora se genera con datos autorreportados en Fish Pulse y no sustituye la bitácora oficial exigida por la autoridad. Los campos marcados \'— completar a mano\' no están capturados actualmente por la app; verifica cada dato contra los documentos de la embarcación y la normativa aplicable antes de usar este registro.', flcaptainlog_not_captured: '— completar a mano', flcaptainlog_f_vessel: 'Nombre de la Embarcación', flcaptainlog_f_registration: 'Matrícula / No. de Registro', flcaptainlog_f_permit_holder: 'Titular del Permiso', flcaptainlog_f_permit_number: 'No. de Permiso de Pesca', flcaptainlog_f_captain: 'Capitán', flcaptainlog_f_flag: 'Bandera / Nacionalidad', flcaptainlog_f_callsign: 'Distintivo de Llamada (Radio)', flcaptainlog_f_hold_capacity: 'Capacidad de Bodega', flcaptainlog_f_trip_number: 'No. de Viaje (temporada)', flcaptainlog_f_departure_port: 'Puerto de Salida', flcaptainlog_f_departure_dt: 'Fecha/Hora de Salida', flcaptainlog_f_arrival_port: 'Puerto de Arribo', flcaptainlog_f_arrival_dt: 'Fecha/Hora de Arribo', flcaptainlog_f_arrival_folio: 'No. de Folio de Arribo', flcaptainlog_f_fishing_zone: 'Zona de Pesca Autorizada', flcaptainlog_f_gear_desc: 'Descripción del Arte de Pesca', flcaptainlog_col_hauldate: 'Fecha / Hora', flcaptainlog_col_position: 'Posición', flcaptainlog_col_depth: 'Profundidad (m)', flcaptainlog_col_notes: 'Notas', flcaptainlog_col_species: 'Especie', flcaptainlog_col_estkg: 'Peso Est.', flcaptainlog_col_preservation: 'Conservación', flcaptainlog_kpi_days: 'Días en Mar', flcaptainlog_kpi_hauls: 'Lances', flcaptainlog_kpi_fuel: 'Combustible Consumido', flcaptainlog_kpi_catch: 'Captura Total', flcaptainlog_sec_bycatch: 'Fauna de Acompañamiento — Retenida / Descartada en el Mar', flcaptainlog_col_kept: 'Retenido (kg)', flcaptainlog_col_discarded: 'Descartado (kg)', flcaptainlog_sec_protected: 'Interacciones con Especies Protegidas', flcaptainlog_col_block: 'No. de Bloque', flcaptainlog_col_fao: 'Código FAO', flcaptainlog_tolerance_warning: 'Las especies marcadas difieren del peso en b\u00e1scula por m\u00e1s del margen de tolerancia del 10% por especie de la UE \u2014 concilia antes de enviar.',
+      flsales_card_title: 'Ventas en el muelle', flsales_card_sub: '{n} especies desembarcadas', flsales_caught_sold: 'Capturado {caught} kg · Vendido {sold} kg', flsales_remaining_label: 'restante', flsales_view_ledger: 'Ver registro de ventas ({n})', flsales_export_pdf_btn: 'Exportar PDF de ventas', flsales_qr_title: 'QR de trazabilidad', flsales_qr_sub: 'Los compradores lo escanean para ver la captura restante', flsales_qr_offline_tab: 'QR offline', flsales_qr_online_tab: 'QR online', flsales_qr_online_locked: 'Requiere conexión — disponible próximamente con la sincronización en la nube.', flsales_qr_lib_missing: 'Librería de QR no cargada', flsales_qr_generated_at: 'Generado {time} · vuelve a abrir después de cada venta', flsales_modal_title: 'Registrar venta — {species}', flsales_modal_remaining: '{kg} kg restantes', flsales_kg_label: 'Kg vendidos', flsales_kg_exceeds: 'No puede exceder los {kg} kg restantes', flsales_price_label: 'Precio por kg', flsales_buyer_label: 'Comprador / nota', flsales_save_btn: 'Guardar venta', flsales_cancel_btn: 'Cancelar', flsales_saved: 'Venta guardada — QR actualizado', flsales_ledger_title: 'Registro de ventas', flsales_ledger_sub: 'Inmutable — las correcciones son entradas nuevas, no ediciones', flsales_ledger_empty: 'Aún no hay ventas registradas.', flsales_close_btn: 'Cerrar', flsales_pdf_title: 'Reporte de Ventas en el Muelle', flsales_pdf_kpi_caught: 'Total capturado', flsales_pdf_kpi_sold: 'Total vendido', flsales_pdf_kpi_remaining: 'Total restante', flsales_pdf_section_ledger: 'Registro venta por venta', flsales_pdf_col_datetime: 'Fecha/hora', flsales_pdf_col_species: 'Especie', flsales_pdf_col_kg: 'Kg', flsales_pdf_col_price: 'Precio/kg', flsales_pdf_col_by: 'Por', flsales_pdf_col_buyer: 'Comprador/nota', flsales_pdf_disclaimer: 'Generado por Fish Pulse con datos capturados por la tripulación. No es un certificado oficial de pesaje, aduana o inspección sanitaria.',
+flcaptainlog_card_title: 'Bitácora del Capitán', flcaptainlog_card_desc: 'Un registro completo del viaje — identificación de embarcación y permisos, datos del viaje, arte de pesca, tripulación, lances y estimación de captura a bordo — en un solo documento exportable.', flcaptainlog_export_btn: 'Generar Bitácora del Capitán', flcaptainlog_grid_export_btn: 'Generar Vista Grid', flcaptainlog_grid_title: 'Bitácora del Capitán — Vista Grid', flcaptainlog_title: 'Bitácora del Capitán', flcaptainlogscreen_past_trips: 'Viajes anteriores', flcaptainlogscreen_no_trips: 'Aún no hay viajes cerrados.', flcaptainlog_sec_id: 'Identificación de la Embarcación y Permisos', flcaptainlog_sec_trip: 'Datos del Viaje', flcaptainlog_sec_gear: 'Características del Arte de Pesca', flcaptainlog_sec_crew: 'Tripulación a Bordo', flcaptainlog_sec_hauls: 'Registro de Lances', flcaptainlog_sec_catch: 'Estimación de Captura a Bordo', flcaptainlog_disclaimer: 'Esta bitácora se genera con datos autorreportados en Fish Pulse y no sustituye la bitácora oficial exigida por la autoridad. Los campos marcados \'— completar a mano\' no están capturados actualmente por la app; verifica cada dato contra los documentos de la embarcación y la normativa aplicable antes de usar este registro.', flcaptainlog_not_captured: '— completar a mano', flcaptainlog_f_vessel: 'Nombre de la Embarcación', flcaptainlog_f_registration: 'Matrícula / No. de Registro', flcaptainlog_f_permit_holder: 'Titular del Permiso', flcaptainlog_f_permit_number: 'No. de Permiso de Pesca', flcaptainlog_f_captain: 'Capitán', flcaptainlog_f_flag: 'Bandera / Nacionalidad', flcaptainlog_f_callsign: 'Distintivo de Llamada (Radio)', flcaptainlog_f_hold_capacity: 'Capacidad de Bodega', flcaptainlog_f_trip_number: 'No. de Viaje (temporada)', flcaptainlog_f_departure_port: 'Puerto de Salida', flcaptainlog_f_departure_dt: 'Fecha/Hora de Salida', flcaptainlog_f_arrival_port: 'Puerto de Arribo', flcaptainlog_f_arrival_dt: 'Fecha/Hora de Arribo', flcaptainlog_f_arrival_folio: 'No. de Folio de Arribo', flcaptainlog_f_fishing_zone: 'Zona de Pesca Autorizada', flcaptainlog_f_gear_desc: 'Descripción del Arte de Pesca', flcaptainlog_col_hauldate: 'Fecha / Hora', flcaptainlog_col_position: 'Posición', flcaptainlog_col_depth: 'Profundidad (m)', flcaptainlog_col_notes: 'Notas', flcaptainlog_col_species: 'Especie', flcaptainlog_col_estkg: 'Peso Est.', flcaptainlog_col_preservation: 'Conservación', flcaptainlog_kpi_days: 'Días en Mar', flcaptainlog_kpi_hauls: 'Lances', flcaptainlog_kpi_fuel: 'Combustible Consumido', flcaptainlog_kpi_catch: 'Captura Total', flcaptainlog_sec_bycatch: 'Fauna de Acompañamiento — Retenida / Descartada en el Mar', flcaptainlog_col_kept: 'Retenido (kg)', flcaptainlog_col_discarded: 'Descartado (kg)', flcaptainlog_sec_protected: 'Interacciones con Especies Protegidas', flcaptainlog_col_block: 'No. de Bloque', flcaptainlog_col_fao: 'Código FAO', flcaptainlog_tolerance_warning: 'Las especies marcadas difieren del peso en b\u00e1scula por m\u00e1s del margen de tolerancia del 10% por especie de la UE \u2014 concilia antes de enviar.',
       flmx_aviso_export_btn: 'Exportar Aviso de Arribo (México)',
       flmx_escama_export_btn: 'Exportar Bitácora de Escama (México)', flmx_camaron_export_btn: 'Exportar Bitácora de Camarón (México)', flmx_tiburon_export_btn: 'Exportar Bitácora de Tiburón (México)',
       flus_nt_export_btn: 'Exportar Hoja de Non-Trawl Logbook (EE.UU.)',
@@ -7310,7 +7378,8 @@
       fltripdet_generic_format_notice: 'Formato generico di Fish Pulse — non corrisponde al layout ufficiale di nessuna autorità specifica. Se la tua giurisdizione richiede un formato particolare, imposta un\'Autorità di Riferimento nelle impostazioni di conformità di questa nave.',
       fltripdet_export_pdf_btn: 'Esporta come PDF', fltripdet_no_hauls: 'Nessuna calata registrata.', fltripdet_no_catches: 'Nessuna cattura registrata.',
       fltripdet_protected_section: 'Interazioni con Specie Protette', fltripdet_no_protected: 'Nessuna interazione con specie protette registrata.',
-      flcaptainlog_card_title: 'Diario di Bordo del Capitano', flcaptainlog_card_desc: 'Un registro completo del viaggio — identificazione dell\'imbarcazione e permessi, dati del viaggio, attrezzo da pesca, equipaggio, calate e stima della cattura a bordo — in un unico documento esportabile.', flcaptainlog_export_btn: 'Genera Diario di Bordo del Capitano', flcaptainlog_grid_export_btn: 'Genera Vista Grid', flcaptainlog_grid_title: 'Diario di Bordo del Capitano — Vista Grid', flcaptainlog_title: 'Diario di Bordo del Capitano', flcaptainlogscreen_past_trips: 'Viaggi precedenti', flcaptainlogscreen_no_trips: 'Nessun viaggio chiuso ancora.', flcaptainlog_sec_id: 'Identificazione dell\'Imbarcazione e Permessi', flcaptainlog_sec_trip: 'Dati del Viaggio', flcaptainlog_sec_gear: 'Caratteristiche dell\'Attrezzo da Pesca', flcaptainlog_sec_crew: 'Equipaggio a Bordo', flcaptainlog_sec_hauls: 'Registro delle Calate', flcaptainlog_sec_catch: 'Stima della Cattura a Bordo', flcaptainlog_disclaimer: 'Questo diario è generato con dati autodichiarati in Fish Pulse e non sostituisce il giornale di pesca ufficiale richiesto dall\'autorità. I campi contrassegnati con \'— completare a mano\' non sono attualmente acquisiti dall\'app; verifica ogni dato con i documenti dell\'imbarcazione e la normativa applicabile prima di usare questo registro.', flcaptainlog_not_captured: '— completare a mano', flcaptainlog_f_vessel: 'Nome dell\'Imbarcazione', flcaptainlog_f_registration: 'Matricola / N. di Registro', flcaptainlog_f_permit_holder: 'Titolare del Permesso', flcaptainlog_f_permit_number: 'N. di Permesso di Pesca', flcaptainlog_f_captain: 'Capitano', flcaptainlog_f_flag: 'Bandiera / Nazionalità', flcaptainlog_f_callsign: 'Nominativo Radio', flcaptainlog_f_hold_capacity: 'Capacità della Stiva', flcaptainlog_f_trip_number: 'N. di Viaggio (stagione)', flcaptainlog_f_departure_port: 'Porto di Partenza', flcaptainlog_f_departure_dt: 'Data/Ora di Partenza', flcaptainlog_f_arrival_port: 'Porto di Arrivo', flcaptainlog_f_arrival_dt: 'Data/Ora di Arrivo', flcaptainlog_f_arrival_folio: 'N. di Foglio di Arrivo', flcaptainlog_f_fishing_zone: 'Zona di Pesca Autorizzata', flcaptainlog_f_gear_desc: 'Descrizione dell\'Attrezzo', flcaptainlog_col_hauldate: 'Data / Ora', flcaptainlog_col_position: 'Posizione', flcaptainlog_col_depth: 'Profondità (m)', flcaptainlog_col_notes: 'Note', flcaptainlog_col_species: 'Specie', flcaptainlog_col_estkg: 'Peso Stimato', flcaptainlog_col_preservation: 'Conservazione', flcaptainlog_kpi_days: 'Giorni in Mare', flcaptainlog_kpi_hauls: 'Calate', flcaptainlog_kpi_fuel: 'Carburante Consumato', flcaptainlog_kpi_catch: 'Cattura Totale', flcaptainlog_sec_bycatch: 'Catture Accessorie — Trattenute / Scartate in Mare', flcaptainlog_col_kept: 'Trattenuto (kg)', flcaptainlog_col_discarded: 'Scartato (kg)', flcaptainlog_sec_protected: 'Interazioni con Specie Protette', flcaptainlog_col_block: 'N. Blocco', flcaptainlog_col_fao: 'Codice FAO', flcaptainlog_tolerance_warning: 'Le specie contrassegnate differiscono dal peso alla bilancia di oltre la tolleranza UE del 10% per specie \u2014 riconciliare prima dell\'invio.',
+      flsales_card_title: 'Vendite al molo', flsales_card_sub: '{n} specie sbarcate', flsales_caught_sold: 'Catturato {caught} kg · Venduto {sold} kg', flsales_remaining_label: 'rimanente', flsales_view_ledger: 'Vedi registro vendite ({n})', flsales_export_pdf_btn: 'Esporta PDF vendite', flsales_qr_title: 'QR di tracciabilità', flsales_qr_sub: 'Gli acquirenti lo scansionano per vedere il pescato rimanente', flsales_qr_offline_tab: 'QR offline', flsales_qr_online_tab: 'QR online', flsales_qr_online_locked: 'Richiede connessione — disponibile prossimamente con la sincronizzazione cloud.', flsales_qr_lib_missing: 'Libreria QR non caricata', flsales_qr_generated_at: 'Generato {time} · riapri dopo ogni vendita', flsales_modal_title: 'Registra vendita — {species}', flsales_modal_remaining: '{kg} kg rimanenti', flsales_kg_label: 'Kg venduti', flsales_kg_exceeds: 'Non può superare i {kg} kg rimanenti', flsales_price_label: 'Prezzo al kg', flsales_buyer_label: 'Acquirente / nota', flsales_save_btn: 'Salva vendita', flsales_cancel_btn: 'Annulla', flsales_saved: 'Vendita salvata — QR aggiornato', flsales_ledger_title: 'Registro vendite', flsales_ledger_sub: 'Immutabile — le correzioni sono nuove voci, non modifiche', flsales_ledger_empty: 'Nessuna vendita registrata finora.', flsales_close_btn: 'Chiudi', flsales_pdf_title: 'Rapporto Vendite al Molo', flsales_pdf_kpi_caught: 'Totale catturato', flsales_pdf_kpi_sold: 'Totale venduto', flsales_pdf_kpi_remaining: 'Totale rimanente', flsales_pdf_section_ledger: 'Registro vendita per vendita', flsales_pdf_col_datetime: 'Data/ora', flsales_pdf_col_species: 'Specie', flsales_pdf_col_kg: 'Kg', flsales_pdf_col_price: 'Prezzo/kg', flsales_pdf_col_by: 'Da', flsales_pdf_col_buyer: 'Acquirente/nota', flsales_pdf_disclaimer: 'Generato da Fish Pulse con i dati inseriti dall\'equipaggio. Non è un certificato ufficiale di pesatura, dogana o ispezione sanitaria.',
+flcaptainlog_card_title: 'Diario di Bordo del Capitano', flcaptainlog_card_desc: 'Un registro completo del viaggio — identificazione dell\'imbarcazione e permessi, dati del viaggio, attrezzo da pesca, equipaggio, calate e stima della cattura a bordo — in un unico documento esportabile.', flcaptainlog_export_btn: 'Genera Diario di Bordo del Capitano', flcaptainlog_grid_export_btn: 'Genera Vista Grid', flcaptainlog_grid_title: 'Diario di Bordo del Capitano — Vista Grid', flcaptainlog_title: 'Diario di Bordo del Capitano', flcaptainlogscreen_past_trips: 'Viaggi precedenti', flcaptainlogscreen_no_trips: 'Nessun viaggio chiuso ancora.', flcaptainlog_sec_id: 'Identificazione dell\'Imbarcazione e Permessi', flcaptainlog_sec_trip: 'Dati del Viaggio', flcaptainlog_sec_gear: 'Caratteristiche dell\'Attrezzo da Pesca', flcaptainlog_sec_crew: 'Equipaggio a Bordo', flcaptainlog_sec_hauls: 'Registro delle Calate', flcaptainlog_sec_catch: 'Stima della Cattura a Bordo', flcaptainlog_disclaimer: 'Questo diario è generato con dati autodichiarati in Fish Pulse e non sostituisce il giornale di pesca ufficiale richiesto dall\'autorità. I campi contrassegnati con \'— completare a mano\' non sono attualmente acquisiti dall\'app; verifica ogni dato con i documenti dell\'imbarcazione e la normativa applicabile prima di usare questo registro.', flcaptainlog_not_captured: '— completare a mano', flcaptainlog_f_vessel: 'Nome dell\'Imbarcazione', flcaptainlog_f_registration: 'Matricola / N. di Registro', flcaptainlog_f_permit_holder: 'Titolare del Permesso', flcaptainlog_f_permit_number: 'N. di Permesso di Pesca', flcaptainlog_f_captain: 'Capitano', flcaptainlog_f_flag: 'Bandiera / Nazionalità', flcaptainlog_f_callsign: 'Nominativo Radio', flcaptainlog_f_hold_capacity: 'Capacità della Stiva', flcaptainlog_f_trip_number: 'N. di Viaggio (stagione)', flcaptainlog_f_departure_port: 'Porto di Partenza', flcaptainlog_f_departure_dt: 'Data/Ora di Partenza', flcaptainlog_f_arrival_port: 'Porto di Arrivo', flcaptainlog_f_arrival_dt: 'Data/Ora di Arrivo', flcaptainlog_f_arrival_folio: 'N. di Foglio di Arrivo', flcaptainlog_f_fishing_zone: 'Zona di Pesca Autorizzata', flcaptainlog_f_gear_desc: 'Descrizione dell\'Attrezzo', flcaptainlog_col_hauldate: 'Data / Ora', flcaptainlog_col_position: 'Posizione', flcaptainlog_col_depth: 'Profondità (m)', flcaptainlog_col_notes: 'Note', flcaptainlog_col_species: 'Specie', flcaptainlog_col_estkg: 'Peso Stimato', flcaptainlog_col_preservation: 'Conservazione', flcaptainlog_kpi_days: 'Giorni in Mare', flcaptainlog_kpi_hauls: 'Calate', flcaptainlog_kpi_fuel: 'Carburante Consumato', flcaptainlog_kpi_catch: 'Cattura Totale', flcaptainlog_sec_bycatch: 'Catture Accessorie — Trattenute / Scartate in Mare', flcaptainlog_col_kept: 'Trattenuto (kg)', flcaptainlog_col_discarded: 'Scartato (kg)', flcaptainlog_sec_protected: 'Interazioni con Specie Protette', flcaptainlog_col_block: 'N. Blocco', flcaptainlog_col_fao: 'Codice FAO', flcaptainlog_tolerance_warning: 'Le specie contrassegnate differiscono dal peso alla bilancia di oltre la tolleranza UE del 10% per specie \u2014 riconciliare prima dell\'invio.',
       flmx_aviso_export_btn: 'Esporta Aviso de Arribo (Messico)',
       flmx_escama_export_btn: 'Esporta Bitácora de Escama (Messico)', flmx_camaron_export_btn: 'Esporta Bitácora de Camarón (Messico)', flmx_tiburon_export_btn: 'Esporta Bitácora de Tiburón (Messico)',
       flus_nt_export_btn: 'Esporta Foglio Non-Trawl Logbook (USA)',
@@ -7816,7 +7885,8 @@
       fltripdet_generic_format_notice: 'รูปแบบทั่วไปของ Fish Pulse — ไม่ตรงกับรูปแบบทางการของหน่วยงานใดหน่วยงานหนึ่งโดยเฉพาะ หากเขตอำนาจของคุณต้องการรูปแบบเฉพาะ โปรดตั้งค่าหน่วยงานที่รายงานในการตั้งค่าการปฏิบัติตามข้อกำหนดของเรือลำนี้',
       fltripdet_export_pdf_btn: 'ส่งออกเป็น PDF', fltripdet_no_hauls: 'ไม่มีการลากอวนที่บันทึกไว้', fltripdet_no_catches: 'ไม่มีการจับปลาที่บันทึกไว้',
       fltripdet_protected_section: 'ปฏิสัมพันธ์กับสัตว์คุ้มครอง', fltripdet_no_protected: 'ไม่มีปฏิสัมพันธ์กับสัตว์คุ้มครองที่บันทึกไว้',
-      flcaptainlog_card_title: 'สมุดบันทึกกัปตัน', flcaptainlog_card_desc: 'บันทึกการเดินทางแบบครบถ้วน — ข้อมูลระบุตัวเรือและใบอนุญาต รายละเอียดการเดินทาง เครื่องมือประมง ลูกเรือ บันทึกการลากอวนแต่ละครั้ง และประมาณการจับสัตว์น้ำบนเรือ — ในเอกสารเดียวที่ส่งออกได้', flcaptainlog_export_btn: 'สร้างสมุดบันทึกกัปตัน', flcaptainlog_grid_export_btn: 'สร้างมุมมองแบบกริด', flcaptainlog_grid_title: 'สมุดบันทึกกัปตัน — มุมมองแบบกริด', flcaptainlog_title: 'สมุดบันทึกกัปตัน', flcaptainlogscreen_past_trips: 'ทริปที่ผ่านมา', flcaptainlogscreen_no_trips: 'ยังไม่มีทริปที่ปิดแล้ว', flcaptainlog_sec_id: 'ข้อมูลระบุตัวเรือและใบอนุญาต', flcaptainlog_sec_trip: 'ข้อมูลการเดินทาง', flcaptainlog_sec_gear: 'ลักษณะเครื่องมือประมง', flcaptainlog_sec_crew: 'ลูกเรือบนเรือ', flcaptainlog_sec_hauls: 'บันทึกการลากอวน', flcaptainlog_sec_catch: 'ประมาณการจับสัตว์น้ำบนเรือ', flcaptainlog_disclaimer: 'สมุดบันทึกนี้สร้างจากข้อมูลที่รายงานเองใน Fish Pulse และไม่ใช่สมุดบันทึกทางการที่หน่วยงานกำหนด ช่องที่ระบุ \'— กรอกด้วยมือ\' ยังไม่ถูกบันทึกในแอปนี้ กรุณาตรวจสอบข้อมูลทุกรายการกับเอกสารของเรือและกฎระเบียบที่บังคับใช้ก่อนใช้บันทึกนี้', flcaptainlog_not_captured: '— กรอกด้วยมือ', flcaptainlog_f_vessel: 'ชื่อเรือ', flcaptainlog_f_registration: 'ทะเบียนเรือ', flcaptainlog_f_permit_holder: 'ผู้ถือใบอนุญาต', flcaptainlog_f_permit_number: 'เลขที่ใบอนุญาตประมง', flcaptainlog_f_captain: 'กัปตัน', flcaptainlog_f_flag: 'สัญชาติเรือ', flcaptainlog_f_callsign: 'สัญญาณเรียกขานวิทยุ', flcaptainlog_f_hold_capacity: 'ความจุระวางเก็บสัตว์น้ำ', flcaptainlog_f_trip_number: 'เที่ยวที่ (ฤดูกาล)', flcaptainlog_f_departure_port: 'ท่าเรือต้นทาง', flcaptainlog_f_departure_dt: 'วันที่/เวลาออกเรือ', flcaptainlog_f_arrival_port: 'ท่าเรือปลายทาง', flcaptainlog_f_arrival_dt: 'วันที่/เวลาเข้าเทียบท่า', flcaptainlog_f_arrival_folio: 'เลขที่ใบแจ้งเข้าเทียบท่า', flcaptainlog_f_fishing_zone: 'เขตประมงที่ได้รับอนุญาต', flcaptainlog_f_gear_desc: 'รายละเอียดเครื่องมือประมง', flcaptainlog_col_hauldate: 'วันที่ / เวลา', flcaptainlog_col_position: 'ตำแหน่ง', flcaptainlog_col_depth: 'ความลึก (ม.)', flcaptainlog_col_notes: 'หมายเหตุ', flcaptainlog_col_species: 'ชนิดสัตว์น้ำ', flcaptainlog_col_estkg: 'น้ำหนักโดยประมาณ', flcaptainlog_col_preservation: 'การเก็บรักษา', flcaptainlog_kpi_days: 'จำนวนวันในทะเล', flcaptainlog_kpi_hauls: 'จำนวนครั้งลากอวน', flcaptainlog_kpi_fuel: 'เชื้อเพลิงที่ใช้', flcaptainlog_kpi_catch: 'จับได้ทั้งหมด', flcaptainlog_sec_bycatch: 'สัตว์น้ำพลอยจับ — เก็บไว้ / ทิ้งในทะเล', flcaptainlog_col_kept: 'เก็บไว้ (กก.)', flcaptainlog_col_discarded: 'ทิ้ง (กก.)', flcaptainlog_sec_protected: 'การปะทะกับสัตว์น้ำคุ้มครอง', flcaptainlog_col_block: 'หมายเลขบล็อก', flcaptainlog_col_fao: 'รหัส FAO', flcaptainlog_tolerance_warning: 'ชนิดที่ทำเครื่องหมายมีน้ำหนักต่างจากตาชั่งเกินกว่าเกณฑ์ผ่อนผัน 10% ต่อชนิดของสหภาพยุโรป \u2014 กรุณาตรวจสอบก่อนส่ง',
+      flsales_card_title: 'การขายที่ท่าเทียบเรือ', flsales_card_sub: 'ขึ้นท่า {n} ชนิดพันธุ์', flsales_caught_sold: 'จับได้ {caught} กก. · ขายแล้ว {sold} กก.', flsales_remaining_label: 'คงเหลือ', flsales_view_ledger: 'ดูบันทึกการขาย ({n})', flsales_export_pdf_btn: 'ส่งออก PDF การขาย', flsales_qr_title: 'QR ตรวจสอบย้อนกลับ', flsales_qr_sub: 'ผู้ซื้อสแกนเพื่อดูปริมาณที่จับได้ที่เหลืออยู่', flsales_qr_offline_tab: 'QR ออฟไลน์', flsales_qr_online_tab: 'QR ออนไลน์', flsales_qr_online_locked: 'ต้องการการเชื่อมต่อ — เร็วๆ นี้พร้อมการซิงค์บนคลาวด์', flsales_qr_lib_missing: 'ไม่ได้โหลดไลบรารี QR', flsales_qr_generated_at: 'สร้างเมื่อ {time} · เปิดใหม่หลังการขายแต่ละครั้ง', flsales_modal_title: 'บันทึกการขาย — {species}', flsales_modal_remaining: 'เหลือ {kg} กก.', flsales_kg_label: 'กก. ที่ขาย', flsales_kg_exceeds: 'ต้องไม่เกิน {kg} กก. ที่เหลืออยู่', flsales_price_label: 'ราคาต่อกก.', flsales_buyer_label: 'ผู้ซื้อ / บันทึกย่อ', flsales_save_btn: 'บันทึกการขาย', flsales_cancel_btn: 'ยกเลิก', flsales_saved: 'บันทึกการขายแล้ว — อัปเดต QR แล้ว', flsales_ledger_title: 'บันทึกการขาย', flsales_ledger_sub: 'ไม่สามารถแก้ไขได้ — การแก้ไขคือรายการใหม่ ไม่ใช่การแก้ไขของเดิม', flsales_ledger_empty: 'ยังไม่มีการขายที่บันทึกไว้', flsales_close_btn: 'ปิด', flsales_pdf_title: 'รายงานการขายที่ท่าเทียบเรือ', flsales_pdf_kpi_caught: 'จับได้ทั้งหมด', flsales_pdf_kpi_sold: 'ขายแล้วทั้งหมด', flsales_pdf_kpi_remaining: 'คงเหลือทั้งหมด', flsales_pdf_section_ledger: 'บันทึกรายการขายทีละรายการ', flsales_pdf_col_datetime: 'วันที่/เวลา', flsales_pdf_col_species: 'ชนิดพันธุ์', flsales_pdf_col_kg: 'กก.', flsales_pdf_col_price: 'ราคา/กก.', flsales_pdf_col_by: 'โดย', flsales_pdf_col_buyer: 'ผู้ซื้อ/บันทึกย่อ', flsales_pdf_disclaimer: 'สร้างโดย Fish Pulse จากข้อมูลที่ลูกเรือป้อน ไม่ใช่ใบรับรองการชั่งน้ำหนัก ศุลกากร หรือการตรวจสุขภาพอย่างเป็นทางการ',
+flcaptainlog_card_title: 'สมุดบันทึกกัปตัน', flcaptainlog_card_desc: 'บันทึกการเดินทางแบบครบถ้วน — ข้อมูลระบุตัวเรือและใบอนุญาต รายละเอียดการเดินทาง เครื่องมือประมง ลูกเรือ บันทึกการลากอวนแต่ละครั้ง และประมาณการจับสัตว์น้ำบนเรือ — ในเอกสารเดียวที่ส่งออกได้', flcaptainlog_export_btn: 'สร้างสมุดบันทึกกัปตัน', flcaptainlog_grid_export_btn: 'สร้างมุมมองแบบกริด', flcaptainlog_grid_title: 'สมุดบันทึกกัปตัน — มุมมองแบบกริด', flcaptainlog_title: 'สมุดบันทึกกัปตัน', flcaptainlogscreen_past_trips: 'ทริปที่ผ่านมา', flcaptainlogscreen_no_trips: 'ยังไม่มีทริปที่ปิดแล้ว', flcaptainlog_sec_id: 'ข้อมูลระบุตัวเรือและใบอนุญาต', flcaptainlog_sec_trip: 'ข้อมูลการเดินทาง', flcaptainlog_sec_gear: 'ลักษณะเครื่องมือประมง', flcaptainlog_sec_crew: 'ลูกเรือบนเรือ', flcaptainlog_sec_hauls: 'บันทึกการลากอวน', flcaptainlog_sec_catch: 'ประมาณการจับสัตว์น้ำบนเรือ', flcaptainlog_disclaimer: 'สมุดบันทึกนี้สร้างจากข้อมูลที่รายงานเองใน Fish Pulse และไม่ใช่สมุดบันทึกทางการที่หน่วยงานกำหนด ช่องที่ระบุ \'— กรอกด้วยมือ\' ยังไม่ถูกบันทึกในแอปนี้ กรุณาตรวจสอบข้อมูลทุกรายการกับเอกสารของเรือและกฎระเบียบที่บังคับใช้ก่อนใช้บันทึกนี้', flcaptainlog_not_captured: '— กรอกด้วยมือ', flcaptainlog_f_vessel: 'ชื่อเรือ', flcaptainlog_f_registration: 'ทะเบียนเรือ', flcaptainlog_f_permit_holder: 'ผู้ถือใบอนุญาต', flcaptainlog_f_permit_number: 'เลขที่ใบอนุญาตประมง', flcaptainlog_f_captain: 'กัปตัน', flcaptainlog_f_flag: 'สัญชาติเรือ', flcaptainlog_f_callsign: 'สัญญาณเรียกขานวิทยุ', flcaptainlog_f_hold_capacity: 'ความจุระวางเก็บสัตว์น้ำ', flcaptainlog_f_trip_number: 'เที่ยวที่ (ฤดูกาล)', flcaptainlog_f_departure_port: 'ท่าเรือต้นทาง', flcaptainlog_f_departure_dt: 'วันที่/เวลาออกเรือ', flcaptainlog_f_arrival_port: 'ท่าเรือปลายทาง', flcaptainlog_f_arrival_dt: 'วันที่/เวลาเข้าเทียบท่า', flcaptainlog_f_arrival_folio: 'เลขที่ใบแจ้งเข้าเทียบท่า', flcaptainlog_f_fishing_zone: 'เขตประมงที่ได้รับอนุญาต', flcaptainlog_f_gear_desc: 'รายละเอียดเครื่องมือประมง', flcaptainlog_col_hauldate: 'วันที่ / เวลา', flcaptainlog_col_position: 'ตำแหน่ง', flcaptainlog_col_depth: 'ความลึก (ม.)', flcaptainlog_col_notes: 'หมายเหตุ', flcaptainlog_col_species: 'ชนิดสัตว์น้ำ', flcaptainlog_col_estkg: 'น้ำหนักโดยประมาณ', flcaptainlog_col_preservation: 'การเก็บรักษา', flcaptainlog_kpi_days: 'จำนวนวันในทะเล', flcaptainlog_kpi_hauls: 'จำนวนครั้งลากอวน', flcaptainlog_kpi_fuel: 'เชื้อเพลิงที่ใช้', flcaptainlog_kpi_catch: 'จับได้ทั้งหมด', flcaptainlog_sec_bycatch: 'สัตว์น้ำพลอยจับ — เก็บไว้ / ทิ้งในทะเล', flcaptainlog_col_kept: 'เก็บไว้ (กก.)', flcaptainlog_col_discarded: 'ทิ้ง (กก.)', flcaptainlog_sec_protected: 'การปะทะกับสัตว์น้ำคุ้มครอง', flcaptainlog_col_block: 'หมายเลขบล็อก', flcaptainlog_col_fao: 'รหัส FAO', flcaptainlog_tolerance_warning: 'ชนิดที่ทำเครื่องหมายมีน้ำหนักต่างจากตาชั่งเกินกว่าเกณฑ์ผ่อนผัน 10% ต่อชนิดของสหภาพยุโรป \u2014 กรุณาตรวจสอบก่อนส่ง',
       flmx_aviso_export_btn: 'ส่งออก Aviso de Arribo (เม็กซิโก)',
       flmx_escama_export_btn: 'ส่งออก Bitácora de Escama (เม็กซิโก)', flmx_camaron_export_btn: 'ส่งออก Bitácora de Camarón (เม็กซิโก)', flmx_tiburon_export_btn: 'ส่งออก Bitácora de Tiburón (เม็กซิโก)',
       flus_nt_export_btn: 'ส่งออกเอกสาร Non-Trawl Logbook (สหรัฐฯ)',
@@ -8621,6 +8691,33 @@
     const hasActuals = landingGroups.some(g => g.hasActual);
     return { landingGroups, totalEstKg, totalActualKg, hasActuals };
   }
+
+  // ===== Dockside sales ledger (kg-by-kg, buyer-facing traceability) =====
+  // Deliberately a different key from SALES_KEY ('fleet_sales_v1') above —
+  // that one records a single reconciled unit price per species for profit
+  // accounting. This is a separate, append-only log of individual sales as
+  // they happen at the dock (one entry per buyer/transaction), so a
+  // remaining-kg figure can be shown on a QR code and updated live as fish
+  // actually leaves the boat. Entries are never edited or deleted — a
+  // correction is a new entry (e.g. a negative adjustment with a note),
+  // same "ledger, not a form" philosophy as everywhere else in the app that
+  // needs an audit trail Operations can trust.
+  const FLEET_DOCKSIDE_SALES_KEY = 'fleet_dockside_sales_v1';
+
+  // Caught-per-species (preferring the scale-reconciled actual_kg over the
+  // logbook estimate when it exists, same precedence Landing Report uses)
+  // minus sold-per-species from the dockside ledger = what's left to sell.
+  function fleetSalesRemainingBySpecies(tripId){
+    const catches = load(CATCHES_KEY).filter(c => c.trip_id === tripId);
+    const { landingGroups } = computeFleetLandingGroups(catches);
+    const sales = load(FLEET_DOCKSIDE_SALES_KEY).filter(s => s.trip_id === tripId);
+    return landingGroups.map(g => {
+      const caughtKg = g.hasActual ? g.actualKg : g.estKg;
+      const soldKg = sales.filter(s => s.species === g.species).reduce((sum,s) => sum + (s.kg_sold||0), 0);
+      return { species: g.species, caughtKg, soldKg, remainingKg: Math.max(0, caughtKg - soldKg) };
+    });
+  }
+
   // No offline tile-download system in this segment (unlike Field
   // Research), so a fixed subdomain isn't strictly required here — kept
   // anyway for visual/behavioral consistency across segments.
@@ -11025,7 +11122,185 @@
       });
     });
     applyDefaultCurrencyToSelects();
+    renderFleetSalesCard(trip, vessel);
   }
+
+  // ===== Dockside sales UI (species remaining list, add-sale modal,
+  // ledger modal, offline/online QR card) — only rendered once the trip
+  // is closed (ended_at set); an open trip has nothing to sell yet. =====
+  let fleetSaleModalSpecies = null;
+  let fleetSaleModalRemainingKg = 0;
+
+  function escapeFleetHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function renderFleetSalesCard(trip, vessel){
+    const cardEl = document.getElementById('fleetSalesCard');
+    if(!cardEl) return;
+    if(!trip || !trip.ended_at){ cardEl.innerHTML = ''; return; }
+    const rows = fleetSalesRemainingBySpecies(trip.trip_id);
+    if(rows.length === 0){ cardEl.innerHTML = ''; return; }
+    const sales = load(FLEET_DOCKSIDE_SALES_KEY).filter(s => s.trip_id === trip.trip_id).sort((a,b) => b.ts - a.ts);
+    const currency = vessel ? vessel.default_currency : 'THB';
+
+    let html = '<div class="card">'
+      + '<div class="insight-card-label" style="margin-bottom:2px;">' + t('flsales_card_title') + '</div>'
+      + '<div style="font-family:var(--data);font-size:10px;color:var(--ink-soft);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.03em;">' + t('flsales_card_sub').replace('{n}', rows.length) + '</div>';
+
+    rows.forEach(r => {
+      const zero = r.remainingKg <= 0.0001;
+      html += '<div class="fleet-sales-row">'
+        + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-weight:600;font-size:13.5px;color:var(--ink);">' + escapeFleetHtml(r.species) + '</div>'
+          + '<div style="font-family:var(--data);font-size:10.5px;color:var(--ink-soft);">' + t('flsales_caught_sold').replace('{caught}', r.caughtKg.toFixed(1)).replace('{sold}', r.soldKg.toFixed(1)) + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;flex-shrink:0;">'
+          + '<div style="font-weight:700;font-size:13px;' + (zero ? 'color:var(--ink-soft);' : 'color:var(--released);') + '">' + r.remainingKg.toFixed(1) + ' kg</div>'
+          + '<div style="font-size:9px;color:var(--ink-soft);">' + t('flsales_remaining_label') + '</div>'
+        + '</div>'
+        + '<button type="button" class="fleet-sales-add-btn" data-species="' + escapeFleetHtml(r.species) + '" data-remaining="' + r.remainingKg + '"' + (zero ? ' disabled' : '') + '>+</button>'
+      + '</div>';
+    });
+
+    html += '<button type="button" class="fleet-sales-ghost-btn" id="fleetSalesLedgerBtn">' + t('flsales_view_ledger').replace('{n}', sales.length) + '</button>'
+      + '<button type="button" class="fleet-sales-ghost-btn" id="fleetSalesExportBtn">⬇ ' + t('flsales_export_pdf_btn') + '</button>'
+    + '</div>';
+
+    html += '<div class="card">'
+      + '<div class="insight-card-label" style="margin-bottom:2px;">' + t('flsales_qr_title') + '</div>'
+      + '<div style="font-family:var(--data);font-size:10px;color:var(--ink-soft);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.03em;">' + t('flsales_qr_sub') + '</div>'
+      + '<div class="fleet-qr-tabs">'
+        + '<div class="fleet-qr-tab active" data-tab="offline">' + t('flsales_qr_offline_tab') + '</div>'
+        + '<div class="fleet-qr-tab locked" data-tab="online">' + t('flsales_qr_online_tab') + ' 🔒</div>'
+      + '</div>'
+      + '<div id="fleetSalesQrOffline" style="text-align:center;padding:12px 0;">'
+        + '<div id="fleetSalesQrCanvas" style="display:inline-block;margin-bottom:8px;"></div>'
+        + '<div style="font-size:11px;color:var(--ink-soft);" id="fleetSalesQrCaption">—</div>'
+      + '</div>'
+      + '<div id="fleetSalesQrOnline" style="display:none;font-size:12px;color:var(--ink-soft);padding:24px 10px;text-align:center;">' + t('flsales_qr_online_locked') + '</div>'
+    + '</div>';
+
+    cardEl.innerHTML = html;
+
+    cardEl.querySelectorAll('.fleet-sales-add-btn').forEach(btn => {
+      btn.addEventListener('click', () => openFleetSaleModal(btn.dataset.species, parseFloat(btn.dataset.remaining)));
+    });
+    const ledgerBtn = document.getElementById('fleetSalesLedgerBtn');
+    if(ledgerBtn) ledgerBtn.addEventListener('click', () => openFleetSalesLedgerModal(trip.trip_id, currency));
+    const exportBtn = document.getElementById('fleetSalesExportBtn');
+    if(exportBtn) exportBtn.addEventListener('click', () => generateFleetSalesPdf(trip, vessel, rows, sales, currency));
+    cardEl.querySelectorAll('.fleet-qr-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if(tab.classList.contains('locked')) return;
+        cardEl.querySelectorAll('.fleet-qr-tab').forEach(x => x.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('fleetSalesQrOffline').style.display = tab.dataset.tab === 'offline' ? '' : 'none';
+        document.getElementById('fleetSalesQrOnline').style.display = tab.dataset.tab === 'online' ? '' : 'none';
+      });
+    });
+
+    renderFleetSalesQr(trip, vessel, rows);
+  }
+
+  // Regenerated in place every time a sale is saved — a QR is a static
+  // image, it can't "push" an update to whoever already scanned it. The
+  // buyer scans whatever is currently on screen, so the source of truth is
+  // always this one device until Supabase adds a public live-updating URL
+  // (see the disabled "QR online" tab above).
+  function renderFleetSalesQr(trip, vessel, rows){
+    const canvasEl = document.getElementById('fleetSalesQrCanvas');
+    const captionEl = document.getElementById('fleetSalesQrCaption');
+    if(!canvasEl) return;
+    canvasEl.innerHTML = '';
+    if(typeof QRCode === 'undefined'){
+      canvasEl.textContent = t('flsales_qr_lib_missing');
+      return;
+    }
+    const payload = JSON.stringify({
+      vessel: vessel ? vessel.name : null,
+      trip_id: trip.trip_id,
+      generated_at: new Date().toISOString(),
+      remaining: rows.map(r => ({ species: r.species, remaining_kg: Number(r.remainingKg.toFixed(1)) }))
+    });
+    new QRCode(canvasEl, { text: payload, width: 140, height: 140 });
+    if(captionEl) captionEl.textContent = t('flsales_qr_generated_at').replace('{time}', new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}));
+  }
+
+  function openFleetSaleModal(species, remainingKg){
+    fleetSaleModalSpecies = species;
+    fleetSaleModalRemainingKg = remainingKg;
+    document.getElementById('fleetSaleModalTitle').textContent = t('flsales_modal_title').replace('{species}', species);
+    document.getElementById('fleetSaleModalRemaining').textContent = t('flsales_modal_remaining').replace('{kg}', remainingKg.toFixed(1));
+    document.getElementById('fleetSaleErr').style.display = 'none';
+    document.getElementById('fleetSaleKg').value = '';
+    document.getElementById('fleetSalePrice').value = '';
+    document.getElementById('fleetSaleBuyer').value = '';
+    document.getElementById('fleetSaleModalOverlay').classList.add('open');
+  }
+
+  function saveFleetSale(){
+    const trip = load(TRIPS_KEY).find(t => t.trip_id === currentTripDetailId);
+    if(!trip) return;
+    const kgEl = document.getElementById('fleetSaleKg');
+    const kg = kgEl.value ? Number(kgEl.value) : null;
+    const errEl = document.getElementById('fleetSaleErr');
+    if(!kg || kg <= 0 || kg > fleetSaleModalRemainingKg + 0.0001){
+      errEl.textContent = t('flsales_kg_exceeds').replace('{kg}', fleetSaleModalRemainingKg.toFixed(1));
+      errEl.style.display = 'block';
+      return;
+    }
+    const priceEl = document.getElementById('fleetSalePrice');
+    const buyerEl = document.getElementById('fleetSaleBuyer');
+    const role = (window.fishPulseGetActiveFleetRole && window.fishPulseGetActiveFleetRole()) || 'operations';
+    const sales = load(FLEET_DOCKSIDE_SALES_KEY);
+    sales.push({
+      sale_id: uid(),
+      trip_id: trip.trip_id,
+      species: fleetSaleModalSpecies,
+      kg_sold: kg,
+      price_per_kg: priceEl.value ? Number(priceEl.value) : null,
+      buyer_note: (buyerEl.value || '').trim() || null,
+      sold_by: role,
+      ts: Date.now()
+    });
+    save(FLEET_DOCKSIDE_SALES_KEY, sales);
+    document.getElementById('fleetSaleModalOverlay').classList.remove('open');
+    showFleetToast(t('flsales_saved'));
+    renderFleetTripDetail();
+  }
+
+  function openFleetSalesLedgerModal(tripId, currency){
+    const rowsEl = document.getElementById('fleetLedgerRows');
+    const sales = load(FLEET_DOCKSIDE_SALES_KEY).filter(s => s.trip_id === tripId).sort((a,b) => b.ts - a.ts);
+    if(sales.length === 0){
+      rowsEl.innerHTML = '<div class="empty">' + t('flsales_ledger_empty') + '</div>';
+    } else {
+      rowsEl.innerHTML = sales.map(s => {
+        const d = new Date(s.ts);
+        const soldByLabel = s.sold_by === 'captain' ? t('flrole_captain_short') : t('flrole_ops_short');
+        const parts = [escapeFleetHtml(s.species) + ' ' + s.kg_sold.toFixed(1) + 'kg'];
+        if(s.price_per_kg != null) parts.push('@ ' + s.price_per_kg + ' ' + currency);
+        if(s.buyer_note) parts.push(escapeFleetHtml(s.buyer_note));
+        return '<div class="fleet-ledger-row">'
+          + '<span>' + d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + ' · ' + soldByLabel + '</span>'
+          + '<span>' + parts.join(' · ') + '</span>'
+        + '</div>';
+      }).join('');
+    }
+    document.getElementById('fleetLedgerModalOverlay').classList.add('open');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('fleetSaleSaveBtn');
+    if(saveBtn) saveBtn.addEventListener('click', saveFleetSale);
+    const cancelBtn = document.getElementById('fleetSaleCancelBtn');
+    if(cancelBtn) cancelBtn.addEventListener('click', () => document.getElementById('fleetSaleModalOverlay').classList.remove('open'));
+    const ledgerCloseBtn = document.getElementById('fleetLedgerCloseBtn');
+    if(ledgerCloseBtn) ledgerCloseBtn.addEventListener('click', () => document.getElementById('fleetLedgerModalOverlay').classList.remove('open'));
+  });
 
   // Builds an actual PDF (not text-as-image) so the file looks like a
   // real document when shared via WhatsApp/email, and can be saved or
@@ -13431,6 +13706,59 @@
     } catch(err){
       showFleetToast(t('msg_zip_failed'), true);
     }
+  }
+
+  function generateFleetSalesPdf(trip, vessel, rows, sales, currency){
+    if(typeof jspdf === 'undefined'){ showFleetToast(t('msg_pdf_not_loaded'), true); return; }
+    const { jsPDF } = jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const useThaiFont = window.getFishPulseLang && window.getFishPulseLang() === 'th';
+    if(useThaiFont) registerThaiPdfFont(doc);
+    const pdfFont = useThaiFont ? 'NotoSansThai' : 'helvetica';
+
+    const totalCaughtKg = rows.reduce((s,r) => s + r.caughtKg, 0);
+    const totalSoldKg = rows.reduce((s,r) => s + r.soldKg, 0);
+    const totalRemainingKg = rows.reduce((s,r) => s + r.remainingKg, 0);
+
+    drawPdfWatermark(doc);
+    let y = drawPdfLetterhead(doc, {
+      pdfFont, eyebrow: t('mode_fleet_title'),
+      title: t('flsales_pdf_title'),
+      subtitle: (vessel ? vessel.name : '—') + ' · ' + new Date(trip.started_at).toLocaleDateString(),
+      docRef: new Date().toLocaleDateString()
+    });
+    y = drawPdfKpiRow(doc, { pdfFont, y, kpis: [
+      { label: t('flsales_pdf_kpi_caught'), value: totalCaughtKg.toFixed(1) + ' kg' },
+      { label: t('flsales_pdf_kpi_sold'), value: totalSoldKg.toFixed(1) + ' kg' },
+      { label: t('flsales_pdf_kpi_remaining'), value: totalRemainingKg.toFixed(1) + ' kg' }
+    ]});
+
+    y = drawPdfSectionLabel(doc, { pdfFont, y, text: t('flsales_pdf_section_ledger') });
+    y = drawPdfTable(doc, {
+      pdfFont, y,
+      cols: [
+        { label: t('flsales_pdf_col_datetime'), width: 110 },
+        { label: t('flsales_pdf_col_species'), width: 140 },
+        { label: t('flsales_pdf_col_kg'), width: 60, align: 'right' },
+        { label: t('flsales_pdf_col_price'), width: 70, align: 'right' },
+        { label: t('flsales_pdf_col_by'), width: 60 },
+        { label: t('flsales_pdf_col_buyer'), width: 96 }
+      ],
+      rows: sales.slice().sort((a,b) => a.ts - b.ts).map(s => [
+        new Date(s.ts).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' }),
+        s.species,
+        s.kg_sold.toFixed(1),
+        s.price_per_kg != null ? (s.price_per_kg + ' ' + currency) : '—',
+        s.sold_by === 'captain' ? t('flrole_captain_short') : t('flrole_ops_short'),
+        s.buyer_note || '—'
+      ])
+    });
+
+    drawPdfDisclaimerFooter(doc, { pdfFont, y: y + 8, text: t('flsales_pdf_disclaimer') });
+
+    const filename = 'fleet-sales-' + (vessel ? vessel.name.replace(/\s+/g,'-').toLowerCase() : 'trip') + '-' + new Date().toISOString().slice(0,10) + '.pdf';
+    const blob = doc.output('blob');
+    showFleetPdfExport(blob, filename, t('flsales_pdf_title'));
   }
 
   function showFleetPdfExport(blob, filename, title){
